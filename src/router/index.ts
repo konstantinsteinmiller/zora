@@ -7,7 +7,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'main-menu',
-      component: MainMenuView,
+      redirect: 'game',
+      // component: MainMenuView,
     },
     {
       path: '/game',
