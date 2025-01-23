@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 export default class Renderer extends THREE.WebGLRenderer {
   scene = null
@@ -7,6 +8,7 @@ export default class Renderer extends THREE.WebGLRenderer {
   cbUpdate: any = null
   cbLoop = null
   previousRAF = null
+  orbitControls = null
 
   constructor() {
     const canvas = document.querySelector('canvas')
@@ -31,7 +33,11 @@ export default class Renderer extends THREE.WebGLRenderer {
     this.previousRAF = null
 
     this.createSkybox()
-    this.createWolrdMesh()
+    this.createWorldMesh()
+
+    this.orbitControls = new OrbitControls(camera, this.domElement)
+    this.orbitControls.target.set(0, 0, 0)
+    this.orbitControls?.update()
 
     window.addEventListener('resize', this.onWindowResize, false)
     this.loop()
@@ -46,17 +52,16 @@ export default class Renderer extends THREE.WebGLRenderer {
     if (this.cbUpdate) {
       this.cbUpdate(dt)
     }
+    this.orbitControls?.update()
 
     this.render(scene, camera)
     requestAnimationFrame(this.cbLoop)
     this.step(dt - this.previousRAF)
     this.previousRAF = dt
   }
+
   step(timeElapsedInMs: number) {
     const timeElapsedInSeconds = timeElapsedInMs * 0.001
-    if (this.controls) {
-      this.controls.Update(timeElapsedInSeconds)
-    }
   }
 
   onUpdate(callback: any) {
@@ -71,12 +76,12 @@ export default class Renderer extends THREE.WebGLRenderer {
 
   createSkybox() {
     const loader = new THREE.CubeTextureLoader()
-    const texture = loader.load(['../assets/images/skybox/px.png', '../assets/images/skybox/nx.png', '@/assets/images/skybox/py.png', '../assets/images/skybox/ny.png', '../assets/images/skybox/pz.png', '#/images/skybox/nz.png'])
+    const texture = loader.load(['/images/skybox/px.png', '/images/skybox/nx.png', '/images/skybox/py.png', '/images/skybox/ny.png', '/images/skybox/pz.png', '/images/skybox/nz.png'])
     texture.encoding = THREE.sRGBEncoding
     scene.background = texture
   }
 
-  createWolrdMesh() {
+  createWorldMesh() {
     /* initial World plane */
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10, 10, 10), new THREE.MeshStandardMaterial({ color: 0x808080 }))
     plane.castShadow = false

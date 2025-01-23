@@ -5,7 +5,6 @@ import CharacterController from '@/entity/CharacterController.ts'
 import Camera from '@/engine/Camera'
 import Light from '@/engine/Light.js'
 import Renderer from '@/engine/Renderer'
-import { OrbitControls } from 'three/addons/controls/OrbitControls'
 
 export default class Game {
   constructor(/*props*/) {
@@ -30,10 +29,6 @@ export default class Game {
     scene.add(player)
 
     window.renderer = new Renderer()
-
-    const controls = new OrbitControls(camera, renderer.domElement)
-    controls.target.set(this.position)
-    controls.update()
 
     renderer.onUpdate((dt: number) => {
       physic.step()
