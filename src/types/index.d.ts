@@ -64,7 +64,7 @@ export type Player = {
 //   matchStatus: string
 // }
 //
-// export type Player = {
+// export type CharacterController = {
 //   userUuid: playerUuid
 //   name: string
 //   matchesList: Match[]

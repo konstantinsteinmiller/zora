@@ -30,6 +30,21 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
+      'max-params': ['error', 2],
+      'max-len': [0, 80, 2, { ignoreUrls: true }],
+      'prettier/prettier': [
+        'warn',
+        {
+          // bracketSameLine: false,
+          printWidth: 70,
+          singleAttributePerLine: true,
+          singleQuote: true,
+          semi: false,
+          tabWidth: 2,
+          trailingComma: 'es5',
+          arrowParens: 'avoid',
+        },
+      ],
     },
   },
   // vue

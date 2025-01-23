@@ -10,11 +10,31 @@ export default class Light extends THREE.Object3D {
     point.shadow.bias = -0.001
     point.shadow.mapSize = new THREE.Vector2(2048, 2048)
 
-    this.add(ambient)
-    this.add(point)
+    const light = new THREE.DirectionalLight(0xffffff, 1.0)
+    light.position.set(-100, 100, 100)
+    light.target.position.set(0, 0, 0)
+    light.castShadow = true
+    light.shadow.bias = -0.001
+    light.shadow.mapSize.width = 4096
+    light.shadow.mapSize.height = 4096
+    light.shadow.camera.near = 0.1
+    light.shadow.camera.far = 500.0
+    light.shadow.camera.near = 0.5
+    light.shadow.camera.far = 500.0
+    light.shadow.camera.left = 50
+    light.shadow.camera.right = -50
+    light.shadow.camera.top = 50
+    light.shadow.camera.bottom = -50
+    scene.add(light)
+
+    scene.add(ambient)
+    scene.add(point)
   }
 
-  update(player) {
-    this.position.copy(player.position)
+  update(player: any) {
+    this.position.set(0, 10, 0)
+    if (player?.position) {
+      this.position.copy(player.position)
+    }
   }
 }
