@@ -6,6 +6,7 @@ export default class Renderer extends THREE.WebGLRenderer {
   clock = new THREE.Clock()
   camera = null
   cbUpdate: any = null
+  cbPostUpdate: any = null
   cbLoop = null
   previousRAF = null
   orbitControls = null
@@ -32,12 +33,9 @@ export default class Renderer extends THREE.WebGLRenderer {
 
     this.previousRAF = null
 
-    this.createSkybox()
-    this.createWorldMesh()
-
-    this.orbitControls = new OrbitControls(camera, this.domElement)
-    this.orbitControls.target.set(0, 0, 0)
-    this.orbitControls?.update()
+    // this.orbitControls = new OrbitControls(camera, this.domElement)
+    // this.orbitControls.target.set(0, 0, 0)
+    // this.orbitControls?.update()
 
     window.addEventListener('resize', this.onWindowResize, false)
     this.loop()
@@ -52,7 +50,7 @@ export default class Renderer extends THREE.WebGLRenderer {
     if (this.cbUpdate) {
       this.cbUpdate(dt)
     }
-    this.orbitControls?.update()
+    // this.orbitControls?.update()
 
     this.render(scene, camera)
     requestAnimationFrame(this.cbLoop)
@@ -62,31 +60,20 @@ export default class Renderer extends THREE.WebGLRenderer {
 
   step(timeElapsedInMs: number) {
     const timeElapsedInSeconds = timeElapsedInMs * 0.001
+    this?.cbPostUpdate?.(timeElapsedInSeconds)
   }
 
   onUpdate(callback: any) {
     this.cbUpdate = callback
   }
 
+  postUpdate(callback: any) {
+    this.cbPostUpdate = callback
+  }
+
   onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     this.setSize(window.innerWidth, window.innerHeight)
-  }
-
-  createSkybox() {
-    const loader = new THREE.CubeTextureLoader()
-    const texture = loader.load(['/images/skybox/px.png', '/images/skybox/nx.png', '/images/skybox/py.png', '/images/skybox/ny.png', '/images/skybox/pz.png', '/images/skybox/nz.png'])
-    texture.encoding = THREE.sRGBEncoding
-    scene.background = texture
-  }
-
-  createWorldMesh() {
-    /* initial World plane */
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10, 10, 10), new THREE.MeshStandardMaterial({ color: 0x808080 }))
-    plane.castShadow = false
-    plane.receiveShadow = true
-    plane.rotation.x = -Math.PI / 2
-    scene.add(plane)
   }
 }

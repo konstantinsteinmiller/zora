@@ -20,6 +20,7 @@ export default class CharacterController extends THREE.Object3D {
 
     this.animationsMap = {}
     this.inputController = new InputController()
+    window.playerInput = this.inputController
     this.stateMachine = new CharacterFSM(this.animationsMap)
 
     this.loadModels()
@@ -52,8 +53,8 @@ export default class CharacterController extends THREE.Object3D {
     }*/
 
     const loader = new FBXLoader()
-    loader.setPath('/models/zombie/')
-    loader.load('/mremireh_o_desbiens.fbx', (model: any) => {
+    loader.setPath('/models/fairy/')
+    loader.load('/nature_fairy_1.fbx', (model: any) => {
       model.scale.setScalar(0.01)
       model.traverse((c: any) => {
         c.castShadow = true
@@ -80,7 +81,7 @@ export default class CharacterController extends THREE.Object3D {
       }
 
       const loader = new FBXLoader(this.loadingManager)
-      loader.setPath('/models/zombie/')
+      loader.setPath('/models/fairy/')
       loader.load('walk.fbx', (anim: any) => {
         onLoad('walk', anim)
       })
@@ -90,10 +91,27 @@ export default class CharacterController extends THREE.Object3D {
       loader.load('idle.fbx', (anim: any) => {
         onLoad('idle', anim)
       })
-      loader.load('dance.fbx', (anim: any) => {
+      loader.load('angry.fbx', (anim: any) => {
         onLoad('dance', anim)
       })
+      loader.load('cast.fbx', (anim: any) => {
+        onLoad('cast', anim)
+      })
+      loader.load('jump.fbx', (anim: any) => {
+        onLoad('jump', anim)
+      })
     })
+  }
+
+  get getPosition() {
+    return this.position
+  }
+
+  get getRotation() {
+    if (!this.model) {
+      return new THREE.Quaternion()
+    }
+    return this.model.quaternion
   }
 
   update(timeInSeconds: number) {
@@ -164,6 +182,7 @@ export default class CharacterController extends THREE.Object3D {
     controlObject.position.add(sideways)
 
     oldPosition.copy(controlObject.position)
+    this.position.copy(controlObject.position)
 
     if (this.mixer) {
       this.mixer.update(timeInSeconds)

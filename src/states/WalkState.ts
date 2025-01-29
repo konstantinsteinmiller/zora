@@ -25,6 +25,11 @@ export default class WalkState extends State {
         currentAction.setEffectiveWeight(1.0)
       }
 
+      // if (previousState.name == 'jump') {
+      //   currentAction.crossFadeFrom(previousAction, 0.01, true)
+      //   currentAction.play()
+      //   return
+      // }
       currentAction.crossFadeFrom(previousAction, 0.5, true)
       currentAction.play()
     } else {
@@ -35,6 +40,14 @@ export default class WalkState extends State {
   exit() {}
 
   update(timeElapsed: number, input: any) {
+    if (input.keysMap.leftMouse) {
+      this.parent.setState('cast')
+      return
+    }
+    if (input.keysMap.space) {
+      this.parent.setState('jump')
+      return
+    }
     if (input.keysMap.forward || input.keysMap.backward) {
       if (input.keysMap.shift) {
         this.parent.setState('run')

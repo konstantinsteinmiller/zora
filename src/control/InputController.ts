@@ -13,9 +13,42 @@ export default class InputController {
       right: false,
       space: false,
       shift: false,
+      leftMouse: false,
+      middleMouse: false,
+      rightMouse: false,
     }
     document.addEventListener('keydown', e => this.onKeyDown(e), false)
     document.addEventListener('keyup', e => this.onKeyUp(e), false)
+    document.addEventListener('mousedown', e => this.onMouseDown(e), false)
+    document.addEventListener('mouseup', e => this.onMouseUp(e), false)
+  }
+
+  onMouseDown(event: MouseEvent) {
+    switch (event.button) {
+      case 0: // left mouse button
+        this.keysMap.leftMouse = true
+        break
+      case 1: // cursor wheel button
+        this.keysMap.middleMouse = true
+        break
+      case 2: // right mouse button
+        this.keysMap.rightMouse = true
+        break
+    }
+  }
+
+  onMouseUp(event: MouseEvent) {
+    switch (event.button) {
+      case 0: // left mouse button
+        this.keysMap.leftMouse = false
+        break
+      case 1: // cursor wheel button
+        this.keysMap.middleMouse = false
+        break
+      case 2: // right mouse button
+        this.keysMap.rightMouse = false
+        break
+    }
   }
 
   onKeyDown(event: KeyboardEvent) {
