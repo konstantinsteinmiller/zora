@@ -1,5 +1,8 @@
 export default class InputController {
-  keysMap: { [key: string]: boolean } = {}
+  keysMap: { [key: string]: boolean | number } = {}
+  current = { mouseX: 0, mouseY: 0, mouseXDelta: 0, mouseYDelta: 0 }
+  previous: any = null
+  target = null
 
   constructor() {
     this.init()
@@ -7,6 +10,9 @@ export default class InputController {
 
   init() {
     this.keysMap = {
+      interact: false,
+      dunno: false,
+      inventory: false,
       forward: false,
       backward: false,
       left: false,
@@ -17,10 +23,18 @@ export default class InputController {
       middleMouse: false,
       rightMouse: false,
     }
+    this.current = {
+      mouseX: 0,
+      mouseY: 0,
+      mouseXDelta: 0,
+      mouseYDelta: 0,
+    }
+    this.previous = null
     document.addEventListener('keydown', e => this.onKeyDown(e), false)
     document.addEventListener('keyup', e => this.onKeyUp(e), false)
     document.addEventListener('mousedown', e => this.onMouseDown(e), false)
     document.addEventListener('mouseup', e => this.onMouseUp(e), false)
+    document.addEventListener('mousemove', e => this.onMouseMove(e), false)
   }
 
   onMouseDown(event: MouseEvent) {
@@ -52,6 +66,7 @@ export default class InputController {
   }
 
   onKeyDown(event: KeyboardEvent) {
+    // console.log('event.keyCode: ', event.keyCode)
     switch (event.keyCode) {
       case 87: // w
         this.keysMap.forward = true
@@ -64,6 +79,18 @@ export default class InputController {
         break
       case 68: // d
         this.keysMap.right = true
+        break
+      case 70: // f
+        this.keysMap.interact = true
+        break
+      case 69: // e
+        this.keysMap.dunno = true
+        break
+      case 73: // i
+        this.keysMap.inventory = !this.keysMap.inventory
+        break
+      case 9: // TAB
+        this.keysMap.inventory = !this.keysMap.inventory
         break
       case 32: // SPACE
         this.keysMap.space = true
@@ -88,12 +115,44 @@ export default class InputController {
       case 68: // d
         this.keysMap.right = false
         break
+      case 70: // f
+        this.keysMap.interact = false
+        break
+      case 69: // e
+        this.keysMap.dunno = false
+        break
       case 32: // SPACE
         this.keysMap.space = false
         break
       case 16: // SHIFT
         this.keysMap.shift = false
         break
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    this.current.mouseX = event.pageX - innerWidth / 2
+    this.current.mouseY = event.pageY - innerHeight / 2
+
+    if (this.previous === null) {
+      this.previous = {
+        ...this.current,
+      }
+    }
+    this.current.mouseXDelta = this.current.mouseX - this.previous.mouseX
+    this.current.mouseYDelta = this.current.mouseY - this.previous.mouseY
+  }
+
+  isReady() {
+    return this.previous !== null
+  }
+
+  update(_: any) {
+    if (this.previous !== null) {
+      this.current.mouseXDelta = this.current.mouseX - this.previous.mouseX
+      this.current.mouseYDelta = this.current.mouseY - this.previous.mouseY
+
+      this.previous = { ...this.current }
     }
   }
 }

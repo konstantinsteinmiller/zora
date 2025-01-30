@@ -75,3 +75,7 @@ export const getSrc = src => {
 export const randomInt = (range = 1) => {
   return Math.floor(Math.random() * range)
 }
+
+export const clamp = (x: number, a: number, b: number) => {
+  return Math.min(Math.max(x, a), b)
+}

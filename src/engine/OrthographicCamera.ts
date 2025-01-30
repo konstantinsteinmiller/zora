@@ -2,9 +2,10 @@ import * as THREE from 'three'
 
 export default class OrthographicCamera extends THREE.PerspectiveCamera {
   constructor() {
-    super(60, window.innerWidth / window.innerHeight, 1, 1000)
-    this.position.set(6, 50, 14)
-    this.lookAt(0, 0, 1.8)
+    super(60, innerWidth / innerHeight, 1, 1000)
+    this.position.set(25, 10, 25)
+    // this.position.set(6, 50, 14)
+    // this.lookAt(0, 0, 1.8)
   }
 
   update(player: any) {

@@ -145,6 +145,10 @@ export default class CharacterController extends THREE.Object3D {
       acc.multiplyScalar(0.0)
     }
 
+    if (this.stateMachine.currentState.name === 'jump') {
+      acc.multiplyScalar(1.5)
+    }
+
     if (this.inputController.keysMap.forward) {
       velocity.z += acc.z * timeInSeconds
     }

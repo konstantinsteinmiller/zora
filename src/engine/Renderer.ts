@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 export default class Renderer extends THREE.WebGLRenderer {
   scene = null
+  uiScene = null
   clock = new THREE.Clock()
   camera = null
   cbUpdate: any = null
@@ -28,6 +29,8 @@ export default class Renderer extends THREE.WebGLRenderer {
     this.shadowMap.type = THREE.PCFSoftShadowMap
 
     this.outputEncoding = THREE.sRGBEncoding
+    this.physicallyCorrectLights = true
+
     this.toneMapping = THREE.CineonToneMapping
     this.toneMappingExposure = 1.75
 
@@ -42,20 +45,28 @@ export default class Renderer extends THREE.WebGLRenderer {
   }
 
   loop() {
-    const dt = this.clock.getDelta()
-    if (this.previousRAF === null) {
-      this.previousRAF = dt
-    }
+    requestAnimationFrame((t: number) => {
+      if (this.previousRAF === null) {
+        this.previousRAF = t
+      }
+      const elapsedTimeInMs = t - this.previousRAF
 
-    if (this.cbUpdate) {
-      this.cbUpdate(dt)
-    }
-    // this.orbitControls?.update()
+      if (this.cbUpdate) {
+        this.cbUpdate(elapsedTimeInMs * 0.001)
+      }
+      // this.orbitControls?.update()
+      this.autoClear = true
+      this.render(scene, camera)
+      this.autoClear = false
+      if (showCrosshair) {
+        this.render(uiScene, uiCamera)
+      }
 
-    this.render(scene, camera)
-    requestAnimationFrame(this.cbLoop)
-    this.step(dt - this.previousRAF)
-    this.previousRAF = dt
+      this.step(elapsedTimeInMs)
+      this.previousRAF = t
+
+      this.loop()
+    })
   }
 
   step(timeElapsedInMs: number) {
