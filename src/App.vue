@@ -1,10 +1,19 @@
 <template>
   <div class="flex flex-col h-screen sm:h-full">
-    <main><router-view /></main>
+    <main
+      class="game"
+      :class="cssProps"
+    >
+      <router-view />
+    </main>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from 'vue'
+
+const cssProps = computed(() => ({ 'cursor--hidden': !window.showCursor }))
+</script>
 
 <style scoped lang="sass">
 #app
@@ -13,20 +22,17 @@
   text-align: center
   color: #2c3e50
 
+.game
+  cursor: auto
+  &.cursor--hidden
+    cursor: none
+</style>
+
+<style lang="sass">
 body
   margin: 0
   display: flex
   place-items: center
   min-width: 320px
   min-height: 100vh
-
-//.logo
-//  height: 6em
-//  padding: 1.5em
-//  will-change: filter
-//  transition: filter 300ms
-//.logo:hover
-//  filter: drop-shadow(0 0 2em #646cffaa)
-//.logo.vue:hover
-//  filter: drop-shadow(0 0 2em #42b883aa)
 </style>

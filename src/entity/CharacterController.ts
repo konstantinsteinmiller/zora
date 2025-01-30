@@ -9,7 +9,6 @@ export default class CharacterController extends THREE.Object3D {
 
   constructor() {
     super()
-
     this.init()
   }
 
@@ -22,6 +21,9 @@ export default class CharacterController extends THREE.Object3D {
     this.inputController = new InputController()
     window.playerInput = this.inputController
     this.stateMachine = new CharacterFSM(this.animationsMap)
+
+    this.raycaster = new THREE.Raycaster()
+    this.pointer = new THREE.Vector2(this.inputController.current.crosshairX, this.inputController.current.crosshairY)
 
     this.loadModels()
   }
@@ -103,15 +105,21 @@ export default class CharacterController extends THREE.Object3D {
     })
   }
 
-  get getPosition() {
+  public get getPosition() {
     return this.position
   }
 
-  get getRotation() {
+  public get getRotation() {
     if (!this.model) {
       return new THREE.Quaternion()
     }
     return this.model.quaternion
+  }
+  public setRotation(rotation: THREE.Quaternion) {
+    if (!this.model) {
+      return
+    }
+    return this.model.quaternion.copy(rotation)
   }
 
   update(timeInSeconds: number) {
@@ -141,7 +149,7 @@ export default class CharacterController extends THREE.Object3D {
       acc.multiplyScalar(2.0)
     }
 
-    if (this.stateMachine.currentState.name === 'dance') {
+    if (this.stateMachine.currentState.name === 'cast') {
       acc.multiplyScalar(0.0)
     }
 

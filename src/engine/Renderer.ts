@@ -58,7 +58,7 @@ export default class Renderer extends THREE.WebGLRenderer {
       this.autoClear = true
       this.render(scene, camera)
       this.autoClear = false
-      if (showCrosshair) {
+      if (window.showCrosshair) {
         this.render(uiScene, uiCamera)
       }
 

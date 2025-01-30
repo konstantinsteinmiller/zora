@@ -48,24 +48,28 @@ export default class World extends THREE.Object3D {
 
     const wall1 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 4), concreteMaterial)
     wall1.position.set(0, -40, -50)
+    wall1.name = 'wall1'
     wall1.castShadow = true
     wall1.receiveShadow = true
     scene.add(wall1)
 
     const wall2 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 4), concreteMaterial)
     wall2.position.set(0, -40, 50)
+    wall2.name = 'wall2'
     wall2.castShadow = true
     wall2.receiveShadow = true
     scene.add(wall2)
 
     const wall3 = new THREE.Mesh(new THREE.BoxGeometry(4, 100, 100), concreteMaterial)
     wall3.position.set(50, -40, 0)
+    wall3.name = 'wall3'
     wall3.castShadow = true
     wall3.receiveShadow = true
     scene.add(wall3)
 
     const wall4 = new THREE.Mesh(new THREE.BoxGeometry(4, 100, 100), concreteMaterial)
     wall4.position.set(-50, -40, 0)
+    wall4.name = 'wall4'
     wall4.castShadow = true
     wall4.receiveShadow = true
     scene.add(wall4)
@@ -84,17 +88,15 @@ export default class World extends THREE.Object3D {
   }
 
   displayCrosshair() {
-    if (window.showCrosshair) {
-      const mapLoader = new THREE.TextureLoader()
-      const crosshair = mapLoader.load('world/crosshair.png')
-      crosshair.anisotropy = renderer.capabilities.getMaxAnisotropy()
+    const textureLoader = new THREE.TextureLoader()
+    const crosshair = textureLoader.load('images/crosshair/crosshair-white.png')
+    crosshair.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
-      const crosshairSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: crosshair, color: 0xffffff, fog: false, depthTest: false, depthWrite: false }))
-      crosshairSprite.scale.set(0.15, 0.15 * camera.aspect, 1)
-      crosshairSprite.position.set(0, 0, -10)
+    const crosshairSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: crosshair, color: 0xffffff, fog: false, depthTest: false, depthWrite: false }))
+    crosshairSprite.scale.set(0.15 / camera.aspect, 0.15 * camera.aspect, 1)
+    crosshairSprite.position.set(0, 0, -10)
 
-      uiScene.add(crosshairSprite)
-    }
+    uiScene.add(crosshairSprite)
   }
 
   loadMaterial(name: string, tiling: number) {

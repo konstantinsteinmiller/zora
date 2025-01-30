@@ -8,45 +8,39 @@ import ThirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
 import FirstPersonCamera from '@/engine/FirstPersonCamera.ts'
 
 export default class Game {
-  isThirdPerson = false
   aspect = window.innerWidth / window.innerHeight
   private thirdPersonCamera: any
 
-  constructor(/*props*/) {
-    // super(props)
+  constructor() {
     this.init()
   }
 
   async init() {
     await Rapier.init()
+    window.showCursor = false
     window.showCrosshair = true
+    window.isThirdPerson = true
     window.physic = new Rapier.World({ x: 0, y: -9.81, z: 0 })
 
     window.scene = new THREE.Scene()
     window.uiScene = new THREE.Scene()
-    this.camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000)
+    this.camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 1000)
     this.camera.position.set(0, 2, 0)
     window.camera = this.camera
     // window.camera = new OrthographicCamera()
     window.uiCamera = new THREE.OrthographicCamera(-1, 1, this.aspect, -1 * this.aspect, 1, 1000)
     // console.log('meshesWorld:', meshesWorld.players)
     const player = new CharacterController()
+    window.player = player
 
-    if (this.isThirdPerson) {
-      this.thirdPersonCamera = new ThirdPersonCamera({
-        target: player,
-      })
-    } else {
-      this.fpsCamera = new FirstPersonCamera(player.inputController)
-    }
+    this.thirdPersonCamera = new ThirdPersonCamera({
+      player: player,
+    })
+    this.fpsCamera = new FirstPersonCamera(player)
 
     const light = new Light()
 
-    scene.add(light)
-    // scene.add(player)
-
     window.renderer = new Renderer()
-
     window.world = new World()
 
     renderer.onUpdate((elapsedTimeInS: number) => {
@@ -56,7 +50,7 @@ export default class Game {
       light.update(player)
     })
     renderer.postUpdate((elapsedTimeInS: number) => {
-      if (this.isThirdPerson) {
+      if (window.isThirdPerson) {
         this.thirdPersonCamera.update(elapsedTimeInS)
       } else {
         this.fpsCamera.update(elapsedTimeInS)

@@ -1,4 +1,5 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
+import * as THREE from 'three'
 
 const createColliderGeo = (geo, rigidBody, physic) => {
   const vertices = new Float32Array(geo.attributes.position.array)
@@ -78,4 +79,16 @@ export const randomInt = (range = 1) => {
 
 export const clamp = (x: number, a: number, b: number) => {
   return Math.min(Math.max(x, a), b)
+}
+
+export const createRayTrace = (origin: THREE.Vector3, target: THREE.Vector3, distance: number) => {
+  // Draw a line from pointA in the given direction at distance 1
+  const geometry = new THREE.SphereGeometry(0.1, 16, 16)
+  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  const sphereMesh = new THREE.Mesh(geometry, material)
+  sphereMesh.position.copy(target)
+  sphereMesh.scale.set(1, 1, 1)
+  sphereMesh.frustumCulled = false
+  sphereMesh.castShadow = true
+  window.scene.add(sphereMesh)
 }
