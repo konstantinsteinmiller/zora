@@ -15,7 +15,8 @@
         "./src/*" // set path `@/*` as alias of `src/*`
       ],
       "#/*": ["./src/assets/*"]
-    }
+    },
+    "types": ["@vue-macros/reactivity-transform/macros-global"]
   },
   "noImplicitAny": false,
   "allowJs": true,

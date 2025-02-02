@@ -42,10 +42,15 @@ export default class Game {
 
     window.renderer = new Renderer()
     window.world = new World()
+    const axesHelper = new THREE.AxesHelper(5)
+    scene.add(axesHelper)
 
     renderer.onUpdate((elapsedTimeInS: number) => {
       physic.step()
       player.update(elapsedTimeInS)
+      axesHelper.position.copy(player.getPosition)
+      axesHelper.position.y = axesHelper.position.y + 0.5
+      axesHelper.quaternion.copy(player.getRotation)
       // camera.update(player)
       light.update(player)
     })

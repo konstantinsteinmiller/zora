@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 
 export default class CharacterController extends THREE.Object3D {

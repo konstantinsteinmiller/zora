@@ -11,6 +11,7 @@ export default class Renderer extends THREE.WebGLRenderer {
   cbLoop = null
   previousRAF = null
   orbitControls = null
+  eventsList: { id: string; callback: () => void }[] = []
 
   constructor() {
     const canvas = document.querySelector('canvas')
@@ -50,9 +51,10 @@ export default class Renderer extends THREE.WebGLRenderer {
         this.previousRAF = t
       }
       const elapsedTimeInMs = t - this.previousRAF
+      const elapsedTimeInS = elapsedTimeInMs * 0.001
 
       if (this.cbUpdate) {
-        this.cbUpdate(elapsedTimeInMs * 0.001)
+        this.cbUpdate(elapsedTimeInS)
       }
       // this.orbitControls?.update()
       this.autoClear = true
@@ -63,6 +65,9 @@ export default class Renderer extends THREE.WebGLRenderer {
       }
 
       this.step(elapsedTimeInMs)
+      this.eventsList.forEach(({ callback }) => {
+        callback?.(elapsedTimeInS)
+      })
       this.previousRAF = t
 
       this.loop()
@@ -86,5 +91,13 @@ export default class Renderer extends THREE.WebGLRenderer {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     this.setSize(window.innerWidth, window.innerHeight)
+  }
+
+  public addEvent(id: string, callback: any) {
+    this.eventsList.push({ id, callback })
+  }
+
+  public removeEvent(eventId: string) {
+    this.eventsList = this.eventsList.filter(({ id }) => eventId !== id)
   }
 }

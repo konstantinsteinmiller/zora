@@ -11,13 +11,16 @@
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.14.0",
     "three": "^0.172.0",
+    "three-nebula": "^10.0.3",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.26.7",
     "@eslint/js": "^9.18.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue-macros/reactivity-transform": "^1.1.6",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.3.0",
     "@vue/tsconfig": "^0.7.0",

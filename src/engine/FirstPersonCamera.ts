@@ -64,22 +64,35 @@ export default class FirstPersonCamera {
   }
 
   updateRotation(timeElapsedInS: number) {
+    /* calc the delta to rotate the character vertically */
     const xh = this.input.current.mouseXDelta / innerWidth
+
+    /* calc the delta to rotate the character horizontally */
     const yh = this.input.current.mouseYDelta / innerHeight
 
+    /* apply some speed constant to get an angle in radians [0, 2 PI] */
     this.phi += -xh * this.phiSpeed
+    /* apply some speed constant to get an angle in radians [0, 2 PI],
+     * but don't allow user to rotate too far up or too far down
+     * -> [-60°, 60°] or [-PI/3, PI/3] in radians */
     this.theta = clamp(this.theta + (this.isLookBack ? -1 : 1) * yh * this.thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
     const qx = new THREE.Quaternion()
+    /* (0, 1, 0) is Up Vector / y positive Vector and rotate it by phi,
+     *  so setFromAxisAngle uses following formula:
+     *  q = cos(phi/2) + sin(phi/2) * ^n, where ^n is the normalized axis vector   */
     qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.phi)
     const qz = new THREE.Quaternion()
+    /* (1, 0, 0) is Right Vector / x positive Vector and rotate it by theta */
     qz.setFromAxisAngle(new THREE.Vector3(1, 0, 0), this.theta)
 
-    const q = new THREE.Quaternion()
-    q.multiply(qx)
-    q.multiply(qz)
+    /* multiply both quaternions to apply both rotations around the
+     * y-axis with angle phi and around the x-axis with angle theta */
+    const quaternionRotationTotal = new THREE.Quaternion()
+    quaternionRotationTotal.multiply(qx)
+    quaternionRotationTotal.multiply(qz)
 
-    this.rotation.copy(q)
+    this.rotation.copy(quaternionRotationTotal)
   }
 
   getXRotation() {

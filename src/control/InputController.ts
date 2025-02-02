@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { createRayTrace } from '@/utils/function'
+import { createTwinShotVFX } from '@/utils/vfx.ts'
 
 export default class InputController {
   keysMap: { [key: string]: boolean | number } = {}
@@ -57,10 +58,13 @@ export default class InputController {
       return
     }
 
-    const intersect = intersects[0]
+    const intersect = intersects.find(inter => {
+      return inter.object.type !== 'AxesHelper'
+    })
     // const object = intersect.object
     // console.log('intersect object:', object.name, intersect, intersect.point)
     createRayTrace(player.getPosition, intersect.point, intersect.distance)
+    createTwinShotVFX(intersect.point)
   }
 
   onMouseDown(event: MouseEvent) {

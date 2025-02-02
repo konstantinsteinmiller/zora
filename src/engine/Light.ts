@@ -3,14 +3,14 @@ import * as THREE from 'three'
 export default class Light extends THREE.Object3D {
   constructor() {
     super()
-    const ambient = new THREE.AmbientLight(0xffffff, 1.9)
-    const point = new THREE.PointLight(0xffffff, 1)
+    const ambient = new THREE.AmbientLight(0xffffff, 1.5)
+    const point = new THREE.PointLight(0xffffff, 0.5)
     point.position.set(1, 0, 4)
     point.castShadow = true
     point.shadow.bias = -0.001
     point.shadow.mapSize = new THREE.Vector2(2048, 2048)
 
-    const light = new THREE.DirectionalLight(0xffffff, 1.0)
+    const light = new THREE.DirectionalLight(0xffffff, 0.4)
     light.position.set(-100, 100, 100)
     light.target.position.set(0, 0, 0)
     light.castShadow = true
