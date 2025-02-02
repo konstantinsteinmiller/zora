@@ -6,6 +6,7 @@ import Light from '@/engine/Light.js'
 import Renderer from '@/engine/Renderer'
 import ThirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
 import FirstPersonCamera from '@/engine/FirstPersonCamera.ts'
+import { GPURenderer } from 'three-nebula'
 
 export default class Game {
   aspect = window.innerWidth / window.innerHeight
