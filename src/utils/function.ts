@@ -1,5 +1,6 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import * as THREE from 'three'
+import state from '@/states/GlobalState'
 
 const createColliderGeo = (geo, rigidBody, physic) => {
   const vertices = new Float32Array(geo.attributes.position.array)
@@ -90,5 +91,5 @@ export const createRayTrace = (origin: THREE.Vector3, target: THREE.Vector3, dis
   sphereMesh.scale.set(1, 1, 1)
   sphereMesh.frustumCulled = false
   sphereMesh.castShadow = true
-  window.scene.add(sphereMesh)
+  state.scene.add(sphereMesh)
 }

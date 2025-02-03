@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import vertexShader from '@/entity/water/caustics.vert?raw'
 import fragmentShader from '@/entity/water/caustics.frag?raw'
+import state from '@/states/GlobalState'
 
 export default (options: any) => {
   const mesh = new THREE.Mesh()
@@ -24,9 +25,17 @@ export default (options: any) => {
   mesh.rotation.x = -Math.PI * 0.5
   mesh.position.y = 0.2
 
-  mesh.update = (time: number) => {
+  const update = (time: number) => {
     mesh.material.uniforms.uTime.value = time
   }
-  scene.add(mesh)
+
+  state.addEvent('renderer.update', (deltaInS: number, elapsedTime: number) => {
+    update(elapsedTime)
+  })
+
+  if (!state.scene) {
+    setTimeout(() => state.scene.add(mesh))
+  } else state.scene.add(mesh)
+
   return mesh
 }

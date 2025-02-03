@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.14.0",
+    "@types/three": "^0.173.0",
     "three": "^0.172.0",
     "three-nebula": "^10.0.3",
     "tweakpane": "^4.0.5",
@@ -28,6 +29,7 @@
     "@vue/tsconfig": "^0.7.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
+    "eslint-plugin-auto-import": "^0.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-vue": "^9.32.0",

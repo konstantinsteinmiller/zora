@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import state from '@/states/GlobalState'
 
 export default class EnemyController {
   constructor() {
@@ -16,9 +17,9 @@ export default class EnemyController {
   }
 
   findPlayer() {
-    const player = window.player
+    const player = state.player
 
-    const directionVector: THREE.Vector3 = player.getPosition.clone()
+    const directionVector: THREE.Vector3 = player.getPosition().clone()
     directionVector.sub(this.position)
     directionVector.y = 0
 

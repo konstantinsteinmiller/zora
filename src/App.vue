@@ -11,12 +11,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import state from '@/states/GlobalState'
 
 /* reactivity transform example */
 // let count = $ref(0)
 // count++
 // console.log(count)
-const cssProps = computed(() => ({ 'cursor--hidden': !window.showCursor }))
+const cssProps = computed(() => ({ 'cursor--hidden': !state.showCursor }))
 </script>
 
 <style scoped lang="sass">
