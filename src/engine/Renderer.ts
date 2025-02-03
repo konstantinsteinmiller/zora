@@ -2,10 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 export default class Renderer extends THREE.WebGLRenderer {
-  scene = null
-  uiScene = null
   clock = new THREE.Clock()
-  camera = null
   cbUpdate: any = null
   cbPostUpdate: any = null
   cbLoop = null
@@ -24,6 +21,9 @@ export default class Renderer extends THREE.WebGLRenderer {
       // shadowMap: THREE.PCFSoftShadowMap,
       // size: { width: canvas.clientWidth, height: canvas.clientHeight }
     })
+
+    this.clock = new THREE.Clock()
+
     this.setPixelRatio(4)
     this.cbLoop = this.loop.bind(this)
     this.shadowMap.enabled = true
@@ -50,13 +50,17 @@ export default class Renderer extends THREE.WebGLRenderer {
       if (this.previousRAF === null) {
         this.previousRAF = t
       }
+      const elapsedTime = this.clock.getElapsedTime()
+
       const elapsedTimeInMs = t - this.previousRAF
       const elapsedTimeInS = elapsedTimeInMs * 0.001
 
       if (this.cbUpdate) {
-        this.cbUpdate(elapsedTimeInS)
+        this.cbUpdate(elapsedTimeInS, elapsedTime)
       }
       // this.orbitControls?.update()
+      /* autoclear here to be able to render uiScene on top of the animated
+       * object scene */
       this.autoClear = true
       this.render(scene, camera)
       this.autoClear = false

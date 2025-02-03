@@ -16,9 +16,10 @@ export default class World extends THREE.Object3D {
 
   createSkybox() {
     const loader = new THREE.CubeTextureLoader()
-    const texture = loader.load(['/images/skybox/px.png', '/images/skybox/nx.png', '/images/skybox/py.png', '/images/skybox/ny.png', '/images/skybox/pz.png', '/images/skybox/nz.png'])
-    texture.encoding = THREE.sRGBEncoding
-    scene.background = texture
+    const environmentMap = loader.load(['/images/skybox/px.png', '/images/skybox/nx.png', '/images/skybox/py.png', '/images/skybox/ny.png', '/images/skybox/pz.png', '/images/skybox/nz.png'])
+    environmentMap.encoding = THREE.sRGBEncoding
+    scene.background = environmentMap
+    scene.environment = environmentMap
   }
 
   createWorldMesh() {
@@ -36,7 +37,7 @@ export default class World extends THREE.Object3D {
     plane.castShadow = false
     plane.receiveShadow = true
     plane.rotation.x = -Math.PI / 2
-    scene.add(plane)
+    // scene.add(plane)
 
     const box = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), this.loadMaterial('vintage-tile1_', 0.2))
     box.position.set(10, 2, 0)

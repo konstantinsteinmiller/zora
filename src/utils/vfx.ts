@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import System, { SpriteRenderer, GPURenderer } from 'three-nebula'
-// import Nebula, { Emitter, Rate, Span, Position, Mass, Radius, Life, Velocity, PointZone, Vector3D, Alpha, Scale, Color } from 'three-nebula'
-// import TwinShot from '@/vfx/twin-shot.json'
+
 import TwinShot from '@/vfx/twin-shot_2.json'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,12 +13,9 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
   // const nebulaRenderer = new SpriteRenderer(window.scene, THREE)
   const nebulaRenderer = new GPURenderer(window.scene, THREE)
-  console.log('nebulaRenderer: ', nebulaRenderer)
-  // nebulaRenderer.dispose()
-  // nebulaRenderer.forceContextLoss()
   const nebulaSystem = system.addRenderer(nebulaRenderer)
 
-  console.log('nebulaSystem: ', nebulaSystem)
+  // console.log('nebulaSystem: ', nebulaSystem)
   const playerRotation = window.player.getRotation
 
   const forwardNormal = new THREE.Vector3(0, 0, 1)

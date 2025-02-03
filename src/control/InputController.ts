@@ -62,9 +62,11 @@ export default class InputController {
       return inter.object.type !== 'AxesHelper'
     })
     // const object = intersect.object
-    // console.log('intersect object:', object.name, intersect, intersect.point)
-    createRayTrace(player.getPosition, intersect.point, intersect.distance)
-    createTwinShotVFX(intersect.point)
+    // console.log('intersect object:', object.name, intersect, intersect?.point)
+    if (intersect?.point) {
+      createRayTrace(player.getPosition, intersect.point, intersect.distance)
+      createTwinShotVFX(intersect.point)
+    }
   }
 
   onMouseDown(event: MouseEvent) {
