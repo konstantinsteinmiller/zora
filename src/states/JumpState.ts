@@ -1,5 +1,6 @@
 import State from '@/states/State'
 import { LoopOnce } from 'three'
+import state from '@/states/GlobalState'
 
 export default class JumpState extends State {
   constructor(parent: any) {
@@ -40,7 +41,7 @@ export default class JumpState extends State {
   }
 
   onFinished(previousState: any) {
-    const input = window.playerInput
+    const input = state.input
     this.cleanup()
 
     // if (previousState) {

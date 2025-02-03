@@ -6,8 +6,11 @@
 
 <script setup lang="ts">
 import Game from '@/Game'
+import { onMounted } from 'vue'
 
-const game = new Game()
+onMounted(() => {
+  const game = new Game()
+})
 </script>
 
 <style scoped lang="sass"></style>

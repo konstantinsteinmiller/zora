@@ -1,59 +1,46 @@
+import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import CharacterFSM from '@/states/CharacterFSM.ts'
+import state from '@/states/GlobalState'
 
-export default class CharacterController extends THREE.Object3D {
-  player: any = null
+let player: any = null
 
-  constructor() {
-    super()
-    this.init()
+export default () => {
+  if (player !== null) {
+    return player
   }
 
-  init() {
-    this.decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
-    this.acceleration = new THREE.Vector3(1, 0.25, 10.0)
-    this.velocity = new THREE.Vector3(0, 0, 0)
-
-    this.animationsMap = {}
-    this.inputController = new InputController()
-    window.playerInput = this.inputController
-    this.stateMachine = new CharacterFSM(this.animationsMap)
-
-    this.raycaster = new THREE.Raycaster()
-    this.pointer = new THREE.Vector2(this.inputController.current.crosshairX, this.inputController.current.crosshairY)
-
-    this.loadModels()
+  let mesh: any = new Object3D()
+  player = new Object3D()
+  player.getPosition = () => {
+    if (!mesh) {
+      return new Vector3(0,0,0)
+    }
+    return mesh?.position
+  }
+  player.getRotation = () => {
+    return mesh.quaternion
+  }
+  player.setRotation = (rotation: THREE.Quaternion) => {
+    if (!mesh) {
+      return
+    }
+    return mesh.quaternion.copy(rotation)
   }
 
-  async loadModels() {
-    /*const loaderGlb = new GLTFLoader()
-    const glb = await loaderGlb.loadAsync('/models/fairy/fairy.glb')
-    for (const mesh of glb.scene.children) {
-      this.model = mesh
-      scene.add(mesh)
-      mesh.position.set(0, 1, 0)
-      this.mixer = new THREE.AnimationMixer(this.model)
+  InputController()
+  let mixer: any = null
+  let loadingManager = null
+  let animationsMap: any = {}
+  const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
+  const acceleration = new THREE.Vector3(1, 0.25, 10.0)
+  const velocity = new THREE.Vector3(0, 0, 0)
 
-      const onLoad = (animName: string, anim: any) => {
-        const clip = anim.animations[0]
-        const action = this.mixer.clipAction(clip)
-        this.animationsMap[animName] = {
-          clip: clip,
-          action: action,
-        }
-      }
+  const stateMachine = new CharacterFSM(animationsMap)
 
-      const walkAnim = await loaderGlb.loadAsync('/models/fairy/walk.glb')
-      onLoad('walk', walkAnim)
-      const idleAnim = await loaderGlb.loadAsync('/models/fairy/idle.glb')
-      onLoad('idle', idleAnim)
-      console.log('idle: ')
-      this.stateMachine.setState('idle')
-    }*/
-
+  const loadModels = () => {
     const loader = new FBXLoader()
     loader.setPath('/models/fairy/')
     loader.load('/nature_fairy_1.fbx', (model: any) => {
@@ -61,28 +48,27 @@ export default class CharacterController extends THREE.Object3D {
       model.traverse((c: any) => {
         c.castShadow = true
       })
-      // model.position.set(0, 2, 0)
-      this.model = model
-      scene.add(model)
+      mesh = model
+      state.scene.add(mesh)
 
-      this.mixer = new THREE.AnimationMixer(model)
+      mixer = new THREE.AnimationMixer(mesh)
 
-      this.loadingManager = new THREE.LoadingManager()
-      this.loadingManager.onLoad = () => {
-        this.stateMachine.setState('idle')
+      loadingManager = new THREE.LoadingManager()
+      loadingManager.onLoad = () => {
+        stateMachine.setState('idle')
       }
 
       const onLoad = (animName: string, anim: any) => {
         const clip = anim.animations[0]
-        const action = this.mixer.clipAction(clip)
+        const action = mixer.clipAction(clip)
 
-        this.animationsMap[animName] = {
+        animationsMap[animName] = {
           clip: clip,
           action: action,
         }
       }
 
-      const loader = new FBXLoader(this.loadingManager)
+      const loader = new FBXLoader(loadingManager)
       loader.setPath('/models/fairy/')
       loader.load('walk.fbx', (anim: any) => {
         onLoad('walk', anim)
@@ -105,72 +91,54 @@ export default class CharacterController extends THREE.Object3D {
     })
   }
 
-  public get getPosition() {
-    return this.position
-  }
-
-  public get getRotation() {
-    if (!this.model) {
-      return new THREE.Quaternion()
-    }
-    return this.model.quaternion
-  }
-  public setRotation(rotation: THREE.Quaternion) {
-    if (!this.model) {
-      return
-    }
-    return this.model.quaternion.copy(rotation)
-  }
-
-  update(timeInSeconds: number) {
-    if (!this.model) {
+  const update = (timeInSeconds: number) => {
+    if (!mesh) {
       return
     }
 
-    if (this.stateMachine.currentState === null) {
+    if (stateMachine.currentState === null) {
       return
     }
-    this.stateMachine.update(timeInSeconds, this.inputController)
+    stateMachine.update(timeInSeconds, state.input)
 
-    const velocity = this.velocity
-    const frameDecceleration = new THREE.Vector3(velocity.x * this.decceleration.x, velocity.y * this.decceleration.y, velocity.z * this.decceleration.z)
+    const frameDecceleration = new THREE.Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
     frameDecceleration.multiplyScalar(timeInSeconds)
     frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
 
     velocity.add(frameDecceleration)
 
-    const controlObject = this.model
+    const controlObject = mesh
     const _Q = new THREE.Quaternion()
     const _A = new THREE.Vector3()
     const _R = controlObject.quaternion.clone()
 
-    const acc = this.acceleration.clone()
-    if (this.inputController.keysMap.shift) {
+    const acc = acceleration.clone()
+    if (state.input.keysMap.shift) {
       acc.multiplyScalar(2.0)
     }
 
-    if (this.stateMachine.currentState.name === 'cast') {
+    if (stateMachine.currentState.name === 'cast') {
       acc.multiplyScalar(0.0)
     }
 
-    if (this.stateMachine.currentState.name === 'jump') {
+    if (stateMachine.currentState.name === 'jump') {
       acc.multiplyScalar(1.5)
     }
 
-    if (this.inputController.keysMap.forward) {
+    if (state.input.keysMap.forward) {
       velocity.z += acc.z * timeInSeconds
     }
-    if (this.inputController.keysMap.backward) {
+    if (state.input.keysMap.backward) {
       velocity.z -= acc.z * timeInSeconds
     }
-    if (this.inputController.keysMap.left) {
+    if (state.input.keysMap.left) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this.acceleration.y)
+      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * acceleration.y)
       _R.multiply(_Q)
     }
-    if (this.inputController.keysMap.right) {
+    if (state.input.keysMap.right) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * this.acceleration.y)
+      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * acceleration.y)
       _R.multiply(_Q)
     }
 
@@ -194,10 +162,20 @@ export default class CharacterController extends THREE.Object3D {
     controlObject.position.add(sideways)
 
     oldPosition.copy(controlObject.position)
-    this.position.copy(controlObject.position)
+    player.position.copy(controlObject.position)
+    mesh.position.copy(controlObject.position)
 
-    if (this.mixer) {
-      this.mixer.update(timeInSeconds)
+    if (mixer) {
+      mixer.update(timeInSeconds)
     }
   }
+
+  state.addEvent('renderer.update', (deltaInS: number) => {
+    update(deltaInS)
+  })
+  
+  loadModels()
+
+  state.player = player
+  return player
 }

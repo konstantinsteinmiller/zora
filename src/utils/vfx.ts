@@ -1,26 +1,22 @@
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import System, { SpriteRenderer, GPURenderer } from 'three-nebula'
-// import Nebula, { Emitter, Rate, Span, Position, Mass, Radius, Life, Velocity, PointZone, Vector3D, Alpha, Scale, Color } from 'three-nebula'
-// import TwinShot from '@/vfx/twin-shot.json'
+import state from '@/states/GlobalState'
+
 import TwinShot from '@/vfx/twin-shot_2.json'
-import { v4 as uuidv4 } from 'uuid'
 
 export const createTwinShotVFX = async (intersectPoint: Vector3) => {
-  const adjustedPosition = window.player.getPosition.clone()
+  const adjustedPosition = state.player.getPosition().clone()
   adjustedPosition.y += 1
   adjustedPosition.z += 0.5
 
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
-  // const nebulaRenderer = new SpriteRenderer(window.scene, THREE)
-  const nebulaRenderer = new GPURenderer(window.scene, THREE)
-  console.log('nebulaRenderer: ', nebulaRenderer)
-  // nebulaRenderer.dispose()
-  // nebulaRenderer.forceContextLoss()
+  // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
+  const nebulaRenderer = new GPURenderer(state.scene, THREE)
   const nebulaSystem = system.addRenderer(nebulaRenderer)
 
-  console.log('nebulaSystem: ', nebulaSystem)
-  const playerRotation = window.player.getRotation
+  // console.log('nebulaSystem: ', nebulaSystem)
+  const playerRotation = state.player.getRotation()
 
   const forwardNormal = new THREE.Vector3(0, 0, 1)
   forwardNormal.applyQuaternion(playerRotation)
@@ -41,12 +37,13 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   })
 
   const TWIN_SHOT_SPEED = 20
-  const uuid = uuidv4()
-  window.renderer.addEvent(`twin-shot-${uuid}`, (deltaTimeInSeconds: number) => {
+  let uuid: string = ''
+
+  uuid = state.addEvent(`renderer.update`, (deltaTimeInSeconds: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {
       const trajectoryVector: Vector3 = intersectPoint.clone().sub(emitter.position)
       if (trajectoryVector.length() < 0.1) {
-        window.renderer.removeEvent(`twin-shot-${uuid}`)
+        state.removeEvent(`renderer.update`, uuid)
         nebulaSystem.destroy()
         return
       }

@@ -1,9 +1,61 @@
 # Todo
-- [ ] import character
-  - [ ] import character animations
-  - [ ] state machine
-- [ ] skybox
+- [ ] Enemy
+  - [ ] Navigation Mesh
+  - [ ] loading Mesh
+  - [ ] enemy FSM
+  - [ ] enemy attack
+  - [ ] enemy AI
+    - [ ] moving around / fleeing / hiding behind 
+          cover while charging
+- [ ] Inventory
+  - [ ] Drag and Drop
+  - [ ] Item Slot
+  - [ ] Items
+    - [ ] Gold
+    - [ ] Fairy Dust
+    - [ ] Consumables
+    - [ ] Quest Items
+- [ ] UI
+  - [ ] Charge indicator around crosshair
+  - [ ] Life bar
+  - [ ] Mana bar
+  - [ ] Endurance bar
+  - [ ] Skill Box
+- [ ] Main Menu
+  - [ ] Start Game
+  - [ ] Load Game / Continue
+  - [ ] Options
+  - [ ] Exit
+- [ ] World
+  - [ ] Water Shader
+  - [ ] Arenas
+  - [ ] Biomes
+    - [ ] Forest
+    - [ ] Desert / Steppe
+    - [ ] Volcano
+    - [ ] Swamp
+    - [ ] Iceland
+    - [ ] Water islands
+    - [ ] Mushroom forest
+    - [ ] Sky islands
+  - Day and night cycle
+- [x] Physics for Character
+  - [ ] character dynamic colliders
+  - [ ] world static colliders
+- [x] import character
+  - [x] import character animations
+  - [x] state machine
+  - [x] idle, run, cast, jump
+  - [ ] jump to fly animation
+- [x] skybox
+- [x] First person camera with Keyboard and Mouse
+- [x] Third person camera with Keyboard and Mouse
 - [ ] basic three game engine 
+  - [x] Physics
+  - [x] Renderer
+  - [x] Light
+  - [x] Camera
+  - [ ] Sound
 - [x] basic vue + eslint + typescript setup 
 
 ## Bugs

@@ -27,7 +27,7 @@ export default class Sound {
   //
   // update(player) {
   //   this.tracks.forEach(track => {
-  //     track.position.copy(player.position)
+  //     track.position.copy(state.player.getPosition())
   //   })
   // }
 }

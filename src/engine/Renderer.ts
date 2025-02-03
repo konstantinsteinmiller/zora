@@ -1,103 +1,86 @@
+import camera from '@/engine/Camera.ts'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import state from '@/states/GlobalState'
 
-export default class Renderer extends THREE.WebGLRenderer {
-  scene = null
-  uiScene = null
-  clock = new THREE.Clock()
-  camera = null
-  cbUpdate: any = null
-  cbPostUpdate: any = null
-  cbLoop = null
-  previousRAF = null
-  orbitControls = null
-  eventsList: { id: string; callback: () => void }[] = []
+let renderer: any = null
 
-  constructor() {
-    const canvas = document.querySelector('canvas')
-    super({
-      canvas,
-      antialias: true,
-      // outputEncoding: THREE.sRGBEncoding,
-      // toneMapping: THREE.CineonToneMapping,
-      // toneMappingExposure: 1.75,
-      // shadowMap: THREE.PCFSoftShadowMap,
-      // size: { width: canvas.clientWidth, height: canvas.clientHeight }
-    })
-    this.setPixelRatio(4)
-    this.cbLoop = this.loop.bind(this)
-    this.shadowMap.enabled = true
-    this.shadowMap.type = THREE.PCFSoftShadowMap
-
-    this.outputEncoding = THREE.sRGBEncoding
-    this.physicallyCorrectLights = true
-
-    this.toneMapping = THREE.CineonToneMapping
-    this.toneMappingExposure = 1.75
-
-    this.previousRAF = null
-
-    // this.orbitControls = new OrbitControls(camera, this.domElement)
-    // this.orbitControls.target.set(0, 0, 0)
-    // this.orbitControls?.update()
-
-    window.addEventListener('resize', this.onWindowResize, false)
-    this.loop()
+export default () => {
+  /* renderer is a Singleton */
+  if (renderer !== null) {
+    return renderer
   }
 
-  loop() {
-    requestAnimationFrame((t: number) => {
-      if (this.previousRAF === null) {
-        this.previousRAF = t
+  let previousTickTime: number | null = null
+
+  const canvas: any = document.querySelector('canvas')
+  renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+  })
+
+  renderer.clock = new THREE.Clock()
+
+  renderer.setPixelRatio(4)
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
+  renderer.outputEncoding = THREE.sRGBEncoding
+  renderer.physicallyCorrectLights = true
+
+  renderer.toneMapping = THREE.CineonToneMapping
+  renderer.toneMappingExposure = 1.75
+
+  previousTickTime = null
+
+  renderer.onUpdate = (callback: any) => {
+    renderer.cbUpdate = callback
+  }
+
+  const tick = () => {
+    requestAnimationFrame((time: number) => {
+      if (previousTickTime === null) {
+        previousTickTime = time
       }
-      const elapsedTimeInMs = t - this.previousRAF
+      const elapsedTime = renderer.clock.getElapsedTime()
+
+      const elapsedTimeInMs = time - previousTickTime
       const elapsedTimeInS = elapsedTimeInMs * 0.001
 
-      if (this.cbUpdate) {
-        this.cbUpdate(elapsedTimeInS)
+      if (renderer.cbUpdate) {
+        renderer.cbUpdate(elapsedTimeInS)
       }
-      // this.orbitControls?.update()
-      this.autoClear = true
-      this.render(scene, camera)
-      this.autoClear = false
-      if (window.showCrosshair) {
-        this.render(uiScene, uiCamera)
-      }
-
-      this.step(elapsedTimeInMs)
-      this.eventsList.forEach(({ callback }) => {
-        callback?.(elapsedTimeInS)
+      state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
+        callback?.(elapsedTimeInS, elapsedTime)
       })
-      this.previousRAF = t
+      // this.orbitControls?.update()
+      /* auto clear here to be able to render uiScene on top
+       * of the animated object scene */
+      renderer.autoClear = true
+      renderer.render(state.scene, state.camera)
+      renderer.autoClear = false
+      if (state.showCrosshair) {
+        renderer.render(state.uiScene, state.uiCamera)
+      }
 
-      this.loop()
+      previousTickTime = time
+
+      tick()
     })
   }
 
-  step(timeElapsedInMs: number) {
-    const timeElapsedInSeconds = timeElapsedInMs * 0.001
-    this?.cbPostUpdate?.(timeElapsedInSeconds)
-  }
-
-  onUpdate(callback: any) {
-    this.cbUpdate = callback
-  }
-
-  postUpdate(callback: any) {
-    this.cbPostUpdate = callback
-  }
-
-  onWindowResize() {
+  const onWindowResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
-    this.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(window.innerWidth, window.innerHeight)
   }
 
-  public addEvent(id: string, callback: any) {
-    this.eventsList.push({ id, callback })
-  }
+  window.addEventListener('resize', onWindowResize, false)
 
-  public removeEvent(eventId: string) {
-    this.eventsList = this.eventsList.filter(({ id }) => eventId !== id)
-  }
+  /* start game loop */
+  tick()
+
+  state.renderer = renderer
+
+  return renderer
 }
