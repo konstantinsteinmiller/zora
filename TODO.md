@@ -29,6 +29,9 @@
 - [ ] World
   - [x] Water Shader
   - [ ] Arenas
+    - [ ] Mountain
+      - [x] load Mesh
+      - [ ] Colliders
   - [ ] Biomes
     - [ ] Forest
     - [ ] Desert / Steppe
@@ -41,7 +44,9 @@
   - Day and night cycle
 - [x] Refactor to function style programming
 - [ ] Refactor model importing
-- [x] Physics for Character
+  - [x] glb and fbx meshes
+  - [ ] fbx characters with anims
+- [ ] Physics for Character
   - [ ] character dynamic colliders
   - [ ] world static colliders
 - [x] import character

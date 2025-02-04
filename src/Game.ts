@@ -22,10 +22,8 @@ export default class Game {
     state.scene = new THREE.Scene()
     state.uiScene = new THREE.Scene()
 
-    Camera()
     CharacterController()
-    ThirdPersonCamera()
-    FirstPersonCamera()
+    Camera()
 
     Light()
     Renderer()

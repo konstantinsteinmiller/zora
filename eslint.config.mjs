@@ -2,7 +2,7 @@ import globals from 'globals'
 import pluginJs from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
-import autoImport from 'auto-import'
+// import autoImport from 'eslint-plugin-auto-import'
 import prettier from 'eslint-plugin-prettier/recommended'
 import vueConfigTypescript from '@vue/eslint-config-typescript'
 import vueConfigPrettier from '@vue/eslint-config-prettier'
@@ -46,7 +46,6 @@ export default [
           arrowParens: 'avoid',
         },
       ],
-
     },
   },
   // vue
@@ -123,13 +122,13 @@ export default [
       'prettier/prettier': ['warn', { singleQuote: true }],
     },
   },
-  ...autoImport.configs.recommended,
-  {
-    rules: {
-      "rootPath": "./src",
-      'packages': {
-        "three": "three",
-      }
-    },
-  },
+  // ...autoImport.configs.recommended,
+  // {
+  //   rules: {
+  //     "rootPath": "./src",
+  //     'packages': {
+  //       "three": "three",
+  //     }
+  //   },
+  // },
 ]
