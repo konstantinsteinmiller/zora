@@ -24,16 +24,15 @@ export default class Game {
 
     Camera()
     CharacterController()
-
     ThirdPersonCamera()
-
     FirstPersonCamera()
+
     Light()
     Renderer()
     World()
     AxesHelper()
     Crosshair()
 
-    WaterTutorial()
+    // WaterTutorial()
   }
 }

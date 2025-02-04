@@ -27,7 +27,7 @@
   - [ ] Options
   - [ ] Exit
 - [ ] World
-  - [ ] Water Shader
+  - [x] Water Shader
   - [ ] Arenas
   - [ ] Biomes
     - [ ] Forest
@@ -39,6 +39,8 @@
     - [ ] Mushroom forest
     - [ ] Sky islands
   - Day and night cycle
+- [x] Refactor to function style programming
+- [ ] Refactor model importing
 - [x] Physics for Character
   - [ ] character dynamic colliders
   - [ ] world static colliders

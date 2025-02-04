@@ -33,10 +33,6 @@ export default () => {
 
   previousTickTime = null
 
-  renderer.onUpdate = (callback: any) => {
-    renderer.cbUpdate = callback
-  }
-
   const tick = () => {
     requestAnimationFrame((time: number) => {
       if (previousTickTime === null) {
@@ -47,13 +43,11 @@ export default () => {
       const elapsedTimeInMs = time - previousTickTime
       const elapsedTimeInS = elapsedTimeInMs * 0.001
 
-      if (renderer.cbUpdate) {
-        renderer.cbUpdate(elapsedTimeInS)
-      }
       state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
         callback?.(elapsedTimeInS, elapsedTime)
       })
       // this.orbitControls?.update()
+
       /* auto clear here to be able to render uiScene on top
        * of the animated object scene */
       renderer.autoClear = true

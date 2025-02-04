@@ -2,7 +2,6 @@ import type { Box3, Object3D } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
 
-
 let testWorld: any = null
 export default () => {
   if (testWorld !== null) {
