@@ -1,4 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import { clamp } from '@/utils/function.ts'
 import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
@@ -29,6 +30,15 @@ export default () => {
     }
     return mesh.quaternion.copy(rotation)
   }
+  player.hp = 33
+  player.previousHp = 33
+  player.maxHp = 100
+  player.mp = 77
+  player.previousMp = 77
+  player.maxMp = 100
+  player.endurance = 100
+  player.previousEndurance = 100
+  player.maxEndurance = 100
 
   InputController()
   let mixer: any = {}
@@ -38,6 +48,33 @@ export default () => {
   const velocity = new THREE.Vector3(0, 0, 0)
 
   const stateMachine = new CharacterFSM(animationsMap)
+
+  player.dealDamage = (damage: number) => {
+    player.previousHp = player.hp
+    player.hp = clamp(player.hp + damage, 0, player.maxHp)
+    player.previousMp = player.mp
+    player.mp = clamp(player.mp - damage, 0, player.maxMp)
+    player.previousEndurance = player.endurance
+    player.endurance = clamp(player.endurance - damage - 5, 0, player.maxEndurance)
+  }
+
+  player.addHp = (heal: number) => {
+    player.previousHp = player.hp
+    player.hp = clamp(player.hp + heal, 0, player.maxHp)
+  }
+
+  let didDamage = false
+  const TIME_INTERVAL = 6
+  const updateLife = (timeInSeconds: number, elapsedTimeInS: number) => {
+    // console.log('elapsedTimeInS: ', elapsedTimeInS)
+    if (!didDamage && elapsedTimeInS % TIME_INTERVAL < 1.0) {
+      player.dealDamage(23)
+      didDamage = true
+      // console.log('dealDamage: ', player.hp)
+    } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
+      didDamage = false
+    }
+  }
 
   const loadModels = () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
@@ -55,7 +92,7 @@ export default () => {
     })
   }
 
-  const update = (timeInSeconds: number) => {
+  const update = (timeInSeconds: number, elapsedTimeInS: number) => {
     if (!mesh) {
       return
     }
@@ -130,6 +167,8 @@ export default () => {
     mesh.position.copy(controlObject.position)
 
     mixer?.update?.(timeInSeconds)
+
+    updateLife(timeInSeconds, elapsedTimeInS)
   }
 
   state.addEvent('renderer.update', update)

@@ -17,9 +17,9 @@
     - [ ] Quest Items
 - [ ] UI
   - [ ] Charge indicator around crosshair
-  - [ ] Life bar
-  - [ ] Mana bar
-  - [ ] Endurance bar
+  - [x] Life bar
+  - [x] Mana bar
+  - [x] Endurance bar
   - [ ] Skill Box
 - [ ] Main Menu
   - [ ] Start Game
