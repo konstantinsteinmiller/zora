@@ -1,7 +1,7 @@
+import AssetLoader from '@/engine/AssetLoader.ts'
 import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState'
 
@@ -16,7 +16,7 @@ export default () => {
   player = new Object3D()
   player.getPosition = () => {
     if (!mesh) {
-      return new Vector3(0,0,0)
+      return new Vector3(0, 0, 0)
     }
     return mesh?.position
   }
@@ -31,9 +31,8 @@ export default () => {
   }
 
   InputController()
-  let mixer: any = null
-  let loadingManager = null
-  let animationsMap: any = {}
+  let mixer: any = {}
+  const animationsMap: any = {}
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.25, 10.0)
   const velocity = new THREE.Vector3(0, 0, 0)
@@ -41,53 +40,18 @@ export default () => {
   const stateMachine = new CharacterFSM(animationsMap)
 
   const loadModels = () => {
-    const loader = new FBXLoader()
-    loader.setPath('/models/fairy/')
-    loader.load('/nature_fairy_1.fbx', (model: any) => {
-      model.scale.setScalar(0.01)
-      model.traverse((c: any) => {
-        c.castShadow = true
-      })
-      mesh = model
-      state.scene.add(mesh)
-
-      mixer = new THREE.AnimationMixer(mesh)
-
-      loadingManager = new THREE.LoadingManager()
-      loadingManager.onLoad = () => {
-        stateMachine.setState('idle')
-      }
-
-      const onLoad = (animName: string, anim: any) => {
-        const clip = anim.animations[0]
-        const action = mixer.clipAction(clip)
-
-        animationsMap[animName] = {
-          clip: clip,
-          action: action,
-        }
-      }
-
-      const loader = new FBXLoader(loadingManager)
-      loader.setPath('/models/fairy/')
-      loader.load('walk.fbx', (anim: any) => {
-        onLoad('walk', anim)
-      })
-      loader.load('run.fbx', (anim: any) => {
-        onLoad('run', anim)
-      })
-      loader.load('idle.fbx', (anim: any) => {
-        onLoad('idle', anim)
-      })
-      loader.load('angry.fbx', (anim: any) => {
-        onLoad('dance', anim)
-      })
-      loader.load('cast.fbx', (anim: any) => {
-        onLoad('cast', anim)
-      })
-      loader.load('jump.fbx', (anim: any) => {
-        onLoad('jump', anim)
-      })
+    const { loadCharacterModelWithAnimations } = AssetLoader()
+    loadCharacterModelWithAnimations({
+      modelPath: '/models/fairy/nature_fairy_1.fbx',
+      parent: state.scene,
+      scale: 0.01,
+      stateMachine,
+      animationsMap,
+      animationNamesList: ['walk', 'run', 'idle', 'dance', 'cast', 'jump'],
+      callback: (scope: any) => {
+        mixer = scope.mixer
+        mesh = scope.mesh
+      },
     })
   }
 
@@ -165,15 +129,11 @@ export default () => {
     player.position.copy(controlObject.position)
     mesh.position.copy(controlObject.position)
 
-    if (mixer) {
-      mixer.update(timeInSeconds)
-    }
+    mixer?.update?.(timeInSeconds)
   }
 
-  state.addEvent('renderer.update', (deltaInS: number) => {
-    update(deltaInS)
-  })
-  
+  state.addEvent('renderer.update', update)
+
   loadModels()
 
   state.player = player

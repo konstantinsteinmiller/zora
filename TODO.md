@@ -43,9 +43,9 @@
     - [ ] Sky islands
   - Day and night cycle
 - [x] Refactor to function style programming
-- [ ] Refactor model importing
+- [x] Refactor model importing
   - [x] glb and fbx meshes
-  - [ ] fbx characters with anims
+  - [x] fbx characters with anims
 - [ ] Physics for Character
   - [ ] character dynamic colliders
   - [ ] world static colliders
