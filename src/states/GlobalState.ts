@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 let state: {
   triggerEvent: (eventName: string) => void
-  addEvent: (eventName: string, callback: (a?: any, b?: any) => any, cleanup?: () => any | undefined) => string
+  addEvent: (eventName: string, callback: (a?: any, b?: any) => any, cleanup?: () => any | undefined, sourceName?: string) => string
   removeEvent: (eventName: string, uuid: string) => void
   [key: string]: any /* global objects */
   eventsMap: {
@@ -10,6 +10,7 @@ let state: {
       uuid: string
       callback: () => any
       cleanup?: any
+      sourceName?: string
     }[]
   }
 } = null
@@ -34,7 +35,7 @@ const globalState = () => {
         console.log('XXEvent triggered:', eventName)
       })
     },
-    addEvent: (eventName: string, callback: () => string, cleanup?: () => any) => {
+    addEvent: (eventName: string, callback: () => string, cleanup?: () => any, sourceName?: string) => {
       const uuid = uuidv4()
       if (!state?.eventsMap?.[eventName]) {
         state.eventsMap[eventName] = []
@@ -43,6 +44,7 @@ const globalState = () => {
         uuid,
         callback,
         cleanup,
+        sourceName,
       })
       console.log('XXEvent added:', eventName, 'with ', uuid)
       return uuid
@@ -62,6 +64,7 @@ const globalState = () => {
   state.showCrosshair = true
   state.isThirdPerson = true
   state.isLookBack = false
+  state.isPaused = false
 
   return state
 }

@@ -43,6 +43,12 @@ export default () => {
       const elapsedTimeInMs = time - previousTickTime
       const elapsedTimeInS = elapsedTimeInMs * 0.001
 
+      if (state.isPaused) {
+        previousTickTime = time
+        tick()
+        return
+      }
+
       state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
         callback?.(elapsedTimeInS, elapsedTime)
       })

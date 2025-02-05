@@ -14,7 +14,7 @@ export default () => {
     return input
   }
 
-  input =  {
+  input = {
     keysMap: {
       interact: false,
       dunno: false,
@@ -30,6 +30,7 @@ export default () => {
       rightMouse: false,
       lookBack: false,
       firstPersonCamera: false,
+      pause: false,
     },
     current: {
       mouseX: 0,
@@ -39,15 +40,15 @@ export default () => {
       crosshairX: (innerWidth / 2 / innerWidth) * 2 - 1,
       crosshairY: -(innerHeight / 2 / innerHeight) * 2 + 1,
     },
-    previous: null
+    previous: null,
   }
 
   const lookAroundSpeed = 1.5
 
   const raycaster = new THREE.Raycaster()
   const pointer = new THREE.Vector2(input.current.crosshairX, input.current.crosshairY)
-  
-  const fireRaycaster =() => {
+
+  const fireRaycaster = () => {
     raycaster.setFromCamera(pointer, state.camera)
     const intersects = raycaster.intersectObjects(state.scene.children, true)
 
@@ -66,7 +67,7 @@ export default () => {
     }
   }
 
-  const  onMouseDown =  (event: MouseEvent) =>   {
+  const onMouseDown = (event: MouseEvent) => {
     switch (event.button) {
       case 0: // left mouse button
         input.keysMap.leftMouse = true
@@ -81,7 +82,7 @@ export default () => {
     }
   }
 
-  const onMouseUp =(event: MouseEvent) =>  {
+  const onMouseUp = (event: MouseEvent) => {
     switch (event.button) {
       case 0: // left mouse button
         input.keysMap.leftMouse = false
@@ -95,8 +96,8 @@ export default () => {
     }
   }
 
-  const onKeyDown =(event: KeyboardEvent) =>  {
-    // console.log('event.keyCode: ', event.keyCode)
+  const onKeyDown = (event: KeyboardEvent) => {
+    console.log('event.keyCode: ', event.keyCode)
     switch (event.keyCode) {
       case 87: // w
         input.keysMap.forward = true
@@ -134,6 +135,10 @@ export default () => {
         break
       case 69: // e
         input.keysMap.dunno = true
+        break
+      case 80: // p
+        input.keysMap.pause = !input.keysMap.pause
+        state.isPaused = input.keysMap.pause
         break
       case 73: // i
         input.keysMap.inventory = !input.keysMap.inventory
@@ -223,9 +228,14 @@ export default () => {
     }
   }
 
-  state.addEvent('renderer.update', () => {
-    update()
-  })
+  state.addEvent(
+    'renderer.update',
+    () => {
+      update()
+    },
+    () => {},
+    'input'
+  )
 
   document.addEventListener('keydown', e => onKeyDown(e), false)
   document.addEventListener('keyup', e => onKeyUp(e), false)
