@@ -17,7 +17,7 @@
     - [ ] Quest Items
 - [ ] UI
   - [x] Pausing Game for menu access
-  - [ ] Charge indicator around crosshair
+  - [x] Charge indicator around crosshair
   - [x] Life bar
   - [x] Mana bar
   - [x] Endurance bar

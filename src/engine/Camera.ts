@@ -12,6 +12,14 @@ export default () => {
   state.camera = camera
 
   state.uiCamera = new THREE.OrthographicCamera(-1, 1, aspect, -1 * aspect, 1, 100)
+  state.uiCamera.position.set(0, 0, 1)
+
+  const aspectRatio = innerWidth / innerHeight
+  state.uiCamera.left = -aspectRatio
+  state.uiCamera.right = aspectRatio
+  state.uiCamera.top = 1
+  state.uiCamera.bottom = -1
+  state.uiCamera.updateProjectionMatrix()
 
   ThirdPersonCamera()
   FirstPersonCamera()

@@ -60,6 +60,7 @@ export default () => {
       renderer.render(state.scene, state.camera)
       renderer.autoClear = false
       if (state.showCrosshair) {
+        renderer.clearDepth()
         renderer.render(state.uiScene, state.uiCamera)
       }
 

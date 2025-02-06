@@ -65,6 +65,7 @@ const globalState = () => {
   state.isThirdPerson = true
   state.isLookBack = false
   state.isPaused = false
+  state.canFire = false
 
   return state
 }

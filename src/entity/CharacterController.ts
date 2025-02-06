@@ -39,6 +39,10 @@ export default () => {
   player.endurance = 100
   player.previousEndurance = 100
   player.maxEndurance = 100
+  player.currentSpell = {
+    speed: 1,
+    damage: 25,
+  }
 
   InputController()
   let mixer: any = {}
@@ -48,6 +52,7 @@ export default () => {
   const velocity = new THREE.Vector3(0, 0, 0)
 
   const stateMachine = new CharacterFSM(animationsMap)
+  player.stateMachine = stateMachine
 
   player.dealDamage = (damage: number) => {
     player.previousHp = player.hp
@@ -79,7 +84,7 @@ export default () => {
   const loadModels = () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
     loadCharacterModelWithAnimations({
-      modelPath: '/models/fairy/nature_fairy_1.fbx',
+      modelPath: '/models/fairy/nature_fairy_1_scaled.fbx',
       parent: state.scene,
       scale: 0.01,
       stateMachine,

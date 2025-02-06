@@ -1,4 +1,4 @@
-import mountainArena from '@/entity/MountainArena.ts'
+import WaterArena from '@/entity/WaterArena.ts'
 import MountainArena from '@/entity/MountainArena.ts'
 import type { Box3, Object3D } from 'three'
 import * as THREE from 'three'
@@ -128,9 +128,11 @@ export default () => {
 
   createSkybox()
   // createWorldMesh()
-  MountainArena()
+  // MountainArena()
+  WaterArena()
 
-  testWorld.add(state.mountainArena)
+  // testWorld.add(state.mountainArena)
+  testWorld.add(state.waterArena)
 
   testWorld.objects = objects
   state.scene.add(testWorld)

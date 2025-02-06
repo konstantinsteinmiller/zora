@@ -1,6 +1,4 @@
-import * as THREE from 'three'
-import { createRayTrace } from '@/utils/function'
-import { createTwinShotVFX } from '@/utils/vfx.ts'
+import SpellFire from '@/entity/SpellFire.ts'
 import state from '@/states/GlobalState'
 
 let input: {
@@ -45,33 +43,10 @@ export default () => {
 
   const lookAroundSpeed = 1.5
 
-  const raycaster = new THREE.Raycaster()
-  const pointer = new THREE.Vector2(input.current.crosshairX, input.current.crosshairY)
-
-  const fireRaycaster = () => {
-    raycaster.setFromCamera(pointer, state.camera)
-    const intersects = raycaster.intersectObjects(state.scene.children, true)
-
-    if (intersects.length === 0) {
-      return
-    }
-
-    const intersect = intersects.find(inter => {
-      return inter.object.type !== 'AxesHelper'
-    })
-    // const object = intersect.object
-    // console.log('intersect object:', object.name, intersect, intersect?.point)
-    if (intersect?.point) {
-      createRayTrace(state.player.getPosition(), intersect.point, intersect.distance)
-      createTwinShotVFX(intersect.point)
-    }
-  }
-
   const onMouseDown = (event: MouseEvent) => {
     switch (event.button) {
       case 0: // left mouse button
         input.keysMap.leftMouse = true
-        fireRaycaster()
         break
       case 1: // cursor wheel button
         input.keysMap.middleMouse = true
@@ -86,6 +61,7 @@ export default () => {
     switch (event.button) {
       case 0: // left mouse button
         input.keysMap.leftMouse = false
+        state.triggerEvent('input.attack1.up')
         break
       case 1: // cursor wheel button
         input.keysMap.middleMouse = false
@@ -97,7 +73,7 @@ export default () => {
   }
 
   const onKeyDown = (event: KeyboardEvent) => {
-    console.log('event.keyCode: ', event.keyCode)
+    // console.log('event.keyCode: ', event.keyCode)
     switch (event.keyCode) {
       case 87: // w
         input.keysMap.forward = true
@@ -244,5 +220,8 @@ export default () => {
   document.addEventListener('pointermove', e => onMouseMove(e), false)
 
   state.input = input
+
+  const { fireRaycaster } = SpellFire()
+
   return input
 }

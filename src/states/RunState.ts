@@ -40,10 +40,10 @@ export default class RunState extends State {
   exit() {}
 
   update(timeElapsed: number, input: any) {
-    if (input.keysMap.leftMouse) {
-      this.parent.setState('cast')
-      return
-    }
+    // if (input.keysMap.leftMouse) {
+    //   this.parent.setState('cast')
+    //   return
+    // }
     if (input.keysMap.space) {
       this.parent.setState('jump')
       return

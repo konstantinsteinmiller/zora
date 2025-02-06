@@ -25,10 +25,10 @@ export default class IdleState extends State {
   }
   exit() {}
   update(_: any, input: any) {
-    if (input.keysMap.leftMouse) {
-      this.parent.setState('cast')
-      return
-    }
+    // if (input.keysMap.leftMouse) {
+    //   this.parent.setState('cast')
+    //   return
+    // }
     if (input.keysMap.forward || input.keysMap.backward) {
       this.parent.setState('walk')
     } else if (input.keysMap.space) {
