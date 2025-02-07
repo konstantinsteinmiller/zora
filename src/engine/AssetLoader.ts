@@ -1,10 +1,27 @@
-import { AnimationMixer, Object3D } from 'three'
+import { AnimationMixer, Mesh, Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 let loader: any = null
 
+const createGeoIndex = (mesh: Mesh) => {
+  // Check if the geometry has an index
+  if (!mesh?.geometry?.index) {
+    let geometry = mesh.geometry
+    // console.warn('FBX geometry is non-indexed. Converting...')
+    // Convert to indexed geometry
+    geometry = BufferGeometryUtils.mergeVertices(geometry)
+    geometry.computeVertexNormals()
+    // geometry.index.array = geometry.index.array.map((v: number, i: number) => (v *= 100))
+    // console.log('Indexed Geometry:', geometry.index) // Should now exist
+
+    // Assign updated geometry back to the mesh
+    mesh.geometry = geometry
+  }
+
+  return mesh
+}
 export default () => {
   if (loader !== null) {
     return loader
@@ -15,7 +32,7 @@ export default () => {
   loader.loadMesh = async (
     publicPath: string,
     parent: Object3D,
-    scale: number = 0.1,
+    scale: number = 0.01,
     shadows: boolean = true,
     callback?: (scene: Object3D) => void /*
      */
@@ -70,6 +87,9 @@ export default () => {
           if (scale >= 0) child.scale.setScalar(scale)
           child.castShadow = true
           child.receiveShadow = true
+
+          child = createGeoIndex(child)
+
           parent.add(child)
         }
       })
@@ -82,6 +102,7 @@ export default () => {
   loader.loadCharacterModelWithAnimations = async ({
     modelPath,
     parent,
+    position,
     scale,
     animationNamesList,
     stateMachine,
@@ -91,6 +112,7 @@ export default () => {
   }: {
     modelPath: string
     parent: Object3D
+    position?: Vector3
     scale: number
     animationNamesList: string[]
     stateMachine: any
@@ -105,12 +127,20 @@ export default () => {
     const animationsPath = `${pathPartsList.join('/')}/`
 
     loader.load(modelPath, (model: any) => {
-      model.scale.setScalar(scale)
+      if (scale >= 0) model.scale.setScalar(scale)
       if (shadows) {
         model.traverse((c: any) => {
           c.castShadow = true
         })
       }
+
+      /* check for all meshes if they have index data and add if needed */
+      model.traverse((child: any) => {
+        if (child.isMesh) {
+          child = createGeoIndex(child)
+        }
+      })
+      if (position) model.position.copy(position)
       const mesh = model
       parent.add(mesh)
 

@@ -1,5 +1,9 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import camera from '@/engine/Camera.ts'
+import world from '@/entity/World.ts'
 import { clamp } from '@/utils/function.ts'
+import { createRigidBodyEntity } from '@/utils/physics.ts'
+import Rapier from '@dimforge/rapier3d-compat'
 import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
@@ -43,6 +47,8 @@ export default () => {
     speed: 1,
     damage: 25,
   }
+  const playerVelocity = new Vector3(0, 0, 0)
+  const isGrounded = false
 
   InputController()
   let mixer: any = {}
@@ -50,6 +56,13 @@ export default () => {
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.25, 10.0)
   const velocity = new THREE.Vector3(0, 0, 0)
+
+  // ✅ Create Rapier Kinematic Character Controller
+  const characterController = state.physics.createCharacterController(0.000001) // `0.1` is skin width
+  characterController.setMaxSlopeClimbAngle(45)
+  characterController.setMinSlopeSlideAngle(30)
+  characterController.enableSnapToGround(0.1)
+  characterController.enableAutostep(0.3, 0.1, true)
 
   const stateMachine = new CharacterFSM(animationsMap)
   player.stateMachine = stateMachine
@@ -81,11 +94,12 @@ export default () => {
     }
   }
 
-  const loadModels = () => {
+  const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
-    loadCharacterModelWithAnimations({
-      modelPath: '/models/fairy/nature_fairy_1_scaled.fbx',
+    await loadCharacterModelWithAnimations({
+      modelPath: '/models/thunder-fairy/thunder-fairy.fbx',
       parent: state.scene,
+      position: new Vector3(6, -1, 5),
       scale: 0.01,
       stateMachine,
       animationsMap,
@@ -96,6 +110,13 @@ export default () => {
       },
     })
   }
+
+  const initPhysics = () => {
+    const { rigidBody, collider } = createRigidBodyEntity(/*player.position */ new Vector3(12, 4, 5), 1)
+    player.rigidBody = rigidBody
+    player.collider = collider
+  }
+  initPhysics()
 
   const update = (timeInSeconds: number, elapsedTimeInS: number) => {
     if (!mesh) {
@@ -168,8 +189,70 @@ export default () => {
     controlObject.position.add(sideways)
 
     oldPosition.copy(controlObject.position)
-    player.position.copy(controlObject.position)
-    mesh.position.copy(controlObject.position)
+    // player.position.copy(controlObject.position)
+    // mesh.position.copy(controlObject.position)
+
+    if (!player.rigidBody) return
+    const movement = { forward: 0, right: 0 }
+
+    // Calculate Movement Direction
+    const moveSpeed = 0.1
+    const direction = new THREE.Vector3()
+    state.camera.getWorldDirection(direction)
+    direction.y = 0 // Keep movement on the horizontal plane
+    direction.normalize()
+
+    const right = new THREE.Vector3()
+    right.crossVectors(state.camera.up, direction).normalize()
+
+    if (state.input.keysMap.forward) {
+      movement.forward += 1
+    }
+    if (state.input.keysMap.backward) {
+      movement.forward -= 1
+    }
+    if (state.input.keysMap.left) {
+      movement.right -= 1
+    }
+    if (state.input.keysMap.right) {
+      movement.right += 1
+    }
+    const movementVector = new Rapier.Vector3(direction.x * movement.forward * moveSpeed + right.x * movement.right * moveSpeed, playerVelocity.y, direction.z * movement.forward * moveSpeed + right.z * movement.right * moveSpeed)
+    const playerPos = player.rigidBody.translation()
+    movementVector.x += playerPos.x
+    movementVector.y += playerPos.y
+    movementVector.z += playerPos.z
+    // console.log('movementVector: ', movementVector)
+
+    // ✅ Move Character Using Kinematic Controller
+    const grav = new Rapier.Vector3(0, playerPos.y - timeInSeconds * timeInSeconds * 9.81, 0)
+    characterController.computeColliderMovement(player.collider, grav)
+    const correctedMovement1 = characterController.computedMovement()
+    // console.log('correctedMovement1: ', correctedMovement1.y - grav.y)
+    if (Math.abs(correctedMovement1.y - grav.y) < 0.001) {
+      movementVector.y -= timeInSeconds * 9.81 * 0.25
+    }
+
+    characterController.computeColliderMovement(player.collider, movementVector)
+    // isGrounded = characterController.computedMovementApplied() // Detect if grounded
+    // for (let i = 0; i < characterController.numComputedCollisions(); i++) {
+    //   const collision = characterController.computedCollision(i)
+    // }
+    const correctedMovement = characterController.computedMovement()
+
+    if (characterController.numComputedCollisions()) {
+      player.rigidBody.setNextKinematicTranslation(correctedMovement)
+    } else {
+      player.rigidBody.setNextKinematicTranslation(movementVector)
+    }
+
+    const meshPos = new Vector3(0, -0.9, 0).add(player.rigidBody.translation())
+    // Update Three.js Mesh Position
+    player.position.copy(meshPos)
+    mesh.position.copy(meshPos)
+
+    // player.position.copy(player.rigidBody.translation())
+    // mesh.position.copy(player.rigidBody.translation())
 
     mixer?.update?.(timeInSeconds)
 

@@ -12,19 +12,16 @@ export default () => {
   }
 
   const input = state.input
-  let rotation = new THREE.Quaternion()
-  let translation = new THREE.Vector3(0, 2, 0)
+  const rotation = new THREE.Quaternion()
+  const translation = new THREE.Vector3(0, 2, 0)
   let phi = 0
   let theta = 0
-  let phiSpeed = 8
-  let thetaSpeed = 5
+  const phiSpeed = 8
+  const thetaSpeed = 5
   let isHeadBobActive = false
   let headBobTimer = 0
 
-  fpsCamera = {
-
-  }
-
+  fpsCamera = {}
 
   state.fpsCamera = fpsCamera
 
@@ -131,7 +128,7 @@ export default () => {
     } else {
       state.camera.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI))
       state.camera.position.copy(playerModelPosition)
-      state.camera.position.y += 1.0
+      state.camera.position.y += 100.0
     }
 
     state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025

@@ -60,6 +60,7 @@ const globalState = () => {
   console.log('XXstate: ', state)
 
   /* init this game state with defaults */
+  state.debugPhysics = true
   state.showCursor = false
   state.showCrosshair = true
   state.isThirdPerson = true

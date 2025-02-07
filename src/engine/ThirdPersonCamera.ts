@@ -3,18 +3,18 @@ import * as THREE from 'three'
 import { Vector3 } from 'three'
 import { clamp } from '@/utils/function.ts'
 
-let thirdPersonCamera: any = null
+const thirdPersonCamera: any = null
 export default () => {
   /* thirdPersonCamera is a Singleton */
   if (thirdPersonCamera !== null) {
     return thirdPersonCamera
   }
 
-  let rotation = new THREE.Quaternion()
-  let translation = new THREE.Vector3(0, 1, 0)
+  const rotation = new THREE.Quaternion()
+  const translation = new THREE.Vector3(0, 1, 0)
   let phi = 0
   let theta = 0
-  const  phiSpeed = 8
+  const phiSpeed = 8
   const thetaSpeed = 5
 
   const updateCamera = () => {
@@ -41,7 +41,7 @@ export default () => {
     }
   }
 
-  const getXRotation = () =>  {
+  const getXRotation = () => {
     let xh = state.input.current.mouseXDelta / innerWidth
 
     if (state.input.keysMap.left || state.input.keysMap.right) {
@@ -57,7 +57,7 @@ export default () => {
     return q.multiply(qx)
   }
 
-  const updateTranslation =(timeElapsedInS: number) =>  {
+  const updateTranslation = (timeElapsedInS: number) => {
     const forwardVelocity = (state.input.keysMap.forward ? 1 : 0) + (state.input.keysMap.backward ? -1 : 0)
     const strafeVelocity = (state.input.keysMap.left ? 1 : 0) + (state.input.keysMap.right ? -1 : 0)
 
@@ -77,7 +77,7 @@ export default () => {
     translation.add(left)
   }
 
-  const updateRotation = ()  =>  {
+  const updateRotation = () => {
     const xh = state.input.current.mouseXDelta / innerWidth
     const yh = state.input.current.mouseYDelta / innerHeight
 

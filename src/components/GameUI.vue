@@ -18,11 +18,13 @@
 
 <script setup lang="ts">
 import StatBar from '@/components/StatBar.vue'
+// import DEBUGGAME from '@/components/DEBUGGAME.ts'
 import Game from '@/Game'
 import { onMounted } from 'vue'
 
 onMounted(() => {
   Game()
+  // DEBUGGAME()
 })
 </script>
 

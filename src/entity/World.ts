@@ -17,26 +17,26 @@ export default () => {
     const mapLoader = new THREE.TextureLoader()
     const maxAnisotropy = state.renderer.capabilities.getMaxAnisotropy()
 
-    const metalMap = mapLoader.load(`world/${name}metallic.png`)
+    const metalMap = mapLoader.load(`worlds/${name}metallic.png`)
     metalMap.anisotropy = maxAnisotropy
     metalMap.wrapS = THREE.RepeatWrapping
     metalMap.wrapT = THREE.RepeatWrapping
     metalMap.repeat.set(tiling, tiling)
 
-    const albedo = mapLoader.load(`world/${name}albedo.png`)
+    const albedo = mapLoader.load(`worlds/${name}albedo.png`)
     albedo.anisotropy = maxAnisotropy
     albedo.wrapS = THREE.RepeatWrapping
     albedo.wrapT = THREE.RepeatWrapping
     albedo.repeat.set(tiling, tiling)
     albedo.encoding = THREE.sRGBEncoding
 
-    const normalMap = mapLoader.load(`world/${name}normal.png`)
+    const normalMap = mapLoader.load(`worlds/${name}normal.png`)
     normalMap.anisotropy = maxAnisotropy
     normalMap.wrapS = THREE.RepeatWrapping
     normalMap.wrapT = THREE.RepeatWrapping
     normalMap.repeat.set(tiling, tiling)
 
-    const roughnessMap = mapLoader.load(`world/${name}roughness.png`)
+    const roughnessMap = mapLoader.load(`worlds/${name}roughness.png`)
     roughnessMap.anisotropy = maxAnisotropy
     roughnessMap.wrapS = THREE.RepeatWrapping
     roughnessMap.wrapT = THREE.RepeatWrapping
@@ -64,7 +64,7 @@ export default () => {
     /* initial World plane */
     const mapLoader = new THREE.TextureLoader()
     const maxAnisotropy = state.renderer.capabilities.getMaxAnisotropy()
-    const checkerboard = mapLoader.load('world/checkerboard.png')
+    const checkerboard = mapLoader.load('worlds/checkerboard.png')
     checkerboard.anisotropy = maxAnisotropy
     checkerboard.wrapS = THREE.RepeatWrapping
     checkerboard.wrapT = THREE.RepeatWrapping
@@ -77,37 +77,37 @@ export default () => {
     plane.rotation.x = -Math.PI / 2
     state.scene.add(plane)
 
-    const box = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), loadMaterial('vintage-tile1_', 0.2))
-    box.position.set(10, 2, 0)
+    const box = new THREE.Mesh(new THREE.BoxGeometry(400, 400, 400), loadMaterial('vintage-tile1_', 0.2))
+    box.position.set(1000, 200, 0)
     box.castShadow = true
     box.receiveShadow = true
     state.scene.add(box)
 
     const concreteMaterial = loadMaterial('concrete3-', 4)
 
-    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 4), concreteMaterial)
-    wall1.position.set(0, -40, -50)
+    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(10000, 10000, 400), concreteMaterial)
+    wall1.position.set(0, -4000, -5000)
     wall1.name = 'wall1'
     wall1.castShadow = true
     wall1.receiveShadow = true
     state.scene.add(wall1)
 
-    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 4), concreteMaterial)
-    wall2.position.set(0, -40, 50)
+    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(10000, 10000, 400), concreteMaterial)
+    wall2.position.set(0, -4000, 5000)
     wall2.name = 'wall2'
     wall2.castShadow = true
     wall2.receiveShadow = true
     state.scene.add(wall2)
 
-    const wall3 = new THREE.Mesh(new THREE.BoxGeometry(4, 100, 100), concreteMaterial)
-    wall3.position.set(50, -40, 0)
+    const wall3 = new THREE.Mesh(new THREE.BoxGeometry(400, 10000, 10000), concreteMaterial)
+    wall3.position.set(5000, -4000, 0)
     wall3.name = 'wall3'
     wall3.castShadow = true
     wall3.receiveShadow = true
     state.scene.add(wall3)
 
-    const wall4 = new THREE.Mesh(new THREE.BoxGeometry(4, 100, 100), concreteMaterial)
-    wall4.position.set(-50, -40, 0)
+    const wall4 = new THREE.Mesh(new THREE.BoxGeometry(400, 10000, 10000), concreteMaterial)
+    wall4.position.set(-5000, -4000, 0)
     wall4.name = 'wall4'
     wall4.castShadow = true
     wall4.receiveShadow = true
@@ -132,7 +132,7 @@ export default () => {
   WaterArena()
 
   // testWorld.add(state.mountainArena)
-  testWorld.add(state.waterArena)
+  // testWorld.add(state.waterArena)
 
   testWorld.objects = objects
   state.scene.add(testWorld)

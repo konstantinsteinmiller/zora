@@ -4,11 +4,12 @@ import System, { SpriteRenderer, GPURenderer } from 'three-nebula'
 import state from '@/states/GlobalState'
 
 import TwinShot from '@/vfx/twin-shot_2.json'
+// import TwinShot from '@/vfx/twin-shot_3.json'
 
 export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const adjustedPosition = state.player.getPosition().clone()
   adjustedPosition.y += 1
-  adjustedPosition.z += 0.5
+  adjustedPosition.z += 0.7
 
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
   // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
@@ -30,13 +31,13 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
     const forward = new THREE.Vector3(0, 0, 1)
     forward.applyQuaternion(playerRotation)
     forward.normalize()
-    forward.multiplyScalar(-100000)
+    forward.multiplyScalar(-80000)
     force.force = forward
 
     emitter.position.copy(adjustedPosition)
   })
 
-  const TWIN_SHOT_SPEED = 20
+  const TWIN_SHOT_SPEED = 30
   let uuid: string = ''
 
   uuid = state.addEvent(`renderer.update`, (deltaTimeInSeconds: number) => {

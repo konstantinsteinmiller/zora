@@ -48,8 +48,8 @@
   - [x] glb and fbx meshes
   - [x] fbx characters with anims
 - [ ] Physics for Character
-  - [ ] character dynamic colliders
-  - [ ] world static colliders
+  - [x] character dynamic colliders
+  - [x] world static colliders
 - [x] import character
   - [x] import character animations
   - [x] state machine
