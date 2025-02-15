@@ -3,7 +3,7 @@ import camera from '@/engine/Camera.ts'
 import world from '@/entity/World.ts'
 import { clamp } from '@/utils/function.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
-import Rapier from '@dimforge/rapier3d-compat'
+import Rapier, { Capsule, Cuboid, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
 import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
@@ -12,7 +12,7 @@ import state from '@/states/GlobalState'
 
 let player: any = null
 
-export default () => {
+export default (modelHeight: number = 1.8) => {
   if (player !== null) {
     return player
   }
@@ -32,6 +32,7 @@ export default () => {
     if (!mesh) {
       return
     }
+    player.rigidBody.setRotation(rotation)
     return mesh.quaternion.copy(rotation)
   }
   player.hp = 33
@@ -47,8 +48,10 @@ export default () => {
     speed: 1,
     damage: 25,
   }
+  player.isGrounded = false
   const playerVelocity = new Vector3(0, 0, 0)
-  const isGrounded = false
+  const halfHeight = modelHeight * 0.5
+  const previousPos = new Vector3(0, 0, 0)
 
   InputController()
   let mixer: any = {}
@@ -58,11 +61,11 @@ export default () => {
   const velocity = new THREE.Vector3(0, 0, 0)
 
   // ✅ Create Rapier Kinematic Character Controller
-  const characterController = state.physics.createCharacterController(0.000001) // `0.1` is skin width
-  characterController.setMaxSlopeClimbAngle(45)
-  characterController.setMinSlopeSlideAngle(30)
-  characterController.enableSnapToGround(0.1)
-  characterController.enableAutostep(0.3, 0.1, true)
+  const characterController = state.physics.createCharacterController(0.01) // `0.1` is skin width
+  characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180)
+  characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180)
+  characterController.enableSnapToGround(0.5)
+  characterController.enableAutostep(0.5, 0.2, true)
 
   const stateMachine = new CharacterFSM(animationsMap)
   player.stateMachine = stateMachine
@@ -112,7 +115,11 @@ export default () => {
   }
 
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(/*player.position */ new Vector3(12, 4, 5), 1)
+    const { rigidBody, collider } = createRigidBodyEntity(
+      /*player.position,
+       */ new Vector3(10.5, 0, 5),
+      halfHeight
+    )
     player.rigidBody = rigidBody
     player.collider = collider
   }
@@ -196,7 +203,7 @@ export default () => {
     const movement = { forward: 0, right: 0 }
 
     // Calculate Movement Direction
-    const moveSpeed = 0.1
+    const moveSpeed = 0.05
     const direction = new THREE.Vector3()
     state.camera.getWorldDirection(direction)
     direction.y = 0 // Keep movement on the horizontal plane
@@ -217,42 +224,71 @@ export default () => {
     if (state.input.keysMap.right) {
       movement.right += 1
     }
-    const movementVector = new Rapier.Vector3(direction.x * movement.forward * moveSpeed + right.x * movement.right * moveSpeed, playerVelocity.y, direction.z * movement.forward * moveSpeed + right.z * movement.right * moveSpeed)
+    const movementVector = new Rapier.Vector3(
+      direction.x * movement.forward * moveSpeed + right.x * movement.right * moveSpeed,
+      playerVelocity.y,
+      direction.z * movement.forward * moveSpeed + right.z * movement.right * moveSpeed /*
+       */
+      // controlObject.position.x,
+      // 0,
+      // controlObject.position.z
+    )
     const playerPos = player.rigidBody.translation()
     movementVector.x += playerPos.x
     movementVector.y += playerPos.y
     movementVector.z += playerPos.z
-    // console.log('movementVector: ', movementVector)
 
-    // ✅ Move Character Using Kinematic Controller
-    const grav = new Rapier.Vector3(0, playerPos.y - timeInSeconds * timeInSeconds * 9.81, 0)
-    characterController.computeColliderMovement(player.collider, grav)
-    const correctedMovement1 = characterController.computedMovement()
-    // console.log('correctedMovement1: ', correctedMovement1.y - grav.y)
-    if (Math.abs(correctedMovement1.y - grav.y) < 0.001) {
-      movementVector.y -= timeInSeconds * 9.81 * 0.25
+    /* implement raycast down to detect ground and only apply
+     * gravity when not grounded */
+    const physicsRayDown = new Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: -1, z: 0 })
+    movementVector.y += -4 * timeInSeconds
+
+    physicsRayDown.origin = playerPos
+    let hit = state.physics.castRay(physicsRayDown, halfHeight, false, 0xff0000ff)
+    if (hit) {
+      /* isGrounded determines if player can jump or start flying */
+      player.isGrounded = true
+      movementVector.y = playerPos.y
+      const point = physicsRayDown.pointAt(hit.timeOfImpact)
+      const diff = +(playerPos.y - (point.y + halfHeight)).toFixed(3)
+      // console.log('point: ', diff)
+      if (diff < -0.001 && diff > -0.3) {
+        movementVector.y = playerPos.y - diff
+      }
     }
 
-    characterController.computeColliderMovement(player.collider, movementVector)
-    // isGrounded = characterController.computedMovementApplied() // Detect if grounded
-    // for (let i = 0; i < characterController.numComputedCollisions(); i++) {
-    //   const collision = characterController.computedCollision(i)
-    // }
-    const correctedMovement = characterController.computedMovement()
+    /* shape cast into movementVector direction to find obstacles */
+    const shapePos = { x: movementVector.x, y: movementVector.y + halfHeight + 0.25, z: movementVector.z }
+    const shapeRot = player.rigidBody.rotation()
+    const shapeVel = movementVector
+    const shape = new Capsule(0.65, 0.45)
+    const targetDistance = 0.0
+    const maxToi = 0.1
+    // Optional parameters:
+    const stopAtPenetration = true
+    const filterFlags = QueryFilterFlags.EXCLUDE_DYNAMIC
+    const filterGroups = 0x000b0001
+    const filterExcludeCollider = player.collider
+    const filterExcludeRigidBody = player.rigidBody
 
-    if (characterController.numComputedCollisions()) {
-      player.rigidBody.setNextKinematicTranslation(correctedMovement)
-    } else {
-      player.rigidBody.setNextKinematicTranslation(movementVector)
+    hit = state.physics.castShape(shapePos, shapeRot, shapeVel, shape, targetDistance, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
+    if (hit != null) {
+      movementVector.x = playerPos.x
+      movementVector.z = playerPos.z
+      previousPos.copy(movementVector)
+      // if (previousPos.x === playerPos.x && previousPos.z === playerPos.z) {
+      //   console.log('player is stuck: ')
+      // }
+      // console.log('Hit the collider', hit.collider, 'at time', hit.time_of_impact)
     }
 
-    const meshPos = new Vector3(0, -0.9, 0).add(player.rigidBody.translation())
+    player.rigidBody.setNextKinematicTranslation(movementVector)
+
+    /* correct mesh position in physics capsule */
+    const meshPos = new Vector3(0, -halfHeight, 0).add(player.rigidBody.translation())
     // Update Three.js Mesh Position
     player.position.copy(meshPos)
     mesh.position.copy(meshPos)
-
-    // player.position.copy(player.rigidBody.translation())
-    // mesh.position.copy(player.rigidBody.translation())
 
     mixer?.update?.(timeInSeconds)
 

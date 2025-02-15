@@ -30,9 +30,9 @@
 - [ ] World
   - [x] Water Shader
   - [ ] Arenas
-    - [ ] Mountain
+    - [x] Mountain
       - [x] load Mesh
-      - [ ] Colliders
+      - [x] Colliders
   - [ ] Biomes
     - [ ] Forest
     - [ ] Desert / Steppe
@@ -47,9 +47,10 @@
 - [x] Refactor model importing
   - [x] glb and fbx meshes
   - [x] fbx characters with anims
-- [ ] Physics for Character
+- [x] Physics for Character
   - [x] character dynamic colliders
   - [x] world static colliders
+  - [ ] wall sliding
 - [x] import character
   - [x] import character animations
   - [x] state machine

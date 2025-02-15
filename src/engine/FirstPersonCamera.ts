@@ -128,7 +128,7 @@ export default () => {
     } else {
       state.camera.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI))
       state.camera.position.copy(playerModelPosition)
-      state.camera.position.y += 100.0
+      state.camera.position.y += 1.0
     }
 
     state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025

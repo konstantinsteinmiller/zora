@@ -35,7 +35,7 @@ export default () => {
     // const object = intersect.object
     // console.log('intersect object:', object.name, intersect, intersect?.point)
     if (intersect?.point) {
-      createRayTrace(state.player.getPosition(), intersect.point, intersect.distance)
+      createRayTrace(intersect.point, intersect.distance)
       createTwinShotVFX(intersect.point)
     }
   }
