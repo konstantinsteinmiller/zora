@@ -9,7 +9,8 @@ import TwinShot from '@/vfx/twin-shot_2.json'
 export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const adjustedPosition = state.player.getPosition().clone()
   adjustedPosition.y += 1
-  adjustedPosition.z += 0.7
+  adjustedPosition.z -= 0.9
+  console.log('state.player.forward: ', state.player.mesh)
 
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
   // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)

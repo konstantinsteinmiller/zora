@@ -1,7 +1,7 @@
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
 import { clamp } from '@/utils/function.ts'
-import { Vector3 } from 'three'
+import { Quaternion, Vector3 } from 'three'
 
 let fpsCamera: any = null
 
@@ -104,9 +104,9 @@ export default () => {
     }
 
     phi += -xh * phiSpeed
-    const qx = new THREE.Quaternion()
-    qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), phi)
-    const q = new THREE.Quaternion()
+    const qx = new Quaternion()
+    qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
+    const q = new Quaternion()
     return q.multiply(qx)
   }
 
