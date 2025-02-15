@@ -1,4 +1,4 @@
-import { clamp } from '@/utils/function.ts'
+import { clamp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 

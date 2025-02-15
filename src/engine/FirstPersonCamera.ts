@@ -1,6 +1,6 @@
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
-import { clamp } from '@/utils/function.ts'
+import { clamp } from 'three/src/math/MathUtils'
 import { Quaternion, Vector3 } from 'three'
 
 let fpsCamera: any = null

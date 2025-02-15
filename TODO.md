@@ -1,8 +1,9 @@
 # Todo
 - [ ] Enemy
   - [ ] Navigation Mesh
-  - [ ] loading Mesh
-  - [ ] enemy FSM
+  - [x] loading Mesh
+  - [x] enemy FSM
+  - [x] health bar
   - [ ] enemy attack
   - [ ] enemy AI
     - [ ] moving around / fleeing / hiding behind 

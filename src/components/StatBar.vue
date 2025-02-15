@@ -31,13 +31,11 @@
       </div>
     </div>
   </div>
-  <!--  blood color #780606-->
 </template>
 
 <script setup lang="ts">
 import state from '@/states/GlobalState.ts'
-import { clamp } from '@/utils/function.ts'
-import { lerp } from 'three/src/math/MathUtils'
+import { lerp, clamp } from 'three/src/math/MathUtils'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -123,6 +121,7 @@ watch(
 
 const barClasses = computed(() => ({
   'bg-red-700': props.type === 'life',
+  'bg-red-800': props.type === 'life' && props.ownerId === 'enemy',
   'bg-blue-700': props.type === 'mana',
   'bg-green-700': props.type === 'endurance',
 }))
@@ -132,9 +131,11 @@ const lossClasses = computed(() => ({
   'bg-green-500': props.type === 'endurance',
 }))
 const containerClasses = computed(() => ({
+  [`${props.ownerId}-${props.type}-bar`]: true,
   'bg-red-300 bottom-4 left-4': props.type === 'life',
   'bg-blue-300 bottom-4 right-4': props.type === 'mana',
   'bg-green-300 bottom-4 right-1/2 transform translate-x-1/2': props.type === 'endurance',
+  'opacity-0 bg-red-300 ': props.ownerId === 'enemy',
 }))
 
 const percentage = computed(() => (owner.value[typeSelectionList[3]] / owner.value[typeSelectionList[5]]) * 100)

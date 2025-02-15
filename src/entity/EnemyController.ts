@@ -1,12 +1,14 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import camera from '@/engine/Camera.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import Rapier, { Capsule, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
-import { Object3D, Vector3 } from 'three'
+import { Camera, Object3D, Vector3 } from 'three'
+import { lerp } from 'three/src/math/MathUtils'
 
-const stats = {
+const baseStats: any = {
   hp: 100,
   previousHp: 100,
   maxHp: 100,
@@ -26,9 +28,11 @@ const stats = {
 
 export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
   let mesh: any = new Object3D()
+  mesh.position.copy(startPosition)
   const enemy = {
     ...new Object3D(),
-    ...stats,
+    position: startPosition.clone(),
+    ...(stats ? stats : baseStats),
     ...controllerUtils(),
     ...controllerFunctions,
     mesh,
@@ -47,7 +51,7 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
     await loadCharacterModelWithAnimations({
       modelPath,
       parent: state.scene,
-      position: new Vector3(6, 0, 5),
+      position: startPosition,
       scale: 0.01,
       stateMachine,
       animationsMap,
@@ -64,6 +68,42 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
     enemy.rigidBody = rigidBody
     enemy.collider = collider
   }
+
+  enemy.createHealthBar = () => {
+    const healthbarContainer = document.querySelector('.enemy-life-bar') as HTMLDivElement
+
+    const updateHealthBar = () => {
+      if (!healthbarContainer || !mesh) return
+      const enemyPosition = mesh.position.clone() // Placeholder for enemy position
+      mesh.getWorldPosition(enemyPosition)
+      enemyPosition.y += 1.9 // Adjust height to be above the enemy
+
+      // Convert 3D position to 2D screen space
+      const screenPosition = enemyPosition.clone().project(state.camera)
+      const x = (screenPosition.x * 0.5 + 0.5) * window.innerWidth
+      const y = (1 - (screenPosition.y * 0.5 + 0.5)) * window.innerHeight
+
+      // Calculate distance from camera
+      const distance = state.camera.position.distanceTo(enemyPosition)
+
+      // Scale health bar size based on distance (closer = bigger, farther = smaller)
+      const scaleFactor = Math.max(0.3, Math.min(1.0, 5 / distance)) // Clamps scale between 0.5 and 1.5
+
+      healthbarContainer.style.transform = `translate(-50%, -100%) scale(${scaleFactor})`
+      healthbarContainer.style.left = `${x}px`
+      healthbarContainer.style.top = `${y}px`
+      healthbarContainer.dataset.width = '100'
+
+      if (screenPosition.z < 0 || screenPosition.z > 1) {
+        healthbarContainer.style.opacity = '0'
+      } else {
+        healthbarContainer.style.opacity = '1'
+      }
+    }
+    state.addEvent('renderer.update', () => updateHealthBar())
+  }
+
+  enemy.createHealthBar()
 
   loadModels()
   initPhysics()

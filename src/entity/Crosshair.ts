@@ -1,4 +1,4 @@
-import { clamp } from '@/utils/function.ts'
+import { clamp } from 'three/src/math/MathUtils'
 import { Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
 import state from '@/states/GlobalState'
 import SpellFire from '@/entity/SpellFire'
