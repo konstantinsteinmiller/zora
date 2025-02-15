@@ -1,8 +1,8 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { clamp } from '@/utils/function.ts'
+import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import Rapier, { Capsule, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
-import { Object3D, Vector3 } from 'three'
+import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/InputController.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
@@ -16,7 +16,12 @@ export default (modelHeight: number = 1.8) => {
   }
 
   let mesh: any = new Object3D()
-  player = new Object3D()
+  player = {
+    ...new Object3D(),
+    mesh: mesh,
+    ...controllerUtils(),
+    ...controllerFunctions(),
+  }
   player.getPosition = () => {
     if (!mesh) {
       return new Vector3(0, 0, 0)
@@ -35,7 +40,6 @@ export default (modelHeight: number = 1.8) => {
     player.rigidBody.setRotation(prevQuat)
     return mesh.quaternion.copy(prevQuat)
   }
-  player.mesh = mesh
   player.hp = 33
   player.previousHp = 33
   player.maxHp = 100
@@ -46,6 +50,7 @@ export default (modelHeight: number = 1.8) => {
   player.previousEndurance = 100
   player.maxEndurance = 100
   player.currentSpell = {
+    name: 'shot',
     speed: 1,
     damage: 25,
   }
@@ -55,53 +60,19 @@ export default (modelHeight: number = 1.8) => {
   InputController()
   let mixer: any = {}
   const animationsMap: any = {}
-  const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
-  const acceleration = new THREE.Vector3(1, 0.25, 15.0)
-  const velocity = new THREE.Vector3(0, 0, 0)
-
-  // ✅ Create Rapier Kinematic Character Controller
-  const characterController = state.physics.createCharacterController(0.01) // `0.1` is skin width
-  characterController.setMaxSlopeClimbAngle((45 * Math.PI) / 180)
-  characterController.setMinSlopeSlideAngle((30 * Math.PI) / 180)
-  characterController.enableSnapToGround(0.5)
-  characterController.enableAutostep(0.5, 0.2, true)
+  const decceleration = new Vector3(-0.0005, -0.0001, -5.0)
+  const acceleration = new Vector3(1, 0.25, 15.0)
+  const velocity = new Vector3(0, 0, 0)
 
   const stateMachine = new CharacterFSM(animationsMap)
   player.stateMachine = stateMachine
-
-  player.dealDamage = (damage: number) => {
-    player.previousHp = player.hp
-    player.hp = clamp(player.hp + damage, 0, player.maxHp)
-    player.previousMp = player.mp
-    player.mp = clamp(player.mp - damage, 0, player.maxMp)
-    player.previousEndurance = player.endurance
-    player.endurance = clamp(player.endurance - damage - 5, 0, player.maxEndurance)
-  }
-
-  player.addHp = (heal: number) => {
-    player.previousHp = player.hp
-    player.hp = clamp(player.hp + heal, 0, player.maxHp)
-  }
-
-  let didDamage = false
-  const TIME_INTERVAL = 6
-  const updateLife = (timeInSeconds: number, elapsedTimeInS: number) => {
-    // console.log('elapsedTimeInS: ', elapsedTimeInS)
-    if (!didDamage && elapsedTimeInS % TIME_INTERVAL < 1.0) {
-      player.dealDamage(23)
-      didDamage = true
-      // console.log('dealDamage: ', player.hp)
-    } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
-      didDamage = false
-    }
-  }
 
   const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
     await loadCharacterModelWithAnimations({
       modelPath: '/models/thunder-fairy/thunder-fairy.fbx',
       parent: state.scene,
-      position: new Vector3(6, 0, 5),
+      position: new Vector3(8.5, 0, 3),
       scale: 0.01,
       stateMachine,
       animationsMap,
@@ -114,34 +85,26 @@ export default (modelHeight: number = 1.8) => {
   }
 
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(
-      /*player.position,
-       */ new Vector3(10.5, 0, 5),
-      halfHeight
-    )
+    const { rigidBody, collider } = createRigidBodyEntity(new Vector3(10.5, 0, 5), halfHeight)
     player.rigidBody = rigidBody
     player.collider = collider
   }
   initPhysics()
 
   const update = (timeInSeconds: number, elapsedTimeInS: number) => {
-    if (!mesh) {
-      return
-    }
-
-    if (stateMachine.currentState === null) {
+    if (!mesh || stateMachine.currentState === null) {
       return
     }
     stateMachine.update(timeInSeconds, state.input)
 
-    const frameDecceleration = new THREE.Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
+    const frameDecceleration = new Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
     frameDecceleration.multiplyScalar(timeInSeconds)
     frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
 
     velocity.add(frameDecceleration)
 
-    const _Q = new THREE.Quaternion()
-    const _A = new THREE.Vector3()
+    const _Q = new Quaternion()
+    const _A = new Vector3()
     const _R = mesh.quaternion.clone()
 
     const acc = acceleration.clone()
@@ -193,30 +156,30 @@ export default (modelHeight: number = 1.8) => {
     if (!player.rigidBody) return
 
     const movementVector = new Rapier.Vector3(forward.x + sideways.x, forward.y + sideways.y, forward.z + sideways.z)
-    const playerPos = player.rigidBody.translation()
-    movementVector.x += playerPos.x
-    movementVector.y += playerPos.y
-    movementVector.z += playerPos.z
+    const rigidPos = player.rigidBody.translation()
+    movementVector.x += rigidPos.x
+    movementVector.y += rigidPos.y
+    movementVector.z += rigidPos.z
 
     /* implement ray cast down to detect ground and only apply
      * gravity when not grounded */
     const physicsRayDown = new Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: -1, z: 0 })
     movementVector.y += -4 * timeInSeconds
 
-    physicsRayDown.origin = playerPos
+    physicsRayDown.origin = rigidPos
     let hit = state.physics.castRay(physicsRayDown, halfHeight, false, 0xff0000ff)
     if (hit) {
       /* isGrounded determines if player can jump or start flying */
       player.isGrounded = true
-      movementVector.y = playerPos.y
+      movementVector.y = rigidPos.y
       const point = physicsRayDown.pointAt(hit.timeOfImpact)
-      let diff = +(playerPos.y - (point.y + halfHeight)).toFixed(3)
+      let diff = +(rigidPos.y - (point.y + halfHeight)).toFixed(3)
       // console.log('point: ', diff)
-      if (diff < 0.05 && diff > -0.3) {
+      if (diff < -0.05 && diff > -0.3) {
         if (diff > 0) {
           diff = 0
         }
-        movementVector.y = playerPos.y - diff
+        movementVector.y = rigidPos.y - diff
       }
     }
 
@@ -236,54 +199,25 @@ export default (modelHeight: number = 1.8) => {
 
     hit = state.physics.castShape(shapePos, shapeRot, shapeVel, shape, targetDistance, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
     if (hit != null) {
-      // console.log('hit: ', hit)
       const normal = new Vector3(hit.normal1.x, hit.normal1.y, hit.normal1.z).normalize()
-      const normal2 = new Vector3(hit.normal2.x, hit.normal2.y, hit.normal2.z).normalize()
 
       // Project movement onto the surface to allow sliding
-      const movementDir = /*normal2*/ new Vector3(movementVector.x - playerPos.x, 0, movementVector.z - playerPos.z)
+      const movementDir = new Vector3(movementVector.x - rigidPos.x, 0, movementVector.z - rigidPos.z)
       const dotProduct = movementDir.dot(normal)
 
       // Remove the component of movement that goes into the wall
       movementDir.sub(normal.multiplyScalar(dotProduct))
       if (dotProduct < 0) {
         // Apply the adjusted movement vector
-        movementVector.x = playerPos.x + movementDir.x
-        movementVector.z = playerPos.z + movementDir.z
-      } else {
-        // movementVector.x = playerPos.x
-        // movementVector.z = playerPos.z
+        movementVector.x = rigidPos.x + movementDir.x
+        movementVector.z = rigidPos.z + movementDir.z
       }
 
-      // previousPos.copy(movementVector)
       // if (previousPos.x === playerPos.x && previousPos.z === playerPos.z) {
       //   console.log('player is stuck: ')
       // }
       // console.log('Hit the collider', hit.collider, 'at time', hit.time_of_impact)
     }
-
-    // characterController.computeColliderMovement(player.collider, movementVector)
-    // const correctedMovement = characterController.computedMovement()
-
-    // // 🔥 Wall Sliding Logic
-    // if (characterController.numComputedCollisions() > 0) {
-    //   for (let i = 0; i < characterController.numComputedCollisions(); i++) {
-    //     const collision = characterController.computedCollision(i)
-    //     const normal = collision.normal1
-    //     // console.log('collision: ', collision)
-    //
-    //     const movementVectorThree = new Vector3(movementVector.x, movementVector.y, movementVector.z)
-    //     const normalThree = new Vector3(normal.x, normal.y, normal.z)
-    //
-    //     const dot = movementVectorThree.dot(normalThree)
-    //     const slideVector = movementVectorThree.sub(normalThree.multiplyScalar(dot))
-    //
-    //     correctedMovement = new Rapier.Vector3(slideVector.x, slideVector.y, slideVector.z)
-    //   }
-    // }
-
-    // player.rigidBody.setNextKinematicTranslation(correctedMovement)
-
     player.rigidBody.setNextKinematicTranslation(movementVector)
 
     /* correct mesh position in physics capsule */
@@ -294,7 +228,7 @@ export default (modelHeight: number = 1.8) => {
 
     mixer?.update?.(timeInSeconds)
 
-    updateLife(timeInSeconds, elapsedTimeInS)
+    player.updateLife(player, elapsedTimeInS)
   }
 
   state.addEvent('renderer.update', update)

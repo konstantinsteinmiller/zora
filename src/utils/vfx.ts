@@ -9,18 +9,15 @@ import TwinShot from '@/vfx/twin-shot_2.json'
 export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const adjustedPosition = state.player.getPosition().clone()
   adjustedPosition.y += 1
-  adjustedPosition.z -= 0.9
-  console.log('state.player.forward: ', state.player.mesh)
 
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
   // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
   const nebulaRenderer = new GPURenderer(state.scene, THREE)
   const nebulaSystem = system.addRenderer(nebulaRenderer)
 
-  // console.log('nebulaSystem: ', nebulaSystem)
   const playerRotation = state.player.getRotation()
 
-  const forwardNormal = new THREE.Vector3(0, 0, 1)
+  const forwardNormal = new Vector3(0, 0, 1)
   forwardNormal.applyQuaternion(playerRotation)
   forwardNormal.normalize()
   forwardNormal.multiplyScalar(0.03)
@@ -29,7 +26,7 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
     /* adjust the force field of the emitters to get proper rotation
      * of the left behind particle */
     const force = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')
-    const forward = new THREE.Vector3(0, 0, 1)
+    const forward = new Vector3(0, 0, 1)
     forward.applyQuaternion(playerRotation)
     forward.normalize()
     forward.multiplyScalar(-80000)

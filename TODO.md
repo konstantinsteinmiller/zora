@@ -50,7 +50,7 @@
 - [x] Physics for Character
   - [x] character dynamic colliders
   - [x] world static colliders
-  - [ ] wall sliding
+  - [x] wall sliding
 - [x] import character
   - [x] import character animations
   - [x] state machine

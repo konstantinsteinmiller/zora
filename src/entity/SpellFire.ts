@@ -30,7 +30,7 @@ export default () => {
     }
 
     const intersect = intersects.find(inter => {
-      return inter.object.type !== 'AxesHelper'
+      return inter.object.type !== 'AxesHelper' && inter.object.type !== 'LineSegments'
     })
     // const object = intersect.object
     // console.log('intersect object:', object.name, intersect, intersect?.point)
