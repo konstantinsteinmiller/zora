@@ -1,13 +1,15 @@
 # Todo
 - [ ] Enemy
-  - [ ] Navigation Mesh
+  - [x] Navigation Mesh
   - [x] loading Mesh
   - [x] enemy FSM
   - [x] health bar
   - [ ] enemy attack
   - [ ] enemy AI
-    - [ ] moving around / fleeing / hiding behind 
-          cover while charging
+    - [x] randomly moving around on navmesh
+    - [ ] fleeing
+    - [ ] hiding behind
+    - [ ] cover while charging
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -66,6 +68,7 @@
   - [x] Light
   - [x] Camera
   - [ ] Sound
+- [x] game icon
 - [x] basic vue + eslint + typescript setup 
 
 ## Bugs

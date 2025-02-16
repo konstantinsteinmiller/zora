@@ -19,7 +19,7 @@ export default async () => {
   EnemyController({
     modelPath: '/models/fairy/nature_fairy_1.fbx',
     stats: undefined,
-    startPosition: new Vector3(8.5, 0, 2),
+    startPosition: new Vector3(10.5, 0, 9),
     modelHeight: 1.8,
   })
   Camera()

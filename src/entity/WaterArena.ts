@@ -1,11 +1,10 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import Ground from '@/entity/water/Ground.ts'
-import ground from '@/entity/water/Ground.ts'
 import Water from '@/entity/water/Water.ts'
-import { setupUI } from '@/utils/tweakpane-ui.ts'
-import { Object3D, TextureLoader } from 'three'
+import { loadNavMesh } from '@/utils/navigation.ts'
+import { Color, Mesh, MeshBasicMaterial, Object3D, TextureLoader, Vector3 } from 'three'
 import state from '@/states/GlobalState'
 import { createCollidersForGraph } from '@/utils/physics.ts'
+import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
 export default async () => {
   if (state.waterArena) {
@@ -16,7 +15,7 @@ export default async () => {
   const { loadMesh } = AssetLoader()
   await loadMesh('/worlds/arenas/water-arena.fbx', state.waterArena, 1)
 
-  state.waterArena.position.set(2.98, -0.06, -0.02)
+  // state.waterArena.position.set(2.98, -0.06, -0.02)
   if (state.enableWater) {
     const waterResolution = { size: 256 }
     const water = Water({
@@ -37,9 +36,36 @@ export default async () => {
     // state.player.position.set(2500, 1000, 2000)
   }
 
+  const pathfinder: any = new Pathfinding()
+  pathfinder.pathfindingHelper = new PathfindingHelper()
+  loadNavMesh('/worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
+    const geo = navMesh.clone().geometry.clone()
+    geo.rotateX(-Math.PI / 2)
+
+    // state.scene.add(navMesh)
+    state.waterArena.zone = 'water-arena'
+    pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
+    state.waterArena.pathfinder = pathfinder
+
+    const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
+    state.scene.add(wiredNavMesh)
+    const wiredFillMesh = new Mesh(
+      geo,
+      new MeshBasicMaterial({
+        color: 0xffffff,
+        opacity: 0.5,
+        transparent: true,
+      })
+    )
+    state.scene.add(wiredFillMesh)
+    state.scene.add(pathfinder.pathfindingHelper)
+  })
+
   createCollidersForGraph(state.waterArena, 'fixed')
   state.waterArena.name = 'WaterArenaContainer'
+  state.waterArena.movingEntitiesList = []
   state.scene.add(state.waterArena)
+  state.level = state.waterArena
 
   return state.waterArena
 }

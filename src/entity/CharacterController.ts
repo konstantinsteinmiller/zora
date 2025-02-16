@@ -16,11 +16,14 @@ export default (modelHeight: number = 1.8) => {
   }
 
   let mesh: any = new Object3D()
+  const halfHeight = modelHeight * 0.5
+
   player = {
     ...new Object3D(),
     mesh: mesh,
     ...controllerUtils(),
     ...controllerFunctions(),
+    halfHeight,
   }
   player.getPosition = () => {
     if (!mesh) {
@@ -40,6 +43,7 @@ export default (modelHeight: number = 1.8) => {
     player.rigidBody.setRotation(prevQuat)
     return mesh.quaternion.copy(prevQuat)
   }
+  player.name = 'player'
   player.hp = 33
   player.previousHp = 33
   player.maxHp = 100
@@ -55,7 +59,6 @@ export default (modelHeight: number = 1.8) => {
     damage: 25,
   }
   player.isGrounded = false
-  const halfHeight = modelHeight * 0.5
 
   InputController()
   let mixer: any = {}
@@ -64,7 +67,7 @@ export default (modelHeight: number = 1.8) => {
   const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
-  const stateMachine = new CharacterFSM(animationsMap)
+  const stateMachine = new CharacterFSM(animationsMap, player)
   player.stateMachine = stateMachine
 
   const loadModels = async () => {
@@ -80,6 +83,7 @@ export default (modelHeight: number = 1.8) => {
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
+        player.mesh = mesh
       },
     })
   }
@@ -218,6 +222,7 @@ export default (modelHeight: number = 1.8) => {
       // }
       // console.log('Hit the collider', hit.collider, 'at time', hit.time_of_impact)
     }
+    player.rigidBody.setNextKinematicRotation(meshQuat)
     player.rigidBody.setNextKinematicTranslation(movementVector)
 
     /* correct mesh position in physics capsule */

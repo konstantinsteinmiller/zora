@@ -16,7 +16,7 @@ export default async () => {
   state.addEvent('renderer.update', () => {
     physics.step()
 
-    if (state.debugPhysics) {
+    if (state.enableDebug) {
       if (!added) {
         added = true
         state.scene.add(debugLines)

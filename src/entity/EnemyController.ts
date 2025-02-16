@@ -1,14 +1,14 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import camera from '@/engine/Camera.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
+import { moveToRandomPosition } from '@/utils/navigation.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import Rapier, { Capsule, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
-import { Camera, Object3D, Vector3 } from 'three'
-import { lerp } from 'three/src/math/MathUtils'
+import { Object3D, Vector3 } from 'three'
 
 const baseStats: any = {
+  name: 'enemy',
   hp: 100,
   previousHp: 100,
   maxHp: 100,
@@ -29,6 +29,8 @@ const baseStats: any = {
 export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
+  const halfHeight = modelHeight * 0.5
+
   const enemy = {
     ...new Object3D(),
     position: startPosition.clone(),
@@ -36,14 +38,13 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
     ...controllerUtils(),
     ...controllerFunctions,
     mesh,
+    halfHeight,
   }
-
-  const halfHeight = modelHeight * 0.5
 
   let mixer: any = {}
   const animationsMap: any = {}
 
-  const stateMachine = new CharacterFSM(animationsMap)
+  const stateMachine = new CharacterFSM(animationsMap, enemy)
   enemy.stateMachine = stateMachine
 
   const loadModels = async () => {
@@ -59,10 +60,10 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
+        enemy.mesh = mesh
       },
     })
   }
-
   const initPhysics = () => {
     const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight)
     enemy.rigidBody = rigidBody
@@ -102,8 +103,9 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
     }
     state.addEvent('renderer.update', () => updateHealthBar())
   }
-
   enemy.createHealthBar()
+
+  enemy.moveToRandomPosition = moveToRandomPosition
 
   loadModels()
   initPhysics()
@@ -112,9 +114,14 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
   const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
+  const movementVector = null
   const update = (timeInSeconds: number, elapsedTimeInS: number) => {
     if (!enemy.mesh || enemy.stateMachine.currentState === null) {
       return
+    }
+
+    if (state?.level?.pathfinder) {
+      enemy.moveToRandomPosition(enemy)
     }
 
     const frameDecceleration = new Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)

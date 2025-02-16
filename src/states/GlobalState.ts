@@ -13,6 +13,12 @@ let state: {
       sourceName?: string
     }[]
   }
+  level: {
+    name: string
+    zone: string
+    pathfinder: any
+    movingEntitiesList: string[]
+  }
 } = null
 
 const globalState = () => {
@@ -61,6 +67,7 @@ const globalState = () => {
 
   /* init this game state with defaults */
   state.enableWater = true
+  state.enableDebug = false
   // state.debugPhysics = true
   state.showCursor = false
   state.showCrosshair = true

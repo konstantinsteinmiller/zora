@@ -1,5 +1,6 @@
 import SpellFire from '@/entity/SpellFire.ts'
 import state from '@/states/GlobalState'
+import { moveToRandomPosition } from '@/utils/navigation.ts'
 
 let input: {
   keysMap: { [key: string]: boolean | number }
@@ -73,8 +74,14 @@ export default () => {
   }
 
   const onKeyDown = (event: KeyboardEvent) => {
-    // console.log('event.keyCode: ', event.keyCode)
+    state.enableDebug && console.log('event.keyCode: ', event.keyCode)
     switch (event.keyCode) {
+      case 16: // shift
+        input.keysMap.shift = true
+        break
+      case 17: // ctrl
+        input.keysMap.ctrl = true
+        break
       case 87: // w
         input.keysMap.forward = true
         break
@@ -84,8 +91,17 @@ export default () => {
       case 83: // s
         input.keysMap.backward = true
         break
+      case 86: // v
+        state.level.pathfinder.isMoving = false
+        moveToRandomPosition(state.player)
+        break
       case 68: // d
         input.keysMap.right = true
+        break
+      case 67: // c
+        if (input.keysMap.ctrl) {
+          state.enableDebug = !state.enableDebug
+        }
         break
       case 70: // f
         input.keysMap.interact = true
@@ -114,7 +130,12 @@ export default () => {
         break
       case 80: // p
         input.keysMap.pause = !input.keysMap.pause
-        state.isPaused = input.keysMap.pause
+        if (input.keysMap.shift) {
+          console.log('pos: ', state.player.mesh.position)
+          navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
+        } else {
+          state.isPaused = input.keysMap.pause
+        }
         break
       case 73: // i
         input.keysMap.inventory = !input.keysMap.inventory
@@ -133,6 +154,12 @@ export default () => {
 
   const onKeyUp = (event: KeyboardEvent) => {
     switch (event.keyCode) {
+      case 16: // shift
+        input.keysMap.shift = false
+        break
+      case 17: // ctrl
+        input.keysMap.ctrl = false
+        break
       case 87: // w
         input.keysMap.forward = false
         break
@@ -144,6 +171,8 @@ export default () => {
         break
       case 68: // d
         input.keysMap.right = false
+        break
+      case 67: // c
         break
       case 70: // f
         input.keysMap.interact = false

@@ -1,8 +1,12 @@
 import State from '@/states/State'
+import state from '@/states/GlobalState.ts'
 
 export default class RunState extends State {
+  isPlayer: boolean
+
   constructor(parent: any) {
     super(parent)
+    this.isPlayer = parent.owner.name === 'player'
   }
 
   get name() {
@@ -44,12 +48,17 @@ export default class RunState extends State {
     //   this.parent.setState('cast')
     //   return
     // }
-    if (input.keysMap.space) {
+
+    if (state.level.movingEntitiesList?.includes(this.parent.owner.name)) {
+      return
+    }
+
+    if (input.keysMap.space && this.isPlayer) {
       this.parent.setState('jump')
       return
     }
-    if (input.keysMap.forward || input.keysMap.backward) {
-      if (!input.keysMap.shift) {
+    if (input.keysMap.forward || (input.keysMap.backward && this.isPlayer)) {
+      if (!input.keysMap.shift && this.isPlayer) {
         this.parent.setState('walk')
       }
       return
