@@ -1,8 +1,10 @@
 import state from '@/states/GlobalState.ts'
-import Rapier, { Capsule, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
+import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
 
 export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS: number): Rapier.Vector3 => {
+  if (!entity.rigidBody) return new Rapier.Vector3(0, 0, 0)
+
   const meshQuat: any = entity.mesh.quaternion
   const forward = new Vector3(0, 0, 1)
     .applyQuaternion(meshQuat)
@@ -13,27 +15,22 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     .normalize()
     .multiplyScalar(velocity.x * deltaS)
 
-  if (!entity.rigidBody) return
-
-  const direction = new Vector3(forward.x + sideways.x, forward.y + sideways.y, forward.z + sideways.z)
-  direction.normalize()
-  direction.multiplyScalar(0.1)
-  const shortMove = new Rapier.Vector3(direction.x, direction.y, direction.z)
-
   const rigidPos = entity.rigidBody.translation()
-  const movementVector = new Rapier.Vector3(forward.x + sideways.x, forward.y + sideways.y, forward.z + sideways.z)
-  movementVector.x += rigidPos.x
-  movementVector.y += rigidPos.y
-  movementVector.z += rigidPos.z
-  shortMove.x += rigidPos.x
-  shortMove.y += rigidPos.y
-  shortMove.z += rigidPos.z
+  const direction = new Vector3(forward.x + sideways.x, forward.y + sideways.y, forward.z + sideways.z)
+  direction.normalize().multiplyScalar(0.1)
 
-  let hit = null
+  const movementVector = new Rapier.Vector3(forward.x + sideways.x, 0, forward.z + sideways.z)
+  movementVector.x += rigidPos.x
+  movementVector.y = rigidPos.y
+  movementVector.z += rigidPos.z
+
   /* shape cast into movementVector direction to find obstacles */
   const shapePos = { x: movementVector.x, y: movementVector.y + entity.halfHeight, z: movementVector.z }
   const shapeRot = entity.rigidBody.rotation()
-  const shapeVel = movementVector
+  const shapeVel = new Vector3(forward.x + sideways.x, 0, forward.z + sideways.z)
+  const movementMagnitude = shapeVel.length() // Preserve movement magnitude
+  shapeVel.normalize()
+
   const shape = new Capsule(0.7, 0.4)
   const targetDistance = 0.0
   const maxToi = 0.1
@@ -44,46 +41,47 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   const filterExcludeCollider = entity.collider
   const filterExcludeRigidBody = entity.rigidBody
 
+  // 🔹 Wall Collision & Sliding Fix
+  const adjustedWallHit = null
+  const wallHit = state.physics.castShape(shapePos, shapeRot, shapeVel, shape, targetDistance, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
+  if (wallHit) {
+    const normal = new Vector3(wallHit.normal1.x, 0, wallHit.normal1.z).normalize()
+
+    // 🔥 Project movement vector onto the wall plane while preserving magnitude
+    const movementDir = new Vector3(movementVector.x - rigidPos.x, 0, movementVector.z - rigidPos.z)
+    const dotProduct = movementDir.dot(normal)
+    const projectedMovement = movementDir.clone().sub(normal.clone().multiplyScalar(dotProduct))
+
+    projectedMovement.setLength(movementMagnitude).multiplyScalar(0.3) // Ensure movement length stays the same
+
+    // Apply projected movement
+    movementVector.x = rigidPos.x + projectedMovement.x
+    movementVector.z = rigidPos.z + projectedMovement.z
+
+    // Re-check if adjusted movement still collides
+    const adjustedWallHit = state.physics.castShape(shapePos, shapeRot, projectedMovement, shape, 0.0, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
+    if (adjustedWallHit) {
+      movementVector.x = rigidPos.x
+      movementVector.z = rigidPos.z
+    }
+  }
+
+  // 🔹 Gravity & Ground Detection
   /* implement ray cast down to detect ground and only apply
    * gravity when not grounded */
-  movementVector.y += -4 * deltaS
-  hit = state.physics.castShape(rigidPos, shapeRot, new Rapier.Vector3(0, -1, 0), new Capsule(0.1, 0.1), targetDistance, entity.halfHeight, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
-  if (hit != null) {
-    movementVector.y = rigidPos.y
-    const point = hit.witness1
-    const diff = +(rigidPos.y - (point.y + entity.halfHeight)).toFixed(3)
-    if (diff > -0.3 && diff < -0.05) {
-      movementVector.y = rigidPos.y - diff
+  entity.isGrounded = false
+  const groundHit = state.physics.castShape(rigidPos, shapeRot, new Rapier.Vector3(0, -1, 0), new Capsule(0.01, 0.1), targetDistance, entity.halfHeight, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
+  if (groundHit) {
+    entity.isGrounded = true
+    const point = groundHit.witness1
+    const d = +(rigidPos.y - point.y).toFixed(3)
+    if (d < entity.halfHeight - 0.05 && !adjustedWallHit) {
+      movementVector.y += entity.halfHeight - d
     }
+  } else {
+    // Apply gravity only if not grounded
+    movementVector.y += -4 * deltaS
   }
 
-  hit = state.physics.castShape(shapePos, shapeRot, shapeVel, shape, targetDistance, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
-  if (hit != null) {
-    const normal = new Vector3(hit.normal1.x, rigidPos.y, hit.normal1.z).normalize()
-
-    // Project movement onto the surface to allow sliding
-    const movementDir = new Vector3(movementVector.x - rigidPos.x,0, movementVector.z - rigidPos.z)
-    const dotProduct = movementDir.dot(normal)
-
-    // Remove the component of movement that goes into the wall
-    movementDir.sub(normal.multiplyScalar(dotProduct))
-    if (dotProduct < 0) {
-      // Apply the adjusted movement vector
-      movementVector.x = rigidPos.x + movementDir.x
-      movementVector.z = rigidPos.z + movementDir.z
-      const shapePos = { x: movementVector.x, y: movementVector.y + entity.halfHeight, z: movementVector.z }
-      const shapeVel = movementVector
-      hit = state.physics.castShape(shapePos, shapeRot, shapeVel, shape, targetDistance, maxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
-      if (hit != null) {
-        movementVector.x = rigidPos.x
-        movementVector.z = rigidPos.z
-      }
-    }
-
-    // if (previousPos.x === playerPos.x && previousPos.z === playerPos.z) {
-    //   console.log('player is stuck: ')
-    // }
-    // console.log('Hit the collider', hit.collider, 'at time', hit.time_of_impact)
-  }
   return movementVector
 }

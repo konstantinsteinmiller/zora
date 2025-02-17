@@ -121,7 +121,7 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
       acc.multiplyScalar(0.0)
     }
 
-    if (stateMachine.currentState.name === 'jump') {
+    if (stateMachine.currentState.name === 'jump' && !state.input.keysMap.shift) {
       acc.multiplyScalar(1.5)
     }
 
