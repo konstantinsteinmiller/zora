@@ -78,12 +78,11 @@ export const moveToRandomPosition = (entity: any) => {
 
   const path = findPathToRandomPosition(entity, randomTargetPosition)
   if (path) {
-    console.log('moving to path: ', path)
+    // console.log('moving to path: ', path)
     let nextPosition: Vector3 | null = null
     let uuid: string | null = null
 
     state.level.movingEntitiesList.push(entity.name)
-    console.log('state.level.movingEntitiesList: ', state.level.movingEntitiesList)
     entity.stateMachine.setState('run')
     const started = false
     uuid = state.addEvent('renderer.update', (deltaS: number) => {

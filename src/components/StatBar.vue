@@ -63,7 +63,7 @@ const ANIMATION_SPEED = 8
 let condition = false
 let typeSelectionList: any[] = []
 
-const updateCallback = (deltaTimeInS: number) => {
+const updateCallback = (deltaS: number) => {
   counter++
 
   if (props.type === 'life') {
@@ -95,7 +95,7 @@ const updateCallback = (deltaTimeInS: number) => {
   }
   if (counter % 8 === 0 && current !== target) {
     const dist: number = +clamp(Math.abs(target - current), 0.1, 100).toFixed(1)
-    const delta = +clamp(deltaTimeInS * (totalDist / dist) * ANIMATION_SPEED, 0.01, 1).toFixed(3)
+    const delta = +clamp(deltaS * (totalDist / dist) * ANIMATION_SPEED, 0.01, 1).toFixed(3)
     if (dist <= 1) {
       current = target
       owner.value[typeSelectionList[3]] = target

@@ -38,7 +38,7 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const TWIN_SHOT_SPEED = 30
   let uuid: string = ''
 
-  uuid = state.addEvent(`renderer.update`, (deltaTimeInSeconds: number) => {
+  uuid = state.addEvent(`renderer.update`, (deltaSeconds: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {
       const trajectoryVector: Vector3 = intersectPoint.clone().sub(emitter.position)
       if (trajectoryVector.length() < 0.1) {
@@ -47,7 +47,7 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
         return
       }
       trajectoryVector.normalize()
-      trajectoryVector.multiplyScalar(deltaTimeInSeconds * TWIN_SHOT_SPEED)
+      trajectoryVector.multiplyScalar(deltaSeconds * TWIN_SHOT_SPEED)
       emitter.position.add(trajectoryVector)
     })
     nebulaSystem.update()

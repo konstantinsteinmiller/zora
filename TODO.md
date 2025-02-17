@@ -7,6 +7,7 @@
   - [ ] enemy attack
   - [ ] enemy AI
     - [x] randomly moving around on navmesh
+    - [ ] smooth out path following with bezier curve
     - [ ] fleeing
     - [ ] hiding behind
     - [ ] cover while charging
