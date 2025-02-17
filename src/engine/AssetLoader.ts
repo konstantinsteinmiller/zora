@@ -164,6 +164,7 @@ export default () => {
       const onLoad = (animName: string, anim: any) => {
         const clip = anim.animations[0]
         const action = mixer.clipAction(clip)
+        action.name = animName
 
         animationsMap[animName] = {
           clip: clip,

@@ -16,6 +16,7 @@ export default () => {
   input = {
     keysMap: {
       interact: false,
+      attack: false,
       dunno: false,
       inventory: false,
       forward: false,

@@ -7,6 +7,8 @@
   - [ ] enemy attack
   - [ ] enemy AI
     - [x] randomly moving around on navmesh
+    - [x] randomly moving with collision and gravity
+    - [x] facing target while moving and runs backwards if target is behind him
     - [ ] smooth out path following with bezier curve
     - [ ] fleeing
     - [ ] hiding behind

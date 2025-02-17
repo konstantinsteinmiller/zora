@@ -1,12 +1,9 @@
-import State from '@/states/State'
+import State, { isMovingEntity, transitionTo } from '@/states/State'
 import state from '@/states/GlobalState.ts'
 
 export default class RunState extends State {
-  isPlayer: boolean
-
   constructor(parent: any) {
     super(parent)
-    this.isPlayer = parent.owner.name === 'player'
   }
 
   get name() {
@@ -20,7 +17,8 @@ export default class RunState extends State {
 
       currentAction.enabled = true
 
-      if (previousState.name == 'walk') {
+      const states = ['walk', 'walk-back', 'run', 'run-back']
+      if (states.includes(previousState.name)) {
         const ratio = currentAction.getClip().duration / previousAction.getClip().duration
         currentAction.time = previousAction.time * ratio
       } else {
@@ -44,25 +42,12 @@ export default class RunState extends State {
   exit() {}
 
   update(timeElapsed: number, input: any) {
-    // if (input.keysMap.leftMouse) {
-    //   this.parent.setState('cast')
-    //   return
-    // }
+    if (isMovingEntity(this.parent)) return
 
-    if (state.level.movingEntitiesList?.includes(this.parent.owner.name)) {
-      return
-    }
-
-    if (input.keysMap.space && this.isPlayer) {
-      this.parent.setState('jump')
-      return
-    }
-    if (input.keysMap.forward || (input.keysMap.backward && this.isPlayer)) {
-      if (!input.keysMap.shift && this.isPlayer) {
-        this.parent.setState('walk')
-      }
-      return
-    }
+    // if (transitionTo('cast', this.parent)) return
+    if (transitionTo('jump', this.parent)) return
+    if (transitionTo('walk', this.parent)) return
+    if (transitionTo('run-back', this.parent)) return
 
     this.parent.setState('idle')
   }

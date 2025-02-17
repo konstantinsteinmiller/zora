@@ -1,4 +1,4 @@
-import State from '@/states/State'
+import State, { isMovingEntity, transitionTo } from '@/states/State'
 
 export default class IdleState extends State {
   constructor(parent: any) {
@@ -29,10 +29,14 @@ export default class IdleState extends State {
     //   this.parent.setState('cast')
     //   return
     // }
-    if (input.keysMap.forward || input.keysMap.backward) {
+    if (isMovingEntity(this.parent)) return
+
+    // if (transitionTo('cast', this.parent)) return
+    if (transitionTo('jump', this.parent)) return
+    if (input.keysMap.forward) {
       this.parent.setState('walk')
-    } else if (input.keysMap.space) {
-      this.parent.setState('jump')
+    } else if (input.keysMap.backward) {
+      this.parent.setState('walk-back')
     }
   }
 }

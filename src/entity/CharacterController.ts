@@ -1,4 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import { characterAnimationNamesList } from '@/enums/constants.ts'
 import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
@@ -84,7 +85,7 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
       scale: 0.01,
       stateMachine,
       animationsMap,
-      animationNamesList: ['walk', 'run', 'idle', 'dance', 'cast', 'jump'],
+      animationNamesList: characterAnimationNamesList,
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh

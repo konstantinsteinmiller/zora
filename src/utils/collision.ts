@@ -16,8 +16,6 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     .multiplyScalar(velocity.x * deltaS)
 
   const rigidPos = entity.rigidBody.translation()
-  const direction = new Vector3(forward.x + sideways.x, forward.y + sideways.y, forward.z + sideways.z)
-  direction.normalize().multiplyScalar(0.1)
 
   const movementVector = new Rapier.Vector3(forward.x + sideways.x, 0, forward.z + sideways.z)
   movementVector.x += rigidPos.x

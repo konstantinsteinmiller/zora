@@ -14,3 +14,6 @@ expected features:
 - Water
 
 ![charging-spell](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/charging-spell.png)
+
+###random pathfinding with collision
+![random-pathfinding-with-collision.gif](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/random-pathfinding-with-collision.gif)

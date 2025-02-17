@@ -1,4 +1,4 @@
-import State from '@/states/State'
+import State, { isMovingEntity, transitionTo } from '@/states/State'
 import { LoopOnce } from 'three'
 import state from '@/states/GlobalState'
 
@@ -48,12 +48,23 @@ export default class JumpState extends State {
     //   this.parent.setState(previousState.name)
     //   return
     // }
-    if (input.keysMap.forward || input.keysMap.backward) {
+
+    if (isMovingEntity(this.parent)) return
+
+    if (input.keysMap.forward) {
       if (!input.keysMap.shift) {
         this.parent.setState('walk')
-      } else {
-        this.parent.setState('run')
+        return
       }
+      this.parent.setState('run')
+      return
+    }
+    if (input.keysMap.backward) {
+      if (!input.keysMap.shift) {
+        this.parent.setState('walk-back')
+        return
+      }
+      this.parent.setState('run-back')
       return
     }
     this.parent.setState('idle')

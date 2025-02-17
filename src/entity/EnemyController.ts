@@ -1,11 +1,11 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import { characterAnimationNamesList } from '@/enums/constants.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { moveToRandomPosition } from '@/utils/navigation.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
-import Rapier, { Capsule, QueryFilterFlags, Ray } from '@dimforge/rapier3d-compat'
 import { Object3D, Vector3 } from 'three'
 
 const baseStats: any = {
@@ -57,7 +57,7 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
       scale: 0.01,
       stateMachine,
       animationsMap,
-      animationNamesList: ['walk', 'run', 'idle', 'dance', 'cast', 'jump'],
+      animationNamesList: characterAnimationNamesList,
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
@@ -112,17 +112,16 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
   initPhysics()
 
   const decceleration = new Vector3(-0.0005, -0.0001, -5.0)
-  const acceleration = new Vector3(1, 0.25, 15.0)
+  // const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
-  const movementVector = null
   const update = (deltaS: number, elapsedTimeInS: number) => {
     if (!enemy.mesh || enemy.stateMachine.currentState === null) {
       return
     }
 
     if (state?.level?.pathfinder) {
-      enemy.moveToRandomPosition(enemy)
+      enemy.moveToRandomPosition(enemy, state.player)
     }
 
     const frameDecceleration = new Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
@@ -132,7 +131,6 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
     velocity.add(frameDecceleration)
 
     const movementVector = calcRapierMovementVector(enemy, velocity, deltaS)
-
     enemy.rigidBody.setNextKinematicTranslation(movementVector)
 
     /* correct mesh position in physics capsule */
