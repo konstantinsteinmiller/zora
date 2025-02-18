@@ -27,6 +27,7 @@
   - [x] Life bar
   - [x] Mana bar
   - [x] Endurance bar
+    - [x] Flying mechanic, jump -> fly
   - [ ] Skill Box
 - [ ] Main Menu
   - [ ] Start Game
@@ -57,11 +58,12 @@
   - [x] character dynamic colliders
   - [x] world static colliders
   - [x] wall sliding
-- [x] import character
+- [x] Character Controller
   - [x] import character animations
   - [x] state machine
   - [x] idle, run, cast, jump
-  - [ ] jump to fly animation
+  - [x] Flying mechanic, jump -> fly
+    - [x] spend stamina for flying
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse
 - [x] Third person camera with Keyboard and Mouse

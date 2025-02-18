@@ -128,6 +128,8 @@ export default () => {
 
     loader.load(modelPath, (model: any) => {
       if (scale >= 0) model.scale.setScalar(scale)
+      // const socket = model.getObjectByName('right_hand_socket')
+      // console.log('socket: ', socket)
       if (shadows) {
         model.traverse((c: any) => {
           c.castShadow = true

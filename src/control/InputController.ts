@@ -1,4 +1,5 @@
 import SpellFire from '@/entity/SpellFire.ts'
+import { FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState'
 import { moveToRandomPosition } from '@/utils/navigation.ts'
 
@@ -31,6 +32,7 @@ export default () => {
       lookBack: false,
       firstPersonCamera: false,
       pause: false,
+      appliedFlyImpulse: 0,
     },
     current: {
       mouseX: 0,
@@ -76,6 +78,10 @@ export default () => {
 
   const onKeyDown = (event: KeyboardEvent) => {
     state.enableDebug && console.log('event.keyCode: ', event.keyCode)
+    if (event.keyCode === 32) {
+      event.preventDefault()
+    }
+
     switch (event.keyCode) {
       case 16: // shift
         input.keysMap.shift = true
@@ -145,10 +151,10 @@ export default () => {
         input.keysMap.inventory = !input.keysMap.inventory
         break
       case 32: // SPACE
+        if (!input.keysMap.space) {
+          input.keysMap.appliedFlyImpulse = FLY_IMPULSE
+        }
         input.keysMap.space = true
-        break
-      case 16: // SHIFT
-        input.keysMap.shift = true
         break
     }
   }
@@ -188,14 +194,10 @@ export default () => {
         input.keysMap.firstPersonCamera = true
         state.isThirdPerson = !input.keysMap.firstPersonCamera
 
-        const $game = document.querySelector('.game')
-        $game.classList.add('cursor--hidden')
+        document.querySelector('.game')?.classList?.add('cursor--hidden')
         break
       case 32: // SPACE
         input.keysMap.space = false
-        break
-      case 16: // SHIFT
-        input.keysMap.shift = false
         break
     }
   }

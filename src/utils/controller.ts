@@ -1,3 +1,4 @@
+import { ENDURANCE_REGEN_SPEED, FLY_COST, FLY_IMPULSE } from '@/enums/constants.ts'
 import { clamp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
@@ -38,7 +39,7 @@ export const controllerFunctions = () => {
     },
     dealEnduranceDamage(target: any, damage: number) {
       target.previousEndurance = target.endurance
-      target.endurance = clamp(target.endurance - damage - 5, 0, target.maxEndurance)
+      target.endurance = clamp(target.endurance - damage, 0, target.maxEndurance)
     },
     addHp(target: any, heal: number) {
       target.previousHp = target.hp
@@ -48,11 +49,19 @@ export const controllerFunctions = () => {
       if (!didDamage && elapsedTimeInS % TIME_INTERVAL < 1.0) {
         this.dealDamage(target, -23)
         this.dealMpDamage(target, 12)
-        this.dealEnduranceDamage(target, 16)
+        // this.dealEnduranceDamage(target, 16)
         didDamage = true
       } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
         didDamage = false
       }
+    },
+    updateEndurance(target: any, deltaS: number) {
+      if (target.isGrounded) {
+        this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
+      }
+    },
+    checkFlyCost(target: any) {
+      return target.endurance >= FLY_COST
     },
   }
 }

@@ -1,3 +1,4 @@
+import { FLY_IMPULSE, FLY_COST, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
@@ -14,12 +15,27 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     .applyQuaternion(meshQuat)
     .normalize()
     .multiplyScalar(velocity.x * deltaS)
+  const up = new Vector3(0, 1, 0).applyQuaternion(meshQuat).normalize()
 
   const rigidPos = entity.rigidBody.translation()
+  const isFlying = entity.stateMachine.currentState.name === 'fly'
+  let flyImpulse = state?.input?.keysMap.appliedFlyImpulse
 
-  const movementVector = new Rapier.Vector3(forward.x + sideways.x, 0, forward.z + sideways.z)
+  if (isFlying && flyImpulse) {
+    if (flyImpulse === FLY_IMPULSE && entity.endurance >= FLY_COST) {
+      entity.dealEnduranceDamage(entity, FLY_COST)
+    } else if (flyImpulse === FLY_IMPULSE) {
+      flyImpulse = MIN_FLY_IMPULSE * 0.1
+    }
+    flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
+    up.y = flyImpulse
+    state.input.keysMap.appliedFlyImpulse = flyImpulse
+  }
+  const directionUp: any = !isFlying ? 0 : up.y
+
+  const movementVector = new Rapier.Vector3(forward.x + sideways.x, directionUp, forward.z + sideways.z)
   movementVector.x += rigidPos.x
-  movementVector.y = rigidPos.y
+  movementVector.y += rigidPos.y
   movementVector.z += rigidPos.z
 
   /* shape cast into movementVector direction to find obstacles */
@@ -45,7 +61,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   if (wallHit) {
     const normal = new Vector3(wallHit.normal1.x, 0, wallHit.normal1.z).normalize()
 
-    // 🔥 Project movement vector onto the wall plane while preserving magnitude
+    // Project movement vector onto the wall plane while preserving magnitude
     const movementDir = new Vector3(movementVector.x - rigidPos.x, 0, movementVector.z - rigidPos.z)
     const dotProduct = movementDir.dot(normal)
     const projectedMovement = movementDir.clone().sub(normal.clone().multiplyScalar(dotProduct))

@@ -1,8 +1,10 @@
+import { MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import State, { isMovingEntity, transitionTo } from '@/states/State'
 import { LoopOnce } from 'three'
 import state from '@/states/GlobalState'
 
 export default class JumpState extends State {
+  counter: number = 0
   constructor(parent: any) {
     super(parent)
   }
@@ -15,7 +17,7 @@ export default class JumpState extends State {
     const currentAction = this.parent.animationsMap['jump'].action
     const mixer = currentAction.getMixer()
     mixer.addEventListener('finished', () => this.onFinished(previousState))
-
+    this.counter = 0
     if (previousState) {
       const previousAction = this.parent.animationsMap[previousState.name].action
 
@@ -77,5 +79,9 @@ export default class JumpState extends State {
 
   exit() {}
 
-  update() {}
+  update() {
+    if (this.parent.owner.input.keysMap.appliedFlyImpulse > MIN_FLY_IMPULSE) {
+      this.parent.setState('fly')
+    }
+  }
 }

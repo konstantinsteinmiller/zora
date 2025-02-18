@@ -22,6 +22,7 @@ const baseStats: any = {
   endurance: 100,
   previousEndurance: 100,
   maxEndurance: 100,
+  enduranceRegen: 1,
   currentSpell: {
     name: 'shot',
     speed: 1,
@@ -151,6 +152,8 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
     }
     stateMachine.update(deltaS, state.input)
 
+    player.updateEndurance(player, deltaS)
+
     const { _R, velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
 
     player.mesh.quaternion.slerp(_R, 0.1) // Smooth interpolation
@@ -175,5 +178,6 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
   state.addEvent('renderer.update', update)
 
   state.player = player
+  player.input = state.input
   return player
 }

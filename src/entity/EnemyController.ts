@@ -19,6 +19,7 @@ const baseStats: any = {
   endurance: 100,
   previousEndurance: 100,
   maxEndurance: 100,
+  enduranceRegen: 1,
   currentSpell: {
     name: 'shot',
     speed: 1,
