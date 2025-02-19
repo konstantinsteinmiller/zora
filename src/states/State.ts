@@ -15,12 +15,12 @@ export default class State {
 }
 
 const transitionMap: { [key: string]: string[] } = {
-  walk: ['forward', '!shift'],
-  'walk-back': ['backward', '!shift'],
-  run: ['forward', 'shift'],
-  'run-back': ['backward', 'shift'],
+  walk: ['forward', '!sprint'],
+  'walk-back': ['backward', '!sprint'],
+  run: ['forward', 'sprint'],
+  'run-back': ['backward', 'sprint'],
   cast: ['attack'],
-  jump: ['space'],
+  jump: ['jump'],
 }
 
 export const isMovingEntity = (parent: any) => state.level.movingEntitiesList?.includes(parent.owner.name)
@@ -28,16 +28,16 @@ export const transitionTo = (stateName: string, parent: any) => {
   const keyNamesList = transitionMap[stateName]
   const condition = keyNamesList?.every((keyName: string) => {
     if (keyName.startsWith('!')) {
-      return !state.input.keysMap[keyName.slice(1)]
+      return !state.controls[keyName.slice(1)]
     }
-    return state.input.keysMap[keyName]
+    return state.controls[keyName]
   })
 
   if (condition) {
     parent.setState(stateName)
     return true
   }
-  if (state.input.keysMap[keyNamesList[0]]) {
+  if (state.controls[keyNamesList[0]]) {
     return true
   }
   return false

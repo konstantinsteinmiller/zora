@@ -1,7 +1,5 @@
-import { MIN_FLY_IMPULSE } from '@/enums/constants.ts'
-import State, { isMovingEntity } from '@/states/State'
+import State, { isMovingEntity, transitionTo } from '@/states/State'
 import { LoopOnce } from 'three'
-import state from '@/states/GlobalState'
 
 export default class JumpState extends State {
   counter: number = 0
@@ -10,11 +8,11 @@ export default class JumpState extends State {
   }
 
   get name() {
-    return 'jump'
+    return 'hit'
   }
 
   enter(previousState: any) {
-    const currentAction = this.parent.animationsMap['jump'].action
+    const currentAction = this.parent.animationsMap[this.name].action
     const mixer = currentAction.getMixer()
     mixer.addEventListener('finished', () => this.onFinished(previousState))
     this.counter = 0
@@ -23,7 +21,7 @@ export default class JumpState extends State {
 
       currentAction.enabled = true
 
-      if (previousState.name === 'walk' || previousState.name === 'run') {
+      if (previousState.name !== 'idle') {
         const ratio = currentAction.getClip().duration / previousAction.getClip().duration
         currentAction.time = previousAction.time * ratio
       } else {
@@ -45,42 +43,16 @@ export default class JumpState extends State {
   onFinished(previousState: any) {
     this.cleanup()
 
-    // if (previousState) {
-    //   this.parent.setState(previousState.name)
-    //   return
-    // }
-
     if (isMovingEntity(this.parent)) return
-
-    if (state.controls.forward) {
-      if (!state.controls.sprint) {
-        this.parent.setState('walk')
-        return
-      }
-      this.parent.setState('run')
-      return
-    }
-    if (state.controls.backward) {
-      if (!state.controls.sprint) {
-        this.parent.setState('walk-back')
-        return
-      }
-      this.parent.setState('run-back')
-      return
-    }
     this.parent.setState('idle')
   }
 
   cleanup() {
-    const action = this.parent.animationsMap['jump'].action
+    const action = this.parent.animationsMap[this.name].action
     action.getMixer().removeEventListener('finished', () => {})
   }
 
   exit() {}
 
-  update() {
-    if (this.parent.owner.appliedFlyImpulse > MIN_FLY_IMPULSE) {
-      this.parent.setState('fly')
-    }
-  }
+  update() {}
 }

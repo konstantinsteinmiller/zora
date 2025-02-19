@@ -4,7 +4,7 @@ import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
-import InputController from '@/control/InputController.ts'
+import InputController from '@/control/KeyboardController.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState'
 import { calcRapierMovementVector } from '@/utils/collision'
@@ -29,6 +29,7 @@ const baseStats: any = {
     damage: 25,
   },
   isGrounded: false,
+  appliedFlyImpulse: 0,
 }
 
 export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
@@ -115,30 +116,31 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
     const _R = mesh.quaternion.clone()
 
     const acc = acceleration.clone()
-    if (state.input.keysMap.shift) {
+    if (state.controls.sprint) {
       acc.multiplyScalar(2.0)
     }
 
-    if (stateMachine.currentState.name === 'cast') {
+    const stopStates = ['cast', 'hit']
+    if (stopStates.includes(stateMachine.currentState.name)) {
       acc.multiplyScalar(0.0)
     }
 
-    if (stateMachine.currentState.name === 'jump' && !state.input.keysMap.shift) {
+    if (stateMachine.currentState.name === 'jump' && !state.controls.sprint) {
       acc.multiplyScalar(1.5)
     }
 
-    if (state.input.keysMap.forward) {
+    if (state.controls.forward) {
       velocity.z += acc.z * deltaS
     }
-    if (state.input.keysMap.backward) {
+    if (state.controls.backward) {
       velocity.z -= acc.z * deltaS
     }
-    if (state.input.keysMap.left) {
+    if (state.controls.left) {
       _A.set(0, 1, 0)
       _Q.setFromAxisAngle(_A, 4.0 * Math.PI * deltaS * acceleration.y)
       _R.multiply(_Q)
     }
-    if (state.input.keysMap.right) {
+    if (state.controls.right) {
       _A.set(0, 1, 0)
       _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * deltaS * acceleration.y)
       _R.multiply(_Q)
@@ -150,7 +152,7 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
     if (!mesh || stateMachine.currentState === null) {
       return
     }
-    stateMachine.update(deltaS, state.input)
+    stateMachine.update(deltaS, state.controls)
 
     player.updateEndurance(player, deltaS)
 
@@ -178,6 +180,5 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
   state.addEvent('renderer.update', update)
 
   state.player = player
-  player.input = state.input
   return player
 }

@@ -60,8 +60,5 @@ export const controllerFunctions = () => {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
     },
-    checkFlyCost(target: any) {
-      return target.endurance >= FLY_COST
-    },
   }
 }

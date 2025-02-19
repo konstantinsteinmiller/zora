@@ -55,10 +55,12 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
   return closest
 }
 
-const axesHelper = new AxesHelper(2)
+let axesHelper: any
 let addedAxesHelper = false
+
 export const moveToRandomPosition = (entity: any, targetToFace: any) => {
-  if (!addedAxesHelper) {
+  if (!addedAxesHelper && state.enbaleDebug) {
+    axesHelper = new AxesHelper(2)
     state.scene.add(axesHelper)
     addedAxesHelper = true
   }
@@ -108,11 +110,7 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
         const localVelocity = velocity.clone().applyQuaternion(entity.mesh.quaternion.clone().invert())
 
         const movementVector = calcRapierMovementVector(entity, localVelocity, deltaS)
-        /* make axesHelper look at the next waypoint in navmesh so we can
-         * rotate player mesh after it */
         agentPos.add(localVelocity)
-        axesHelper.position.set(movementVector.x, movementVector.y + entity.halfHeight, movementVector.z)
-        axesHelper.lookAt(new Vector3(nextPosition.x, axesHelper.position.y, nextPosition.z))
 
         if (targetToFace) {
           entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
@@ -126,7 +124,8 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
           }
         } else {
           // look at next waypoint
-          entity.setRotation(axesHelper.quaternion)
+          const flatTargetPos: Vector3 = new Vector3(nextPosition.x, agentPos.y, nextPosition.z)
+          entity.setRotation(entity.mesh.lookAt(flatTargetPos)?.quaternion)
         }
 
         const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)

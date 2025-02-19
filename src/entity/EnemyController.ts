@@ -26,6 +26,7 @@ const baseStats: any = {
     damage: 25,
   },
   isGrounded: false,
+  appliedFlyImpulse: 0,
 }
 
 export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {

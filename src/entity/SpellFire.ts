@@ -10,15 +10,16 @@ export default () => {
   singleton = {}
 
   const raycaster = new THREE.Raycaster()
-  const pointer = new THREE.Vector2(state.input.current.crosshairX, state.input.current.crosshairY)
+  const pointer = new THREE.Vector2(state.controls.mouse.current.crosshairX, state.controls.mouse.current.crosshairY)
 
   const damageSelf = () => {
     state.player.hp -= state.player.currentSpell.damage
   }
 
   singleton.fireRaycaster = (rotationSpeed: number) => {
-    if (rotationSpeed === 0.08) {
+    if (rotationSpeed >= 0.08) {
       damageSelf()
+      state.player.stateMachine.setState('hit')
       return
     }
     state.player.stateMachine.setState('cast')

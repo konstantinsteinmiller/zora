@@ -72,9 +72,7 @@ const globalState = () => {
   state.showCursor = false
   state.showCrosshair = true
   state.isThirdPerson = true
-  state.isLookBack = false
   state.isPaused = false
-  state.canFire = false
 
   return state
 }

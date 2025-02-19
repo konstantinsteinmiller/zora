@@ -25,7 +25,7 @@ export default () => {
     const playerModelPosition = state.player.getPosition()
 
     state.player.setRotation(getXRotation())
-    if (state.isLookBack) {
+    if (state.controls.lookBack) {
       state.camera.quaternion.slerp(playerModelQuaternion, 0.3)
       /* define distance to playerModel position 1 up and 2 away */
       const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
@@ -48,12 +48,12 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh = state.input.current.mouseXDelta / innerWidth
+    let xh = state.controls.mouse.current.mouseXDelta / innerWidth
 
-    if (state.input.keysMap.left || state.input.keysMap.right) {
-      xh = state.input.keysMap.left ? -1.5 / innerWidth : 1.5 / innerWidth
+    if (state.controls.left || state.controls.right) {
+      xh = state.controls.left ? -1.5 / innerWidth : 1.5 / innerWidth
     } else {
-      xh = state.input.current.mouseXDelta / innerWidth
+      xh = state.controls.mouse.current.mouseXDelta / innerWidth
     }
 
     phi += -xh * phiSpeed
@@ -65,8 +65,8 @@ export default () => {
   }
 
   const updateTranslation = (timeElapsedInS: number) => {
-    const forwardVelocity = (state.input.keysMap.forward ? 1 : 0) + (state.input.keysMap.backward ? -1 : 0)
-    const strafeVelocity = (state.input.keysMap.left ? 1 : 0) + (state.input.keysMap.right ? -1 : 0)
+    const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
+    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
 
     const qx = new Quaternion()
     qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
@@ -85,11 +85,11 @@ export default () => {
   }
 
   const updateRotation = () => {
-    const xh = state.input.current.mouseXDelta / innerWidth
-    const yh = state.input.current.mouseYDelta / innerHeight
+    const xh = state.controls.mouse.current.mouseXDelta / innerWidth
+    const yh = state.controls.mouse.current.mouseYDelta / innerHeight
 
     phi += -xh * phiSpeed
-    theta = clamp(theta + (state.isLookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
+    theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
     const qx = new THREE.Quaternion()
     qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), phi)

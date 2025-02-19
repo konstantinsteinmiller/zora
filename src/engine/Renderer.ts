@@ -71,9 +71,11 @@ export default () => {
   }
 
   const onWindowResize = () => {
-    camera.aspect = window.innerWidth / window.innerHeight
-    camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    const aspect = innerWidth / innerHeight
+    state.camera.aspect = aspect
+    state.camera?.updateProjectionMatrix()
+    renderer.setSize(innerWidth, innerHeight)
+    state.triggerEvent('renderer.resize')
   }
 
   window.addEventListener('resize', onWindowResize, false)

@@ -22,6 +22,23 @@ export default () => {
         depthWrite: false,
       })
     )
+
+    // const originalScale = crosshairSprite.scale.clone()
+    state.addEvent('renderer.resize', () => {
+      const aspect = innerWidth / innerHeight
+      state.uiCamera.left = -aspect
+      state.uiCamera.right = aspect
+      state.uiCamera.top = 1
+      state.uiCamera.bottom = -1
+      state.uiCamera.updateProjectionMatrix()
+
+      // Scale crosshair based on screen size
+      const scaleFactor = Math.min(innerWidth, innerHeight) * 0.0015 * 0.15
+      crosshairSprite.scale.set(scaleFactor, scaleFactor, 1)
+
+      crosshairSprite.position.set(0, 0, -10)
+      crosshairSprite.center.set(0.5, 0.5)
+    })
     crosshairSprite.scale.set(0.15, 0.15, 1)
     crosshairSprite.position.set(0, 0, -10)
     crosshairSprite.center.set(0.5, 0.5)
@@ -69,10 +86,14 @@ export default () => {
 
   const { fireRaycaster } = SpellFire()
 
+  let canFire = false
+  let forcedSpellRelease = false
+
   /* release shot if attack button is released */
   state.addEvent('input.attack1.up', () => {
-    state.canFire && fireRaycaster(rotationSpeed)
-    state.canFire = false
+    canFire && fireRaycaster(rotationSpeed)
+    forcedSpellRelease = false
+    canFire = false
     crosshairDots.visible = false
     crosshairStar.visible = false
     rotationSpeed = INITIAL_ROTATION_SPEED
@@ -80,33 +101,37 @@ export default () => {
 
   state.addEvent('renderer.update', (deltaInS: number) => {
     if (!state.player.currentSpell) return
-    if (state.input.keysMap.leftMouse) {
-      crosshairRotatingGroup.rotation.z -= rotationSpeed
-      const rotationIncrease = 0.006 * state.player.currentSpell.speed * deltaInS
-      rotationSpeed += rotationIncrease
-      rotationSpeed = clamp(rotationSpeed, 0.0000001, 0.08)
 
-      if (rotationSpeed > 0.03) {
-        state.canFire = true
-      }
-      if (rotationSpeed < 0.06) {
-        crosshairStar.material.color.lerpColors(startColor, endColor, rotationSpeed * 15)
-        crosshairDots.visible = false
-        crosshairStar.visible = true
-      } else if (rotationSpeed < 0.08) {
-        /* switch to dots and blueish color */
-        crosshairDots.material.color.lerpColors(new Color(0xd4dcfc), new Color(0x3d8dff), rotationSpeed * 12)
-        crosshairStar.visible = false
-        crosshairDots.visible = true
-      } else {
-        /* spell overload -> forced release the charged shot and receive damage */
-        fireRaycaster(rotationSpeed)
-        state.canFire = false
-        state.input.keysMap.leftMouse = false
-        crosshairDots.visible = false
-        crosshairStar.visible = false
-        rotationSpeed = INITIAL_ROTATION_SPEED
-      }
+    if (!state.controls.attack || forcedSpellRelease) return
+    /* while attack button pressed => rotate crosshair */
+
+    crosshairRotatingGroup.rotation.z -= rotationSpeed
+    const rotationIncrease = 0.006 * state.player.currentSpell.speed * deltaInS
+    rotationSpeed += rotationIncrease
+    rotationSpeed = clamp(rotationSpeed, 0.0000001, 0.08)
+
+    if (rotationSpeed > 0.03) {
+      canFire = true
+    }
+    if (rotationSpeed < 0.06) {
+      crosshairStar.material.color.lerpColors(startColor, endColor, rotationSpeed * 15)
+      crosshairDots.visible = false
+      crosshairStar.visible = true
+    } else if (rotationSpeed < 0.08) {
+      /* switch to dots and blueish color */
+      crosshairDots.material.color.lerpColors(new Color(0xd4dcfc), new Color(0x3d8dff), rotationSpeed * 12)
+      crosshairStar.visible = false
+      crosshairDots.visible = true
+    } else {
+      /* spell overload -> forced release of the charged shot and receive damage */
+      fireRaycaster(rotationSpeed)
+      canFire = false
+      forcedSpellRelease = true
+      state.controls.previous.attack = false
+      state.controls.attack = false
+      crosshairDots.visible = false
+      crosshairStar.visible = false
+      rotationSpeed = INITIAL_ROTATION_SPEED
     }
   })
 }

@@ -10,6 +10,7 @@ import RunBackState from '@/states/RunBackState.ts'
 import CastState from '@/states/CastState.ts'
 import JumpState from '@/states/JumpState.ts'
 import FlyState from '@/states/FlyState.ts'
+import HitState from '@/states/HitState.ts'
 import state from '@/states/GlobalState'
 /* the ...State imports are needed for the eval down below */
 

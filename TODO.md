@@ -10,6 +10,7 @@
     - [x] randomly moving with collision and gravity
     - [x] facing target while moving and runs backwards if target is behind him
     - [ ] smooth out path following with bezier curve
+    - [ ] pathfinding and flying to off mesh islands
     - [ ] fleeing
     - [ ] hiding behind
     - [ ] cover while charging
@@ -29,10 +30,12 @@
   - [x] Endurance bar
     - [x] Flying mechanic, jump -> fly
   - [ ] Skill Box
+  - [ ] Loading Screen
 - [ ] Main Menu
   - [ ] Start Game
   - [ ] Load Game / Continue
   - [ ] Options
+    - [ ] Keybindings change
   - [ ] Exit
 - [ ] World
   - [x] Water Shader
@@ -64,6 +67,7 @@
   - [x] idle, run, cast, jump
   - [x] Flying mechanic, jump -> fly
     - [x] spend stamina for flying
+- [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse
 - [x] Third person camera with Keyboard and Mouse

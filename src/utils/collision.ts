@@ -1,7 +1,23 @@
 import { FLY_IMPULSE, FLY_COST, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
-import { Vector3 } from 'three'
+import { ArrowHelper, Vector3 } from 'three'
+
+const calcUpVector = (entity: any, deltaS: number) => {
+  const isFlying = entity.stateMachine.currentState.name === 'fly'
+  let flyImpulse = entity.appliedFlyImpulse
+
+  if (!isFlying || !flyImpulse) return 0
+
+  if (flyImpulse === FLY_IMPULSE && entity.endurance >= FLY_COST) {
+    entity.dealEnduranceDamage(entity, FLY_COST)
+  } else if (flyImpulse === FLY_IMPULSE) {
+    flyImpulse = MIN_FLY_IMPULSE * 0.1
+  }
+  flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
+  entity.appliedFlyImpulse = flyImpulse
+  return flyImpulse
+}
 
 export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS: number): Rapier.Vector3 => {
   if (!entity.rigidBody) return new Rapier.Vector3(0, 0, 0)
@@ -15,28 +31,25 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     .applyQuaternion(meshQuat)
     .normalize()
     .multiplyScalar(velocity.x * deltaS)
-  const up = new Vector3(0, 1, 0).applyQuaternion(meshQuat).normalize()
 
   const rigidPos = entity.rigidBody.translation()
-  const isFlying = entity.stateMachine.currentState.name === 'fly'
-  let flyImpulse = state?.input?.keysMap.appliedFlyImpulse
 
-  if (isFlying && flyImpulse) {
-    if (flyImpulse === FLY_IMPULSE && entity.endurance >= FLY_COST) {
-      entity.dealEnduranceDamage(entity, FLY_COST)
-    } else if (flyImpulse === FLY_IMPULSE) {
-      flyImpulse = MIN_FLY_IMPULSE * 0.1
-    }
-    flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
-    up.y = flyImpulse
-    state.input.keysMap.appliedFlyImpulse = flyImpulse
-  }
-  const directionUp: any = !isFlying ? 0 : up.y
+  const directionUp: any = calcUpVector(entity, deltaS)
 
-  const movementVector = new Rapier.Vector3(forward.x + sideways.x, directionUp, forward.z + sideways.z)
+  const direction: Vector3 = new Vector3(forward.x + sideways.x, directionUp, forward.z + sideways.z)
+  const directionN: Vector3 = direction.clone().normalize()
+
+  const movementVector = new Rapier.Vector3(direction.x, direction.y, direction.z)
   movementVector.x += rigidPos.x
   movementVector.y += rigidPos.y
   movementVector.z += rigidPos.z
+  if (state.enableDebug) {
+    const arrowHelper = new ArrowHelper(directionN, rigidPos, 2, 0xff1100, 0.6, 0.3)
+    state.scene.add(arrowHelper)
+    setTimeout(() => {
+      state.scene.remove(arrowHelper)
+    }, 5)
+  }
 
   /* shape cast into movementVector direction to find obstacles */
   const shapePos = { x: movementVector.x, y: movementVector.y + entity.halfHeight, z: movementVector.z }

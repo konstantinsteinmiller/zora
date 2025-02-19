@@ -19,7 +19,7 @@ export default () => {
   state.uiCamera.right = aspectRatio
   state.uiCamera.top = 1
   state.uiCamera.bottom = -1
-  state.uiCamera.updateProjectionMatrix()
+  state.uiCamera?.updateProjectionMatrix()
 
   ThirdPersonCamera()
   FirstPersonCamera()

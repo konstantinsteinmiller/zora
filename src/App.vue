@@ -40,4 +40,5 @@ body
   place-items: center
   min-width: 320px
   min-height: 100vh
+  overflow: hidden
 </style>

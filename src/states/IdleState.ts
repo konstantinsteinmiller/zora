@@ -1,4 +1,5 @@
 import State, { isMovingEntity, transitionTo } from '@/states/State'
+import state from '@/states/GlobalState'
 
 export default class IdleState extends State {
   constructor(parent: any) {
@@ -25,17 +26,13 @@ export default class IdleState extends State {
   }
   exit() {}
   update(_: any, input: any) {
-    // if (input.keysMap.leftMouse) {
-    //   this.parent.setState('cast')
-    //   return
-    // }
     if (isMovingEntity(this.parent)) return
 
     // if (transitionTo('cast', this.parent)) return
     if (transitionTo('jump', this.parent)) return
-    if (input.keysMap.forward) {
+    if (input.forward) {
       this.parent.setState('walk')
-    } else if (input.keysMap.backward) {
+    } else if (input.backward) {
       this.parent.setState('walk-back')
     }
   }

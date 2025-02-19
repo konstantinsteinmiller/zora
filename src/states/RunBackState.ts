@@ -1,6 +1,4 @@
 import State, { isMovingEntity, transitionTo } from '@/states/State'
-import state from '@/states/GlobalState.ts'
-import { transition } from 'three/examples/jsm/tsl/display/TransitionNode'
 
 export default class RunBackState extends State {
   constructor(parent: any) {
