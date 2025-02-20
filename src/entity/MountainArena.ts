@@ -10,7 +10,7 @@ export default async () => {
   state.mountainArena = new Object3D()
   const { loadMesh } = AssetLoader()
   loadMesh(
-    '/worlds/arenas/mountain-arena.fbx',
+    'worlds/arenas/mountain-arena.fbx',
     state.mountainArena,
     35 /*, (scene: Object3D) => {
     console.log('callback: ')

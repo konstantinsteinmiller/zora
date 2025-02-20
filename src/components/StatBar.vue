@@ -82,9 +82,11 @@ const updateCallback = (deltaS: number) => {
     condition = target !== endurance
   }
 
+  /* this branch executed once if damage or heal happens */
   if (condition) {
     current = typeSelectionList[1]
     target = typeSelectionList[0]
+    // console.log('current: ', current, target, target - current, Math.abs(target - current))
     totalDist = Math.abs(target - current)
     // console.log('targetHp, current: ', target, current)
     owner.value = {
@@ -93,9 +95,12 @@ const updateCallback = (deltaS: number) => {
       [typeSelectionList[5]]: typeSelectionList[2],
     }
   }
+
   if (counter % 8 === 0 && current !== target) {
-    const dist: number = +clamp(Math.abs(target - current), 0.1, 100).toFixed(1)
+    const absDist = Math.abs(target - current)
+    const dist: number = +clamp(absDist, 0.1, typeSelectionList[2]).toFixed(1)
     const delta = +clamp(deltaS * (totalDist / dist) * ANIMATION_SPEED, 0.01, 1).toFixed(3)
+
     if (dist <= 1) {
       current = target
       owner.value[typeSelectionList[3]] = target

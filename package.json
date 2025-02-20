@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
+    "build-github": " vite build --base=/battler/",
+    "validated-build": "vue-tsc -b && vite build",
+    "deploy": "vite build && surge dist/ --domain battler.surge.sh",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -8,7 +8,7 @@ export default () => {
   /* Water tutorial */
   const waterResolution = { size: 256 }
   const water = Water({ resolution: waterResolution.size, environmentMap: state.scene.environment })
-  const sandTexture: any = new TextureLoader().load('/images/sand/ocean_floor.png')
+  const sandTexture: any = new TextureLoader().load('images/sand/ocean_floor.png')
   const ground = Ground({ texture: sandTexture })
   setupUI({ waterResolution, water, ground })
 }

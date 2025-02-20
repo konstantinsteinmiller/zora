@@ -13,7 +13,7 @@ export default async () => {
 
   state.waterArena = new Object3D()
   const { loadMesh } = AssetLoader()
-  await loadMesh('/worlds/arenas/water-arena.fbx', state.waterArena, 1)
+  await loadMesh('worlds/arenas/water-arena.fbx', state.waterArena, 1)
 
   // state.waterArena.position.set(2.98, -0.06, -0.02)
   if (state.enableWater) {
@@ -38,7 +38,7 @@ export default async () => {
 
   const pathfinder: any = new Pathfinding()
   pathfinder.pathfindingHelper = new PathfindingHelper()
-  loadNavMesh('/worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
+  loadNavMesh('worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
     const geo = navMesh.clone().geometry.clone()
     geo.rotateX(-Math.PI / 2)
 

@@ -10,6 +10,7 @@ const calcUpVector = (entity: any, deltaS: number) => {
   if (!isFlying || !flyImpulse) return 0
 
   if (flyImpulse === FLY_IMPULSE && entity.endurance >= FLY_COST) {
+    entity.groundedTime.lastTimeNotGrounded = Date.now()
     entity.dealEnduranceDamage(entity, FLY_COST)
   } else if (flyImpulse === FLY_IMPULSE) {
     flyImpulse = MIN_FLY_IMPULSE * 0.1
@@ -96,10 +97,10 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   // 🔹 Gravity & Ground Detection
   /* implement ray cast down to detect ground and only apply
    * gravity when not grounded */
-  entity.isGrounded = false
   const groundHit = state.physics.castShape(rigidPos, shapeRot, new Rapier.Vector3(0, -1, 0), new Capsule(0.01, 0.1), targetDistance, entity.halfHeight, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
   if (groundHit) {
     entity.isGrounded = true
+    entity.groundedTime.value = (Date.now() - entity.groundedTime.lastTimeNotGrounded) / 1000
     const point = groundHit.witness1
     const d = +(rigidPos.y - point.y).toFixed(3)
     if (d < entity.halfHeight - 0.05 && !adjustedWallHit) {
@@ -108,6 +109,11 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   } else {
     // Apply gravity only if not grounded
     movementVector.y += -4 * deltaS
+    entity.isGrounded = false
+    if (entity.stateMachine.currentState.name === 'fly') {
+      entity.groundedTime.lastTimeNotGrounded = Date.now()
+      entity.groundedTime.value = 0
+    }
   }
 
   return movementVector

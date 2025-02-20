@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { baseStats, characterAnimationNamesList } from '@/enums/constants.ts'
 import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
@@ -11,28 +11,7 @@ import { calcRapierMovementVector } from '@/utils/collision'
 
 let player: any = null
 
-const baseStats: any = {
-  name: 'player',
-  hp: 33,
-  previousHp: 33,
-  maxHp: 100,
-  mp: 77,
-  previousMp: 77,
-  maxMp: 100,
-  endurance: 100,
-  previousEndurance: 100,
-  maxEndurance: 100,
-  enduranceRegen: 1,
-  currentSpell: {
-    name: 'shot',
-    speed: 1,
-    damage: 25,
-  },
-  isGrounded: false,
-  appliedFlyImpulse: 0,
-}
-
-export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
+export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
   if (player !== null) {
     return player
   }
@@ -43,7 +22,8 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
 
   player = {
     ...new Object3D(),
-    ...(stats ? stats : baseStats),
+    ...baseStats,
+    ...stats,
     ...controllerUtils(),
     ...controllerFunctions(),
     mesh: mesh,
@@ -154,7 +134,7 @@ export default ({ modelPath, stats, startPosition, modelHeight = 1.8 }: { modelP
     }
     stateMachine.update(deltaS, state.controls)
 
-    player.updateEndurance(player, deltaS)
+    player.updateEndurance(player, deltaS, elapsedTimeInS)
 
     const { _R, velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
 

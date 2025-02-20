@@ -16,14 +16,20 @@ export default async () => {
   state.uiScene = new THREE.Scene()
 
   CharacterController({
-    modelPath: '/models/thunder-fairy/thunder_fairy_1.fbx',
-    stats: undefined,
+    modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
+    stats: {
+      name: 'player',
+      hp: 33,
+      previousHp: 33,
+      mp: 77,
+      previousMp: 77,
+    },
     startPosition: new Vector3(10.5, 0, 5),
     modelHeight: 1.8,
   })
   EnemyController({
-    modelPath: '/models/fairy/nature_fairy_1.fbx',
-    stats: undefined,
+    modelPath: 'models/fairy/nature_fairy_1.fbx',
+    stats: { name: 'enemy' },
     startPosition: new Vector3(10.5, 0, 9),
     modelHeight: 1.8,
   })

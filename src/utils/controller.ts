@@ -49,14 +49,13 @@ export const controllerFunctions = () => {
       if (!didDamage && elapsedTimeInS % TIME_INTERVAL < 1.0) {
         this.dealDamage(target, -23)
         this.dealMpDamage(target, 12)
-        // this.dealEnduranceDamage(target, 16)
         didDamage = true
       } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
         didDamage = false
       }
     },
     updateEndurance(target: any, deltaS: number) {
-      if (target.isGrounded) {
+      if (target.stateMachine.currentState.name !== 'fly' && target.groundedTime.value > 0.5) {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
     },

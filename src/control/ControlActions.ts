@@ -88,6 +88,14 @@ export default (defaultControlsConfig: EnumStringToList) => {
       },
       onDeactivate: (entity: any) => {},
     },
+    hit: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        if (hasChanged) {
+          entity.stateMachine.setState('hit')
+        }
+      },
+      onDeactivate: (entity: any) => {},
+    },
     sprint: {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},

@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { baseStats, characterAnimationNamesList } from '@/enums/constants.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
@@ -8,28 +8,7 @@ import { moveToRandomPosition } from '@/utils/navigation.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Vector3 } from 'three'
 
-const baseStats: any = {
-  name: 'enemy',
-  hp: 100,
-  previousHp: 100,
-  maxHp: 100,
-  mp: 100,
-  previousMp: 100,
-  maxMp: 100,
-  endurance: 100,
-  previousEndurance: 100,
-  maxEndurance: 100,
-  enduranceRegen: 1,
-  currentSpell: {
-    name: 'shot',
-    speed: 1,
-    damage: 25,
-  },
-  isGrounded: false,
-  appliedFlyImpulse: 0,
-}
-
-export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
+export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
@@ -37,7 +16,8 @@ export default ({ modelPath, stats, startPosition, modelHeight }: { modelPath: s
   const enemy = {
     ...new Object3D(),
     position: startPosition.clone(),
-    ...(stats ? stats : baseStats),
+    ...baseStats,
+    ...stats,
     ...controllerUtils(),
     ...controllerFunctions,
     mesh,

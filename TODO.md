@@ -29,6 +29,7 @@
   - [x] Mana bar
   - [x] Endurance bar
     - [x] Flying mechanic, jump -> fly
+    - [x] fix previous endurance bug when regen overwriting previous damage
   - [ ] Skill Box
   - [ ] Loading Screen
 - [ ] Main Menu

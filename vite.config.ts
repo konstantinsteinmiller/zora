@@ -6,13 +6,18 @@ import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // base: '/',
+  base: '/',
   plugins: [vue(), glsl(), ReactivityTransform()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '#': fileURLToPath(new URL('./src/assets', import.meta.url)),
       '@/': fileURLToPath(new URL('./src/', import.meta.url)),
+    },
+  },
+  server: {
+    headers: {
+      'Permissions-Policy': '',
     },
   },
 })

@@ -1,5 +1,4 @@
 import State, { isMovingEntity, transitionTo } from '@/states/State'
-import state from '@/states/GlobalState'
 
 export default class IdleState extends State {
   constructor(parent: any) {

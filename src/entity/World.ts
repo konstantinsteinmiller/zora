@@ -1,5 +1,4 @@
 import WaterArena from '@/entity/WaterArena.ts'
-import MountainArena from '@/entity/MountainArena.ts'
 import type { Box3, Object3D } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
@@ -17,26 +16,26 @@ export default () => {
     const mapLoader = new THREE.TextureLoader()
     const maxAnisotropy = state.renderer.capabilities.getMaxAnisotropy()
 
-    const metalMap = mapLoader.load(`worlds/${name}metallic.png`)
+    const metalMap = mapLoader.load(`worlds/testworld/${name}metallic.png`)
     metalMap.anisotropy = maxAnisotropy
     metalMap.wrapS = THREE.RepeatWrapping
     metalMap.wrapT = THREE.RepeatWrapping
     metalMap.repeat.set(tiling, tiling)
 
-    const albedo = mapLoader.load(`worlds/${name}albedo.png`)
+    const albedo = mapLoader.load(`worlds/testworld/${name}albedo.png`)
     albedo.anisotropy = maxAnisotropy
     albedo.wrapS = THREE.RepeatWrapping
     albedo.wrapT = THREE.RepeatWrapping
     albedo.repeat.set(tiling, tiling)
     albedo.encoding = THREE.sRGBEncoding
 
-    const normalMap = mapLoader.load(`worlds/${name}normal.png`)
+    const normalMap = mapLoader.load(`worlds/testworld/${name}normal.png`)
     normalMap.anisotropy = maxAnisotropy
     normalMap.wrapS = THREE.RepeatWrapping
     normalMap.wrapT = THREE.RepeatWrapping
     normalMap.repeat.set(tiling, tiling)
 
-    const roughnessMap = mapLoader.load(`worlds/${name}roughness.png`)
+    const roughnessMap = mapLoader.load(`worlds/testworld/${name}roughness.png`)
     roughnessMap.anisotropy = maxAnisotropy
     roughnessMap.wrapS = THREE.RepeatWrapping
     roughnessMap.wrapT = THREE.RepeatWrapping
@@ -54,7 +53,7 @@ export default () => {
 
   const createSkybox = () => {
     const loader = new THREE.CubeTextureLoader()
-    const environmentMap = loader.load(['/images/skybox/px.png', '/images/skybox/nx.png', '/images/skybox/py.png', '/images/skybox/ny.png', '/images/skybox/pz.png', '/images/skybox/nz.png'])
+    const environmentMap = loader.load(['images/skybox/px.png', 'images/skybox/nx.png', 'images/skybox/py.png', 'images/skybox/ny.png', 'images/skybox/pz.png', 'images/skybox/nz.png'])
     environmentMap.encoding = THREE.sRGBEncoding
     state.scene.background = environmentMap
     state.scene.environment = environmentMap
