@@ -2,7 +2,7 @@
 
 a Zanzarah-like battle game in a fantasy arena. Created in Three.js with Rapier.js
 
-#### you can try the current version here: [demo](https://konstantinsteinmiller.github.io/battler/#/game) but first load is slow because of the big models (>80mb total)
+#### you can try the current version here: [demo](https://konstantinsteinmiller.github.io/battler/#/game) but first load is slow because of the big models (>40mb total)
 
 expected features:
 - 3D arena

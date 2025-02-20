@@ -1,4 +1,4 @@
-import WaterArena from '@/entity/WaterArena.ts'
+import WaterArena from '@/entity/levels/water-arena/WaterArena.ts'
 import type { Box3, Object3D } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
@@ -41,14 +41,12 @@ export default () => {
     roughnessMap.wrapT = THREE.RepeatWrapping
     roughnessMap.repeat.set(tiling, tiling)
 
-    const material = new THREE.MeshStandardMaterial({
+    return new THREE.MeshStandardMaterial({
       metalnessMap: metalMap,
       map: albedo,
       normalMap: normalMap,
       roughnessMap: roughnessMap,
     })
-
-    return material
   }
 
   const createSkybox = () => {
@@ -59,7 +57,7 @@ export default () => {
     state.scene.environment = environmentMap
   }
 
-  const createWorldMesh = () => {
+  const createWorldMesh = (): void => {
     /* initial World plane */
     const mapLoader = new THREE.TextureLoader()
     const maxAnisotropy = state.renderer.capabilities.getMaxAnisotropy()

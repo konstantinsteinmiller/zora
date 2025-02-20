@@ -38,7 +38,7 @@ const globalState = () => {
           return
         }
         event.callback?.()
-        console.log('XXEvent triggered:', eventName)
+        // console.log('XXEvent triggered:', eventName)
       })
     },
     addEvent: (eventName: string, callback: () => string, cleanup?: () => any, sourceName?: string) => {
@@ -52,18 +52,18 @@ const globalState = () => {
         cleanup,
         sourceName,
       })
-      console.log('XXEvent added:', eventName, 'with ', uuid)
+      // console.log('XXEvent added:', eventName, 'with ', uuid)
       return uuid
     },
     removeEvent: (eventName: string, uuid: string) => {
       const event = state.eventsMap[eventName]
       event.cleanup?.()
       state.eventsMap[eventName] = state.eventsMap[eventName].filter((e: any) => e.uuid !== uuid)
-      console.log('XXEvent removed:', eventName, 'with ', uuid)
+      // console.log('XXEvent removed:', eventName, 'with ', uuid)
     },
     eventsMap: {},
   }
-  console.log('XXstate: ', state)
+  // console.log('XXstate: ', state)
 
   /* init this game state with defaults */
   state.enableWater = true

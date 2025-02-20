@@ -58,6 +58,70 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
 let axesHelper: any
 let addedAxesHelper = false
 
+const findPathBetweenNavIslands = (path: any[], startPos: Vector3, targetPos: Vector3, startGroupId: number) => {
+  /* handle islands */
+  const pathfinder = state.level.pathfinder
+  const zone = state.level.zone
+  const targetGroupId = pathfinder.getGroup(zone, targetPos)
+  if (!path && startGroupId !== targetGroupId) {
+    // No direct path? Use portal points
+    const groupIdsList = [startGroupId, targetGroupId]
+    const closestPortal: any = {
+      position: {},
+      distance: -1,
+    }
+    pathfinder.customPortals.forEach((portal: any) => {
+      const portalA = portal[0]
+      const portalB = portal[1]
+      const portalAPos = new Vector3(portalA.x, portalA.y, portalA.z)
+      const distance = startPos.distanceTo(portalAPos)
+      const hasCorrectGroupIds = groupIdsList.includes(portalA.groupId) && groupIdsList.includes(portalB.groupId)
+
+      /* overwrite further away portal points */
+      if ((distance < closestPortal.distance || closestPortal.distance === -1) && hasCorrectGroupIds) {
+        closestPortal.position = portalAPos
+        closestPortal.exitPosition = new Vector3(portalB.x, portalB.y, portalB.z)
+        closestPortal.distance = distance
+      }
+    })
+    if (closestPortal.distance === -1) return []
+
+    path = pathfinder.findPath(startPos, closestPortal.position, zone, startGroupId) || []
+    path.push(closestPortal.exitPosition)
+    /* path = g1pos1 -> g1pos2 -> closestPortal.position | closestPortal.exitPosition -> g2pos1 -> ...*/
+    const newGroup = pathfinder.getGroup(zone, closestPortal.exitPosition)
+    const newPath = pathfinder.findPath(closestPortal.exitPosition, targetPos, zone, newGroup) || []
+    path = path.concat(newPath)
+  }
+  return path
+}
+
+const getRandomIslandGroupId = () => {
+  const pathfinder = state.level.pathfinder
+  const zone = state.level.zone
+  const islandsMap: { totalWeights: number; totalNodes: number } = {
+    totalWeights: 0,
+    totalNodes: 0,
+  }
+
+  pathfinder.zones[zone].groups.forEach((group: any[]) => {
+    islandsMap.totalNodes += group.length
+  })
+
+  const islandWeightsList: number[] = []
+  pathfinder.zones[zone].groups.forEach((group: any[]) => {
+    const weight: number = islandsMap.totalNodes > 0 ? +(group.length / islandsMap.totalNodes).toFixed(3) : 0
+    islandsMap.totalWeights += weight
+    islandsMap.totalWeights = +islandsMap.totalWeights.toFixed(3)
+    islandWeightsList.push(islandsMap.totalWeights)
+  })
+
+  const random = Math.random()
+  const randomTargetGroupId = islandWeightsList.findIndex((weight: number) => random < weight)
+  // randomTargetGroupId = 5
+  return randomTargetGroupId
+}
+
 export const moveToRandomPosition = (entity: any, targetToFace: any) => {
   if (!addedAxesHelper && state.enbaleDebug) {
     axesHelper = new AxesHelper(2)
@@ -68,12 +132,15 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
   const pathfinder = state.level.pathfinder
   const zone = state.level.zone
   const pos = entity.position.clone()
-  const groupId = pathfinder.getGroup(zone, pos)
+  // const groupId = pathfinder.getGroup(zone, pos)
   const radius = 25
   let randomTargetPosition = null
   try {
-    randomTargetPosition = pathfinder.getRandomNode(zone, groupId, pos, radius)
-  } catch (e) {}
+    const targetGroupId = getRandomIslandGroupId()
+    randomTargetPosition = pathfinder.getRandomNode(zone, targetGroupId, pos, radius)
+  } catch (e: any) {
+    // console.warn('no random position found: ', e)
+  }
   if (!randomTargetPosition) {
     // console.warn('no random position found: ', randomTargetPosition)
     return
@@ -98,7 +165,9 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
         const flatAgentPos = agentPos.clone().setY(0)
         const flatNextPosition = nextPosition.clone().setY(0)
         distance = flatAgentPos.distanceTo(flatNextPosition)
-      } catch (e) {}
+      } catch (e: any) {
+        // console.warn('distance error: ', e)
+      }
       if (!distance) return
       const velocity = nextPosition.clone().sub(agentPos)
 
@@ -153,17 +222,25 @@ export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75
   // Find path from A to B.
   const pathfinder = state.level.pathfinder
   const meshPosition = entity.mesh.position.clone()
+  const { zone } = state.waterArena
 
-  const groupId = pathfinder.getGroup(state.level.zone, meshPosition)
-  let closest = pathfinder.getClosestNode(meshPosition, state.level.zone, groupId, true)
+  const startGroupId = pathfinder.getGroup(zone, meshPosition)
+  let closest = pathfinder.getClosestNode(meshPosition, zone, startGroupId, true)
 
   if (closest === null) {
-    closest = findClosestPointInCircle(meshPosition)
+    try {
+      closest = findClosestPointInCircle(meshPosition)
+    } catch (e: any) {
+      closest = new Vector3().copy(pathfinder.orientationPosition)
+    }
     if (closest === null) return
   }
 
   const startPos = closest.centroid
-  const path = pathfinder.findPath(startPos, targetPos, state.waterArena.zone, groupId)
+  let path = pathfinder.findPath(startPos, targetPos, zone, startGroupId)
+
+  path = findPathBetweenNavIslands(path, startPos, targetPos, startGroupId)
+
   displayPath(path, startPos, targetPos)
   return path
 }

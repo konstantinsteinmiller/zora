@@ -106,8 +106,13 @@ export default (defaultControlsConfig: EnumStringToList) => {
         if (hasChanged) {
           state.isPaused = !state.isPaused
           /* print the current position of the player mesh and save it as Vector3 to clipboard */
-          console.log('pos: ', state.player.mesh.position)
+          const pos = state.player.mesh.position
+          const groupId = state.level.pathfinder.getGroup(state.level.zone, pos)
+          const closest = state.level.pathfinder.getClosestNode(pos, state.level.zone, groupId, true)
+          console.log('pos: ', pos, JSON.stringify(closest, undefined, 2), groupId)
           navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
+
+          window.onceDebug = false
         }
       },
       onDeactivate: (entity: any) => {},

@@ -1,8 +1,9 @@
+import state from '@/states/GlobalState.ts'
+import { customPortals, orientationPosition } from '@/entity/levels/water-arena/config.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
 import Water from '@/entity/water/Water.ts'
 import { loadNavMesh } from '@/utils/navigation.ts'
-import { Color, Mesh, MeshBasicMaterial, Object3D, TextureLoader, Vector3 } from 'three'
-import state from '@/states/GlobalState'
+import { Mesh, MeshBasicMaterial, Object3D } from 'three'
 import { createCollidersForGraph } from '@/utils/physics.ts'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
@@ -45,20 +46,26 @@ export default async () => {
     // state.scene.add(navMesh)
     state.waterArena.zone = 'water-arena'
     pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
+    pathfinder.customPortals = customPortals
+    pathfinder.orientationPosition = orientationPosition
+    // console.log('pathfinder: ', pathfinder)
+
     state.waterArena.pathfinder = pathfinder
 
-    const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
-    state.scene.add(wiredNavMesh)
-    const wiredFillMesh = new Mesh(
-      geo,
-      new MeshBasicMaterial({
-        color: 0xffffff,
-        opacity: 0.5,
-        transparent: true,
-      })
-    )
-    state.scene.add(wiredFillMesh)
-    state.scene.add(pathfinder.pathfindingHelper)
+    if (state.enableDebug || true) {
+      const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
+      state.scene.add(wiredNavMesh)
+      const wiredFillMesh = new Mesh(
+        geo,
+        new MeshBasicMaterial({
+          color: 0xffffff,
+          opacity: 0.5,
+          transparent: true,
+        })
+      )
+      state.scene.add(wiredFillMesh)
+      state.scene.add(pathfinder.pathfindingHelper)
+    }
   })
 
   createCollidersForGraph(state.waterArena, 'fixed')
