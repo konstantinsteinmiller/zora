@@ -11,11 +11,13 @@ const calcUpVector = (entity: any, deltaS: number) => {
 
   if (flyImpulse === FLY_IMPULSE && entity.endurance >= FLY_COST) {
     entity.groundedTime.lastTimeNotGrounded = Date.now()
-    entity.dealEnduranceDamage(entity, FLY_COST)
+    entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
   } else if (flyImpulse === FLY_IMPULSE) {
     flyImpulse = MIN_FLY_IMPULSE * 0.1
   }
-  flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
+  const decayFactor = Math.exp(-1 * deltaS) // Exponential decay
+  flyImpulse *= decayFactor
+  // flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
   entity.appliedFlyImpulse = flyImpulse
   return flyImpulse
 }

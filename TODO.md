@@ -12,9 +12,11 @@
     - [ ] smooth out path following with bezier curve
     - [ ] navigation to off navmesh islands
       - [x] pathfinding
-      - [ ] flying to 
+      - [ ] flying to islands
     - [ ] fleeing
     - [ ] hiding behind
+    - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
+    - [ ] prevent self hurting
     - [ ] cover while charging
 - [ ] Inventory
   - [ ] Drag and Drop

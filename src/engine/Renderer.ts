@@ -1,4 +1,5 @@
 import camera from '@/engine/Camera.ts'
+import { Clock } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import state from '@/states/GlobalState'
@@ -11,7 +12,7 @@ export default () => {
     return renderer
   }
 
-  let previousTickTime: number | null = null
+  const previousTickTime: number | null = null
 
   const canvas: any = document.querySelector('canvas')
   renderer = new THREE.WebGLRenderer({
@@ -19,7 +20,7 @@ export default () => {
     antialias: true,
   })
 
-  renderer.clock = new THREE.Clock()
+  renderer.clock = new Clock()
 
   renderer.setPixelRatio(4)
   renderer.shadowMap.enabled = true
@@ -31,43 +32,36 @@ export default () => {
   renderer.toneMapping = THREE.CineonToneMapping
   renderer.toneMappingExposure = 1.75
 
-  previousTickTime = null
+  const FIXED_TIME_STEP = 1 / 60 // 60 FPS baseline
+  let accumulatedTime = 0
 
   const tick = () => {
-    requestAnimationFrame((time: number) => {
-      if (previousTickTime === null) {
-        previousTickTime = time
-      }
-      const elapsedTime = renderer.clock.getElapsedTime()
+    const deltaS = renderer.clock.getDelta()
+    accumulatedTime += deltaS
 
-      const elapsedTimeInMs = time - previousTickTime
-      const elapsedTimeInS = elapsedTimeInMs * 0.001
+    if (state.isPaused) {
+      requestAnimationFrame(tick)
+      return
+    }
 
-      if (state.isPaused) {
-        previousTickTime = time
-        tick()
-        return
-      }
-
+    while (accumulatedTime >= FIXED_TIME_STEP) {
       state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
-        callback?.(elapsedTimeInS, elapsedTime)
+        callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
       })
-      // this.orbitControls?.update()
+      accumulatedTime -= FIXED_TIME_STEP
+    }
 
-      /* auto clear here to be able to render uiScene on top
-       * of the animated object scene */
-      renderer.autoClear = true
-      renderer.render(state.scene, state.camera)
-      renderer.autoClear = false
-      if (state.showCrosshair) {
-        renderer.clearDepth()
-        renderer.render(state.uiScene, state.uiCamera)
-      }
+    /* auto clear here to be able to render uiScene on top
+     * of the animated object scene */
+    renderer.autoClear = true
+    renderer.render(state.scene, state.camera)
+    renderer.autoClear = false
+    if (state.showCrosshair) {
+      renderer.clearDepth()
+      renderer.render(state.uiScene, state.uiCamera)
+    }
 
-      previousTickTime = time
-
-      tick()
-    })
+    requestAnimationFrame(tick)
   }
 
   const onWindowResize = () => {
@@ -81,6 +75,8 @@ export default () => {
   window.addEventListener('resize', onWindowResize, false)
 
   /* start game loop */
+  renderer.clock.elapsedTime = 0
+  renderer.clock.start()
   tick()
 
   state.renderer = renderer

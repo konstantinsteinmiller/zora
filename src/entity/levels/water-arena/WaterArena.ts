@@ -52,7 +52,7 @@ export default async () => {
 
     state.waterArena.pathfinder = pathfinder
 
-    if (state.enableDebug || true) {
+    if (state.enableDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
       state.scene.add(wiredNavMesh)
       const wiredFillMesh = new Mesh(

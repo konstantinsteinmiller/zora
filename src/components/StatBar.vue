@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-[18%] h-[3.5%] p-[0.125%] absolute border-[#A5A9B4] border-solid border-[2px] rounded-full bg-opacity-70"
+    class="w-[18%] min-w-32 h-[3.5%] p-[0.125%] absolute border-[#A5A9B4] border-solid border-[2px] rounded-full bg-opacity-70"
     :class="containerClasses"
     style=""
   >

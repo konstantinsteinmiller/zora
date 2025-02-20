@@ -40,7 +40,7 @@ export default () => {
            */
         )
       )
-      const idealCameraOffset = new Vector3(-1, 2, -3.5)
+      const idealCameraOffset = new Vector3(-0.5, 2, -3.5)
       idealCameraOffset.applyQuaternion(playerModelQuaternion)
       idealCameraOffset.add(playerModelPosition)
       state.camera.position.copy(idealCameraOffset)

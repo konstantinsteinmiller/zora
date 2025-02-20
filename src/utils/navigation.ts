@@ -1,8 +1,8 @@
-import { BASE_NAVIGATION_MOVE_SPEED } from '@/enums/constants.ts'
+import { BASE_NAVIGATION_MOVE_SPEED, FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import Rapier from '@dimforge/rapier3d-compat'
-import { AxesHelper, Mesh, Vector3 } from 'three'
+import { ArrowHelper, AxesHelper, Mesh, Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
@@ -71,7 +71,7 @@ const findPathBetweenNavIslands = (path: any[], startPos: Vector3, targetPos: Ve
       distance: -1,
     }
     pathfinder.customPortals.forEach((portal: any) => {
-      const portalA = portal[0]
+      const portalA = portal[0].groupId === startGroupId ? portal[0] : portal[1]
       const portalB = portal[1]
       const portalAPos = new Vector3(portalA.x, portalA.y, portalA.z)
       const distance = startPos.distanceTo(portalAPos)
@@ -87,7 +87,9 @@ const findPathBetweenNavIslands = (path: any[], startPos: Vector3, targetPos: Ve
     if (closestPortal.distance === -1) return []
 
     path = pathfinder.findPath(startPos, closestPortal.position, zone, startGroupId) || []
-    path.push(closestPortal.exitPosition)
+
+    /* modify next waypoint to detect portal so we know when to teleport/jump */
+    path.push({ ...closestPortal.exitPosition, isPortal: true })
     /* path = g1pos1 -> g1pos2 -> closestPortal.position | closestPortal.exitPosition -> g2pos1 -> ...*/
     const newGroup = pathfinder.getGroup(zone, closestPortal.exitPosition)
     const newPath = pathfinder.findPath(closestPortal.exitPosition, targetPos, zone, newGroup) || []
@@ -118,8 +120,98 @@ const getRandomIslandGroupId = () => {
 
   const random = Math.random()
   const randomTargetGroupId = islandWeightsList.findIndex((weight: number) => random < weight)
-  // randomTargetGroupId = 5
-  return randomTargetGroupId
+  return 5
+  // return randomTargetGroupId
+}
+
+const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
+  if (!path) return
+
+  // console.log('moving to path: ', path)
+  let nextPosition: Vector3 | null = null
+  let uuid: string | null = null
+
+  state.level.movingEntitiesList.push(entity.name)
+
+  const started = false
+  uuid = state.addEvent('renderer.update', (deltaS: number) => {
+    if (started) return
+    const targetPosition: Vector3 | undefined = new Vector3()
+    if (!nextPosition && path.length) nextPosition = path.shift()
+    if (!nextPosition) return
+
+    targetPosition.set(nextPosition.x, nextPosition.y, nextPosition.z)
+    const isPortal = !!nextPosition.isPortal
+
+    const agentPos = entity.mesh.position.clone()
+    let distance = null
+    try {
+      const flatAgentPos = agentPos.clone().setY(0)
+      const flatNextPosition = targetPosition?.clone().setY(0)
+      distance = flatAgentPos.distanceTo(flatNextPosition)
+    } catch (e: any) {
+      // console.warn('distance error: ', e)
+    }
+    if (!distance) return
+    const velocity: Vector3 = targetPosition?.clone().sub(agentPos)
+
+    // console.log('distance: ', distance)
+    if (distance > 0.2) {
+      velocity.normalize().multiplyScalar(BASE_NAVIGATION_MOVE_SPEED)
+
+      // 🔹 Convert velocity to local space
+      const localVelocity = velocity.clone().applyQuaternion(entity.mesh.quaternion.clone().invert())
+
+      const movementVector = calcRapierMovementVector(entity, localVelocity, deltaS)
+      agentPos.add(localVelocity)
+
+      if (isPortal) {
+        /* if nextPosition is a portal=off-navmesh, we need to fly to the island */
+        const heightDiff = targetPosition.y - entity.mesh.position.y
+        if (heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) {
+          entity.appliedFlyImpulse = FLY_IMPULSE
+          entity.stateMachine.setState('fly')
+        }
+      }
+
+      if (targetToFace) {
+        /* maybe refactor is the facing rotation is instant */
+        entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
+
+        /* set animation based on if agent is looking in the running direction or not */
+        if (!isPortal || (entity.appliedFlyImpulse < MIN_FLY_IMPULSE && entity.isGrounded)) {
+          const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
+          const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
+          const facingFactor = entityForwardN.dot(directionN)
+          if (facingFactor < 0 && entity.stateMachine.currentState.name !== 'run-back') {
+            entity.stateMachine.setState('run-back')
+          } else if (facingFactor >= 0 && entity.stateMachine.currentState.name !== 'run') {
+            entity.stateMachine.setState('run')
+          }
+        }
+      } else {
+        // look at next waypoint
+        const flatTargetPos: Vector3 = new Vector3(targetPosition.x, agentPos.y, targetPosition.z)
+        entity.setRotation(entity.mesh.lookAt(flatTargetPos)?.quaternion)
+      }
+
+      const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)
+      entity.rigidBody.setNextKinematicTranslation(nextPhysicsPos)
+    } else if (uuid && !path.length) {
+      /* reached destination remove event and moving entity */
+      entity.stateMachine.setState('idle')
+      state.removeEvent('renderer.update', uuid)
+      state.scene.remove(axesHelper)
+      addedAxesHelper = false
+      state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
+      state.level.pathfinder.isMoving = false
+    } else {
+      /* reached a waypoint */
+      nextPosition = null
+      return
+    }
+  })
+  state.level.pathfinder.isMoving = true
 }
 
 export const moveToRandomPosition = (entity: any, targetToFace: any) => {
@@ -132,89 +224,19 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
   const pathfinder = state.level.pathfinder
   const zone = state.level.zone
   const pos = entity.position.clone()
-  // const groupId = pathfinder.getGroup(zone, pos)
   const radius = 25
   let randomTargetPosition = null
   try {
     const targetGroupId = getRandomIslandGroupId()
     randomTargetPosition = pathfinder.getRandomNode(zone, targetGroupId, pos, radius)
   } catch (e: any) {
-    // console.warn('no random position found: ', e)
+    // console.warn('no random position found: ')
   }
-  if (!randomTargetPosition) {
-    // console.warn('no random position found: ', randomTargetPosition)
-    return
-  }
+  if (!randomTargetPosition) return
 
   const path = findPathToRandomPosition(entity, randomTargetPosition)
-  if (path) {
-    // console.log('moving to path: ', path)
-    let nextPosition: Vector3 | null = null
-    let uuid: string | null = null
 
-    state.level.movingEntitiesList.push(entity.name)
-
-    const started = false
-    uuid = state.addEvent('renderer.update', (deltaS: number) => {
-      if (started) return
-      if (!nextPosition && path.length) nextPosition = path.shift()
-
-      const agentPos = entity.mesh.position.clone()
-      let distance = null
-      try {
-        const flatAgentPos = agentPos.clone().setY(0)
-        const flatNextPosition = nextPosition.clone().setY(0)
-        distance = flatAgentPos.distanceTo(flatNextPosition)
-      } catch (e: any) {
-        // console.warn('distance error: ', e)
-      }
-      if (!distance) return
-      const velocity = nextPosition.clone().sub(agentPos)
-
-      // console.log('distance: ', distance)
-      if (distance > 0.2) {
-        velocity.normalize().multiplyScalar(BASE_NAVIGATION_MOVE_SPEED)
-
-        // 🔹 Convert velocity to local space
-        const localVelocity = velocity.clone().applyQuaternion(entity.mesh.quaternion.clone().invert())
-
-        const movementVector = calcRapierMovementVector(entity, localVelocity, deltaS)
-        agentPos.add(localVelocity)
-
-        if (targetToFace) {
-          entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
-          const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
-          const directionN = nextPosition.clone().sub(agentPos).normalize()
-          const facingFactor = entityForwardN.dot(directionN)
-          if (facingFactor < 0 && entity.stateMachine.currentState.name !== 'run-back') {
-            entity.stateMachine.setState('run-back')
-          } else if (facingFactor >= 0 && entity.stateMachine.currentState.name !== 'run') {
-            entity.stateMachine.setState('run')
-          }
-        } else {
-          // look at next waypoint
-          const flatTargetPos: Vector3 = new Vector3(nextPosition.x, agentPos.y, nextPosition.z)
-          entity.setRotation(entity.mesh.lookAt(flatTargetPos)?.quaternion)
-        }
-
-        const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)
-        entity.rigidBody.setNextKinematicTranslation(nextPhysicsPos)
-      } else if (uuid && !path.length) {
-        /* reached destination remove event and moving entity */
-        entity.stateMachine.setState('idle')
-        state.removeEvent('renderer.update', uuid)
-        state.scene.remove(axesHelper)
-        addedAxesHelper = false
-        state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
-        state.level.pathfinder.isMoving = false
-      } else {
-        /* reached a waypoint */
-        nextPosition = null
-        return
-      }
-    })
-    state.level.pathfinder.isMoving = true
-  }
+  moveAgentAlongPath(path, entity, targetToFace)
 }
 
 export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {

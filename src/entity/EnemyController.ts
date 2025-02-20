@@ -19,7 +19,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPa
     ...baseStats,
     ...stats,
     ...controllerUtils(),
-    ...controllerFunctions,
+    ...controllerFunctions(),
     mesh,
     halfHeight,
   }
