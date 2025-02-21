@@ -1,5 +1,5 @@
 import state from '@/states/GlobalState.ts'
-import { customPortals, orientationPosition } from '@/entity/levels/water-arena/config.ts'
+import { portalConnectionsList, orientationPosition, portalTransitionMap } from '@/entity/levels/water-arena/config.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
 import Water from '@/entity/water/Water.ts'
 import { loadNavMesh } from '@/utils/navigation.ts'
@@ -46,10 +46,9 @@ export default async () => {
     // state.scene.add(navMesh)
     state.waterArena.zone = 'water-arena'
     pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
-    pathfinder.customPortals = customPortals
+    pathfinder.portalConnectionsList = portalConnectionsList
+    pathfinder.portalTransitionMap = portalTransitionMap
     pathfinder.orientationPosition = orientationPosition
-    // console.log('pathfinder: ', pathfinder)
-
     state.waterArena.pathfinder = pathfinder
 
     if (state.enableDebug) {

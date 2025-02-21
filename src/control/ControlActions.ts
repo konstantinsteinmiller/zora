@@ -144,7 +144,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     moveToRandomPosition: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        state.level.pathfinder.isMoving = false
+        state.player.isMoving = false
         moveToRandomPosition(state.player, null)
       },
       onDeactivate: (entity: any) => {},

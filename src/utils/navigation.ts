@@ -1,6 +1,8 @@
 import { BASE_NAVIGATION_MOVE_SPEED, FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
+import type { ClosestPortal, PortalConnection } from '@/types/world.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
+import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
 import { AxesHelper, Mesh, Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
@@ -29,6 +31,8 @@ const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => 
     pathfindingHelper.setPlayerPosition(startPos)
     pathfindingHelper.setTargetPosition(targetPos)
     pathfindingHelper.setPath(path)
+  } else {
+    console.warn('Failed to find path found')
   }
 }
 
@@ -58,47 +62,62 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
 let axesHelper: any
 let addedAxesHelper = false
 
-const findPathBetweenNavIslands = (path: any[], startPos: Vector3, targetPos: Vector3, startGroupId: number) => {
+const findPathBetweenNavIslands = (path: Vector3[] | null, startPos: Vector3, targetPos: Vector3, startGroupId: number): Vector3[] => {
   /* handle islands */
   const pathfinder = state.level.pathfinder
   const zone = state.level.zone
-  const targetGroupId = pathfinder.getGroup(zone, targetPos)
-  if (!path && startGroupId !== targetGroupId) {
-    // No direct path? Use portal points
-    const groupIdsList = [startGroupId, targetGroupId]
-    const closestPortal: any = {
-      position: {},
-      distance: -1,
-    }
-    pathfinder.customPortals.forEach((portal: any) => {
-      const portalA = portal[0].groupId === startGroupId ? portal[0] : portal[1]
-      const portalB = portal[1].groupId === startGroupId ? portal[1] : portal[0]
-      const portalAPos = new Vector3(portalA.x, portalA.y, portalA.z)
-      const distance = startPos.distanceTo(portalAPos)
-      const hasCorrectGroupIds = groupIdsList.includes(portalA.groupId) && groupIdsList.includes(portalB.groupId)
+  const targetGroupId: number = pathfinder.getGroup(zone, targetPos)
+  const portalTransitionMap = pathfinder.portalTransitionMap
+  const transitionPath = JSON.parse(JSON.stringify(portalTransitionMap[startGroupId][targetGroupId]))
+  transitionPath.shift()
 
-      /* overwrite further away portal points */
-      if ((distance < closestPortal.distance || closestPortal.distance === -1) && hasCorrectGroupIds) {
-        closestPortal.position = portalAPos
-        closestPortal.exitPosition = new Vector3(portalB.x, portalB.y, portalB.z)
-        closestPortal.distance = distance
+  if (path || startGroupId === targetGroupId) return path || []
+
+  // No direct path? Use portal points
+  let completePath: Vector3[] = []
+  let currentStartPos = startPos
+  let currentGroupId = startGroupId
+
+  while (currentGroupId !== targetGroupId) {
+    let closestPortal: ClosestPortal | null = null
+    if (!transitionPath.length) return completePath
+    const currentTargetGroupId = transitionPath.shift()
+
+    pathfinder.portalConnectionsList.forEach((connection: PortalConnection) => {
+      const { entryPosition, exitPosition, entryGroup, exitGroup } = connection
+
+      if (entryGroup === currentGroupId && exitGroup === currentTargetGroupId) {
+        const distance = currentStartPos.distanceTo(entryPosition)
+
+        if (!closestPortal || distance < closestPortal.distance) {
+          closestPortal = { entryPosition: entryPosition as Vector3, exitPosition: exitPosition as Vector3, exitGroupId: exitGroup, distance }
+        }
       }
     })
-    if (closestPortal.distance === -1) return []
 
-    path = pathfinder.findPath(startPos, closestPortal.position, zone, startGroupId) || []
+    if (!closestPortal) return completePath
 
-    /* modify next waypoint to detect portal so we know when to teleport/jump */
-    path.push({ ...closestPortal.exitPosition, isPortal: true })
-    /* path = g1pos1 -> g1pos2 -> closestPortal.position | closestPortal.exitPosition -> g2pos1 -> ...*/
-    const newGroup = pathfinder.getGroup(zone, closestPortal.exitPosition)
-    const newPath = pathfinder.findPath(closestPortal.exitPosition, targetPos, zone, newGroup) || []
-    path = path.concat(newPath)
+    // Add portal to path
+    const { exitGroupId: portalExitGroupId } = closestPortal
+    const segmentPath = pathfinder.findPath(currentStartPos, closestPortal.entryPosition, zone, currentGroupId) || []
+    completePath = completePath.concat(segmentPath)
+
+    // Move to next segment
+    completePath.push({ ...closestPortal.exitPosition, isPortal: true })
+    currentStartPos = closestPortal.exitPosition
+    currentGroupId = portalExitGroupId
+    // console.log('completePath: ', completePath)
   }
-  return path
+
+  // Final path to target
+  const finalPath = pathfinder.findPath(currentStartPos, targetPos, zone, currentGroupId) || []
+  // console.log('finalPath: ', finalPath)
+  completePath = completePath.concat(finalPath)
+
+  return completePath
 }
 
-const getRandomIslandGroupId = () => {
+const getRandomIslandGroupId = (): number => {
   const pathfinder = state.level.pathfinder
   const zone = state.level.zone
   const islandsMap: { totalWeights: number; totalNodes: number } = {
@@ -118,24 +137,29 @@ const getRandomIslandGroupId = () => {
     islandWeightsList.push(islandsMap.totalWeights)
   })
 
-  const random = Math.random()
-  const randomTargetGroupId = islandWeightsList.findIndex((weight: number) => random < weight)
-  return 5
-  // return randomTargetGroupId
+  // console.log('state.level.pathfinder: ', state.level.pathfinder)
+  // const random = Math.random()
+  const totalGroups = state.level.pathfinder.zones[zone].groups.length
+  let random = Math.floor(Math.random() * totalGroups)
+  random = clamp(0, totalGroups - 1, random)
+  // console.log('random: ', random)
+  return random
+
+  // return 5
+  // return 0
+  // return islandWeightsList.findIndex((weight: number) => random < weight)
 }
 
 const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   if (!path) return
 
-  // console.log('moving to path: ', path)
-  let nextPosition: Vector3 | null = null
+  let nextPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
   let uuid: string | null = null
 
   state.level.movingEntitiesList.push(entity.name)
 
-  const started = false
+  entity.isMoving = true
   uuid = state.addEvent('renderer.update', (deltaS: number) => {
-    if (started) return
     const targetPosition: Vector3 | undefined = new Vector3()
     if (!nextPosition && path.length) nextPosition = path.shift()
     if (!nextPosition) return
@@ -168,7 +192,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       if (isPortal) {
         /* if nextPosition is a portal=off-navmesh, we need to fly to the island */
         const heightDiff = targetPosition.y - entity.mesh.position.y
-        if (heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) {
+        if ((heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) || (heightDiff > 1 && entity.appliedFlyImpulse < FLY_IMPULSE * 0.7)) {
           entity.appliedFlyImpulse = FLY_IMPULSE
           entity.stateMachine.setState('fly')
         }
@@ -204,17 +228,22 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       state.scene.remove(axesHelper)
       addedAxesHelper = false
       state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
-      state.level.pathfinder.isMoving = false
+      entity.isMoving = false
+      // console.log('reached destination: ', entity.isMoving)
     } else {
       /* reached a waypoint */
       nextPosition = null
       return
     }
   })
-  state.level.pathfinder.isMoving = true
 }
 
 export const moveToRandomPosition = (entity: any, targetToFace: any) => {
+  if (entity.isMoving) {
+    // Math.random() < 0.1 && console.log('agent is moving: ')
+    return
+  }
+
   if (!addedAxesHelper && state.enbaleDebug) {
     axesHelper = new AxesHelper(2)
     state.scene.add(axesHelper)
@@ -240,7 +269,7 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
 }
 
 export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {
-  if (state.level.pathfinder.isMoving) return
+  if (entity.isMoving) return
   // Find path from A to B.
   const pathfinder = state.level.pathfinder
   const meshPosition = entity.mesh.position.clone()
@@ -268,7 +297,7 @@ export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75
 }
 
 export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {
-  if (state.level.pathfinder.isMoving) return
+  if (entity.isMoving) return
   // Find path from A to B.
   const pathfinder = state.level.pathfinder
   const meshPosition = entity.mesh.position.clone()
@@ -285,5 +314,5 @@ export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75
   const path = pathfinder.findPath(startPos, targetPos, state.waterArena.zone, groupId)
   console.log('path: ', path)
   displayPath(path, startPos, targetPos)
-  state.level.pathfinder.isMoving = true
+  entity.isMoving = true
 }

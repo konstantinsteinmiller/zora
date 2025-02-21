@@ -13,6 +13,7 @@
     - [x] navigation to off navmesh islands
       - [x] pathfinding
       - [x] flying to islands
+      - [x] support between island navigation A -> B -> C -> D
     - [ ] fleeing
     - [ ] hiding behind
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
