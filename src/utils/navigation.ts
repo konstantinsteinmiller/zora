@@ -2,7 +2,7 @@ import { BASE_NAVIGATION_MOVE_SPEED, FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enum
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import Rapier from '@dimforge/rapier3d-compat'
-import { ArrowHelper, AxesHelper, Mesh, Vector3 } from 'three'
+import { AxesHelper, Mesh, Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
@@ -72,7 +72,7 @@ const findPathBetweenNavIslands = (path: any[], startPos: Vector3, targetPos: Ve
     }
     pathfinder.customPortals.forEach((portal: any) => {
       const portalA = portal[0].groupId === startGroupId ? portal[0] : portal[1]
-      const portalB = portal[1]
+      const portalB = portal[1].groupId === startGroupId ? portal[1] : portal[0]
       const portalAPos = new Vector3(portalA.x, portalA.y, portalA.z)
       const distance = startPos.distanceTo(portalAPos)
       const hasCorrectGroupIds = groupIdsList.includes(portalA.groupId) && groupIdsList.includes(portalB.groupId)

@@ -10,9 +10,9 @@
     - [x] randomly moving with collision and gravity
     - [x] facing target while moving and runs backwards if target is behind him
     - [ ] smooth out path following with bezier curve
-    - [ ] navigation to off navmesh islands
+    - [x] navigation to off navmesh islands
       - [x] pathfinding
-      - [ ] flying to islands
+      - [x] flying to islands
     - [ ] fleeing
     - [ ] hiding behind
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
@@ -59,6 +59,7 @@
     - [ ] Sky islands
   - Day and night cycle
 - [x] Refactor to function style programming
+- [x] Refactor to frame rate independent movement -> browser and machine independent physics
 - [x] Refactor model importing
   - [x] glb and fbx meshes
   - [x] fbx characters with anims

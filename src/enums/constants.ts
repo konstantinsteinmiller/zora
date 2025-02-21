@@ -1,3 +1,5 @@
+import { Color } from 'three'
+
 export const baseStats: any = {
   hp: 100,
   previousHp: 100,
@@ -42,3 +44,14 @@ export const characterAnimationNamesList: string[] = [
   'hit' /*
    */,
 ]
+
+/* spell charge constants */
+export const INITIAL_ROTATION_SPEED = Math.PI * 0.05 // 1 full rotation per 10 sec
+export const MAX_ROTATION_SPEED = 4 * Math.PI // 2 full rotations per sec
+export const MIN_CHARGE_SPEED = MAX_ROTATION_SPEED * 0.3
+export const MIN_CHARGE_CRITICAL_SPEED = MAX_ROTATION_SPEED * 0.8
+export const DEFAULT_CHARGE_DURATION = 12 /* in Seconds */
+export const MIN_CHARGE_START_COLOR = new Color(0x77d9f9)
+export const MIN_CHARGE_END_COLOR = new Color(0xff0000)
+export const CRITICAL_CHARGE_START_COLOR = new Color(0xd4dcfc)
+export const CRITICAL_CHARGE_END_COLOR = new Color(0x3d8dff)

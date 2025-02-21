@@ -47,9 +47,13 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onDeactivate: (entity: any) => {},
     },
     attack: {
-      onActivate: (entity: any, hasChanged: boolean) => {},
+      onActivate: (entity: any, hasChanged: boolean) => {
+        if (hasChanged) {
+          state.triggerEvent('controls.attack1.down')
+        }
+      },
       onDeactivate: (entity: any) => {
-        state.triggerEvent('input.attack1.up')
+        state.triggerEvent('controls.attack1.up')
       },
     },
     inventory: {

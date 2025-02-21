@@ -1,5 +1,7 @@
-import { clamp } from 'three/src/math/MathUtils'
-import { Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
+import { CRITICAL_CHARGE_END_COLOR, CRITICAL_CHARGE_START_COLOR, DEFAULT_CHARGE_DURATION, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
+import { remap } from '@/utils/function.ts'
+import { lerp } from 'three/src/math/MathUtils'
+import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
 import state from '@/states/GlobalState'
 import SpellFire from '@/entity/SpellFire'
 
@@ -23,7 +25,6 @@ export default () => {
       })
     )
 
-    // const originalScale = crosshairSprite.scale.clone()
     state.addEvent('renderer.resize', () => {
       const aspect = innerWidth / innerHeight
       state.uiCamera.left = -aspect
@@ -78,11 +79,9 @@ export default () => {
 
   const { crosshairRotatingGroup, crosshairStar, crosshairDots } = createCrosshair()
 
-  const INITIAL_ROTATION_SPEED = 0.005
-  let rotationSpeed: number = INITIAL_ROTATION_SPEED
-
-  const startColor = new Color(0x7aafc1)
-  const endColor = new Color(0xff0000)
+  const entityChargeDuration = DEFAULT_CHARGE_DURATION / state.player.currentSpell.speed
+  const rotationSpeed: number = INITIAL_ROTATION_SPEED
+  let chargeStartTime: number = 0
 
   const { fireRaycaster } = SpellFire()
 
@@ -90,36 +89,58 @@ export default () => {
   let forcedSpellRelease = false
 
   /* release shot if attack button is released */
-  state.addEvent('input.attack1.up', () => {
+  state.addEvent('controls.attack1.up', () => {
     canFire && fireRaycaster(rotationSpeed)
     forcedSpellRelease = false
     canFire = false
     crosshairDots.visible = false
     crosshairStar.visible = false
-    rotationSpeed = INITIAL_ROTATION_SPEED
+  })
+
+  /* start charging spell on mouse down and hold */
+  state.addEvent('controls.attack1.down', () => {
+    canFire = false
+    forcedSpellRelease = false
+    crosshairDots.visible = false
+    crosshairStar.visible = false
+    chargeStartTime = Date.now()
   })
 
   state.addEvent('renderer.update', (deltaInS: number) => {
     if (!state.player.currentSpell) return
 
-    if (!state.controls.attack || forcedSpellRelease) return
     /* while attack button pressed => rotate crosshair */
+    if (!state.controls.attack || forcedSpellRelease) return
 
-    crosshairRotatingGroup.rotation.z -= rotationSpeed
-    const rotationIncrease = 0.006 * state.player.currentSpell.speed * deltaInS
-    rotationSpeed += rotationIncrease
-    rotationSpeed = clamp(rotationSpeed, 0.0000001, 0.08)
+    /* ~ 12 - 4 seconds */
+    const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
+    const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
+    const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
+    const rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
 
-    if (rotationSpeed > 0.03) {
+    crosshairRotatingGroup.rotation.z -= rotationSpeed * deltaInS
+
+    if (rotationSpeed > MIN_CHARGE_SPEED) {
+      /* allow successful spell release */
       canFire = true
     }
-    if (rotationSpeed < 0.06) {
-      crosshairStar.material.color.lerpColors(startColor, endColor, rotationSpeed * 15)
+    if (rotationSpeed < MIN_CHARGE_CRITICAL_SPEED) {
+      crosshairStar.material.color.lerpColors(
+        MIN_CHARGE_START_COLOR,
+        MIN_CHARGE_END_COLOR,
+        remap(0, 0.7, 0, 1, rotationN) /*
+         */
+      )
       crosshairDots.visible = false
       crosshairStar.visible = true
-    } else if (rotationSpeed < 0.08) {
+    } else if (rotationSpeed < MAX_ROTATION_SPEED) {
       /* switch to dots and blueish color */
-      crosshairDots.material.color.lerpColors(new Color(0xd4dcfc), new Color(0x3d8dff), rotationSpeed * 12)
+      crosshairDots.material.color.lerpColors(
+        CRITICAL_CHARGE_START_COLOR,
+        CRITICAL_CHARGE_END_COLOR,
+        remap(0.8, 1, 0.4, 1, rotationN) /*
+         */
+      )
       crosshairStar.visible = false
       crosshairDots.visible = true
     } else {
@@ -131,7 +152,6 @@ export default () => {
       state.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
-      rotationSpeed = INITIAL_ROTATION_SPEED
     }
   })
 }

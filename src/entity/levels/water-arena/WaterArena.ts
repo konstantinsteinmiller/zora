@@ -64,8 +64,8 @@ export default async () => {
         })
       )
       state.scene.add(wiredFillMesh)
-      state.scene.add(pathfinder.pathfindingHelper)
     }
+    state.scene.add(pathfinder.pathfindingHelper)
   })
 
   createCollidersForGraph(state.waterArena, 'fixed')

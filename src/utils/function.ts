@@ -1,6 +1,7 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
+import { inverseLerp, lerp } from 'three/src/math/MathUtils'
 
 const createColliderGeo = (geo, rigidBody, physic) => {
   const vertices = new Float32Array(geo.attributes.position.array)
@@ -92,4 +93,8 @@ export const createRayTrace = (target: THREE.Vector3, distance: number) => {
   sphereMesh.frustumCulled = false
   sphereMesh.castShadow = true
   state.scene.add(sphereMesh)
+}
+
+export const remap = (A: number, B: number, C: number, D: number, P: number) => {
+  return lerp(C, D, inverseLerp(A, B, P))
 }

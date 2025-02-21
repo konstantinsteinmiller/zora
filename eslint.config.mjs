@@ -30,6 +30,7 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'max-params': ['error', 5],
       'max-len': [0, 80, 2, { ignoreUrls: true }],
