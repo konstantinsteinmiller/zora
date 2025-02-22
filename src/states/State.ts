@@ -23,7 +23,7 @@ const transitionMap: { [key: string]: string[] } = {
   jump: ['jump'],
 }
 
-export const isMovingEntity = (parent: any) => state.level.movingEntitiesList?.includes(parent.owner.name)
+export const isMovingEntity = (parent: any) => parent.owner.isMoving
 export const transitionTo = (stateName: string, parent: any) => {
   const keyNamesList = transitionMap[stateName]
   const condition = keyNamesList?.every((keyName: string) => {

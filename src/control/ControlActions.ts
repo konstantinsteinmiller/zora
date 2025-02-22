@@ -1,4 +1,4 @@
-import { FLY_IMPULSE } from '@/enums/constants.ts'
+import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import state from '@/states/GlobalState'
@@ -87,7 +87,12 @@ export default (defaultControlsConfig: EnumStringToList) => {
     fly: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
-          entity.appliedFlyImpulse = FLY_IMPULSE
+          if (entity.endurance >= FLY_COST) {
+            entity.groundedTime.lastTimeNotGrounded = Date.now()
+            entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
+            entity.appliedFlyImpulse = MAX_FLY_IMPULSE
+            entity.takeOffFrames = 3
+          }
         }
       },
       onDeactivate: (entity: any) => {},

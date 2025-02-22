@@ -1,4 +1,4 @@
-import { ENDURANCE_REGEN_SPEED, FLY_COST, FLY_IMPULSE } from '@/enums/constants.ts'
+import { ENDURANCE_REGEN_SPEED, FLY_COST, MAX_FLY_IMPULSE } from '@/enums/constants.ts'
 import { clamp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
@@ -21,6 +21,9 @@ export const controllerUtils = () => ({
     prevQuat.slerp(rotation, 0.2) // Smooth interpolation
     this.rigidBody.setRotation(prevQuat)
     return this.mesh.quaternion.copy(prevQuat)
+  },
+  isAnimState(stateName: string): boolean {
+    return this.stateMachine.currentState.name === stateName
   },
 })
 

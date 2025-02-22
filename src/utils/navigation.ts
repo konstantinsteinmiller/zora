@@ -1,4 +1,4 @@
-import { BASE_NAVIGATION_MOVE_SPEED, FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
+import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ClosestPortal, PortalConnection } from '@/types/world.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
@@ -154,6 +154,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   if (!path) return
 
   let nextPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
+  let previousPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
   let uuid: string | null = null
 
   state.level.movingEntitiesList.push(entity.name)
@@ -192,9 +193,15 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       if (isPortal) {
         /* if nextPosition is a portal=off-navmesh, we need to fly to the island */
         const heightDiff = targetPosition.y - entity.mesh.position.y
-        if ((heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) || (heightDiff > 1 && entity.appliedFlyImpulse < FLY_IMPULSE * 0.7)) {
-          entity.appliedFlyImpulse = FLY_IMPULSE
-          entity.stateMachine.setState('fly')
+        if ((heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) || (heightDiff > 1 && entity.appliedFlyImpulse < MAX_FLY_IMPULSE * 0.7)) {
+          entity.appliedFlyImpulse = MAX_FLY_IMPULSE
+          entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
+        }
+        /* glide down */
+        const prevHeightDiff = previousPosition ? targetPosition.y - previousPosition.y : 0
+        if (previousPosition && prevHeightDiff < 1) {
+          entity.appliedFlyImpulse = MAX_FLY_IMPULSE * 0.05
+          entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
       }
 
@@ -203,14 +210,14 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
         entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
 
         /* set animation based on if agent is looking in the running direction or not */
-        if (!isPortal || (entity.appliedFlyImpulse < MIN_FLY_IMPULSE && entity.isGrounded)) {
+        if (!isPortal || (!entity.isAnimState('fly') && entity.isGrounded)) {
           const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
           const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
           const facingFactor = entityForwardN.dot(directionN)
           if (facingFactor < 0 && entity.stateMachine.currentState.name !== 'run-back') {
-            entity.stateMachine.setState('run-back')
+            !entity.isAnimState('run-back') && entity.stateMachine.setState('run-back')
           } else if (facingFactor >= 0 && entity.stateMachine.currentState.name !== 'run') {
-            entity.stateMachine.setState('run')
+            !entity.isAnimState('run') && entity.stateMachine.setState('run')
           }
         }
       } else {
@@ -232,6 +239,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       // console.log('reached destination: ', entity.isMoving)
     } else {
       /* reached a waypoint */
+      previousPosition = nextPosition
       nextPosition = null
       return
     }

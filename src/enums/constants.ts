@@ -26,10 +26,10 @@ export const baseStats: any = {
 
 export const BASE_NAVIGATION_MOVE_SPEED = 3
 export const LOOK_AROUND_SPEED = 1.5
-export const FLY_IMPULSE = 0.2
-export const MIN_FLY_IMPULSE = FLY_IMPULSE * 0.1
+export const MAX_FLY_IMPULSE = 0.2
+export const MIN_FLY_IMPULSE = MAX_FLY_IMPULSE * 0.1
 export const FLY_COST = 15
-export const ENDURANCE_REGEN_SPEED = 5
+export const ENDURANCE_REGEN_SPEED = 10
 
 export const characterAnimationNamesList: string[] = [
   'idle',

@@ -42,28 +42,84 @@ const oneWayPortalConnectionsList: PortalConnection[] = [
   },
   {
     entryPosition: {
-      x: 1.65,
+      x: 0.55,
       y: -0.95,
-      z: -0.77,
+      z: -2.47,
     },
     exitPosition: {
-      x: -1.95,
-      y: -0.95,
-      z: -3.57,
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
     },
     entryGroup: 1,
     exitGroup: 5,
   },
   {
     entryPosition: {
-      x: 1.65,
-      y: -0.95,
-      z: -0.77,
+      x: -6.25,
+      y: -1.07,
+      z: -1.2,
     },
     exitPosition: {
-      x: -3.95,
-      y: -1.08,
-      z: 2.96,
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
+    },
+    entryGroup: 1,
+    exitGroup: 5,
+  },
+  {
+    entryPosition: {
+      x: 0.65,
+      y: -1.15,
+      z: 2.83,
+    },
+    exitPosition: {
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
+    },
+    entryGroup: 1,
+    exitGroup: 5,
+  },
+  {
+    entryPosition: {
+      x: 1.35,
+      y: -1.48,
+      z: 3.93,
+    },
+    exitPosition: {
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
+    },
+    entryGroup: 1,
+    exitGroup: 5,
+  },
+  {
+    entryPosition: {
+      x: -4.46,
+      y: -0.95,
+      z: -2.66,
+    },
+    exitPosition: {
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
+    },
+    entryGroup: 1,
+    exitGroup: 5,
+  },
+  {
+    entryPosition: {
+      x: -5.45,
+      y: -1.02,
+      z: -0.17,
+    },
+    exitPosition: {
+      x: -1.67,
+      y: 1.14,
+      z: 0.19,
     },
     entryGroup: 1,
     exitGroup: 5,
@@ -126,14 +182,56 @@ const oneWayPortalConnectionsList: PortalConnection[] = [
   },
 ]
 export const portalConnectionsList: PortalConnection[] = calcAllPortalConnections(oneWayPortalConnectionsList)
-
+// console.log(JSON.stringify(portalConnectionsList, undefined, 2))
 let transitionData: any = {
-  '0': { '0': [], '1': [0, 1], '2': [0, 1, 2], '3': [0, 1, 3], '4': [0, 1, 4], '5': [0, 1, 5] },
-  '1': { '0': [1, 0], '1': [], '2': [1, 2], '3': [1, 3], '4': [1, 4], '5': [1, 5] },
-  '2': { '0': [2, 1, 0], '1': [2, 1], '2': [], '3': [2, 1, 3], '4': [2, 1, 4], '5': [2, 1, 5] },
-  '3': { '0': [3, 1, 0], '1': [3, 1], '2': [3, 1, 2], '3': [], '4': [3, 1, 4], '5': [3, 1, 5] },
-  '4': { '0': [4, 1, 0], '1': [4, 1], '2': [4, 1, 2], '3': [4, 1, 3], '4': [], '5': [4, 1, 5] },
-  '5': { '0': [5, 1, 0], '1': [5, 1], '2': [5, 1, 2], '3': [5, 1, 3], '4': [5, 1, 4], '5': [] },
+  '0': {
+    '0': [],
+    '1': [0, 1],
+    '2': [0, 1, 2],
+    '3': [0, 1, 3],
+    '4': [0, 1, 4],
+    '5': [0, 1, 5],
+  },
+  '1': {
+    '0': [1, 0],
+    '1': [],
+    '2': [1, 2],
+    '3': [1, 3],
+    '4': [1, 4],
+    '5': [1, 5],
+  },
+  '2': {
+    '0': [2, 1, 0],
+    '1': [2, 1],
+    '2': [],
+    '3': [2, 1, 3],
+    '4': [2, 1, 4],
+    '5': [2, 1, 5],
+  },
+  '3': {
+    '0': [3, 1, 0],
+    '1': [3, 1],
+    '2': [3, 1, 2],
+    '3': [],
+    '4': [3, 1, 4],
+    '5': [3, 1, 5],
+  },
+  '4': {
+    '0': [4, 1, 0],
+    '1': [4, 1],
+    '2': [4, 1, 2],
+    '3': [4, 1, 3],
+    '4': [],
+    '5': [4, 1, 5],
+  },
+  '5': {
+    '0': [5, 1, 0],
+    '1': [5, 1],
+    '2': [5, 1, 2],
+    '3': [5, 1, 3],
+    '4': [5, 1, 4],
+    '5': [],
+  },
 }
 /* in case you haven't generated the transition data yet */
 if (transitionData === null) {
