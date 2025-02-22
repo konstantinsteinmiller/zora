@@ -1,6 +1,6 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { baseStats, characterAnimationNamesList } from '@/enums/constants.ts'
-import { controllerFunctions, controllerUtils } from '@/utils/controller.ts'
+import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { controllerFunctions, controllerUtils, getBaseStats } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -22,13 +22,12 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
 
   player = {
     ...new Object3D(),
-    ...baseStats,
+    ...getBaseStats(),
     ...stats,
     ...controllerUtils(),
     ...controllerFunctions(),
     mesh: mesh,
     halfHeight,
-    colliderRadius: 0.5,
   }
   player.getPosition = () => {
     if (!mesh) {

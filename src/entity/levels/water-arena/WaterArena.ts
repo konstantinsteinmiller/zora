@@ -1,9 +1,9 @@
 import state from '@/states/GlobalState.ts'
-import { portalConnectionsList, orientationPosition, portalTransitionMap } from '@/entity/levels/water-arena/config.ts'
+import { portalConnectionsList, orientationPosition, portalTransitionMap, coverPositions } from '@/entity/levels/water-arena/config.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
 import Water from '@/entity/water/Water.ts'
 import { loadNavMesh } from '@/utils/navigation.ts'
-import { Mesh, MeshBasicMaterial, Object3D } from 'three'
+import { BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { createCollidersForGraph } from '@/utils/physics.ts'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
@@ -49,6 +49,7 @@ export default async () => {
     pathfinder.portalConnectionsList = portalConnectionsList
     pathfinder.portalTransitionMap = portalTransitionMap
     pathfinder.orientationPosition = orientationPosition
+    pathfinder.coverPositions = coverPositions
     state.waterArena.pathfinder = pathfinder
 
     if (state.enableDebug) {
@@ -66,6 +67,23 @@ export default async () => {
     }
     state.scene.add(pathfinder.pathfindingHelper)
   })
+
+  const coverBoxGeometry = new BoxGeometry(0.5, 0.5, 0.5)
+  coverBoxGeometry.computeBoundingBox()
+  coverBoxGeometry.computeBoundingSphere()
+
+  /*
+  Debugging Cover Positions
+  coverPositions.forEach((cover: any) => {
+    const coverPos = new Vector3(cover.x, cover.y + 0.9, cover.z)
+
+    const coverBoxMaterial = new MeshStandardMaterial({ color: 0xf0df00 })
+    const coverBox = new Mesh(coverBoxGeometry, coverBoxMaterial)
+    coverBox.position.copy(coverPos)
+    coverBox.name = 'cover'
+    state.waterArena.add(coverBox)
+    state.scene.updateMatrixWorld(true)
+  })*/
 
   createCollidersForGraph(state.waterArena, 'fixed')
   state.waterArena.name = 'WaterArenaContainer'

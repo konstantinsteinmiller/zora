@@ -1,12 +1,12 @@
 {
-  "name": "battler",
+  "name": "zora",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build-github": " vite build --base=/battler/",
+    "build-github": " vite build --base=/zora/",
     "validated-build": "vue-tsc -b && vite build",
     "deploy": "vite build && surge dist/ --domain battler.surge.sh",
     "preview": "vite preview"

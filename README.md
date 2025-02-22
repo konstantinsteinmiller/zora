@@ -1,4 +1,6 @@
-# battler
+![Zora banner](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/Zora_banner_1331x430.jpg)
+
+# Zora
 
 a Zanzarah-like battle game in a fantasy arena. Created in Three.js with Rapier.js
 
@@ -9,6 +11,7 @@ expected features:
 - Character controller with First and Third person view
 - Character can look behind
 - AI with pathfinding and collision
+- AI can detect enemy threat and hide behind obstacles to prevent getting hit
 - Physics/Collision with rapier.js
 - Spells and moving Particle effects
 - UI for health, mana, endurance and enemy health

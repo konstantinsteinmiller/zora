@@ -62,9 +62,13 @@ let totalDist = -1
 const ANIMATION_SPEED = 8
 let condition = false
 let typeSelectionList: any[] = []
+let entity: any = state?.[props.ownerId]
+const uuid = ref('')
 
 const updateCallback = (deltaS: number) => {
   counter++
+  entity = state?.[props.ownerId]
+  uuid.value = entity?.uuid
 
   if (props.type === 'life') {
     const { hp, previousHp, maxHp } = state?.[props.ownerId]
@@ -137,6 +141,7 @@ const lossClasses = computed(() => ({
 }))
 const containerClasses = computed(() => ({
   [`${props.ownerId}-${props.type}-bar`]: true,
+  [`entity-${uuid.value}`]: uuid.value,
   'bg-red-300 bottom-4 left-4': props.type === 'life',
   'bg-blue-300 bottom-4 right-4': props.type === 'mana',
   'bg-green-300 bottom-4 right-1/2 transform translate-x-1/2': props.type === 'endurance',

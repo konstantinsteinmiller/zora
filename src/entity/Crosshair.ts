@@ -80,7 +80,7 @@ export default () => {
   const { crosshairRotatingGroup, crosshairStar, crosshairDots } = createCrosshair()
 
   const entityChargeDuration = DEFAULT_CHARGE_DURATION / state.player.currentSpell.speed
-  const rotationSpeed: number = INITIAL_ROTATION_SPEED
+  let rotationSpeed: number = INITIAL_ROTATION_SPEED
   let chargeStartTime: number = 0
 
   const { fireRaycaster } = SpellFire()
@@ -95,6 +95,7 @@ export default () => {
     canFire = false
     crosshairDots.visible = false
     crosshairStar.visible = false
+    state.player.currentSpell.charge = 0
   })
 
   /* start charging spell on mouse down and hold */
@@ -116,8 +117,8 @@ export default () => {
     const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
     const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
     const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
-    const rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
-
+    rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
+    state.player.currentSpell.charge = rotationN
     crosshairRotatingGroup.rotation.z -= rotationSpeed * deltaInS
 
     if (rotationSpeed > MIN_CHARGE_SPEED) {
@@ -148,6 +149,7 @@ export default () => {
       fireRaycaster(rotationSpeed)
       canFire = false
       forcedSpellRelease = true
+      state.player.currentSpell.charge = 0
       state.controls.previous.attack = false
       state.controls.attack = false
       crosshairDots.visible = false

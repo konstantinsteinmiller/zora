@@ -32,7 +32,7 @@ const defaultControlsConfig: EnumStringToList = {
   pause: ['KeyP'],
   lookBack: ['KeyG'],
   toggleCamera: ['KeyH'],
-  moveToRandomPosition: ['ControlLeft', 'KeyV'],
+  moveToTargetPosition: ['ControlLeft', 'KeyV'],
   toggleDebug: ['ControlLeft', 'KeyC'],
 }
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))

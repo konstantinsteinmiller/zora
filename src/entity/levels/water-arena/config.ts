@@ -254,3 +254,20 @@ const loadTransitionDataFromFile = async () => {
   transitionData = data ? data?.default : generateTransitionMap(portalConnectionsList)
   if (!data) saveDataToFile(transitionData, fileName)
 }
+
+export const coverPositions = [
+  { x: 8.45, y: -2.28, z: 11.73 },
+  { x: 1.35, y: -2.35, z: 13.33 },
+  { x: -5.85, y: -2.35, z: 13.23 },
+  { x: -14.92, y: -2.42, z: 2.53 },
+  { x: -6.15, y: -2.48, z: -13.57 },
+  { x: 1.28, y: -2.22, z: -15.6 },
+  { x: 8.65, y: -2.22, z: -13.47 },
+  { x: 0.58, y: -1.14, z: 1.45 },
+  { x: -1.68, y: -0.98, z: -2.74 },
+  { x: -1.9, y: -1.15, z: 2.29 },
+  { x: -3.85, y: -1.0, z: 0.85 },
+  { x: -3.49, y: -1.07, z: -1.63 },
+  { x: 13.05, y: -2.42, z: -0.37 },
+  { x: 1.65, y: -0.95, z: -0.77 },
+]

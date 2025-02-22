@@ -16,11 +16,11 @@
       - [x] support between island navigation A -> B -> C -> D
       - [x] fix ground stutter and falling stuck in wall
       - [x] fix animations why falling from island
-    - [ ] fleeing
-    - [ ] hiding behind
+    - [x] fleeing
+    - [x] hiding behind obstacles
+    - [ ] cover while charging
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
     - [ ] prevent self hurting
-    - [ ] cover while charging
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot

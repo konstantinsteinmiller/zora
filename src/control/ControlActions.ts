@@ -2,7 +2,7 @@ import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import state from '@/states/GlobalState'
-import { moveToRandomPosition } from '@/utils/navigation.ts'
+import { moveToTargetPosition } from '@/utils/navigation.ts'
 
 /* set all actions initially to false */
 export const getPrefilledActionsMap = (defaultControlsConfig: EnumStringToList) => {
@@ -147,10 +147,10 @@ export default (defaultControlsConfig: EnumStringToList) => {
       },
       onDeactivate: (entity: any) => {},
     },
-    moveToRandomPosition: {
+    moveToTargetPosition: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        state.player.isMoving = false
-        moveToRandomPosition(state.player, null)
+        state.player.path = null
+        moveToTargetPosition(state.player, null, null)
       },
       onDeactivate: (entity: any) => {},
     },
@@ -225,7 +225,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},
     },
-    moveToRandomPosition: {
+    moveToTargetPosition: {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},
     },

@@ -1,3 +1,4 @@
+import { orientationPosition } from '@/entity/levels/water-arena/config.ts'
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ClosestPortal, PortalConnection } from '@/types/world.ts'
@@ -25,7 +26,7 @@ export const loadNavMesh = async (path: string, callback: (navMesh: Mesh) => voi
 }
 
 const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => {
-  if (path) {
+  if (path /* && state.enableDebug*/) {
     const pathfindingHelper = state.level.pathfinder.pathfindingHelper
     pathfindingHelper.reset()
     pathfindingHelper.setPlayerPosition(startPos)
@@ -150,8 +151,24 @@ const getRandomIslandGroupId = (): number => {
   // return islandWeightsList.findIndex((weight: number) => random < weight)
 }
 
+const findRandomTargetPosition = (entity: any) => {
+  const { pathfinder, zone } = state.level
+  const entityPos = entity.position.clone()
+  const radius = 25
+  let randomTargetPosition = null
+  try {
+    const targetGroupId = getRandomIslandGroupId()
+    randomTargetPosition = pathfinder.getRandomNode(zone, targetGroupId, entityPos, radius)
+  } catch (e: any) {
+    // console.warn('no random position found: ')
+  }
+  if (!randomTargetPosition) return pathfinder.orientationPosition
+  return randomTargetPosition
+}
+
 const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
-  if (!path) return
+  if (!path?.length) return
+  entity.path = path
 
   let nextPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
   let previousPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
@@ -159,7 +176,6 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
 
   state.level.movingEntitiesList.push(entity.name)
 
-  entity.isMoving = true
   uuid = state.addEvent('renderer.update', (deltaS: number) => {
     const targetPosition: Vector3 | undefined = new Vector3()
     if (!nextPosition && path.length) nextPosition = path.shift()
@@ -235,8 +251,11 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       state.scene.remove(axesHelper)
       addedAxesHelper = false
       state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
-      entity.isMoving = false
-      // console.log('reached destination: ', entity.isMoving)
+      entity.path = null
+      console.log('reached destination: ')
+      entity.lastCoverPosition = null
+      entity.isAwaitingCoverCalculation = false
+      // console.log('reached destination: ', entity.path)
     } else {
       /* reached a waypoint */
       previousPosition = nextPosition
@@ -246,8 +265,8 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   })
 }
 
-export const moveToRandomPosition = (entity: any, targetToFace: any) => {
-  if (entity.isMoving) {
+export const moveToTargetPosition = (entity: any, targetPosition: Vector3 | null = null, targetToFace: any, isDirect: boolean) => {
+  if (entity.path?.length) {
     // Math.random() < 0.1 && console.log('agent is moving: ')
     return
   }
@@ -258,30 +277,28 @@ export const moveToRandomPosition = (entity: any, targetToFace: any) => {
     addedAxesHelper = true
   }
 
-  const pathfinder = state.level.pathfinder
-  const zone = state.level.zone
-  const pos = entity.position.clone()
-  const radius = 25
-  let randomTargetPosition = null
-  try {
-    const targetGroupId = getRandomIslandGroupId()
-    randomTargetPosition = pathfinder.getRandomNode(zone, targetGroupId, pos, radius)
-  } catch (e: any) {
-    // console.warn('no random position found: ')
+  if (isDirect) {
+    let path = findPathToTargetPosition(entity, targetPosition || findRandomTargetPosition(entity))
+    if (!path?.length) {
+      path = [entity.mesh.position.clone(), targetPosition]
+    }
+    displayPath(path, entity.position, targetPosition as Vector3)
+    moveAgentAlongPath(path, entity, targetToFace)
+    return
   }
-  if (!randomTargetPosition) return
 
-  const path = findPathToRandomPosition(entity, randomTargetPosition)
+  const destinationPosition = targetPosition || findRandomTargetPosition(entity)
+  const path = findPathToTargetPosition(entity, destinationPosition)
+  console.log('path: ', path)
 
   moveAgentAlongPath(path, entity, targetToFace)
 }
 
-export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {
-  if (entity.isMoving) return
-  // Find path from A to B.
-  const pathfinder = state.level.pathfinder
+export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {
+  if (entity.path?.length) return
+
   const meshPosition = entity.mesh.position.clone()
-  const { zone } = state.waterArena
+  const { zone, pathfinder } = state.level
 
   const startGroupId = pathfinder.getGroup(zone, meshPosition)
   let closest = pathfinder.getClosestNode(meshPosition, zone, startGroupId, true)
@@ -302,25 +319,4 @@ export const findPathToRandomPosition = (entity: any, targetPos: any = { x: 2.75
 
   displayPath(path, startPos, targetPos)
   return path
-}
-
-export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75, y: -1.15, z: 1.23 }) => {
-  if (entity.isMoving) return
-  // Find path from A to B.
-  const pathfinder = state.level.pathfinder
-  const meshPosition = entity.mesh.position.clone()
-
-  const groupId = pathfinder.getGroup(state.level.zone, meshPosition)
-  let closest = pathfinder.getClosestNode(meshPosition, state.level.zone, groupId, true)
-
-  if (closest === null) {
-    closest = findClosestPointInCircle(meshPosition)
-    if (closest === null) return
-  }
-
-  const startPos = closest.centroid
-  const path = pathfinder.findPath(startPos, targetPos, state.waterArena.zone, groupId)
-  console.log('path: ', path)
-  displayPath(path, startPos, targetPos)
-  entity.isMoving = true
 }
