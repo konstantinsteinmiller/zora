@@ -127,17 +127,32 @@ const oneWayPortalConnectionsList: PortalConnection[] = [
 ]
 export const portalConnectionsList: PortalConnection[] = calcAllPortalConnections(oneWayPortalConnectionsList)
 
-let data
-const fileName = 'portalTransitionMap.json'
-const tryLoadPortalTransitionMap = async () => {
-  try {
-    data = await import(`./${fileName}`)
-  } catch (e: any) {
-    data = null
-  }
+let transitionData: any = {
+  '0': { '0': [], '1': [0, 1], '2': [0, 1, 2], '3': [0, 1, 3], '4': [0, 1, 4], '5': [0, 1, 5] },
+  '1': { '0': [1, 0], '1': [], '2': [1, 2], '3': [1, 3], '4': [1, 4], '5': [1, 5] },
+  '2': { '0': [2, 1, 0], '1': [2, 1], '2': [], '3': [2, 1, 3], '4': [2, 1, 4], '5': [2, 1, 5] },
+  '3': { '0': [3, 1, 0], '1': [3, 1], '2': [3, 1, 2], '3': [], '4': [3, 1, 4], '5': [3, 1, 5] },
+  '4': { '0': [4, 1, 0], '1': [4, 1], '2': [4, 1, 2], '3': [4, 1, 3], '4': [], '5': [4, 1, 5] },
+  '5': { '0': [5, 1, 0], '1': [5, 1], '2': [5, 1, 2], '3': [5, 1, 3], '4': [5, 1, 4], '5': [] },
 }
-tryLoadPortalTransitionMap()
-const transitionData = data ? data?.default : generateTransitionMap(portalConnectionsList)
-if (!data) saveDataToFile(transitionData, fileName)
-
+/* in case you haven't generated the transition data yet */
+if (transitionData === null) {
+  transitionData = generateTransitionMap(portalConnectionsList)
+  console.log(JSON.stringify(transitionData, undefined, 2))
+}
 export const portalTransitionMap = transitionData
+
+const loadTransitionDataFromFile = async () => {
+  let data
+  const fileName = 'portalTransitionMap.json'
+  const tryLoadPortalTransitionMap = async () => {
+    try {
+      data = await import(`./${fileName}`)
+    } catch (e: any) {
+      data = null
+    }
+  }
+  await tryLoadPortalTransitionMap()
+  transitionData = data ? data?.default : generateTransitionMap(portalConnectionsList)
+  if (!data) saveDataToFile(transitionData, fileName)
+}

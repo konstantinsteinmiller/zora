@@ -22,6 +22,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPa
     ...controllerFunctions(),
     mesh,
     halfHeight,
+    colliderRadius: 0.5,
   }
 
   let mixer: any = {}
@@ -48,7 +49,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPa
     })
   }
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight)
+    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, enemy.colliderRadius)
     enemy.rigidBody = rigidBody
     enemy.collider = collider
   }
@@ -97,7 +98,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPa
   // const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
-  const update = (deltaS: number, elapsedTimeInS: number) => {
+  const update = (deltaS: number) => {
     if (!enemy.mesh || enemy.stateMachine.currentState === null) {
       return
     }
@@ -124,6 +125,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight }: { modelPa
     mixer?.update?.(deltaS)
   }
 
+  /* @Todo: remove the eventUuid when the enemy is destroyed */
   const eventUuid = state.addEvent('renderer.update', update)
 
   state.enemy = enemy

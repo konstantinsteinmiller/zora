@@ -28,6 +28,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     ...controllerFunctions(),
     mesh: mesh,
     halfHeight,
+    colliderRadius: 0.5,
   }
   player.getPosition = () => {
     if (!mesh) {
@@ -78,7 +79,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   loadModels()
 
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight)
+    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, player.colliderRadius)
     player.rigidBody = rigidBody
     player.collider = collider
   }

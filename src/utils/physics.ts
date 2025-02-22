@@ -43,13 +43,13 @@ export const createColliderBall = (radius: number, rigidBody: any) => {
   return state.physics.createCollider(colliderDesc, rigidBody)
 }
 
-export const createRigidBodyEntity = (position: Vector3, halfHeight: number) => {
+export const createRigidBodyEntity = (position: Vector3, halfHeight: number, colliderRadius: number) => {
   const desc: any = RigidBodyDesc.kinematicPositionBased()
   const offsetPosition = position.clone()
   desc.setTranslation(...offsetPosition)
   const rigidBody = state.physics.createRigidBody(desc)
 
-  const colliderDesc = ColliderDesc.capsule(halfHeight * 0.5, 0.5)
+  const colliderDesc = ColliderDesc.capsule(halfHeight, colliderRadius)
   colliderDesc.setCollisionGroups(0xffffffff) /* part of all groups and interacts with all groups */
   const collider = state.physics.createCollider(colliderDesc, rigidBody)
 

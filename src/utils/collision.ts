@@ -97,9 +97,10 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   }
 
   // 🔹 Gravity & Ground Detection
-  /* implement ray cast down to detect ground and only apply
-   * gravity when not grounded */
-  const groundHit = state.physics.castShape(rigidPos, shapeRot, new Rapier.Vector3(0, -1, 0), new Capsule(0.01, 0.1), targetDistance, entity.halfHeight, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
+  const groundHitShape = new Capsule(0.01, 0.1)
+  const groundHitVector = new Rapier.Vector3(0, -1, 0)
+  const groundHitMaxToi = entity.halfHeight
+  const groundHit = state.physics.castShape(rigidPos, shapeRot, groundHitVector, groundHitShape, targetDistance, groundHitMaxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
   if (groundHit) {
     entity.isGrounded = true
     entity.groundedTime.value = (Date.now() - entity.groundedTime.lastTimeNotGrounded) / 1000
