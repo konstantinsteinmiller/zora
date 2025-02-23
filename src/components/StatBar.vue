@@ -1,34 +1,63 @@
 <template>
   <div
-    class="w-[18%] min-w-32 h-[3.5%] p-[0.125%] absolute border-[#A5A9B4] border-solid border-[2px] rounded-full bg-opacity-70"
+    class="min-w-32 h-[7%] p-[0.125%] absolute"
     :class="containerClasses"
     style=""
   >
-    <div class="relative h-full rounded-full overflow-hidden">
+    <div class="relative h-full">
+      <img
+        v-if="ownerId !== 'enemy'"
+        class="ornament absolute top-0 h-full z-50 scale-110"
+        :class="ornamentClasses"
+        src="/images/stat/stat-ornament.png"
+        alt="stat-ornament"
+        :style="{
+          transform: `translateX(${percentage}%)`,
+        }"
+      />
+      <img
+        class="absolute top-0 left-0 h-full z-40 scale-[1.1] -translate-x-[2px]"
+        src="/images/stat/stat-frame.png"
+        alt="stat-frame"
+      />
+      <!--  actual value  -->
       <div
-        class="relative current-hp h-full z-10"
-        :class="barClasses"
+        class="bar-container absolute top-0 left-0 h-full overflow-hidden"
         :style="{
           width: `${percentage}%`,
         }"
-      />
+      >
+        <img
+          id="bar"
+          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :src="`/images/stat/stat-${type}.png`"
+          alt="life-bar"
+        />
+      </div>
+      <!--  loss value  -->
       <div
-        class="pre-loss-hp absolute top-0 left-0 h-full z-0 bg-opacity-80"
-        :class="lossClasses"
+        class="absolute top-0 left-0 loss-bar-container h-full overflow-hidden"
         :style="{
           width: `${lossPercentage}%`,
         }"
-      />
-      <div class="flex justify-between items-center basis-1/4 absolute top-0 left-0 w-full h-full z-10">
-        <div
-          v-for="(separator, index) in ['', '', '', '']"
-          :key="index"
-          class="border-solid border-[#A5A9B4] h-full top-[0.125%] w-1/4 grow-1 shrink-0"
-          :class="{
-            'border-r-[1px]': index < 3,
-          }"
+      >
+        <img
+          id="bar"
+          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :src="`/images/stat/stat-${type}.png`"
+          alt="life-bar"
         />
       </div>
+      <!--  background  -->
+      <img
+        id="bar"
+        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+        :class="barClasses"
+        :src="`/images/stat/stat-${type}.png`"
+        alt="life-bar"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +65,7 @@
 <script setup lang="ts">
 import state from '@/states/GlobalState.ts'
 import { lerp, clamp } from 'three/src/math/MathUtils'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   ownerId: { type: String, required: true },
@@ -100,7 +129,7 @@ const updateCallback = (deltaS: number) => {
     }
   }
 
-  if (counter % 8 === 0 && current !== target) {
+  if (counter % 5 === 0 && current !== target) {
     const absDist = Math.abs(target - current)
     const dist: number = +clamp(absDist, 0.1, typeSelectionList[2]).toFixed(1)
     const delta = +clamp(deltaS * (totalDist / dist) * ANIMATION_SPEED, 0.01, 1).toFixed(3)
@@ -120,32 +149,21 @@ const updateCallback = (deltaS: number) => {
 }
 state.addEvent('renderer.update', updateCallback)
 
-watch(
-  () => owner.value,
-  () => {
-    // console.log('owner.value: ', owner.value)
-  },
-  { deep: true }
-)
-
+const MAX_SIZE = '24vw'
 const barClasses = computed(() => ({
-  'bg-red-700': props.type === 'life',
-  'bg-red-800': props.type === 'life' && props.ownerId === 'enemy',
-  'bg-blue-700': props.type === 'mana',
-  'bg-green-700': props.type === 'endurance',
+  [`min-w-[${MAX_SIZE}] w-[${MAX_SIZE}]`]: true,
 }))
-const lossClasses = computed(() => ({
-  'bg-red-500': props.type === 'life',
-  'bg-blue-500': props.type === 'mana',
-  'bg-green-500': props.type === 'endurance',
+const ornamentClasses = computed(() => ({
+  [`w-[${MAX_SIZE}] -left-[16px] overflow-visible [${MAX_SIZE}]`]: true,
 }))
 const containerClasses = computed(() => ({
+  [`w-[${MAX_SIZE}]`]: true,
   [`${props.ownerId}-${props.type}-bar`]: true,
   [`entity-${uuid.value}`]: uuid.value,
-  'bg-red-300 bottom-4 left-4': props.type === 'life',
-  'bg-blue-300 bottom-4 right-4': props.type === 'mana',
-  'bg-green-300 bottom-4 right-1/2 transform translate-x-1/2': props.type === 'endurance',
-  'opacity-0 bg-red-300 ': props.ownerId === 'enemy',
+  ' bottom-1 left-4': props.type === 'life',
+  ' bottom-1 right-4': props.type === 'mana',
+  ' bottom-1 right-1/2 transform translate-x-1/2': props.type === 'endurance',
+  'opacity-0 ': props.ownerId === 'enemy',
 }))
 
 const percentage = computed(() => (owner.value[typeSelectionList[3]] / owner.value[typeSelectionList[5]]) * 100)

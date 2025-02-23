@@ -21,6 +21,7 @@
     - [ ] cover while charging
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
     - [ ] prevent self hurting
+    - [ ] adjust threat charge levels
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -73,7 +74,7 @@
 - [x] Character Controller
   - [x] import character animations
   - [x] state machine
-  - [x] idle, run, cast, jump
+  - [x] idle, walk, run, cast, jump
   - [x] Flying mechanic, jump -> fly
     - [x] spend stamina for flying
 - [x] Refactor InputController to decouple actions from peripheral inputs

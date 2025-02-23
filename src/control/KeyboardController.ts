@@ -26,6 +26,7 @@ const defaultControlsConfig: EnumStringToList = {
   left: ['KeyA'],
   right: ['KeyD'],
   jump: ['Mouse2'],
+  hurt: ['Mouse1'],
   fly: ['Mouse2'],
   hit: ['Mouse1'],
   sprint: ['ShiftLeft'],

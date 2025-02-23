@@ -1,3 +1,4 @@
+import { STRAFE_VELOCITY } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
 import { Quaternion, Vector3 } from 'three'
@@ -51,7 +52,7 @@ export default () => {
     let xh = state.controls.mouse.current.mouseXDelta / innerWidth
 
     if (state.controls.left || state.controls.right) {
-      xh = state.controls.left ? -1.5 / innerWidth : 1.5 / innerWidth
+      xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
     } else {
       xh = state.controls.mouse.current.mouseXDelta / innerWidth
     }

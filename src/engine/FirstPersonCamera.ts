@@ -1,5 +1,5 @@
+import { STRAFE_VELOCITY } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
-import { getXRotation } from '@/utils/camera.ts'
 import * as THREE from 'three'
 import { clamp } from 'three/src/math/MathUtils'
 import { Quaternion, Vector3 } from 'three'
@@ -94,6 +94,23 @@ export default () => {
     rotation.copy(quaternionRotationTotal)
   }
 
+  const getXRotation = () => {
+    let xh = state.controls.mouse.current.mouseXDelta / innerWidth
+
+    if (state.controls.left || state.controls.right) {
+      xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
+    } else {
+      xh = state.controls.mouse.current.mouseXDelta / innerWidth
+    }
+
+    phi += -xh * phiSpeed
+    const qx = new Quaternion()
+    qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
+    const q = new Quaternion()
+    q.multiply(qx)
+    return q
+  }
+
   const updateCamera = () => {
     state.camera.quaternion.copy(rotation)
     state.camera.position.copy(translation)
@@ -101,7 +118,7 @@ export default () => {
     const playerModelQuaternion = state.player.getRotation()
     const playerModelPosition = state.player.getPosition()
 
-    state.player.setRotation(getXRotation(phi, phiSpeed))
+    state.player.setRotation(getXRotation())
     if (state.controls.lookBack) {
       state.camera.quaternion.copy(playerModelQuaternion)
       /* define distance to playerModel position 1 up 2 away */

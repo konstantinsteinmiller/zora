@@ -1,4 +1,3 @@
-import { orientationPosition } from '@/entity/levels/water-arena/config.ts'
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ClosestPortal, PortalConnection } from '@/types/world.ts'
@@ -209,8 +208,13 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       if (isPortal) {
         /* if nextPosition is a portal=off-navmesh, we need to fly to the island */
         const heightDiff = targetPosition.y - entity.mesh.position.y
-        if ((heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) || (heightDiff > 1 && entity.appliedFlyImpulse < MAX_FLY_IMPULSE * 0.7)) {
+        if (
+          (heightDiff > 0.1 && entity.appliedFlyImpulse < MIN_FLY_IMPULSE) ||
+          (heightDiff > 1 && entity.appliedFlyImpulse < MAX_FLY_IMPULSE * 0.7) /*
+           */
+        ) {
           entity.appliedFlyImpulse = MAX_FLY_IMPULSE
+          entity.utils.takeOffFrames = 3
           entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
         /* glide down */
@@ -226,7 +230,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
         entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
 
         /* set animation based on if agent is looking in the running direction or not */
-        if (!isPortal || (!entity.isAnimState('fly') && entity.isGrounded)) {
+        if (!isPortal || (!entity.isAnimState('fly') && entity.isGrounded && entity.utils.takeOffFrames === 0)) {
           const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
           const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
           const facingFactor = entityForwardN.dot(directionN)
@@ -258,7 +262,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
       // console.log('reached destination: ', entity.path)
     } else {
       /* reached a waypoint */
-      previousPosition = nextPosition
+      previousPosition = new Vector3(nextPosition.x, nextPosition.y, nextPosition.z)
       nextPosition = null
       return
     }
@@ -277,19 +281,14 @@ export const moveToTargetPosition = (entity: any, targetPosition: Vector3 | null
     addedAxesHelper = true
   }
 
-  if (isDirect) {
-    let path = findPathToTargetPosition(entity, targetPosition || findRandomTargetPosition(entity))
-    if (!path?.length) {
-      path = [entity.mesh.position.clone(), targetPosition]
-    }
-    displayPath(path, entity.position, targetPosition as Vector3)
-    moveAgentAlongPath(path, entity, targetToFace)
-    return
-  }
-
   const destinationPosition = targetPosition || findRandomTargetPosition(entity)
-  const path = findPathToTargetPosition(entity, destinationPosition)
-  console.log('path: ', path)
+  let path = findPathToTargetPosition(entity, destinationPosition)
+
+  if (isDirect && !path?.length) {
+    path = [entity.mesh.position.clone(), targetPosition]
+    displayPath(path, entity.position, targetPosition as Vector3)
+  }
+  // console.log('path: ', path)
 
   moveAgentAlongPath(path, entity, targetToFace)
 }

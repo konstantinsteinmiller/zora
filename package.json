@@ -8,7 +8,7 @@
     "build": "vite build",
     "build-github": " vite build --base=/zora/",
     "validated-build": "vue-tsc -b && vite build",
-    "deploy": "vite build && surge dist/ --domain battler.surge.sh",
+    "deploy": "vite build && surge dist/ --domain zora.surge.sh",
     "preview": "vite preview"
   },
   "dependencies": {

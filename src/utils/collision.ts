@@ -108,8 +108,8 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     }
   } else {
     // 🟣 Apply Gravity and Prevent Sticking in Geometry#
-    if (entity.takeOffFrames > 0) {
-      entity.takeOffFrames--
+    if (entity.utils.takeOffFrames > 0) {
+      entity.utils.takeOffFrames--
     } else {
       movementVector.y += -4 * deltaS
     }
@@ -173,13 +173,13 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   }
 
   // 🟣 Check if movement was canceled
-  const movementNullified = beforeCorrection.x === movementVector.x && beforeCorrection.z === movementVector.z
-  const didntMove = rigidPos.x === movementVector.x && rigidPos.z === movementVector.z
-
-  if (attemptedMovement && (movementNullified || didntMove)) {
-    movementVector.x += pushOut.x
-    movementVector.z += pushOut.z
-  }
+  // const movementNullified = beforeCorrection.x === movementVector.x && beforeCorrection.z === movementVector.z
+  // const didntMove = rigidPos.x === movementVector.x && rigidPos.z === movementVector.z
+  //
+  // if (attemptedMovement && (movementNullified || didntMove)) {
+  //   movementVector.x += pushOut.x
+  //   movementVector.z += pushOut.z
+  // }
 
   return movementVector
 }

@@ -84,6 +84,15 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},
     },
+    hurt: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        if (hasChanged) {
+          entity.stateMachine.setState('hit')
+          entity.dealDamage(entity, 15)
+        }
+      },
+      onDeactivate: (entity: any) => {},
+    },
     fly: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
@@ -91,7 +100,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
             entity.groundedTime.lastTimeNotGrounded = Date.now()
             entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
-            entity.takeOffFrames = 3
+            entity.utils.takeOffFrames = 3
           }
         }
       },

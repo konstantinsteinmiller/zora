@@ -35,6 +35,10 @@ export const getBaseStats: any = () => ({
   },
   colliderRadius: 0.5,
   isMoving: false,
+  utils: {
+    flyWaitFrames: 0,
+    takeOffFrames: 0,
+  },
 })
 
 export const controllerUtils = () => ({

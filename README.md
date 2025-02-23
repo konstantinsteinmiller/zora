@@ -1,10 +1,10 @@
-![Zora banner](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/Zora_banner_1331x430.jpg)
+![Zora banner](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/Zora_banner_1331x430.jpg)
 
 # Zora
 
 a Zanzarah-like battle game in a fantasy arena. Created in Three.js with Rapier.js
 
-#### you can try the current version here: [demo](https://konstantinsteinmiller.github.io/battler/#/game) but first load is slow because of the big models (>40mb total)
+#### you can try the current version here: [demo](https://konstantinsteinmiller.github.io/zora/#/game) but first load is slow because of the big models (>40mb total)
 
 expected features:
 - 3D arena
@@ -18,10 +18,10 @@ expected features:
 - charging spell indicator
 - Water
 
-![charging-spell](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/charging-spell.png)
+![charging-spell](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/charging-spell.png)
 
 ### random pathfinding with collision
-![random-pathfinding-with-collision.gif](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/random-pathfinding-with-collision.gif)
+![random-pathfinding-with-collision.gif](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/random-pathfinding-with-collision.gif)
 
 ### fly mechanic
-![flying.gif](https://github.com/konstantinsteinmiller/battler/blob/master/src/assets/documentation/flying.gif)
+![flying.gif](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/flying.gif)
