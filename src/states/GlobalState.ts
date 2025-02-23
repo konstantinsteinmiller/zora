@@ -19,6 +19,8 @@ let state: {
     pathfinder: any
     movingEntitiesList: string[]
   }
+  player: any
+  enemy: any
 } = null
 
 const globalState = () => {
@@ -62,6 +64,8 @@ const globalState = () => {
       // console.log('XXEvent removed:', eventName, 'with ', uuid)
     },
     eventsMap: {},
+    player: {},
+    enemy: {},
   }
   // console.log('XXstate: ', state)
 

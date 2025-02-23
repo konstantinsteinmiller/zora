@@ -6,8 +6,8 @@ import state from '@/states/GlobalState'
 import TwinShot from '@/vfx/twin-shot_2.json'
 // import TwinShot from '@/vfx/twin-shot_3.json'
 
-export const createTwinShotVFX = async (intersectPoint: Vector3) => {
-  const adjustedPosition = state.player.getPosition().clone()
+export const createTwinShotVFX = async (intersectPoint: Vector3, entity: any) => {
+  const adjustedPosition = entity.getPosition().clone()
   adjustedPosition.y += 1
 
   const system = await System.fromJSONAsync(TwinShot.particleSystemState, THREE)
@@ -15,7 +15,7 @@ export const createTwinShotVFX = async (intersectPoint: Vector3) => {
   const nebulaRenderer = new GPURenderer(state.scene, THREE)
   const nebulaSystem = system.addRenderer(nebulaRenderer)
 
-  const playerRotation = state.player.getRotation()
+  const playerRotation = entity.getRotation()
 
   const forwardNormal = new Vector3(0, 0, 1)
   forwardNormal.applyQuaternion(playerRotation)

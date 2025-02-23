@@ -1,12 +1,13 @@
 import { coverPositions } from '@/entity/levels/water-arena/config.ts'
+import SpellFire from '@/entity/SpellFire.ts'
 import world from '@/entity/World.ts'
-import { ENDURANCE_REGEN_SPEED } from '@/enums/constants.ts'
+import { CRITICAL_CHARGE_END_COLOR, CRITICAL_CHARGE_START_COLOR, DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
-import { createDebugBox, createRayTrace } from '@/utils/function.ts'
-import { worker } from 'globals'
-import { clamp } from 'three/src/math/MathUtils'
+import { getChargeDuration } from '@/utils/chargeUtils.ts'
+import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
+import { clamp, lerp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
-import { BoxGeometry, Raycaster, Vector3, MeshBasicMaterial, Mesh, Box3, BufferGeometry, Float32BufferAttribute, Uint32BufferAttribute, Scene } from 'three'
+import { Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 
 export const getBaseStats: any = () => ({
@@ -65,7 +66,7 @@ export const controllerUtils = () => ({
   },
 })
 
-export const controllerFunctions = () => {
+export const statsUtils = () => {
   let didDamage = false
   const TIME_INTERVAL = 6
 
@@ -102,6 +103,67 @@ export const controllerFunctions = () => {
     },
   }
 }
+
+export const chargeUtils = () => ({
+  chargeAttack(entity: any, target: any) {
+    if (entity.currentSpell.charge > 0) return
+    entity.currentSpell.charge += 0.00001
+
+    const entityChargeDuration = getChargeDuration(entity)
+    console.log('entityChargeDuration: ', entityChargeDuration)
+    let rotationSpeed: number = INITIAL_ROTATION_SPEED
+    const chargeStartTime: number = Date.now()
+
+    const { fireRaycaster } = SpellFire()
+    entity.currentSpell.canFire = false
+    entity.currentSpell.forcedSpellRelease = false
+
+    const chargingUuid = state.addEvent('renderer.update', () => {
+      if (!entity.currentSpell || entity.currentSpell.forcedSpellRelease) return
+
+      /* ~ 12 - 4 seconds */
+      const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
+      const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
+
+      const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
+
+      rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
+      entity.currentSpell.charge = rotationN
+      // Math.random() < 0.01 && console.log('entity.currentSpell.charge: ', entity.currentSpell.charge)
+
+      if (rotationSpeed > MIN_CHARGE_SPEED && !entity.currentSpell.canFire) {
+        /* allow successful spell release */
+        entity.currentSpell.canFire = true
+        console.log('entity.currentSpell.canFire: ', entity.currentSpell.canFire)
+      }
+      if (rotationSpeed >= MAX_ROTATION_SPEED) {
+        /* spell overload -> forced release of the charged shot and receive damage */
+        entity.currentSpell.canFire = false
+        entity.currentSpell.forcedSpellRelease = true
+        entity.currentSpell.charge = 0
+        console.log('overload: ')
+        state.removeEvent('renderer.update', chargingUuid)
+        fireRaycaster(rotationSpeed, entity, target)
+      } else {
+        const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
+        if (isEntityChargeCritical) {
+          console.log('fire')
+          // entity.fireSpell(entity, target)
+        }
+      }
+    })
+  },
+  fireSpell(entity: any, target: any) {
+    const rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, entity.currentSpell.charge)
+
+    const { fireRaycaster } = SpellFire()
+    fireRaycaster(rotationSpeed, entity, target)
+    console.log('fired shot: ')
+    entity.currentSpell.forcedSpellRelease = false
+    entity.currentSpell.canFire = false
+    entity.currentSpell.charge = 0
+  },
+})
 
 export const createOverHeadHealthBar = (entity: any) => {
   const updateHealthBar = (entity: any) => {
@@ -142,8 +204,8 @@ const threatRaycaster = new Raycaster()
 const DANGEROUS_CHARGE_LEVEL = 0.1
 const AGENT_SAFE_CHARGE_LEVEL = 0.3
 const AGENT_CRITICAL_CHARGE_LEVEL = 0.7
-const RAYCAST_FRAME_INTERVAL = 1500
-let lastRaycastTime = 0
+const RAYCAST_FRAME_INTERVAL = 500
+let lastRaycastTime = Date.now()
 const coverPointsWorker = new Worker(new URL('@/webworkers/coverPointsWorker.ts', import.meta.url), { type: 'module' })
 
 function extractWorldGeometry() {
@@ -159,14 +221,13 @@ function extractWorldGeometry() {
 
 export const controllerAwarenessUtils = () => ({
   detectCriticalCharge: (entity: any) => {
-    return entity.currentSpell.charge > AGENT_CRITICAL_CHARGE_LEVEL
+    return entity.currentSpell.canFire && entity.currentSpell.charge > AGENT_CRITICAL_CHARGE_LEVEL
   },
   detectEnemyThreat: (entity: any, enemy: any) => {
     const isEnemyDangerous = enemy.currentSpell.charge > DANGEROUS_CHARGE_LEVEL
     const isEntityDangerous = entity.currentSpell.charge > AGENT_SAFE_CHARGE_LEVEL
 
-    if (!isEnemyDangerous || isEntityDangerous) return false
-    if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL) return isEnemyDangerous && !isEntityDangerous
+    if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL) return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
 
     // Set start position at entity's height
     const entityPosition = entity.mesh.position.clone()
@@ -183,10 +244,10 @@ export const controllerAwarenessUtils = () => ({
     if (intersects.length > 0) {
       intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
       const hasLineOfSight = intersects[0].object === enemy.mesh
-      return hasLineOfSight
+      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: hasLineOfSight }
     }
 
-    return false
+    return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
   },
   findCoverPosition: (entity: any, enemy: any): Promise<Vector3> => {
     return new Promise((resolve, reject) => {

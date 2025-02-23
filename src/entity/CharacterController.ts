@@ -1,6 +1,6 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import { characterAnimationNamesList } from '@/enums/constants.ts'
-import { controllerFunctions, controllerUtils, getBaseStats } from '@/utils/controller.ts'
+import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -23,9 +23,9 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   player = {
     ...new Object3D(),
     ...getBaseStats(),
-    ...stats,
+    ...{ ...stats, currentSpell: { ...stats.currentSpell }, utils: { ...stats.utils }, groundedTime: { ...stats.groundedTime } },
     ...controllerUtils(),
-    ...controllerFunctions(),
+    ...statsUtils(),
     mesh: mesh,
     halfHeight,
   }

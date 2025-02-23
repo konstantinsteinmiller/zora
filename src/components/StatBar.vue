@@ -2,9 +2,9 @@
   <div
     class="min-w-32 h-[7%] p-[0.125%] absolute"
     :class="containerClasses"
-    style=""
+    :style="containerStyles"
   >
-    <div class="relative h-full">
+    <div class="relative h-full w-full">
       <img
         v-if="ownerId !== 'enemy'"
         class="ornament absolute top-0 h-full z-50 scale-110"
@@ -12,6 +12,8 @@
         src="/images/stat/stat-ornament.png"
         alt="stat-ornament"
         :style="{
+          ...barStyles,
+          ...ornamentStyles,
           transform: `translateX(${percentage}%)`,
         }"
       />
@@ -19,6 +21,7 @@
         class="absolute top-0 left-0 h-full z-40 scale-[1.1] -translate-x-[2px]"
         src="/images/stat/stat-frame.png"
         alt="stat-frame"
+        :style="frameStyles"
       />
       <!--  actual value  -->
       <div
@@ -28,11 +31,28 @@
         }"
       >
         <img
-          id="bar"
+          v-if="type === 'life'"
           class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
           :class="barClasses"
-          :src="`/images/stat/stat-${type}.png`"
+          :style="barStyles"
+          src="/images/stat/stat-life.png"
           alt="life-bar"
+        />
+        <img
+          v-if="type === 'mana'"
+          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :style="barStyles"
+          src="/images/stat/stat-mana.png"
+          alt="mana-bar"
+        />
+        <img
+          v-if="type === 'endurance'"
+          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :style="barStyles"
+          src="/images/stat/stat-endurance.png"
+          alt="endurance-bar"
         />
       </div>
       <!--  loss value  -->
@@ -43,20 +63,54 @@
         }"
       >
         <img
-          id="bar"
+          v-if="type === 'life'"
           class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
           :class="barClasses"
-          :src="`/images/stat/stat-${type}.png`"
-          alt="life-bar"
+          :style="barStyles"
+          src="/images/stat/stat-life.png"
+          alt="loss-life-bar"
+        />
+        <img
+          v-if="type === 'mana'"
+          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :style="barStyles"
+          src="/images/stat/stat-mana.png"
+          alt="loss-life-bar"
+        />
+        <img
+          v-if="type === 'endurance'"
+          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
+          :class="barClasses"
+          :style="barStyles"
+          src="/images/stat/stat-endurance.png"
+          alt="loss-life-bar"
         />
       </div>
       <!--  background  -->
       <img
-        id="bar"
+        v-if="type === 'life'"
         class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
         :class="barClasses"
-        :src="`/images/stat/stat-${type}.png`"
-        alt="life-bar"
+        :style="barStyles"
+        src="/images/stat/stat-life.png"
+        alt="background-life-bar"
+      />
+      <img
+        v-if="type === 'mana'"
+        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+        :class="barClasses"
+        :style="barStyles"
+        src="/images/stat/stat-mana.png"
+        alt="background-mana-bar"
+      />
+      <img
+        v-if="type === 'endurance'"
+        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+        :class="barClasses"
+        :style="barStyles"
+        src="/images/stat/stat-endurance.png"
+        alt="background-endurance-bar"
       />
     </div>
   </div>
@@ -150,14 +204,29 @@ const updateCallback = (deltaS: number) => {
 state.addEvent('renderer.update', updateCallback)
 
 const MAX_SIZE = '24vw'
+const barStyles = computed(() => ({
+  width: MAX_SIZE,
+  minWidth: MAX_SIZE,
+  // maxWidth: MAX_SIZE,
+}))
+const frameStyles = computed(() => ({
+  width: '100%',
+}))
+const ornamentStyles = computed(() => ({
+  // width: '100%',
+  // maxWidth: '300px',
+}))
+const containerStyles = computed(() => ({
+  width: '100%',
+  maxWidth: MAX_SIZE,
+}))
 const barClasses = computed(() => ({
-  [`min-w-[${MAX_SIZE}] w-[${MAX_SIZE}]`]: true,
+  // [`min-w-[${MAX_SIZE}] w-[${MAX_SIZE}]`]: true,
 }))
 const ornamentClasses = computed(() => ({
-  [`w-[${MAX_SIZE}] -left-[16px] overflow-visible [${MAX_SIZE}]`]: true,
+  [`-left-[16px] overflow-visible`]: true,
 }))
 const containerClasses = computed(() => ({
-  [`w-[${MAX_SIZE}]`]: true,
   [`${props.ownerId}-${props.type}-bar`]: true,
   [`entity-${uuid.value}`]: uuid.value,
   ' bottom-1 left-4': props.type === 'life',

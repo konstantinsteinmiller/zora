@@ -1,3 +1,4 @@
+import { MAX_ROTATION_SPEED } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace } from '@/utils/function.ts'
 import { createTwinShotVFX } from '@/utils/vfx.ts'
@@ -12,18 +13,28 @@ export default () => {
   const raycaster = new THREE.Raycaster()
   const pointer = new THREE.Vector2(state.controls.mouse.current.crosshairX, state.controls.mouse.current.crosshairY)
 
-  const damageSelf = () => {
-    state.player.hp -= state.player.currentSpell.damage
+  const damageSelf = (entity: any) => {
+    entity.dealDamage(entity, entity.currentSpell.damage * 0.5)
   }
 
-  singleton.fireRaycaster = (rotationSpeed: number) => {
-    if (rotationSpeed >= 0.08) {
-      damageSelf()
-      state.player.stateMachine.setState('hit')
+  singleton.fireRaycaster = (rotationSpeed: number, entity: any, target: any) => {
+    if (rotationSpeed >= MAX_ROTATION_SPEED) {
+      damageSelf(entity)
+      entity.stateMachine.setState('hit')
       return
     }
-    state.player.stateMachine.setState('cast')
-    raycaster.setFromCamera(pointer, state.camera)
+    entity.stateMachine.setState('cast')
+    if (entity.name === 'player') {
+      raycaster.setFromCamera(pointer, state.camera)
+    } else {
+      const origin = entity.mesh.position.clone()
+      origin.y += entity.halfHeight + 0.1
+      origin.z -= 0.7
+      const targetPosition = target.mesh.position.clone()
+      origin.y += entity.halfHeight + 0.1
+      raycaster.set(origin, targetPosition)
+    }
+
     const intersects = raycaster.intersectObjects(state.scene.children, true)
 
     if (intersects.length === 0) {
@@ -36,8 +47,8 @@ export default () => {
     // const object = intersect.object
     // console.log('intersect object:', object.name, intersect, intersect?.point)
     if (intersect?.point) {
-      createRayTrace(intersect.point, intersect.distance)
-      createTwinShotVFX(intersect.point)
+      createRayTrace(intersect.point)
+      createTwinShotVFX(intersect.point, entity)
     }
   }
 

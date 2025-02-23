@@ -94,6 +94,11 @@ export const createRayTrace = (target: THREE.Vector3) => {
   sphereMesh.frustumCulled = false
   sphereMesh.castShadow = true
   state.scene.add(sphereMesh)
+  setTimeout(() => {
+    state.scene.remove(sphereMesh)
+    geometry.dispose()
+    material.dispose()
+  }, 10000)
 }
 
 export const createDebugBox = (target: THREE.Vector3) => {

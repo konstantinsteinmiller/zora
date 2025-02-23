@@ -1,4 +1,5 @@
 import { CRITICAL_CHARGE_END_COLOR, CRITICAL_CHARGE_START_COLOR, DEFAULT_CHARGE_DURATION, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
+import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils'
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
@@ -79,7 +80,7 @@ export default () => {
 
   const { crosshairRotatingGroup, crosshairStar, crosshairDots } = createCrosshair()
 
-  const entityChargeDuration = DEFAULT_CHARGE_DURATION / state.player.currentSpell.speed
+  const entityChargeDuration = getChargeDuration(state.player)
   let rotationSpeed: number = INITIAL_ROTATION_SPEED
   let chargeStartTime: number = 0
 
@@ -90,7 +91,7 @@ export default () => {
 
   /* release shot if attack button is released */
   state.addEvent('controls.attack1.up', () => {
-    canFire && fireRaycaster(rotationSpeed)
+    canFire && fireRaycaster(rotationSpeed, state.player)
     forcedSpellRelease = false
     canFire = false
     crosshairDots.visible = false
@@ -146,7 +147,7 @@ export default () => {
       crosshairDots.visible = true
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
-      fireRaycaster(rotationSpeed)
+      fireRaycaster(rotationSpeed, state.player)
       canFire = false
       forcedSpellRelease = true
       state.player.currentSpell.charge = 0

@@ -95,7 +95,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
 
   // 🟣 Gravity & Ground Detection
   const groundHitShape = new Capsule(0.01, 0.1)
-  const groundHitVector = new Rapier.Vector3(0, -1, 0)
+  const groundHitVector = new Rapier.Vector3(0, -0.95, 0)
   const groundHitMaxToi = entity.halfHeight
   const groundHit = state.physics.castShape(rigidPos, shapeRot, groundHitVector, groundHitShape, targetDistance, groundHitMaxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
   if (groundHit) {

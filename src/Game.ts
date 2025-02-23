@@ -28,8 +28,9 @@ export default async () => {
     modelHeight: 1.8,
   })
   EnemyController({
+    enemy: state.player,
     modelPath: 'models/fairy/nature_fairy_1.fbx',
-    stats: { name: 'enemy' },
+    name: 'enemy',
     startPosition: new Vector3(10.5, 0, 9),
     modelHeight: 1.8,
   })
