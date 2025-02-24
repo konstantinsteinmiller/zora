@@ -178,9 +178,11 @@ const updateCallback = (deltaS: number) => {
       [typeSelectionList[4]]: typeSelectionList[1],
       [typeSelectionList[5]]: typeSelectionList[2],
     }
-    if (props.type === 'life' && props.ownerId !== 'player') {
-      owner.value[typeSelectionList[3]] = typeSelectionList[0]
-    }
+  }
+
+  if (props.type === 'life' && props.ownerId !== 'player') {
+    owner.value[typeSelectionList[3]] = typeSelectionList[0]
+    return
   }
 
   if (counter % 5 === 0 && current !== target) {
