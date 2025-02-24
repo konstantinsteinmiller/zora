@@ -91,7 +91,7 @@ export default () => {
 
   /* release shot if attack button is released */
   state.addEvent('controls.attack1.up', () => {
-    canFire && fireRaycaster(rotationSpeed, state.player)
+    canFire && fireRaycaster(rotationSpeed, state.player, state.enemy)
     forcedSpellRelease = false
     canFire = false
     crosshairDots.visible = false
@@ -147,7 +147,7 @@ export default () => {
       crosshairDots.visible = true
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
-      fireRaycaster(rotationSpeed, state.player)
+      fireRaycaster(rotationSpeed, state.player, state.enemy)
       canFire = false
       forcedSpellRelease = true
       state.player.currentSpell.charge = 0

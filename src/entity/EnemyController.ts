@@ -49,6 +49,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
+        mesh.entityId = `${entity.uuid}::mesh`
         entity.mesh = mesh
       },
     })

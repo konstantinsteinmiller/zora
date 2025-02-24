@@ -1,7 +1,8 @@
 import { MAX_ROTATION_SPEED } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace } from '@/utils/function.ts'
-import { createTwinShotVFX } from '@/utils/vfx.ts'
+import { createShotVFX } from '@/utils/vfx.ts'
+import { Vector3 } from 'three'
 import * as THREE from 'three'
 
 let singleton: any = null
@@ -24,15 +25,19 @@ export default () => {
       return
     }
     entity.stateMachine.setState('cast')
+
+    let directionN: Vector3 = new Vector3()
     if (entity.name === 'player') {
       raycaster.setFromCamera(pointer, state.camera)
     } else {
       const origin = entity.mesh.position.clone()
       origin.y += entity.halfHeight + 0.1
-      origin.z -= 0.7
+      origin.z -= 0.9
       const targetPosition = target.mesh.position.clone()
-      origin.y += entity.halfHeight + 0.1
-      raycaster.set(origin, targetPosition)
+      origin.y += target.halfHeight + 0.1
+
+      directionN = new Vector3().subVectors(targetPosition, origin).normalize()
+      raycaster.set(origin, directionN)
     }
 
     const intersects = raycaster.intersectObjects(state.scene.children, true)
@@ -42,13 +47,12 @@ export default () => {
     }
 
     const intersect = intersects.find(inter => {
-      return inter.object.type !== 'AxesHelper' && inter.object.type !== 'LineSegments'
+      return inter.object.type !== 'AxesHelper' && inter.object.type !== 'Points' && inter.object.type !== 'LineSegments' && inter.object.type !== 'Line' && inter.object?.parent?.entityId !== `${entity.uuid}::mesh`
     })
-    // const object = intersect.object
-    // console.log('intersect object:', object.name, intersect, intersect?.point)
     if (intersect?.point) {
       createRayTrace(intersect.point)
-      createTwinShotVFX(intersect.point, entity)
+      console.log('intersect: ', intersect.object)
+      createShotVFX(intersect, entity, directionN)
     }
   }
 

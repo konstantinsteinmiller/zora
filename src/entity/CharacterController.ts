@@ -9,42 +9,46 @@ import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState'
 import { calcRapierMovementVector } from '@/utils/collision'
 
-let player: any = null
+let entity: any = null
 
 export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
-  if (player !== null) {
-    return player
+  if (entity !== null) {
+    return entity
   }
 
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
 
-  player = {
+  entity = {
     ...new Object3D(),
     ...getBaseStats(),
-    ...{ ...stats, currentSpell: { ...stats.currentSpell }, utils: { ...stats.utils }, groundedTime: { ...stats.groundedTime } },
+    ...stats,
     ...controllerUtils(),
     ...statsUtils(),
     mesh: mesh,
     halfHeight,
   }
-  player.getPosition = () => {
+  // console.log('entity: ', entity)
+  /* @Todo remove */
+  entity.currentSpell.speed = undefined
+
+  entity.getPosition = () => {
     if (!mesh) {
       return new Vector3(0, 0, 0)
     }
     return mesh?.position
   }
-  player.getRotation = () => {
+  entity.getRotation = () => {
     return mesh.quaternion
   }
-  player.setRotation = (rotation: THREE.Quaternion) => {
+  entity.setRotation = (rotation: THREE.Quaternion) => {
     if (!mesh) {
       return
     }
     const prevQuat = mesh.quaternion.clone()
     prevQuat.slerp(rotation, 0.2) // Smooth interpolation
-    player.rigidBody.setRotation(prevQuat)
+    entity.rigidBody.setRotation(prevQuat)
     return mesh.quaternion.copy(prevQuat)
   }
 
@@ -55,8 +59,8 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   const acceleration = new Vector3(1, 0.25, 15.0)
   const currentVelocity = new Vector3(0, 0, 0)
 
-  const stateMachine = new CharacterFSM(animationsMap, player)
-  player.stateMachine = stateMachine
+  const stateMachine = new CharacterFSM(animationsMap, entity)
+  entity.stateMachine = stateMachine
 
   const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
@@ -71,16 +75,17 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
-        player.mesh = mesh
+        mesh.entityId = `${entity.uuid}::mesh`
+        entity.mesh = mesh
       },
     })
   }
   loadModels()
 
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, player.colliderRadius)
-    player.rigidBody = rigidBody
-    player.collider = collider
+    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, entity.colliderRadius)
+    entity.rigidBody = rigidBody
+    entity.collider = collider
   }
   initPhysics()
 
@@ -134,31 +139,31 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     }
     stateMachine.update(deltaS, state.controls)
 
-    player.updateEndurance(player, deltaS, elapsedTimeInS)
+    entity.updateEndurance(entity, deltaS, elapsedTimeInS)
 
     const { _R, velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
 
-    player.mesh.quaternion.slerp(_R, 0.1) // Smooth interpolation
+    entity.mesh.quaternion.slerp(_R, 0.1) // Smooth interpolation
 
-    const movementVector = calcRapierMovementVector(player, velocity, deltaS)
+    const movementVector = calcRapierMovementVector(entity, velocity, deltaS)
 
     /* apply rotation and translation to physical body */
-    player.rigidBody.setNextKinematicRotation(player.getRotation())
-    player.rigidBody.setNextKinematicTranslation(movementVector)
+    entity.rigidBody.setNextKinematicRotation(entity.getRotation())
+    entity.rigidBody.setNextKinematicTranslation(movementVector)
 
     /* correct mesh position in physics capsule */
-    const meshPos = new Vector3(0, -player.halfHeight, 0).add(player.rigidBody.translation())
+    const meshPos = new Vector3(0, -entity.halfHeight, 0).add(entity.rigidBody.translation())
     /* Update Three.js Mesh Position */
-    player.position.copy(meshPos)
+    entity.position.copy(meshPos)
     mesh.position.copy(meshPos)
 
     mixer?.update?.(deltaS)
 
-    player.updateLife(player, elapsedTimeInS)
+    entity.updateLife(entity, elapsedTimeInS)
   }
 
   state.addEvent('renderer.update', update)
 
-  state.player = player
-  return player
+  state.player = entity
+  return entity
 }

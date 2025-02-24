@@ -1,7 +1,5 @@
-import { coverPositions } from '@/entity/levels/water-arena/config.ts'
 import SpellFire from '@/entity/SpellFire.ts'
-import world from '@/entity/World.ts'
-import { CRITICAL_CHARGE_END_COLOR, CRITICAL_CHARGE_START_COLOR, DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
+import { DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
@@ -147,7 +145,7 @@ export const chargeUtils = () => ({
       } else {
         const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
         if (isEntityChargeCritical) {
-          console.log('fire')
+          // console.log('fire')
           // entity.fireSpell(entity, target)
         }
       }

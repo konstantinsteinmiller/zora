@@ -77,6 +77,8 @@
   - [x] idle, walk, run, cast, jump
   - [x] Flying mechanic, jump -> fly
     - [x] spend stamina for flying
+  - [x] shoot spell vfx and deal damage on impact
+  - [ ] improve hit detection
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse

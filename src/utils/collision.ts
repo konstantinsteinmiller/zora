@@ -7,7 +7,7 @@ const calcUpVector = (entity: any, deltaS: number) => {
   const isFlying = entity.stateMachine.currentState.name === 'fly'
   let flyImpulse = entity.appliedFlyImpulse
 
-  if (!isFlying || !flyImpulse) return 0
+  if (/*!isFlying || */ !flyImpulse) return 0
 
   const decayFactor = Math.exp(-1 * deltaS) // Exponential decay
   flyImpulse *= decayFactor

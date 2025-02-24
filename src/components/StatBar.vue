@@ -63,9 +63,8 @@
         }"
       >
         <img
-          v-if="type === 'life'"
+          v-if="type === 'life' && props.ownerId === 'player'"
           class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
-          :class="barClasses"
           :style="barStyles"
           src="/images/stat/stat-life.png"
           alt="loss-life-bar"
@@ -73,7 +72,6 @@
         <img
           v-if="type === 'mana'"
           class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
-          :class="barClasses"
           :style="barStyles"
           src="/images/stat/stat-mana.png"
           alt="loss-life-bar"
@@ -81,7 +79,6 @@
         <img
           v-if="type === 'endurance'"
           class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
-          :class="barClasses"
           :style="barStyles"
           src="/images/stat/stat-endurance.png"
           alt="loss-life-bar"
@@ -91,7 +88,9 @@
       <img
         v-if="type === 'life'"
         class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-        :class="barClasses"
+        :class="{
+          'opacity-40': props.ownerId === 'player',
+        }"
         :style="barStyles"
         src="/images/stat/stat-life.png"
         alt="background-life-bar"
@@ -99,7 +98,6 @@
       <img
         v-if="type === 'mana'"
         class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-        :class="barClasses"
         :style="barStyles"
         src="/images/stat/stat-mana.png"
         alt="background-mana-bar"
@@ -107,7 +105,6 @@
       <img
         v-if="type === 'endurance'"
         class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-        :class="barClasses"
         :style="barStyles"
         src="/images/stat/stat-endurance.png"
         alt="background-endurance-bar"
@@ -180,6 +177,9 @@ const updateCallback = (deltaS: number) => {
       [typeSelectionList[3]]: typeSelectionList[1],
       [typeSelectionList[4]]: typeSelectionList[1],
       [typeSelectionList[5]]: typeSelectionList[2],
+    }
+    if (props.type === 'life' && props.ownerId !== 'player') {
+      owner.value[typeSelectionList[3]] = typeSelectionList[0]
     }
   }
 
