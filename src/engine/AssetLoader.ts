@@ -140,6 +140,7 @@ export default () => {
       model.traverse((child: any) => {
         if (child.isMesh) {
           child = createGeoIndex(child)
+          child.meshName = 'characterMesh'
         }
       })
       if (position) model.position.copy(position)

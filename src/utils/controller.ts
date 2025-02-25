@@ -240,7 +240,7 @@ export const controllerAwarenessUtils = () => ({
     const intersects = threatRaycaster.intersectObjects(state.scene.children, true)
 
     if (intersects.length > 0) {
-      intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
+      // intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
       const hasLineOfSight = intersects[0].object === enemy.mesh
       return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: hasLineOfSight }
     }

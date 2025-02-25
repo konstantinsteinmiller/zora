@@ -89,6 +89,7 @@ export const createRayTrace = (target: THREE.Vector3) => {
   const geometry = new THREE.SphereGeometry(0.1, 16, 16)
   const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
   const sphereMesh = new THREE.Mesh(geometry, material)
+  sphereMesh.name = 'rayTrace'
   sphereMesh.position.copy(target)
   sphereMesh.scale.set(1, 1, 1)
   sphereMesh.frustumCulled = false

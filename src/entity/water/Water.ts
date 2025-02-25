@@ -36,6 +36,7 @@ export default (options: any) => {
 
   mesh.geometry = new THREE.PlaneGeometry(1000, 1000, options.resolution || 512, options.resolution || 512)
   mesh.rotation.x = Math.PI * 0.5
+  mesh.name = 'waterMesh'
 
   // mesh.material = new THREE.MeshBasicMaterial({ color: 0x00ffff })
   mesh.position.set(0, 0.4, 0)

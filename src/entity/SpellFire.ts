@@ -24,11 +24,12 @@ export default () => {
       entity.stateMachine.setState('hit')
       return
     }
-    entity.stateMachine.setState('cast')
+    // entity.stateMachine.setState('cast')
 
     let directionN: Vector3 = new Vector3()
     if (entity.name === 'player') {
       raycaster.setFromCamera(pointer, state.camera)
+      directionN = raycaster.ray.direction
     } else {
       const origin = entity.mesh.position.clone()
       origin.y += entity.halfHeight + 0.1
@@ -43,16 +44,52 @@ export default () => {
     const intersects = raycaster.intersectObjects(state.scene.children, true)
 
     if (intersects.length === 0) {
+      if (entity.name === 'player') {
+        /* no object intersected, shoot into the air */
+        const directionN = raycaster.ray.direction
+        const point = entity.mesh.position.clone().add(directionN.clone().multiplyScalar(200))
+        createShotVFX({ point: point, object: { entityType: 'level' } }, entity, directionN)
+      }
       return
     }
 
+    // const ignoredObjectTypes = ['AxesHelper', 'Points', 'LineSegments', 'Line']
+    // const ignoredObjectNames = ['rayTrace']
+    /* find only SkinnedMesh of the characterController and enemyController */
     const intersect = intersects.find(inter => {
-      return inter.object.type !== 'AxesHelper' && inter.object.type !== 'Points' && inter.object.type !== 'LineSegments' && inter.object.type !== 'Line' && inter.object?.parent?.entityId !== `${entity.uuid}::mesh`
+      const entityId: string | undefined = inter.object?.parent?.entityId
+      return (
+        // !ignoredObjectTypes.includes(inter.object.type) &&
+        // !ignoredObjectNames.includes(inter.object.name) /*
+        //  */ &&
+        (entityId && entityId !== `${entity.uuid}`) || inter.object?.entityType === 'level'
+      )
     })
     if (intersect?.point) {
       createRayTrace(intersect.point)
-      console.log('intersect: ', intersect.object)
-      createShotVFX(intersect, entity, directionN)
+
+      intersect.object.type !== 'SkinnedMesh' &&
+        intersect.object.name !== 'WaterArena' /*
+         */ &&
+        console.log('intersect: ', intersect.object)
+
+      let hasAppliedCallbackOnce = false
+      createShotVFX(intersect, entity, directionN, () => {
+        if (hasAppliedCallbackOnce) return
+        hasAppliedCallbackOnce = true
+        const entityId: string | undefined = intersect?.object?.parent?.entityId
+        /* find intersected target and deal damage */
+        if (entityId && entityId !== `${entity.uuid}`) {
+          const hitTarget: any = [state.player, state.enemy].find((character: any) => {
+            return character.uuid === entityId
+          })
+          if (hitTarget) {
+            hitTarget.dealDamage(hitTarget, entity.currentSpell.damage)
+            console.log('%c enemy hit: ', 'color: red')
+          }
+        }
+      })
+      return
     }
   }
 

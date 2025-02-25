@@ -1,71 +1,93 @@
-import renderer from '@/engine/Renderer.ts'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
-import System, { SpriteRenderer, GPURenderer } from 'three-nebula'
+import System, { SpriteRenderer, GPURenderer, Force } from 'three-nebula'
 import state from '@/states/GlobalState'
 
 // import TwinShot from '@/vfx/twin-shot_2.json'
 import ShotVFX from '@/vfx/shot.json'
 
-export const createShotVFX = async (intersect: any, entity: any, directionN: Vector3) => {
+export const createShotVFX = async (intersect: any, entity: any, directionN: Vector3, hitCallback: () => void = () => {}) => {
   const adjustedPosition = entity.getPosition().clone()
   adjustedPosition.y += 1
-  // adjustedPosition.x += 0.9
 
   const system = await System.fromJSONAsync(ShotVFX.particleSystemState, THREE)
   // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
   const nebulaRenderer = new GPURenderer(state.scene, THREE)
   const nebulaSystem = system.addRenderer(nebulaRenderer)
 
+  const forceMagnitude = 10000
+  const forceDirection = directionN.clone().negate().normalize().multiplyScalar(forceMagnitude)
+
   nebulaSystem.emitters.forEach((emitter: any) => {
     /* adjust the force field of the emitters to get proper rotation
      * of the left behind particle */
-    const gravity = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Gravity')
-    if (gravity) {
-      const dir = directionN.multiplyScalar(100)
-      gravity.acceleration.set(dir.x, dir.y, dir.z) // Removes gravity effect
+    const forceBehaviour = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')
+    if (forceBehaviour) {
+      forceBehaviour.force.x = forceDirection.x
+      forceBehaviour.force.y = forceDirection.y
+      forceBehaviour.force.z = forceDirection.z
     }
 
     emitter.position.copy(adjustedPosition)
   })
 
-  const TWIN_SHOT_SPEED = 100
+  const SHOT_SPEED = 100
   let eventUuid: string = ''
 
   eventUuid = state.addEvent(`renderer.update`, (deltaS: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {
-      const trajectoryVector: Vector3 = intersect.point.clone().sub(emitter.position)
-      const dist = intersect.point.distanceTo(emitter.position)
-      if (dist < 0.2) {
-        const entityId: string | undefined = intersect?.object?.parent?.entityId
-        if (entityId && entityId !== `${entity.uuid}::mesh`) {
-          const hitTarget: any = [state.player, state.enemy].find((character: any) => {
-            const targetUuid = entityId.split('::')[0]
-            return character.uuid === targetUuid
-          })
-          if (hitTarget) {
-            hitTarget.dealDamage(hitTarget, entity.currentSpell.damage)
-            console.log('%c enemy hit: ', 'color: red')
-          }
+      const isLevel = intersect.object?.entityType === 'level'
+      let destinationPoint = new Vector3()
+
+      if (isLevel) {
+        destinationPoint.copy(intersect.point)
+      } else {
+        destinationPoint = intersect.object?.parent.position.clone()
+        destinationPoint.y += entity.halfHeight || 0
+      }
+      const distToTarget = destinationPoint.distanceTo(emitter.position)
+
+      // const distFromEntity = emitter.position.clone().distanceTo(entity.mesh.position.clone())
+      // const forceBehaviour = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')
+
+      // if (forceBehaviour) {
+      //   // console.log('distFromEntity: ', distFromEntity)
+      //   if (distFromEntity < 6.8) {
+      //     forceBehaviour.force.x = 0
+      //     forceBehaviour.force.y = 0
+      //     forceBehaviour.force.z = 0
+      //   } else {
+      //     forceBehaviour.force.x = forceDirection.x
+      //     forceBehaviour.force.y = forceDirection.y
+      //     forceBehaviour.force.z = forceDirection.z
+      //   }
+      // }
+
+      if (distToTarget < 0.7) {
+        hitCallback()
+
+        /* remove force */
+        const forceBehaviour = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')
+        if (forceBehaviour) {
+          forceBehaviour.force.x = 0
+          forceBehaviour.force.y = 0
+          forceBehaviour.force.z = 0
         }
+
         /* let the impacted spell sit for a while to see where you hit */
-        state.removeEvent(`renderer.update`, eventUuid)
         setTimeout(() => {
+          state.removeEvent(`renderer.update`, eventUuid)
           nebulaSystem.destroy()
         }, 2000)
         return
       }
 
-      const factor = dist < 1 ? 0.4 : 1
-      trajectoryVector.normalize()
-      trajectoryVector.multiplyScalar(deltaS * TWIN_SHOT_SPEED * factor)
+      const trajectoryVector: Vector3 = destinationPoint.clone().sub(emitter.position).normalize()
+      const factor = distToTarget < 1 ? 0.4 : 1
+      const movementDistance = deltaS * SHOT_SPEED * factor
+      const movementVector: Vector3 = trajectoryVector.multiplyScalar(movementDistance)
 
-      const force = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')
-      if (force) {
-        force.force = directionN.multiplyScalar(-100)
-      }
-
-      emitter.position.add(trajectoryVector)
+      emitter.position.add(movementVector)
     })
     nebulaSystem.update()
   })

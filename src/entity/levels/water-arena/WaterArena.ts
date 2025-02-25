@@ -51,6 +51,9 @@ export default async () => {
     pathfinder.orientationPosition = orientationPosition
     pathfinder.coverPositions = coverPositions
     state.waterArena.pathfinder = pathfinder
+    state.waterArena.children.forEach((child: any) => {
+      child.entityType = 'level'
+    })
 
     if (state.enableDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))

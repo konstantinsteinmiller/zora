@@ -57,6 +57,7 @@ export default () => {
       const size = 0.18
       const geometry = new PlaneGeometry(size, size)
       const mesh = new Mesh(geometry, material)
+      mesh.name = 'crosshairMesh'
       mesh.position.set(0, 0, 0) // Center it in the HUD
       return mesh
     }

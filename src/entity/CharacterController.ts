@@ -75,7 +75,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
-        mesh.entityId = `${entity.uuid}::mesh`
+        mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
       },
     })
