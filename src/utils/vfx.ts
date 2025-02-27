@@ -11,7 +11,7 @@ const vfxMap: { [key: string]: any } = {
   deathStar: DeathStarVFX,
 }
 
-export const createVFX = async (position: Vector3, vfxName: string, onFinished: () => void) => {
+export const createVFX = async (position: Vector3, vfxName: string, onFinished?: () => void) => {
   const vfx = vfxMap[vfxName]
   if (!vfx) {
     console.error(`VFX not found: ${vfxName}`)
@@ -33,7 +33,7 @@ export const createVFX = async (position: Vector3, vfxName: string, onFinished: 
     if (nebulaSystem.emitters.every((emitter: any) => emitter.dead)) {
       setTimeout(() => {
         if (hasRemovedSystem) return
-        onFinished()
+        onFinished?.()
         state.removeEvent(`renderer.update`, eventUuid)
         hasRemovedSystem = true
       }, 1000)
@@ -68,6 +68,7 @@ export const createShotVFX = async (intersect: any, entity: any, directionN: Vec
 
   const SHOT_SPEED = 100
   let eventUuid: string = ''
+  let hasAppliedCallbackOnce = false
 
   eventUuid = state.addEvent(`renderer.update`, (deltaS: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {
@@ -99,7 +100,10 @@ export const createShotVFX = async (intersect: any, entity: any, directionN: Vec
       // }
 
       if (distToTarget < 0.7) {
-        hitCallback()
+        if (!hasAppliedCallbackOnce) {
+          hitCallback()
+          hasAppliedCallbackOnce = true
+        }
 
         /* remove force */
         const forceBehaviour = emitter.behaviours.find((behaviour: any) => behaviour.type === 'Force')

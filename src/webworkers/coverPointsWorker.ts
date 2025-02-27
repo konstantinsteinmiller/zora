@@ -10,8 +10,8 @@ self.onmessage = function (event: MessageEvent) {
   // Convert world geometry to a Three.js Mesh if not already done
   if (!worldMesh) {
     const geometry = new BufferGeometry()
-    geometry.setAttribute('position', new Float32BufferAttribute(state.physics.vertices, 3))
-    geometry.setIndex(new Uint32BufferAttribute(state.physics.indices, 1))
+    geometry.setAttribute('position', new Float32BufferAttribute(world.vertices, 3))
+    geometry.setIndex(new Uint32BufferAttribute(world.indices, 1))
 
     const material = new MeshBasicMaterial({ visible: false }) // Invisible for performance
     worldMesh = new Mesh(geometry, material)

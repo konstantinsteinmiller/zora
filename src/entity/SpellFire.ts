@@ -1,6 +1,6 @@
-import { MAX_ROTATION_SPEED } from '@/enums/constants.ts'
+import { DEFAULT_CHARGE_DURATION, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
-import { createRayTrace } from '@/utils/function.ts'
+import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
 import { Vector3 } from 'three'
 import * as THREE from 'three'
@@ -18,6 +18,22 @@ export default () => {
     entity.dealDamage(entity, entity.currentSpell.damage * 0.5)
   }
 
+  singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
+    const damage: number = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, entity.currentSpell.damage * 0.1, entity.currentSpell.damage, rotationSpeed).toFixed(1)
+
+    const entityId: string | undefined = intersect?.object?.parent?.entityId
+    /* find intersected target and deal damage */
+    if (entityId && entityId !== `${entity.uuid}`) {
+      const hitTarget: any = [state.player, state.enemy].find((character: any) => {
+        return character.uuid === entityId
+      })
+      if (hitTarget) {
+        hitTarget.dealDamage(hitTarget, damage)
+        console.log('%c enemy hit: ', 'color: red', damage)
+      }
+    }
+  }
+
   singleton.fireRaycaster = (rotationSpeed: number, entity: any, target: any) => {
     if (rotationSpeed >= MAX_ROTATION_SPEED) {
       damageSelf(entity)
@@ -25,7 +41,6 @@ export default () => {
       return
     }
     // entity.stateMachine.setState('cast')
-
     let directionN: Vector3 = new Vector3()
     if (entity.name === 'player') {
       raycaster.setFromCamera(pointer, state.camera)
@@ -73,21 +88,8 @@ export default () => {
          */ &&
         console.log('intersect: ', intersect.object)
 
-      let hasAppliedCallbackOnce = false
       createShotVFX(intersect, entity, directionN, () => {
-        if (hasAppliedCallbackOnce) return
-        hasAppliedCallbackOnce = true
-        const entityId: string | undefined = intersect?.object?.parent?.entityId
-        /* find intersected target and deal damage */
-        if (entityId && entityId !== `${entity.uuid}`) {
-          const hitTarget: any = [state.player, state.enemy].find((character: any) => {
-            return character.uuid === entityId
-          })
-          if (hitTarget) {
-            hitTarget.dealDamage(hitTarget, entity.currentSpell.damage)
-            console.log('%c enemy hit: ', 'color: red')
-          }
-        }
+        singleton.assessDamage(entity, intersect, rotationSpeed)
       })
       return
     }

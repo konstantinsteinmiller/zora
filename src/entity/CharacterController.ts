@@ -31,7 +31,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   }
   // console.log('entity: ', entity)
   /* @Todo remove */
-  entity.currentSpell.speed = undefined
+  // entity.currentSpell.speed = undefined
 
   entity.getPosition = () => {
     if (!mesh) {
@@ -133,11 +133,18 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     return { _R, velocity }
   }
 
+  let updateEventUuid = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
     if (!mesh || stateMachine.currentState === null) {
       return
     }
     stateMachine.update(deltaS, state.controls)
+
+    if (entity.isDead(entity)) {
+      state.removeEvent('renderer.update', updateEventUuid)
+      entity.die(entity)
+      return
+    }
 
     entity.updateEndurance(entity, deltaS, elapsedTimeInS)
 
@@ -162,7 +169,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     entity.updateLife(entity, elapsedTimeInS)
   }
 
-  state.addEvent('renderer.update', update)
+  updateEventUuid = state.addEvent('renderer.update', update)
 
   state.player = entity
   return entity

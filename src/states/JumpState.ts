@@ -14,6 +14,7 @@ export default class JumpState extends State {
   }
 
   enter(previousState: any) {
+    if (!this.parent.animationsMap['jump'].action) return
     const currentAction = this.parent.animationsMap['jump'].action
     const mixer = currentAction.getMixer()
     mixer.addEventListener('finished', () => this.onFinished(previousState))

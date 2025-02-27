@@ -85,7 +85,7 @@ export const statsUtils = () => {
       target.endurance = clamp(target.endurance - damage, 0, target.maxEndurance)
     },
     addHp(target: any, heal: number) {
-      target.previousHp = target.hp
+      target.previousHp = target.hp + heal
       target.hp = clamp(target.hp + heal, 0, target.maxHp)
     },
     updateLife(target: any, elapsedTimeInS: number) {
@@ -110,9 +110,7 @@ export const statsUtils = () => {
       const scaleFactor = 0.93
       const position: Vector3 = entity.mesh.position.clone()
       position.setY(position.y + 0.1)
-      createVFX(position, 'deathStar', () => {
-        console.log('vfx finished: ')
-      })
+      createVFX(position, 'deathStar' /* () => console.log('vfx finished: ')}*/)
       removePath()
       const deathEventUuid: string = state.addEvent('renderer.update', () => {
         const mesh = entity.mesh
@@ -127,7 +125,7 @@ export const statsUtils = () => {
           entity.mesh.geometry?.dispose()
           entity.mesh.material?.dispose()
           state.scene.remove(entity.mesh)
-          console.log('%c is dying: ', 'color: violet')
+          // console.log('%c is dying: ', 'color: violet')
         }
       })
       entity.utils.takeOffFrames = 0

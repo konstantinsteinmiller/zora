@@ -18,6 +18,7 @@
       - [x] fix animations why falling from island
     - [x] fleeing
     - [x] hiding behind obstacles
+    - [x] enemy can die and vanish with vfx
     - [ ] cover while charging
     - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
     - [ ] prevent self hurting
@@ -80,7 +81,8 @@
   - [x] shoot spell vfx and deal damage on impact
   - [x] improve hit detection
   - [x] VFX trail
-  - [X] refactor mouse movement and add mouse lock to center of screen while not in menus
+  - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
+  - [x] scale damage with charge level
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse
