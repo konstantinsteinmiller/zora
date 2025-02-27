@@ -48,11 +48,11 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     attack: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        if (hasChanged) {
-          state.triggerEvent('controls.attack1.down')
-        }
+        if (!(hasChanged && document.pointerLockElement)) return
+        state.triggerEvent('controls.attack1.down')
       },
       onDeactivate: (entity: any) => {
+        if (!document.pointerLockElement) return
         state.triggerEvent('controls.attack1.up')
       },
     },
@@ -95,6 +95,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     fly: {
       onActivate: (entity: any, hasChanged: boolean) => {
+        if (!document.pointerLockElement) return
         if (hasChanged) {
           if (entity.endurance >= FLY_COST) {
             entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
@@ -123,11 +124,12 @@ export default (defaultControlsConfig: EnumStringToList) => {
         /* do once */
         if (hasChanged) {
           state.isPaused = !state.isPaused
+          state.controls.removePointerLock()
           /* print the current position of the player mesh and save it as Vector3 to clipboard */
           const pos = state.player.mesh.position
           const groupId = state.level.pathfinder.getGroup(state.level.zone, pos)
           const closest = state.level.pathfinder.getClosestNode(pos, state.level.zone, groupId, true)
-          console.log('pos: ', pos, JSON.stringify(closest, undefined, 2), groupId)
+          closest && console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
           navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
 
           window.onceDebug = false

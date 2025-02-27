@@ -36,6 +36,14 @@ const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => 
   }
 }
 
+export const removePath = () => {
+  const isDebug = true /* && state.enableDebug*/
+  if (isDebug) {
+    const pathfindingHelper = state.level.pathfinder.pathfindingHelper
+    pathfindingHelper.reset()
+  }
+}
+
 /* find closest point on navmesh by increasing radius
  * around agent position */
 const findClosestPointInCircle = (meshPosition: Vector3) => {

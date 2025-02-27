@@ -12,7 +12,7 @@ export default () => {
   singleton = {}
 
   const raycaster = new THREE.Raycaster()
-  const pointer = new THREE.Vector2(state.controls.mouse.current.crosshairX, state.controls.mouse.current.crosshairY)
+  const pointer = new THREE.Vector2(state.controls.mouse.crosshairX, state.controls.mouse.crosshairY)
 
   const damageSelf = (entity: any) => {
     entity.dealDamage(entity, entity.currentSpell.damage * 0.5)

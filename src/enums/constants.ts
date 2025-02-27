@@ -32,3 +32,7 @@ export const MIN_CHARGE_END_COLOR = new Color(0xff0000)
 export const CRITICAL_CHARGE_START_COLOR = new Color(0xd4dcfc)
 export const CRITICAL_CHARGE_END_COLOR = new Color(0x3d8dff)
 export const STRAFE_VELOCITY = 8
+
+export const Options = {
+  unadjustedMovement: true,
+}

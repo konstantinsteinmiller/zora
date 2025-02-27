@@ -69,9 +69,15 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
   // const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
+  let eventUuid: string = ''
   entity.isAwaitingCoverCalculation = false
   const update = (deltaS: number) => {
     if (!entity.mesh || entity.stateMachine.currentState === null) {
+      return
+    }
+    if (entity.isDead(entity)) {
+      state.removeEvent('renderer.update', eventUuid)
+      entity.die(entity)
       return
     }
 
@@ -134,8 +140,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
     mixer?.update?.(deltaS)
   }
 
-  /* @Todo: remove the eventUuid when the enemy is destroyed */
-  const eventUuid = state.addEvent('renderer.update', update)
+  eventUuid = state.addEvent('renderer.update', update)
 
   state.enemy = entity
   return entity

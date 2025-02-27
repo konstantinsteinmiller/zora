@@ -89,7 +89,7 @@
         v-if="type === 'life'"
         class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
         :class="{
-          'opacity-40': props.ownerId === 'player',
+          'opacity-20': props.ownerId === 'enemy',
         }"
         :style="barStyles"
         src="/images/stat/stat-life.png"

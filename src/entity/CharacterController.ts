@@ -2,7 +2,6 @@ import AssetLoader from '@/engine/AssetLoader.ts'
 import { characterAnimationNamesList } from '@/enums/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
-import { calcDesiredMovement, detectCollisions } from '@/utils/movement2.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -147,9 +146,6 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     entity.mesh.quaternion.slerp(_R, 0.1) // Smooth interpolation
 
     const movementVector = calcRapierMovementVector(entity, velocity, deltaS)
-    // updateCharacter(entity, velocity, deltaS)
-    // const desiredMovement = calcDesiredMovement(entity, velocity, deltaS)
-    // detectCollisions(entity, deltaS, desiredMovement)
 
     /* apply rotation and translation to physical body */
     entity.rigidBody.setNextKinematicRotation(entity.getRotation())

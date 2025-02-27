@@ -2,7 +2,10 @@ import SpellFire from '@/entity/SpellFire.ts'
 import { DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
+import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
+import { removePath } from '@/utils/navigation.ts'
+import { createVFX } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
 import { Raycaster, Vector3 } from 'three'
@@ -99,6 +102,40 @@ export const statsUtils = () => {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
     },
+    isDead(target: any) {
+      return target?.hp <= 0
+    },
+    die(entity: any, deltaS: number) {
+      const targetScale = 0.001
+      const scaleFactor = 0.93
+      const position: Vector3 = entity.mesh.position.clone()
+      position.setY(position.y + 0.1)
+      createVFX(position, 'deathStar', () => {
+        console.log('vfx finished: ')
+      })
+      removePath()
+      const deathEventUuid: string = state.addEvent('renderer.update', () => {
+        const mesh = entity.mesh
+        const originalScale = entity.mesh.scale.clone()
+
+        if (mesh.scale.x > targetScale) {
+          const scale = originalScale.y * scaleFactor
+          mesh.scale.set(scale, scale, scale)
+        }
+        if (entity.mesh.scale.y < targetScale) {
+          state.removeEvent('renderer.update', deathEventUuid)
+          entity.mesh.geometry?.dispose()
+          entity.mesh.material?.dispose()
+          state.scene.remove(entity.mesh)
+          console.log('%c is dying: ', 'color: violet')
+        }
+      })
+      entity.utils.takeOffFrames = 0
+      entity.lastCoverPosition = null
+      entity.path = null
+      const movementVector = calcRapierMovementVector(entity, new Vector3(0, 0, 0), deltaS)
+      entity.rigidBody.setNextKinematicTranslation(movementVector)
+    },
   }
 }
 
@@ -164,13 +201,15 @@ export const chargeUtils = () => ({
 })
 
 export const createOverHeadHealthBar = (entity: any) => {
+  let healthBarEventUuid = ''
   const updateHealthBar = (entity: any) => {
     const healthBarContainer = document.querySelector(`.enemy-life-bar.entity-${entity.uuid}`) as HTMLDivElement
 
     if (!healthBarContainer || !entity.mesh) return
     const enemyPosition = entity.mesh.position.clone() // Placeholder for enemy position
     entity.mesh.getWorldPosition(enemyPosition)
-    enemyPosition.y += entity.halfHeight * 2 + 0.1 // Adjust height to be above the enemy
+    const entityScale = entity.mesh.scale.y * 100
+    enemyPosition.y += entity.halfHeight * entityScale * 2 + 0.1 // Adjust height to be above the enemy
 
     // Convert 3D position to 2D screen space
     const screenPosition = enemyPosition.clone().project(state.camera)
@@ -179,14 +218,24 @@ export const createOverHeadHealthBar = (entity: any) => {
 
     // Calculate distance from camera
     const distance = state.camera.position.distanceTo(enemyPosition)
-
+    let width = '100%'
     // Scale health bar size based on distance (closer = bigger, farther = smaller)
-    const scaleFactor = Math.max(0.3, Math.min(1.0, 5 / distance)) // Clamps scale between 0.5 and 1.5
+    let scaleFactor = Math.max(0.3, Math.min(1.0, 5 / distance)) // Clamps scale between 0.5 and 1.5
+    if (entity.isDead(entity)) {
+      scaleFactor = entityScale
+      if (scaleFactor < 0.15) {
+        scaleFactor = 0
+        width = '0'
+        healthBarContainer.style.maxWidth = `${width}px`
+        healthBarContainer.style.width = `${width}px`
+        healthBarContainer.style.minWidth = `${width}px`
+        state.removeEvent('renderer.update', healthBarEventUuid)
+      }
+    }
 
     healthBarContainer.style.transform = `translate(-50%, -100%) scale(${scaleFactor})`
     healthBarContainer.style.left = `${x}px`
     healthBarContainer.style.top = `${y}px`
-    healthBarContainer.dataset.width = '100'
 
     if (screenPosition.z < 0 || screenPosition.z > 1) {
       healthBarContainer.style.opacity = '0'
@@ -195,7 +244,7 @@ export const createOverHeadHealthBar = (entity: any) => {
     }
   }
 
-  state.addEvent('renderer.update', () => updateHealthBar(entity))
+  healthBarEventUuid = state.addEvent('renderer.update', () => updateHealthBar(entity))
 }
 
 const threatRaycaster = new Raycaster()

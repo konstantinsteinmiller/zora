@@ -3,8 +3,43 @@ import { Vector3 } from 'three'
 import System, { SpriteRenderer, GPURenderer, Force } from 'three-nebula'
 import state from '@/states/GlobalState'
 
-// import TwinShot from '@/vfx/twin-shot_2.json'
 import ShotVFX from '@/vfx/shot.json'
+import DeathStarVFX from '@/vfx/death-star.json'
+
+const vfxMap: { [key: string]: any } = {
+  shot: ShotVFX,
+  deathStar: DeathStarVFX,
+}
+
+export const createVFX = async (position: Vector3, vfxName: string, onFinished: () => void) => {
+  const vfx = vfxMap[vfxName]
+  if (!vfx) {
+    console.error(`VFX not found: ${vfxName}`)
+    return
+  }
+
+  const system = await System.fromJSONAsync(vfx.particleSystemState, THREE)
+  // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
+  const nebulaRenderer = new GPURenderer(state.scene, THREE)
+  const nebulaSystem = system.addRenderer(nebulaRenderer)
+  nebulaSystem.emitters.forEach((emitter: any) => {
+    emitter.position.copy(position as Vector3)
+  })
+
+  let hasRemovedSystem = false
+  const eventUuid = state.addEvent(`renderer.update`, () => {
+    nebulaSystem.update()
+    /* if all emitters are dead remove the vfx */
+    if (nebulaSystem.emitters.every((emitter: any) => emitter.dead)) {
+      setTimeout(() => {
+        if (hasRemovedSystem) return
+        onFinished()
+        state.removeEvent(`renderer.update`, eventUuid)
+        hasRemovedSystem = true
+      }, 1000)
+    }
+  })
+}
 
 export const createShotVFX = async (intersect: any, entity: any, directionN: Vector3, hitCallback: () => void = () => {}) => {
   const adjustedPosition = entity.getPosition().clone()

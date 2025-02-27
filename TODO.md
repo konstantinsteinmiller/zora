@@ -80,7 +80,7 @@
   - [x] shoot spell vfx and deal damage on impact
   - [x] improve hit detection
   - [x] VFX trail
-  - [ ] refactor mouse movement and add mouse lock to center of screen while not in menues
+  - [X] refactor mouse movement and add mouse lock to center of screen while not in menus
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse

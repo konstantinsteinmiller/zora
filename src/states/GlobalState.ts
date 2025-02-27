@@ -73,7 +73,8 @@ const globalState = () => {
   state.enableWater = true
   state.enableDebug = false
   // state.debugPhysics = true
-  state.showCursor = false
+  // state.showCursor = false
+  state.showCursor = true
   state.showCrosshair = true
   state.isThirdPerson = true
   state.isPaused = false

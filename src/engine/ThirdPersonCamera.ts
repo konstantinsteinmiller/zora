@@ -49,12 +49,12 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh = state.controls.mouse.current.mouseXDelta / innerWidth
+    let xh = state.controls.mouse.mouseX / innerWidth
 
     if (state.controls.left || state.controls.right) {
       xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
     } else {
-      xh = state.controls.mouse.current.mouseXDelta / innerWidth
+      xh = state.controls.mouse.mouseX / innerWidth
     }
 
     phi += -xh * phiSpeed
@@ -86,8 +86,8 @@ export default () => {
   }
 
   const updateRotation = () => {
-    const xh = state.controls.mouse.current.mouseXDelta / innerWidth
-    const yh = state.controls.mouse.current.mouseYDelta / innerHeight
+    const xh = state.controls.mouse.mouseX / innerWidth
+    const yh = state.controls.mouse.mouseY / innerHeight
 
     phi += -xh * phiSpeed
     theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)

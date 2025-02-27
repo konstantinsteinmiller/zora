@@ -1,5 +1,5 @@
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
-import { LOOK_AROUND_SPEED } from '@/enums/constants.ts'
+import { LOOK_AROUND_SPEED, Options } from '@/enums/constants.ts'
 import state from '@/states/GlobalState'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, Enum, EnumStringToList } from '@/types/general.ts'
@@ -8,10 +8,7 @@ let input: {
   keysMap: BoolEnum
   actions: ActionFunctionMap
   actionsMap: { [action: string]: boolean | BoolEnum; previous: BoolEnum }
-  mouse: {
-    current: { [key: string]: number }
-    previous: { [key: string]: number } | null
-  }
+  mouse: { [key: string]: number }
   updateControlsConfig: (newConfig: Partial<Enum>) => void
 } = {}
 
@@ -39,7 +36,7 @@ const defaultControlsConfig: EnumStringToList = {
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))
 
 export default () => {
-  if (input?.mouse?.current) return input
+  if (input?.mouse) return input
 
   const prefilledActionsMap = getPrefilledActionsMap(defaultControlsConfig)
   input = {
@@ -63,15 +60,12 @@ export default () => {
       /* 'activate': false , 'interact': false... */
     },
     mouse: {
-      current: {
-        mouseX: 0,
-        mouseY: 0,
-        mouseXDelta: 0,
-        mouseYDelta: 0,
-        crosshairX: (innerWidth / 2 / innerWidth) * 2 - 1,
-        crosshairY: -(innerHeight / 2 / innerHeight) * 2 + 1,
-      },
-      previous: null,
+      mouseX: 0,
+      mouseY: 0,
+      mouseXDelta: 0,
+      mouseYDelta: 0,
+      crosshairX: (innerWidth / 2 / innerWidth) * 2 - 1,
+      crosshairY: -(innerHeight / 2 / innerHeight) * 2 + 1,
     },
     updateControlsConfig: (newConfig: Partial<Enum>) => {
       controlsConfig = { ...controlsConfig, ...newConfig }
@@ -96,8 +90,11 @@ export default () => {
   }
 
   const onMouseDown = (event: MouseEvent) => {
+    event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = true
+
     setAction(`Mouse${event.button}`)
+    setPointerLock()
     // case 0: // left mouse button
     // case 1: // cursor wheel button
     // case 2: // right mouse button
@@ -105,6 +102,7 @@ export default () => {
     // case 4: // navigate back
   }
   const onMouseUp = (event: MouseEvent) => {
+    event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = false
     setAction(`Mouse${event.button}`)
   }
@@ -126,33 +124,21 @@ export default () => {
   }
 
   const onMouseMove = (event: MouseEvent) => {
-    input.mouse.current.mouseX = event.pageX - innerWidth / 2
-    input.mouse.current.mouseY = event.pageY - innerHeight / 2
-    input.mouse.current.crosshairX = (event.clientX / innerWidth) * 2 - 1
-    input.mouse.current.crosshairY = -(event.clientY / innerHeight) * 2 + 1
+    input.mouse.crosshairX = (event.clientX / innerWidth) * 2 - 1
+    input.mouse.crosshairY = -(event.clientY / innerHeight) * 2 + 1
 
-    if (input.mouse.previous === null) {
-      input.mouse.previous = {
-        ...input.mouse.current,
-      }
-    }
-    input.mouse.current.mouseXDelta = input.mouse.current.mouseX - input.mouse.previous.mouseX
-    input.mouse.current.mouseYDelta = input.mouse.current.mouseY - input.mouse.previous.mouseY
+    input.mouse.mouseXDelta = event.movementX || 0 // Updated to use movementX
+    input.mouse.mouseYDelta = event.movementY || 0 // Updated to use movementY
   }
 
   const update = () => {
-    if (input.mouse.previous !== null) {
-      input.mouse.current.mouseXDelta = input.mouse.current.mouseX - input.mouse.previous.mouseX
-      input.mouse.current.mouseYDelta = input.mouse.current.mouseY - input.mouse.previous.mouseY
-      if (input.mouse.current.mouseX === -innerWidth / 2) {
-        input.mouse.current.mouseXDelta = -LOOK_AROUND_SPEED
-      }
-      if (input.mouse.current.mouseX >= innerWidth / 2 - 1) {
-        input.mouse.current.mouseXDelta = LOOK_AROUND_SPEED
-      }
+    // Process mouse deltas for camera movement here
+    input.mouse.mouseX = LOOK_AROUND_SPEED * input.mouse.mouseXDelta
+    input.mouse.mouseY = input.mouse.mouseYDelta
 
-      input.mouse.previous = { ...input.mouse.current }
-    }
+    // Reset deltas after processing
+    input.mouse.mouseXDelta = 0 // Resetting X delta
+    input.mouse.mouseYDelta = 0 // Resetting Y delta
   }
 
   state.addEvent(
@@ -169,12 +155,45 @@ export default () => {
   document.addEventListener('contextmenu', e => e.preventDefault(), false)
   document.addEventListener('mousedown', e => onMouseDown(e), false)
   document.addEventListener('mouseup', e => onMouseUp(e), false)
-  document.addEventListener('pointermove', e => onMouseMove(e), false)
+  // document.addEventListener('pointermove', e => onMouseMove(e), false)
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === document.body) {
+      // console.log('Pointer locked')
+      document.addEventListener('mousemove', onMouseMove, false)
+    } else {
+      // console.log('Pointer unlocked')
+      document.removeEventListener('mousemove', onMouseMove, false)
+    }
+  })
+
+  function setPointerLock() {
+    document.body.requestPointerLock({
+      unadjustedMovement: Options.unadjustedMovement,
+    })
+  }
+  function isPointerLocked() {
+    return document.pointerLockElement
+  }
+  function togglePointerLock() {
+    document.pointerLockElement === document.body ? removePointerLock() : setPointerLock()
+  }
+  function removePointerLock() {
+    if (document.pointerLockElement) {
+      document.exitPointerLock()
+      console.log('%c Pointer lock released.', 'color: grey')
+    } else {
+      console.log('%c Pointer is not locked.', 'color: grey')
+    }
+  }
 
   state.input = input
   state.controls = input.actionsMap
   state.controls.mouse = input.mouse
   state.controls.keysMap = input.keysMap
+  state.controls.isPointerLocked = isPointerLocked
+  state.controls.removePointerLock = removePointerLock
+  state.controls.setPointerLock = setPointerLock
+  state.controls.togglePointerLock = togglePointerLock
 
   return input
 }

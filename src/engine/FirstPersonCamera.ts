@@ -66,8 +66,8 @@ export default () => {
     /* calc the delta to rotate the character vertically */
     /* calc the delta to rotate the character horizontally */
 
-    const xh = state.controls.mouse.current.mouseXDelta / innerWidth
-    const yh = state.controls.mouse.current.mouseYDelta / innerHeight
+    const xh = state.controls.mouse.mouseX / innerWidth
+    const yh = state.controls.mouse.mouseY / innerHeight
 
     /* apply some speed constant to get an angle in radians [0, 2 PI] */
     phi += -xh * phiSpeed
@@ -95,12 +95,12 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh = state.controls.mouse.current.mouseXDelta / innerWidth
+    let xh = state.controls.mouse.mouseX / innerWidth
 
     if (state.controls.left || state.controls.right) {
       xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
     } else {
-      xh = state.controls.mouse.current.mouseXDelta / innerWidth
+      xh = state.controls.mouse.mouseX / innerWidth
     }
 
     phi += -xh * phiSpeed
