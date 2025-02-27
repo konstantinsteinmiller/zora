@@ -5,17 +5,19 @@ import state from '@/states/GlobalState'
 
 import ShotVFX from '@/vfx/shot.json'
 import DeathStarVFX from '@/vfx/death-star.json'
+import ChargeVFX from '@/vfx/charge.json'
 
 const vfxMap: { [key: string]: any } = {
   shot: ShotVFX,
   deathStar: DeathStarVFX,
+  charge: ChargeVFX,
 }
 
-export const createVFX = async (position: Vector3, vfxName: string, onFinished?: () => void) => {
+export const createVFX = async (position: Vector3, vfxName: string, removeOnDeath: boolean = true, onFinished?: () => void): Promise<{ eventUuid: string; nebulaSystem: any }> => {
   const vfx = vfxMap[vfxName]
   if (!vfx) {
     console.error(`VFX not found: ${vfxName}`)
-    return
+    return Promise.reject({ eventUuid: '', nebulaSystem: null })
   }
 
   const system = await System.fromJSONAsync(vfx.particleSystemState, THREE)
@@ -30,7 +32,7 @@ export const createVFX = async (position: Vector3, vfxName: string, onFinished?:
   const eventUuid = state.addEvent(`renderer.update`, () => {
     nebulaSystem.update()
     /* if all emitters are dead remove the vfx */
-    if (nebulaSystem.emitters.every((emitter: any) => emitter.dead)) {
+    if (removeOnDeath && nebulaSystem.emitters.every((emitter: any) => emitter.dead)) {
       setTimeout(() => {
         if (hasRemovedSystem) return
         onFinished?.()
@@ -39,6 +41,7 @@ export const createVFX = async (position: Vector3, vfxName: string, onFinished?:
       }, 1000)
     }
   })
+  return Promise.resolve({ eventUuid, nebulaSystem })
 }
 
 export const createShotVFX = async (intersect: any, entity: any, directionN: Vector3, hitCallback: () => void = () => {}) => {

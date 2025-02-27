@@ -4,7 +4,7 @@ import type { ClosestPortal, PortalConnection } from '@/types/state.physics.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
-import { AxesHelper, Mesh, Vector3 } from 'three'
+import { Mesh, Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
@@ -25,13 +25,13 @@ export const loadNavMesh = async (path: string, callback: (navMesh: Mesh) => voi
 }
 
 const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => {
-  if (path /* && state.enableDebug*/) {
+  if (path?.length && state.enableDebug) {
     const pathfindingHelper = state.level.pathfinder.pathfindingHelper
     pathfindingHelper.reset()
     pathfindingHelper.setPlayerPosition(startPos)
     pathfindingHelper.setTargetPosition(targetPos)
     pathfindingHelper.setPath(path)
-  } else {
+  } else if (!path?.length && state.enableDebug) {
     console.warn('Failed to find path found')
   }
 }

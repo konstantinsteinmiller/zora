@@ -1,7 +1,7 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import { characterAnimationNamesList } from '@/enums/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
+import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -20,12 +20,14 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
 
+  const chargeUtilsObj = chargeUtils()
   entity = {
     ...new Object3D(),
     ...getBaseStats(),
     ...stats,
     ...controllerUtils(),
     ...statsUtils(),
+    ...{ updateChargeIndicator: chargeUtilsObj.updateChargeIndicator, createChargeIndicator: chargeUtilsObj.createChargeIndicator, destroyChargeIndicatorVFX: chargeUtilsObj.destroyChargeIndicatorVFX },
     mesh: mesh,
     halfHeight,
   }
@@ -77,6 +79,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
         mesh = scope.mesh
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
+        entity.center = entity.calcHalfHeightPosition(entity)
       },
     })
   }
@@ -163,6 +166,7 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     /* Update Three.js Mesh Position */
     entity.position.copy(meshPos)
     mesh.position.copy(meshPos)
+    entity.center = entity.calcHalfHeightPosition(entity)
 
     mixer?.update?.(deltaS)
 

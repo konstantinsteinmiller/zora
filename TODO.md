@@ -1,11 +1,11 @@
 # Todo
-- [ ] Enemy
+- [x] Enemy
   - [x] Navigation Mesh
   - [x] loading Mesh
   - [x] enemy FSM
   - [x] health bar
-  - [ ] enemy attack
-  - [ ] enemy AI
+  - [x] enemy attack
+  - [x] enemy AI
     - [x] randomly moving around on navmesh
     - [x] randomly moving with collision and gravity
     - [x] facing target while moving and runs backwards if target is behind him
@@ -19,10 +19,17 @@
     - [x] fleeing
     - [x] hiding behind obstacles
     - [x] enemy can die and vanish with vfx
-    - [ ] cover while charging
-    - [ ] attacking by charging and releasing spell after threshold and on sight of enemy
-    - [ ] prevent self hurting
-    - [ ] adjust threat charge levels
+    - [x] cover while charging
+    - [x] attacking by charging and releasing spell after threshold and on sight of enemy
+    - [x] prevent self hurting
+    - [x] adjust threat charge levels
+- [ ] Sounds
+  - [ ] hurt sound (anime ääähhh)
+  - [ ] spell shot sound (zushhh)
+  - [ ] flying flap sound (flap flap)
+  - [ ] death sound ()
+  - [ ] game end sound
+  - [ ] background music
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -83,6 +90,7 @@
   - [x] VFX trail
   - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
   - [x] scale damage with charge level
+  - [x] show vfx as indicator for charge level of enemy and player
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse

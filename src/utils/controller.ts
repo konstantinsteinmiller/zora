@@ -1,6 +1,7 @@
 import SpellFire from '@/entity/SpellFire.ts'
 import { DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
+import type { ControllerUtils } from '@/types/entity.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
@@ -8,7 +9,7 @@ import { removePath } from '@/utils/navigation.ts'
 import { createVFX } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
-import { Raycaster, Vector3 } from 'three'
+import { Color, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 
 export const getBaseStats: any = () => ({
@@ -34,7 +35,6 @@ export const getBaseStats: any = () => ({
   colliderRadius: 0.5,
   isMoving: false,
   utils: {
-    flyWaitFrames: 0,
     takeOffFrames: 0,
     groundedTime: {
       value: 0,
@@ -43,7 +43,7 @@ export const getBaseStats: any = () => ({
   },
 })
 
-export const controllerUtils = () => ({
+export const controllerUtils = (): ControllerUtils => ({
   getPosition(): Vector3 {
     if (!this.mesh) {
       return new Vector3(0, 0, 0)
@@ -53,7 +53,7 @@ export const controllerUtils = () => ({
   getRotation() {
     return this.mesh.quaternion
   },
-  setRotation(rotation: THREE.Quaternion) {
+  setRotation(rotation: Quaternion) {
     if (!this.mesh) {
       return
     }
@@ -64,6 +64,9 @@ export const controllerUtils = () => ({
   },
   isAnimState(stateName: string): boolean {
     return this.stateMachine.currentState.name === stateName
+  },
+  calcHalfHeightPosition(entity: any): Vector3 {
+    return entity.mesh.position.clone().add(new Vector3(0, entity.halfHeight, 0))
   },
 })
 
@@ -90,7 +93,7 @@ export const statsUtils = () => {
     },
     updateLife(target: any, elapsedTimeInS: number) {
       if (!didDamage && elapsedTimeInS % TIME_INTERVAL < 1.0) {
-        this.dealDamage(target, -23)
+        // this.dealDamage(target, -23)
         this.dealMpDamage(target, 12)
         didDamage = true
       } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
@@ -110,7 +113,7 @@ export const statsUtils = () => {
       const scaleFactor = 0.93
       const position: Vector3 = entity.mesh.position.clone()
       position.setY(position.y + 0.1)
-      createVFX(position, 'deathStar' /* () => console.log('vfx finished: ')}*/)
+      createVFX(position, 'deathStar', true /*, () => console.log('vfx finished: ')}*/)
       removePath()
       const deathEventUuid: string = state.addEvent('renderer.update', () => {
         const mesh = entity.mesh
@@ -138,18 +141,18 @@ export const statsUtils = () => {
 }
 
 export const chargeUtils = () => ({
-  chargeAttack(entity: any, target: any) {
+  async chargeAttack(entity: any, target: any) {
     if (entity.currentSpell.charge > 0) return
     entity.currentSpell.charge += 0.00001
 
     const entityChargeDuration = getChargeDuration(entity)
-    console.log('entityChargeDuration: ', entityChargeDuration)
     let rotationSpeed: number = INITIAL_ROTATION_SPEED
     const chargeStartTime: number = Date.now()
 
     const { fireRaycaster } = SpellFire()
     entity.currentSpell.canFire = false
     entity.currentSpell.forcedSpellRelease = false
+    const { eventUuid: chargeIndicatorEventUuid, nebulaSystem } = await entity.createChargeIndicator(entity)
 
     const chargingUuid = state.addEvent('renderer.update', () => {
       if (!entity.currentSpell || entity.currentSpell.forcedSpellRelease) return
@@ -162,7 +165,7 @@ export const chargeUtils = () => ({
 
       rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
       entity.currentSpell.charge = rotationN
-      // Math.random() < 0.01 && console.log('entity.currentSpell.charge: ', entity.currentSpell.charge)
+      entity.updateChargeIndicator(entity, rotationSpeed, nebulaSystem)
 
       if (rotationSpeed > MIN_CHARGE_SPEED && !entity.currentSpell.canFire) {
         /* allow successful spell release */
@@ -176,25 +179,84 @@ export const chargeUtils = () => ({
         entity.currentSpell.charge = 0
         console.log('overload: ')
         state.removeEvent('renderer.update', chargingUuid)
+        entity.destroyChargeIndicatorVFX(nebulaSystem, chargeIndicatorEventUuid, entity)
         fireRaycaster(rotationSpeed, entity, target)
       } else {
         const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
+
         if (isEntityChargeCritical) {
-          // console.log('fire')
-          // entity.fireSpell(entity, target)
+          state.removeEvent('renderer.update', chargingUuid)
+          entity.destroyChargeIndicatorVFX(nebulaSystem, chargeIndicatorEventUuid, entity)
+          entity.fireSpell(entity, target, rotationSpeed)
         }
       }
     })
   },
-  fireSpell(entity: any, target: any) {
-    const rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, entity.currentSpell.charge)
-
+  fireSpell(entity: any, target: any, rotationSpeed: number) {
     const { fireRaycaster } = SpellFire()
+
     fireRaycaster(rotationSpeed, entity, target)
-    console.log('fired shot: ')
     entity.currentSpell.forcedSpellRelease = false
     entity.currentSpell.canFire = false
     entity.currentSpell.charge = 0
+  },
+  updateChargeIndicator(entity: any, rotationSpeed: number, nebulaSystem: any) {
+    if (!state.isThirdPerson && entity.name === 'player') return
+    const meshWorldPosition = new Vector3()
+    entity.mesh.updateMatrixWorld(true)
+    entity.mesh.getWorldPosition(meshWorldPosition)
+
+    // Create a vector representing 1 unit forward in the local space (Z direction)
+    const localForward = new Vector3(0, 0, 1)
+    const localRight = new Vector3(-1, 0, 0)
+
+    // Transform the local forward vector to world space
+    const worldForward = localForward.applyMatrix4(entity.mesh.matrixWorld).sub(meshWorldPosition).normalize()
+    const worldRight = localRight.applyMatrix4(entity.mesh.matrixWorld).sub(meshWorldPosition).normalize()
+
+    // Calculate the emitter's position: 1 unit in front of the mesh plus halfHeight upwards
+    const emitterPosition = meshWorldPosition
+      .clone()
+      .add(worldForward.multiplyScalar(0.4))
+      .add(worldRight.multiplyScalar(0.3))
+      .add(new Vector3(0, entity.halfHeight + 0.2, 0))
+
+    const emitter = nebulaSystem.emitters[0]
+    emitter.position.copy(emitterPosition)
+
+    /* interpolate colors to indicate power of spell */
+    const colorBehaviour = emitter.behaviours[1]
+
+    const chargeColor = new Color('#ffffff').lerpColors(
+      MIN_CHARGE_START_COLOR,
+      MIN_CHARGE_END_COLOR,
+      remap(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, 0, 1.6, rotationSpeed) /*
+       */
+    )
+    const endChargeColor = '#edc6bc'
+    // console.log('chargeColor: #', chargeColor.getHexString())
+    colorBehaviour.colorA.colors = [`#${chargeColor.getHexString()}`]
+    colorBehaviour.colorB.colors = [endChargeColor]
+
+    const scaleBehaviour = emitter.behaviours[2]
+    /* scale up the spell with rotationSpeed */
+    const scale = remap(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, 0.5, 2, rotationSpeed)
+    const doubleScale = scale * 2
+    scaleBehaviour.scaleA.a = scale
+    scaleBehaviour.scaleA.b = scale
+    scaleBehaviour.scaleB.a = doubleScale
+    scaleBehaviour.scaleB.b = doubleScale
+  },
+  async createChargeIndicator(entity: any) {
+    if (!state.isThirdPerson && entity.name === 'player') return { eventUuid: '', nebulaSystem: null }
+    const position = entity.center.clone()
+    const { eventUuid, nebulaSystem } = await createVFX(position, 'charge', false)
+    return { eventUuid, nebulaSystem }
+  },
+  destroyChargeIndicatorVFX(nebulaSystem: any, chargeIndicatorEventUuid: string, entity: any) {
+    state.removeEvent('renderer.update', chargeIndicatorEventUuid)
+    nebulaSystem?.destroy?.()
+    entity?.name === 'player' && console.log('nebulaSystem destroyed: ', nebulaSystem, entity?.name)
   },
 })
 
@@ -246,7 +308,7 @@ export const createOverHeadHealthBar = (entity: any) => {
 }
 
 const threatRaycaster = new Raycaster()
-const DANGEROUS_CHARGE_LEVEL = 0.1
+const DANGEROUS_CHARGE_LEVEL = 0.3
 const AGENT_SAFE_CHARGE_LEVEL = 0.3
 const AGENT_CRITICAL_CHARGE_LEVEL = 0.7
 const RAYCAST_FRAME_INTERVAL = 500
@@ -265,7 +327,7 @@ function extractWorldGeometry() {
 }
 
 export const controllerAwarenessUtils = () => ({
-  detectCriticalCharge: (entity: any) => {
+  detectCriticalCharge: (entity: any): boolean => {
     return entity.currentSpell.canFire && entity.currentSpell.charge > AGENT_CRITICAL_CHARGE_LEVEL
   },
   detectEnemyThreat: (entity: any, enemy: any) => {

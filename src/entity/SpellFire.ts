@@ -1,4 +1,4 @@
-import { DEFAULT_CHARGE_DURATION, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/enums/constants.ts'
+import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
@@ -28,6 +28,7 @@ export default () => {
         return character.uuid === entityId
       })
       if (hitTarget) {
+        hitTarget.stateMachine.setState('hit')
         hitTarget.dealDamage(hitTarget, damage)
         console.log('%c enemy hit: ', 'color: red', damage)
       }
@@ -50,7 +51,7 @@ export default () => {
       origin.y += entity.halfHeight + 0.1
       origin.z -= 0.9
       const targetPosition = target.mesh.position.clone()
-      origin.y += target.halfHeight + 0.1
+      targetPosition.y += target.halfHeight + 0.1
 
       directionN = new Vector3().subVectors(targetPosition, origin).normalize()
       raycaster.set(origin, directionN)

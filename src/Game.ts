@@ -19,8 +19,8 @@ export default async () => {
     modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
     stats: {
       name: 'player',
-      hp: 33,
-      previousHp: 33,
+      hp: 56,
+      previousHp: 56,
       mp: 77,
       previousMp: 77,
     },

@@ -85,21 +85,23 @@ export const clamp = (x: number, a: number, b: number) => {
 }
 
 export const createRayTrace = (target: THREE.Vector3) => {
-  // Draw a line from pointA in the given direction at distance 1
-  const geometry = new THREE.SphereGeometry(0.1, 16, 16)
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-  const sphereMesh = new THREE.Mesh(geometry, material)
-  sphereMesh.name = 'rayTrace'
-  sphereMesh.position.copy(target)
-  sphereMesh.scale.set(1, 1, 1)
-  sphereMesh.frustumCulled = false
-  sphereMesh.castShadow = true
-  state.scene.add(sphereMesh)
-  setTimeout(() => {
-    state.scene.remove(sphereMesh)
-    geometry.dispose()
-    material.dispose()
-  }, 10000)
+  if (state.enableDebug) {
+    // Draw a line from pointA in the given direction at distance 1
+    const geometry = new THREE.SphereGeometry(0.1, 16, 16)
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    const sphereMesh = new THREE.Mesh(geometry, material)
+    sphereMesh.name = 'rayTrace'
+    sphereMesh.position.copy(target)
+    sphereMesh.scale.set(1, 1, 1)
+    sphereMesh.frustumCulled = false
+    sphereMesh.castShadow = true
+    state.scene.add(sphereMesh)
+    setTimeout(() => {
+      state.scene.remove(sphereMesh)
+      geometry.dispose()
+      material.dispose()
+    }, 10000)
+  }
 }
 
 export const createDebugBox = (target: THREE.Vector3) => {

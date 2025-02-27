@@ -98,6 +98,8 @@ export default () => {
     crosshairDots.visible = false
     crosshairStar.visible = false
     state.player.currentSpell.charge = 0
+    state.player.destroyChargeIndicatorVFX(chargeIndicatorNebulaSystem, chargeIndicatorEventUuid, state.player)
+    chargeIndicatorNebulaSystem = null
   })
 
   /* start charging spell on mouse down and hold */
@@ -108,12 +110,25 @@ export default () => {
     crosshairStar.visible = false
     chargeStartTime = Date.now()
   })
+  let chargeIndicatorNebulaSystem: any = null
+  let chargeIndicatorEventUuid: string = ''
 
-  state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.player.currentSpell) return
+  state.addEvent('renderer.update', async (deltaInS: number) => {
+    const entity = state?.player
+    if (!entity.currentSpell) return
 
     /* while attack button pressed => rotate crosshair */
     if (!state.controls.attack || forcedSpellRelease) return
+
+    if (!chargeIndicatorNebulaSystem) {
+      chargeIndicatorNebulaSystem = true
+      const chargeVFX = await entity.createChargeIndicator(entity)
+      chargeIndicatorNebulaSystem = chargeVFX.nebulaSystem
+      chargeIndicatorEventUuid = chargeVFX.eventUuid
+    }
+    if (chargeIndicatorNebulaSystem) {
+      entity.updateChargeIndicator(entity, rotationSpeed, chargeIndicatorNebulaSystem)
+    }
 
     /* ~ 12 - 4 seconds */
     const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
@@ -156,6 +171,8 @@ export default () => {
       state.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
+      state.player.destroyChargeIndicatorVFX(chargeIndicatorNebulaSystem, chargeIndicatorEventUuid, state.player)
+      chargeIndicatorNebulaSystem = null
     }
   })
 }

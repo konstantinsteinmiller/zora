@@ -51,6 +51,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
         mesh = scope.mesh
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
+        entity.center = entity.calcHalfHeightPosition(entity)
       },
     })
   }
@@ -89,7 +90,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
       }
       // console.log('entity.currentSpell.charge: ', entity.currentSpell.charge)
       if (entity.currentSpell.charge === 0) {
-        // entity.chargeAttack(entity, enemy)
+        entity.chargeAttack(entity, enemy)
       }
 
       if (isEnemyAThreat && !entity.isAwaitingCoverCalculation) {
@@ -105,7 +106,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
           }
 
           if (isEnemyAThreat) {
-            console.log('goto coverPosition: ')
+            // console.log('goto coverPosition: ')
             entity.path = null
             entity.lastCoverPosition = coverPosition
             /* go directly to cover position */
@@ -136,6 +137,8 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
     // Update Three.js Mesh Position
     entity.position.copy(meshPos)
     mesh.position.copy(meshPos)
+    const rigidPos = entity.rigidBody.translation()
+    entity.center = new Vector3(rigidPos.x, rigidPos.y, rigidPos.z)
 
     mixer?.update?.(deltaS)
   }
