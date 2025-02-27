@@ -76,7 +76,6 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
     }
 
     if (state?.level?.pathfinder) {
-      const targetPosition = null // use a random point in the map
       const { isEnemyAThreat, canSeeEnemy } = entity.detectEnemyThreat(entity, enemy)
       const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
@@ -84,15 +83,16 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
       }
       // console.log('entity.currentSpell.charge: ', entity.currentSpell.charge)
       if (entity.currentSpell.charge === 0) {
-        entity.chargeAttack(entity, enemy)
+        // entity.chargeAttack(entity, enemy)
       }
 
       if (isEnemyAThreat && !entity.isAwaitingCoverCalculation) {
+        console.log('%c threat detected: ', 'color: darkred', entity.isAwaitingCoverCalculation)
         entity.isAwaitingCoverCalculation = true
         entity.findCoverPosition(entity, enemy).then((coverPosition: Vector3) => {
           // coverPosition calculation returned from web worker
           if (isEntityChargeCritical) {
-            isEntityChargeCritical && console.log('isEntityChargeCritical: ', isEntityChargeCritical)
+            isEntityChargeCritical && console.log('%c isEntityChargeCritical: ', 'background: black; color: white;', isEntityChargeCritical)
             entity.path = null
             entity.moveToTargetPosition(entity, enemy.mesh.position, enemy, true)
             return
@@ -111,6 +111,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
         })
       } else if (!entity.lastCoverPosition) {
         /* move around randomly */
+        const targetPosition = null // use a random point in the map
         entity.moveToTargetPosition(entity, targetPosition, enemy)
       }
     }

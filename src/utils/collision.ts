@@ -7,9 +7,12 @@ const calcUpVector = (entity: any, deltaS: number) => {
   const isFlying = entity.stateMachine.currentState.name === 'fly'
   let flyImpulse = entity.appliedFlyImpulse
 
-  if (/*!isFlying || */ !flyImpulse) return 0
+  if (!isFlying || flyImpulse <= 0) {
+    return 0
+  }
 
   const decayFactor = Math.exp(-1 * deltaS) // Exponential decay
+  // console.log('flyImpulse: ', flyImpulse)
   flyImpulse *= decayFactor
   // flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
   entity.appliedFlyImpulse = flyImpulse
@@ -100,7 +103,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   const groundHit = state.physics.castShape(rigidPos, shapeRot, groundHitVector, groundHitShape, targetDistance, groundHitMaxToi, stopAtPenetration, filterFlags, filterGroups, filterExcludeCollider, filterExcludeRigidBody)
   if (groundHit) {
     entity.isGrounded = true
-    entity.groundedTime.value = (Date.now() - entity.groundedTime.lastTimeNotGrounded) / 1000
+    entity.utils.groundedTime.value = (Date.now() - entity.utils.groundedTime.lastTimeNotGrounded) / 1000
     const point = groundHit.witness1
     const d = +(rigidPos.y - point.y).toFixed(3)
     if (d < entity.halfHeight - 0.05) {
@@ -114,6 +117,10 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
       movementVector.y += -4 * deltaS
     }
     entity.isGrounded = false
+    if (entity.stateMachine.currentState.name === 'fly') {
+      entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
+      entity.utils.groundedTime.value = 0
+    }
 
     // 🟣 FallHit Detection for Slopes (NEW)
     const fallHitShape = new Capsule(entity.colliderRadius, entity.colliderRadius)
@@ -173,13 +180,13 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   }
 
   // 🟣 Check if movement was canceled
-  // const movementNullified = beforeCorrection.x === movementVector.x && beforeCorrection.z === movementVector.z
-  // const didntMove = rigidPos.x === movementVector.x && rigidPos.z === movementVector.z
-  //
-  // if (attemptedMovement && (movementNullified || didntMove)) {
-  //   movementVector.x += pushOut.x
-  //   movementVector.z += pushOut.z
-  // }
+  const movementNullified = beforeCorrection.x === movementVector.x && beforeCorrection.z === movementVector.z
+  const didntMove = rigidPos.x === movementVector.x && rigidPos.z === movementVector.z
+
+  if (attemptedMovement && (movementNullified || didntMove)) {
+    movementVector.x += pushOut.x
+    movementVector.z += pushOut.z
+  }
 
   return movementVector
 }

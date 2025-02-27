@@ -78,7 +78,9 @@
   - [x] Flying mechanic, jump -> fly
     - [x] spend stamina for flying
   - [x] shoot spell vfx and deal damage on impact
-  - [ ] improve hit detection
+  - [x] improve hit detection
+  - [x] VFX trail
+  - [ ] refactor mouse movement and add mouse lock to center of screen while not in menues
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse

@@ -28,15 +28,15 @@ export const getBaseStats: any = () => ({
   },
   isGrounded: false,
   appliedFlyImpulse: 0,
-  groundedTime: {
-    value: 0,
-    lastTimeNotGrounded: Date.now(),
-  },
   colliderRadius: 0.5,
   isMoving: false,
   utils: {
     flyWaitFrames: 0,
     takeOffFrames: 0,
+    groundedTime: {
+      value: 0,
+      lastTimeNotGrounded: Date.now(),
+    },
   },
 })
 
@@ -95,7 +95,7 @@ export const statsUtils = () => {
       }
     },
     updateEndurance(target: any, deltaS: number) {
-      if (target.stateMachine.currentState.name !== 'fly' && target.groundedTime.value > 0.5) {
+      if (target.stateMachine.currentState.name !== 'fly' && target.utils.groundedTime.value > 0.5) {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
     },

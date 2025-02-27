@@ -1,3 +1,4 @@
+import { MAX_FLY_IMPULSE } from '@/enums/constants.ts'
 import State, { isMovingEntity } from '@/states/State'
 
 export default class FlyState extends State {
@@ -43,8 +44,9 @@ export default class FlyState extends State {
   update(timeElapsed: number, input: any) {
     if (isMovingEntity(this.parent)) return
 
-    if (!this.parent.owner.isGrounded) return
+    if (!this.parent.owner.isGrounded || this.parent.owner.utils.groundedTime.value > 0.3) return
 
+    // console.log('%cleaving fly state', 'color: green')
     this.parent.setState('idle')
   }
 }

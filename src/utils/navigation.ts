@@ -1,6 +1,6 @@
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
-import type { ClosestPortal, PortalConnection } from '@/types/world.ts'
+import type { ClosestPortal, PortalConnection } from '@/types/state.physics.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
@@ -59,9 +59,6 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
   return closest
 }
 
-let axesHelper: any
-let addedAxesHelper = false
-
 const findPathBetweenNavIslands = (path: Vector3[] | null, startPos: Vector3, targetPos: Vector3, startGroupId: number): Vector3[] => {
   /* handle islands */
   const pathfinder = state.level.pathfinder
@@ -111,7 +108,7 @@ const findPathBetweenNavIslands = (path: Vector3[] | null, startPos: Vector3, ta
 
   // Final path to target
   const finalPath = pathfinder.findPath(currentStartPos, targetPos, zone, currentGroupId) || []
-  // console.log('finalPath: ', finalPath)
+  if (!finalPath?.length) completePath = completePath.concat([targetPos])
   completePath = completePath.concat(finalPath)
 
   return completePath
@@ -165,23 +162,39 @@ const findRandomTargetPosition = (entity: any) => {
   return randomTargetPosition
 }
 
+// let numEvents = 0
 const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   if (!path?.length) return
-  entity.path = path
+  entity.path = JSON.parse(JSON.stringify(path))
 
   let nextPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
   let previousPosition: { x: number; y: number; z: number; isPortal?: boolean } | null = null
   let uuid: string | null = null
+  let isTargetingLastWaypoint: boolean = false
 
   state.level.movingEntitiesList.push(entity.name)
 
+  // numEvents++
+  // console.log('%c create new event: ', 'color: teal', numEvents)
+  let isPortal = false
   uuid = state.addEvent('renderer.update', (deltaS: number) => {
     const targetPosition: Vector3 | undefined = new Vector3()
-    if (!nextPosition && path.length) nextPosition = path.shift()
-    if (!nextPosition) return
+    if (nextPosition === null && path.length) {
+      nextPosition = path.shift()
+      isPortal = !!nextPosition?.isPortal
+      if (path.length === 0 && !isTargetingLastWaypoint) {
+        const lastWaypoint = JSON.parse(JSON.stringify(nextPosition))
+        path.push(lastWaypoint)
+        isTargetingLastWaypoint = true
+      }
+      nextPosition = JSON.parse(JSON.stringify(nextPosition))
+      // console.log('%c  get NEXT: ', 'color: blue; background: green', JSON.stringify(nextPosition, undefined, 2), isPortal)
+    }
+    if (!nextPosition) {
+      return
+    }
 
     targetPosition.set(nextPosition.x, nextPosition.y, nextPosition.z)
-    const isPortal = !!nextPosition.isPortal
 
     const agentPos = entity.mesh.position.clone()
     let distance = null
@@ -213,14 +226,15 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
           (heightDiff > 1 && entity.appliedFlyImpulse < MAX_FLY_IMPULSE * 0.7) /*
            */
         ) {
+          // console.log('heightDiff: ', heightDiff, entity.appliedFlyImpulse, entity.utils.takeOffFrames)
           entity.appliedFlyImpulse = MAX_FLY_IMPULSE
-          entity.utils.takeOffFrames = 3
+          entity.utils.takeOffFrames = 5
           entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
         /* glide down */
-        const prevHeightDiff = previousPosition ? targetPosition.y - previousPosition.y : 0
-        if (previousPosition && prevHeightDiff < 1) {
-          entity.appliedFlyImpulse = MAX_FLY_IMPULSE * 0.05
+        const prevHeightDiff = previousPosition ? targetPosition.y - previousPosition.y : 10000
+        if (prevHeightDiff < 1) {
+          entity.appliedFlyImpulse = MAX_FLY_IMPULSE * 0.1
           entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
       }
@@ -230,10 +244,22 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
         entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
 
         /* set animation based on if agent is looking in the running direction or not */
-        if (!isPortal || (!entity.isAnimState('fly') && entity.isGrounded && entity.utils.takeOffFrames === 0)) {
+        // if (entity.utils.takeOffFrames > 0) {
+        //   console.log('isPortal: ', isPortal, nextPosition.isPortal)
+        //   console.log('fly: ', entity.isAnimState('fly'))
+        //   console.log('entity.isGrounded: ', entity.isGrounded)
+        //   console.log('entity.utils.takeOffFrames: ', entity.utils.takeOffFrames)
+        // }
+        if (
+          !isPortal /* ||
+         (entity.stateMachine.currentState.name === 'fly' && entity.isGrounded && entity.utils.takeOffFrames > 0)*/ /*
+           */
+        ) {
           const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
           const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
           const facingFactor = entityForwardN.dot(directionN)
+
+          entity.utils.takeOffFrames = 0
           if (facingFactor < 0 && entity.stateMachine.currentState.name !== 'run-back') {
             !entity.isAnimState('run-back') && entity.stateMachine.setState('run-back')
           } else if (facingFactor >= 0 && entity.stateMachine.currentState.name !== 'run') {
@@ -248,23 +274,24 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
 
       const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)
       entity.rigidBody.setNextKinematicTranslation(nextPhysicsPos)
-    } else if (uuid && !path.length) {
+    } else if (path.length && distance <= 0.2) {
+      /* reached a waypoint */
+      previousPosition = new Vector3(nextPosition.x, nextPosition.y, nextPosition.z)
+      // console.log('%c previousPosition change: ', 'color: orange', distance, JSON.stringify(path, undefined, 2))
+      nextPosition = null
+      return
+    }
+
+    if (uuid && !path.length) {
       /* reached destination remove event and moving entity */
       entity.stateMachine.setState('idle')
       state.removeEvent('renderer.update', uuid)
-      state.scene.remove(axesHelper)
-      addedAxesHelper = false
+      // numEvents--
       state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
       entity.path = null
-      console.log('reached destination: ')
+      // console.log('%c reached destination: ', 'color: purple', numEvents)
       entity.lastCoverPosition = null
       entity.isAwaitingCoverCalculation = false
-      // console.log('reached destination: ', entity.path)
-    } else {
-      /* reached a waypoint */
-      previousPosition = new Vector3(nextPosition.x, nextPosition.y, nextPosition.z)
-      nextPosition = null
-      return
     }
   })
 }
@@ -275,12 +302,6 @@ export const moveToTargetPosition = (entity: any, targetPosition: Vector3 | null
     return
   }
 
-  if (!addedAxesHelper && state.enbaleDebug) {
-    axesHelper = new AxesHelper(2)
-    state.scene.add(axesHelper)
-    addedAxesHelper = true
-  }
-
   const destinationPosition = targetPosition || findRandomTargetPosition(entity)
   let path = findPathToTargetPosition(entity, destinationPosition)
 
@@ -288,7 +309,6 @@ export const moveToTargetPosition = (entity: any, targetPosition: Vector3 | null
     path = [entity.mesh.position.clone(), targetPosition]
     displayPath(path, entity.position, targetPosition as Vector3)
   }
-  // console.log('path: ', path)
 
   moveAgentAlongPath(path, entity, targetToFace)
 }

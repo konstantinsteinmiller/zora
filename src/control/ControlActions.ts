@@ -97,7 +97,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
           if (entity.endurance >= FLY_COST) {
-            entity.groundedTime.lastTimeNotGrounded = Date.now()
+            entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
             entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
             entity.utils.takeOffFrames = 3

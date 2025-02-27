@@ -1,4 +1,4 @@
-import type { PortalConnection } from '@/types/world.ts'
+import type { PortalConnection } from '@/types/state.physics.ts'
 
 export const findShortestPath = (graph: Map<number, number[]>, startGroup: number, targetGroup: number): number[] | null => {
   if (startGroup === targetGroup) return [] // ✅ Already at target
