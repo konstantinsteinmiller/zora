@@ -137,3 +137,7 @@ typings/
 
 # Electron-Forge
 out/
+
+# music and sound raw files
+src/assets/music/raw/
+src/assets/sounds/raw/

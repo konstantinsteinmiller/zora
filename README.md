@@ -20,12 +20,12 @@ expected features:
 - AI with pathfinding and collision
 - AI can detect enemy threat and hide behind obstacles to prevent getting hit
 - Physics/Collision with rapier.js
-- Spells and moving Particle effects
+- Spells and moving particle effects with three-nebula.js
 - UI for health, mana, endurance and enemy health
 - charging spell indicator
 - Water
 
-### chargin a spell
+### charging a spell
 ![charging-spell](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/charging-spell.png)
 
 ### spell fight
@@ -36,3 +36,7 @@ expected features:
 
 ### spell fight - full fight
 ![spell-fight](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/spell-fight.gif)
+
+Meshes generated with [meshy.ai](https://www.meshy.ai/workspace)
+Music generated with [Tem.Polor](https://www.tempolor.com/)
+Sounds generated with [elevenLabs](https://elevenlabs.io/app/sound-effects/generate)

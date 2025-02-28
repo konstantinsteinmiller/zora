@@ -23,9 +23,9 @@ const defaultControlsConfig: EnumStringToList = {
   left: ['KeyA'],
   right: ['KeyD'],
   jump: ['Mouse2'],
-  hurt: ['Mouse1'],
+  hit: ['ControlLeft', 'KeyH'],
+  hurt: ['ControlLeft', 'KeyH'],
   fly: ['Mouse2'],
-  hit: ['Mouse1'],
   sprint: ['ShiftLeft'],
   pause: ['KeyP'],
   lookBack: ['KeyG'],
@@ -94,7 +94,9 @@ export default () => {
     input.keysMap[`Mouse${event.button}`] = true
 
     setAction(`Mouse${event.button}`)
-    setPointerLock()
+    setTimeout(() => {
+      setPointerLock()
+    })
     // case 0: // left mouse button
     // case 1: // cursor wheel button
     // case 2: // right mouse button
@@ -108,7 +110,7 @@ export default () => {
   }
 
   const preventedKeyDownEventsList = ['Space']
-  const preventedControlCommandsList = ['KeyA', 'KeyS', 'KeyD', 'KeyF']
+  const preventedControlCommandsList = ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyH']
   const onKeyDown = (event: KeyboardEvent) => {
     // state.enableDebug && console.log('event.code: ', event.code, event.keyCode)
     if (preventedKeyDownEventsList.includes(event.code)) event.preventDefault()
@@ -167,6 +169,7 @@ export default () => {
   })
 
   function setPointerLock() {
+    state.isPointerLocked = true
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
     })
@@ -179,6 +182,7 @@ export default () => {
   }
   function removePointerLock() {
     if (document.pointerLockElement) {
+      state.isPointerLocked = false
       document.exitPointerLock()
       console.log('%c Pointer lock released.', 'color: grey')
     } else {

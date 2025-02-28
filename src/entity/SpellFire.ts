@@ -16,10 +16,17 @@ export default () => {
 
   const damageSelf = (entity: any) => {
     entity.dealDamage(entity, entity.currentSpell.damage * 0.5)
+    console.log('damageSelf: ')
   }
 
   singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
-    const damage: number = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, entity.currentSpell.damage * 0.1, entity.currentSpell.damage, rotationSpeed).toFixed(1)
+    const damage: number = +remap(
+      MIN_CHARGE_SPEED,
+      MAX_ROTATION_SPEED,
+      entity.currentSpell.damage * 0.1,
+      entity.currentSpell.damage,
+      rotationSpeed
+    ).toFixed(1)
 
     const entityId: string | undefined = intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */

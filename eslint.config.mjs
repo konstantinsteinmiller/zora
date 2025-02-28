@@ -38,7 +38,7 @@ export default [
         'warn',
         {
           // bracketSameLine: false,
-          printWidth: 70,
+          printWidth: 120,
           singleAttributePerLine: true,
           singleQuote: true,
           semi: false,
@@ -120,7 +120,19 @@ export default [
   prettier,
   {
     rules: {
-      'prettier/prettier': ['warn', { singleQuote: true }],
+      'prettier/prettier': [
+        'warn',
+        {
+          // bracketSameLine: false,
+          printWidth: 120,
+          singleAttributePerLine: true,
+          singleQuote: true,
+          semi: false,
+          tabWidth: 2,
+          trailingComma: 'es5',
+          arrowParens: 'avoid',
+        },
+      ],
     },
   },
   // ...autoImport.configs.recommended,

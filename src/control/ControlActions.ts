@@ -52,7 +52,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         state.triggerEvent('controls.attack1.down')
       },
       onDeactivate: (entity: any) => {
-        if (!document.pointerLockElement) return
+        if (!state.isPointerLocked) return
         state.triggerEvent('controls.attack1.up')
       },
     },
@@ -89,6 +89,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         if (hasChanged) {
           entity.stateMachine.setState('hit')
           entity.dealDamage(entity, 15)
+          state.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.7 })
         }
       },
       onDeactivate: (entity: any) => {},
@@ -102,6 +103,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
             entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
             entity.utils.takeOffFrames = 3
+            state.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.05 })
           }
         }
       },
@@ -129,7 +131,8 @@ export default (defaultControlsConfig: EnumStringToList) => {
           const pos = state.player.mesh.position
           const groupId = state.level.pathfinder.getGroup(state.level.zone, pos)
           const closest = state.level.pathfinder.getClosestNode(pos, state.level.zone, groupId, true)
-          closest && console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
+          closest &&
+            console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
           navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
 
           window.onceDebug = false

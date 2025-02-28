@@ -1,5 +1,15 @@
+import sound from '@/engine/Sound.ts'
 import SpellFire from '@/entity/SpellFire.ts'
-import { DEFAULT_CHARGE_DURATION, ENDURANCE_REGEN_SPEED, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
+import {
+  DEFAULT_CHARGE_DURATION,
+  ENDURANCE_REGEN_SPEED,
+  INITIAL_ROTATION_SPEED,
+  MAX_ROTATION_SPEED,
+  MIN_CHARGE_CRITICAL_SPEED,
+  MIN_CHARGE_END_COLOR,
+  MIN_CHARGE_SPEED,
+  MIN_CHARGE_START_COLOR,
+} from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ControllerUtils } from '@/types/entity.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
@@ -9,7 +19,7 @@ import { removePath } from '@/utils/navigation.ts'
 import { createVFX } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import * as THREE from 'three'
-import { Color, type Quaternion, Raycaster, Vector3 } from 'three'
+import { Color, Group, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 
 export const getBaseStats: any = () => ({
@@ -119,6 +129,7 @@ export const statsUtils = () => {
         const mesh = entity.mesh
         const originalScale = entity.mesh.scale.clone()
 
+        /* shrink body mesh to target scale */
         if (mesh.scale.x > targetScale) {
           const scale = originalScale.y * scaleFactor
           mesh.scale.set(scale, scale, scale)
@@ -136,6 +147,13 @@ export const statsUtils = () => {
       entity.path = null
       const movementVector = calcRapierMovementVector(entity, new Vector3(0, 0, 0), deltaS)
       entity.rigidBody.setNextKinematicTranslation(movementVector)
+
+      state.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.5 })
+      /* cleanup all sound effects on the character */
+      const soundsGroup = entity.mesh.children.find((child: any) => child.name === 'sounds-group')
+      if (soundsGroup) {
+        soundsGroup.children.forEach((child: any) => soundsGroup.remove(child))
+      }
     },
   }
 }
@@ -170,7 +188,7 @@ export const chargeUtils = () => ({
       if (rotationSpeed > MIN_CHARGE_SPEED && !entity.currentSpell.canFire) {
         /* allow successful spell release */
         entity.currentSpell.canFire = true
-        console.log('entity.currentSpell.canFire: ', entity.currentSpell.canFire)
+        // console.log('entity.currentSpell.canFire: ', entity.currentSpell.canFire)
       }
       if (rotationSpeed >= MAX_ROTATION_SPEED) {
         /* spell overload -> forced release of the charged shot and receive damage */
@@ -201,7 +219,7 @@ export const chargeUtils = () => ({
     entity.currentSpell.charge = 0
   },
   updateChargeIndicator(entity: any, rotationSpeed: number, nebulaSystem: any) {
-    if (!state.isThirdPerson && entity.name === 'player') return
+    if ((!state.isThirdPerson && entity.name === 'player') || !entity || !nebulaSystem?.emitters?.length) return
     const meshWorldPosition = new Vector3()
     entity.mesh.updateMatrixWorld(true)
     entity.mesh.getWorldPosition(meshWorldPosition)
@@ -248,7 +266,8 @@ export const chargeUtils = () => ({
     scaleBehaviour.scaleB.b = doubleScale
   },
   async createChargeIndicator(entity: any) {
-    if (!state.isThirdPerson && entity.name === 'player') return { eventUuid: '', nebulaSystem: null }
+    if ((!state.isThirdPerson && entity.name === 'player') || !entity?.center)
+      return { eventUuid: '', nebulaSystem: null }
     const position = entity.center.clone()
     const { eventUuid, nebulaSystem } = await createVFX(position, 'charge', false)
     return { eventUuid, nebulaSystem }
@@ -256,7 +275,8 @@ export const chargeUtils = () => ({
   destroyChargeIndicatorVFX(nebulaSystem: any, chargeIndicatorEventUuid: string, entity: any) {
     state.removeEvent('renderer.update', chargeIndicatorEventUuid)
     nebulaSystem?.destroy?.()
-    entity?.name === 'player' && console.log('nebulaSystem destroyed: ', nebulaSystem, entity?.name)
+    nebulaSystem = null
+    // entity?.name === 'player' && console.log('nebulaSystem destroyed: ', nebulaSystem, entity?.name)
   },
 })
 
@@ -334,7 +354,8 @@ export const controllerAwarenessUtils = () => ({
     const isEnemyDangerous = enemy.currentSpell.charge > DANGEROUS_CHARGE_LEVEL
     const isEntityDangerous = entity.currentSpell.charge > AGENT_SAFE_CHARGE_LEVEL
 
-    if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL) return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
+    if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL)
+      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
 
     // Set start position at entity's height
     const entityPosition = entity.mesh.position.clone()

@@ -13,7 +13,12 @@ const vfxMap: { [key: string]: any } = {
   charge: ChargeVFX,
 }
 
-export const createVFX = async (position: Vector3, vfxName: string, removeOnDeath: boolean = true, onFinished?: () => void): Promise<{ eventUuid: string; nebulaSystem: any }> => {
+export const createVFX = async (
+  position: Vector3,
+  vfxName: string,
+  removeOnDeath: boolean = true,
+  onFinished?: () => void
+): Promise<{ eventUuid: string; nebulaSystem: any }> => {
   const vfx = vfxMap[vfxName]
   if (!vfx) {
     console.error(`VFX not found: ${vfxName}`)
@@ -44,7 +49,12 @@ export const createVFX = async (position: Vector3, vfxName: string, removeOnDeat
   return Promise.resolve({ eventUuid, nebulaSystem })
 }
 
-export const createShotVFX = async (intersect: any, entity: any, directionN: Vector3, hitCallback: () => void = () => {}) => {
+export const createShotVFX = async (
+  intersect: any,
+  entity: any,
+  directionN: Vector3,
+  hitCallback: () => void = () => {}
+) => {
   const adjustedPosition = entity.getPosition().clone()
   adjustedPosition.y += 1
 
@@ -72,6 +82,8 @@ export const createShotVFX = async (intersect: any, entity: any, directionN: Vec
   const SHOT_SPEED = 100
   let eventUuid: string = ''
   let hasAppliedCallbackOnce = false
+
+  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.7 })
 
   eventUuid = state.addEvent(`renderer.update`, (deltaS: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {

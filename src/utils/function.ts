@@ -59,8 +59,6 @@ export const range = (angle1, angle2) => {
   return angle
 }
 
-export const findByName = (name, list) => list.find(a => name === a.name) || console.warn('animationName not found - ', name)
-
 const reg = /\[(.*?)\]/
 export const getSrc = src => {
   const match = src.match(reg)
@@ -77,7 +75,7 @@ export const getSrc = src => {
 }
 
 export const randomInt = (range = 1) => {
-  return Math.floor(Math.random() * range)
+  return Math.floor(Math.random() * range + 0.5)
 }
 
 export const clamp = (x: number, a: number, b: number) => {

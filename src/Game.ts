@@ -1,3 +1,4 @@
+import Sound from '@/engine/Sound.ts'
 import EnemyController from '@/entity/EnemyController.ts'
 import state from '@/states/GlobalState'
 import { Vector3 } from 'three'
@@ -19,8 +20,8 @@ export default async () => {
     modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
     stats: {
       name: 'player',
-      hp: 56,
-      previousHp: 56,
+      hp: 100,
+      previousHp: 100,
       mp: 77,
       previousMp: 77,
     },
@@ -35,6 +36,7 @@ export default async () => {
     modelHeight: 1.8,
   })
   Camera()
+  Sound()
 
   Light()
   Renderer()

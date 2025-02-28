@@ -4,7 +4,7 @@
   "tabWidth": 2,
   "singleQuote": true,
   "useTabs": false,
-  "printWidth": 300,
+  "printWidth": 140,
   "bracketSpacing": true,
   "trailingComma": "es5",
   "singleAttributePerLine": true,

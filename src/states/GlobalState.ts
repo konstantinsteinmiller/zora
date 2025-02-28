@@ -2,7 +2,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 let state: {
   triggerEvent: (eventName: string) => void
-  addEvent: (eventName: string, callback: (a?: any, b?: any) => any, cleanup?: () => any | undefined, sourceName?: string) => string
+  addEvent: (
+    eventName: string,
+    callback: (a?: any, b?: any) => any,
+    cleanup?: () => any | undefined,
+    sourceName?: string
+  ) => string
   removeEvent: (eventName: string, uuid: string) => void
   [key: string]: any /* global objects */
   eventsMap: {
@@ -78,6 +83,8 @@ const globalState = () => {
   state.showCrosshair = true
   state.isThirdPerson = true
   state.isPaused = false
+  state.isPointerLocked = false
+  state.isBattleOngoing = true
 
   return state
 }

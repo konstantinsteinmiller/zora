@@ -1,4 +1,14 @@
-import { CRITICAL_CHARGE_END_COLOR, CRITICAL_CHARGE_START_COLOR, DEFAULT_CHARGE_DURATION, INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, MIN_CHARGE_CRITICAL_SPEED, MIN_CHARGE_END_COLOR, MIN_CHARGE_SPEED, MIN_CHARGE_START_COLOR } from '@/enums/constants.ts'
+import {
+  CRITICAL_CHARGE_END_COLOR,
+  CRITICAL_CHARGE_START_COLOR,
+  DEFAULT_CHARGE_DURATION,
+  INITIAL_ROTATION_SPEED,
+  MAX_ROTATION_SPEED,
+  MIN_CHARGE_CRITICAL_SPEED,
+  MIN_CHARGE_END_COLOR,
+  MIN_CHARGE_SPEED,
+  MIN_CHARGE_START_COLOR,
+} from '@/enums/constants.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils'
@@ -112,10 +122,11 @@ export default () => {
   })
   let chargeIndicatorNebulaSystem: any = null
   let chargeIndicatorEventUuid: string = ''
+  let firstCharge = true
 
   state.addEvent('renderer.update', async (deltaInS: number) => {
     const entity = state?.player
-    if (!entity.currentSpell) return
+    if (!entity.currentSpell || !entity || entity.isDead()) return
 
     /* while attack button pressed => rotate crosshair */
     if (!state.controls.attack || forcedSpellRelease) return
@@ -131,6 +142,10 @@ export default () => {
     }
 
     /* ~ 12 - 4 seconds */
+    if (firstCharge) {
+      chargeStartTime = Date.now()
+      firstCharge = false
+    }
     const elapsedChargeS = (Date.now() - chargeStartTime) / 1000
     const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
     const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
@@ -163,6 +178,7 @@ export default () => {
       crosshairDots.visible = true
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
+      console.log('rotationSpeed: ', rotationSpeed)
       fireRaycaster(rotationSpeed, state.player, state.enemy)
       canFire = false
       forcedSpellRelease = true

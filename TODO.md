@@ -24,12 +24,12 @@
     - [x] prevent self hurting
     - [x] adjust threat charge levels
 - [ ] Sounds
-  - [ ] hurt sound (anime ääähhh)
-  - [ ] spell shot sound (zushhh)
+  - [x] hurt sound (anime ääähhh)
+  - [x] spell shot sound (zushhh)
   - [ ] flying flap sound (flap flap)
   - [ ] death sound ()
   - [ ] game end sound
-  - [ ] background music
+  - [x] background music
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -91,6 +91,8 @@
   - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
   - [x] scale damage with charge level
   - [x] show vfx as indicator for charge level of enemy and player
+  - [ ] add strafing
+  - [ ] fix vfx cleanup or GPURenderer reuse
 - [x] Refactor InputController to decouple actions from peripheral inputs
 - [x] skybox
 - [x] First person camera with Keyboard and Mouse

@@ -3,12 +3,31 @@ import { characterAnimationNamesList } from '@/enums/constants.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { chargeUtils, controllerAwarenessUtils, statsUtils, controllerUtils, createOverHeadHealthBar, getBaseStats } from '@/utils/controller.ts'
+import {
+  chargeUtils,
+  controllerAwarenessUtils,
+  statsUtils,
+  controllerUtils,
+  createOverHeadHealthBar,
+  getBaseStats,
+} from '@/utils/controller.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Vector3 } from 'three'
 
-export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy: any; modelPath: string; name: string; startPosition: Vector3; modelHeight: number }) => {
+export default ({
+  enemy,
+  modelPath,
+  name,
+  startPosition,
+  modelHeight,
+}: {
+  enemy: any
+  modelPath: string
+  name: string
+  startPosition: Vector3
+  modelHeight: number
+}) => {
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
@@ -70,14 +89,14 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
   // const acceleration = new Vector3(1, 0.25, 15.0)
   const velocity = new Vector3(0, 0, 0)
 
-  let eventUuid: string = ''
+  let updateEventUuid: string = ''
   entity.isAwaitingCoverCalculation = false
   const update = (deltaS: number) => {
     if (!entity.mesh || entity.stateMachine.currentState === null) {
       return
     }
     if (entity.isDead(entity)) {
-      state.removeEvent('renderer.update', eventUuid)
+      state.removeEvent('renderer.update', updateEventUuid)
       entity.die(entity)
       return
     }
@@ -86,9 +105,9 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
       const { isEnemyAThreat, canSeeEnemy } = entity.detectEnemyThreat(entity, enemy)
       const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
-      if (isEntityChargeCritical /*&& canSeeEnemy*/) {
-      }
-      // console.log('entity.currentSpell.charge: ', entity.currentSpell.charge)
+      // if (isEntityChargeCritical /*&& canSeeEnemy*/) {
+      // }
+
       if (entity.currentSpell.charge === 0) {
         entity.chargeAttack(entity, enemy)
       }
@@ -99,7 +118,8 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
         entity.findCoverPosition(entity, enemy).then((coverPosition: Vector3) => {
           // coverPosition calculation returned from web worker
           if (isEntityChargeCritical) {
-            isEntityChargeCritical && console.log('%c isEntityChargeCritical: ', 'background: black; color: white;', isEntityChargeCritical)
+            isEntityChargeCritical &&
+              console.log('%c isEntityChargeCritical: ', 'background: black; color: white;', isEntityChargeCritical)
             entity.path = null
             entity.moveToTargetPosition(entity, enemy.mesh.position, enemy, true)
             return
@@ -123,9 +143,14 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
       }
     }
 
-    const frameDecceleration = new Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
+    const frameDecceleration = new Vector3(
+      velocity.x * decceleration.x,
+      velocity.y * decceleration.y,
+      velocity.z * decceleration.z
+    )
     frameDecceleration.multiplyScalar(deltaS)
-    frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
+    frameDecceleration.z =
+      Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
 
     velocity.add(frameDecceleration)
 
@@ -143,7 +168,7 @@ export default ({ enemy, modelPath, name, startPosition, modelHeight }: { enemy:
     mixer?.update?.(deltaS)
   }
 
-  eventUuid = state.addEvent('renderer.update', update)
+  updateEventUuid = state.addEvent('renderer.update', update)
 
   state.enemy = entity
   return entity
