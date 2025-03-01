@@ -23,15 +23,18 @@
     owner-id="player"
     type="endurance"
   />
+
+  <LoadingScreen />
 </template>
 
 <script setup lang="ts">
+import LoadingScreen from '@/components/LoadingScreen.vue'
 import StatBar from '@/components/StatBar.vue'
 import Game from '@/Game'
 import { onMounted } from 'vue'
 
-onMounted(() => {
-  Game()
+onMounted(async () => {
+  await Game()
 })
 </script>
 

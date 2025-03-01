@@ -48,6 +48,12 @@ export default () => {
       state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
         callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
       })
+      state.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
+        if (eventName === 'renderer.update') {
+          callback()
+          cleanup()
+        }
+      })
       accumulatedTime -= FIXED_TIME_STEP
     }
 

@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import '#/css/index.sass'
+import '#/css/glass.sass'
 import router from '@/router'
 import App from '@/App.vue'
 // import { useRoute } from "vue-router"

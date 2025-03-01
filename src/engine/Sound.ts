@@ -6,14 +6,15 @@ const isProduction = process.env.NODE_ENV === 'production'
 const prependBaseUrl = (url: string): string => (isProduction ? `/zora${url}` : url)
 const repeat = (n: number, callback: (_: any, i: number) => string): string[] => [...new Array(n)].map(callback)
 
-const soundToTrackSrcMap: { [key: string]: string[] } = {
+export const soundToTrackSrcMap: { [key: string]: string[] } = {
   hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/auahhhh-hurt-female-${i + 1}.ogg`)),
   spellShot: [prependBaseUrl(`/sounds/fast-whoosh.ogg`)],
   flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/flying-flap-${i + 1}.ogg`)),
   death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death-${i + 1}.ogg`)),
   background: [
-    prependBaseUrl(`/music/thunderous-march_battle.ogg`),
-    // `${isProduction ? '/zora' : ''}/music/beneath-the-soft-moonlight_slow-harmonic-beautiful_background-music.ogg`
+    prependBaseUrl('/music/thunderous-march_battle.ogg'),
+    prependBaseUrl('/music/beneath-the-soft-moonlight_slow-harmonic-beautiful_background-music.ogg'),
+    prependBaseUrl('/music/shadows-in-silence_slow-tired-powerless_main-menu.ogg'),
   ],
 }
 
@@ -25,12 +26,14 @@ export default () => {
   const listener = new AudioListener()
   state.camera.add(listener)
 
-  const loadingManager = new LoadingManager()
-  const audioLoader = new AudioLoader(loadingManager)
+  // const loadingManager = new LoadingManager()
+  // const audioLoader = new AudioLoader(loadingManager)
 
   singleton = {
     trackBuffersMap: new Map(),
+    soundToTrackSrcMap,
   }
+
   singleton.createSounds = ({
     name,
     loop = false,
@@ -76,7 +79,12 @@ export default () => {
     return singleton.trackBuffersMap.has(name)
   }
 
-  singleton.load = (name: string) => {
+  singleton.load = (
+    name: string,
+    audioLoader: AudioLoader,
+    loadingManager: LoadingManager,
+    onProgress: () => number
+  ) => {
     const srcList = soundToTrackSrcMap[name]
     const trackBuffersList: AudioBuffer[] = []
     let counter = 0
@@ -93,7 +101,7 @@ export default () => {
           }
           loadingManager.itemEnd(src)
         },
-        undefined,
+        onProgress,
         error => {
           console.error(`Error loading ${src}:`, error)
           loadingManager.itemError(src)
@@ -171,33 +179,15 @@ export default () => {
     }
   }
 
-  Object.keys(soundToTrackSrcMap).forEach((name: string) => singleton.load(name))
-
-  singleton.areSoundsLoaded = false
-  loadingManager.onLoad = () => {
-    console.log('%c All sound assets loaded', 'color: lightgrey')
-    singleton.areSoundsLoaded = true
-    if (state.isBattleOngoing) {
-      singleton.play('background', { volume: 0.01, loop: true })
-    }
-  }
-  // const soundInitEventUuid = state.addEvent('renderer.update', () => {
-  //   if (!singleton.areSoundsLoaded && singleton.trackBuffersMap.has('hit') && state.isPointerLocked) {
-  //     state.removeEvent('renderer.update', soundInitEventUuid)
-  //     singleton.areSoundsLoaded = true
-  //   }
-  // })
-
-  // stop(name) {
-  //   const track = this.tracks.get(name)
-  //   track.stop()
-  // }
+  // Object.keys(soundToTrackSrcMap).forEach((name: string) => singleton.load(name, audioLoader, loadingManager))
   //
-  // update(player) {
-  //   this.tracks.forEach(track => {
-  //     track.position.copy(state.player.getPosition())
-  //   })
+  // loadingManager.onLoad = () => {
+  //   console.log('%c All sound assets loaded', 'color: lightgrey')
+  //   if (state.isBattleOngoing) {
+  //     singleton.play('background', { volume: 0.01, loop: true })
+  //   }
   // }
+
   state.sounds = singleton
 
   return singleton

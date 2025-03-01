@@ -11,7 +11,19 @@ import state from '@/states/GlobalState'
 
 let entity: any = null
 
-export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { modelPath: string; stats: any; startPosition: Vector3; modelHeight: number }) => {
+export default ({
+  modelPath,
+  stats = {},
+  startPosition,
+  startRotation,
+  modelHeight = 1.8,
+}: {
+  modelPath: string
+  stats: any
+  startPosition: Vector3
+  startRotation: Quaternion
+  modelHeight: number
+}) => {
   if (entity !== null) {
     return entity
   }
@@ -27,7 +39,11 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
     ...stats,
     ...controllerUtils(),
     ...statsUtils(),
-    ...{ updateChargeIndicator: chargeUtilsObj.updateChargeIndicator, createChargeIndicator: chargeUtilsObj.createChargeIndicator, destroyChargeIndicatorVFX: chargeUtilsObj.destroyChargeIndicatorVFX },
+    ...{
+      updateChargeIndicator: chargeUtilsObj.updateChargeIndicator,
+      createChargeIndicator: chargeUtilsObj.createChargeIndicator,
+      destroyChargeIndicatorVFX: chargeUtilsObj.destroyChargeIndicatorVFX,
+    },
     mesh: mesh,
     halfHeight,
   }
@@ -93,9 +109,14 @@ export default ({ modelPath, stats = {}, startPosition, modelHeight = 1.8 }: { m
   initPhysics()
 
   const calcVelocityAndRotation = (velocity: Vector3, deltaS: number) => {
-    const frameDecceleration = new Vector3(velocity.x * decceleration.x, velocity.y * decceleration.y, velocity.z * decceleration.z)
+    const frameDecceleration = new Vector3(
+      velocity.x * decceleration.x,
+      velocity.y * decceleration.y,
+      velocity.z * decceleration.z
+    )
     frameDecceleration.multiplyScalar(deltaS)
-    frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
+    frameDecceleration.z =
+      Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
 
     velocity.add(frameDecceleration)
 

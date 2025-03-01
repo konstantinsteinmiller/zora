@@ -18,6 +18,12 @@ let state: {
       sourceName?: string
     }[]
   }
+  oneTimeEventsList: {
+    eventName: string
+    uuid: string
+    callback: () => any
+    cleanup?: any
+  }[]
   level: {
     name: string
     zone: string
@@ -34,6 +40,7 @@ const globalState = () => {
     return state
   }
 
+  /* needed for e.g. triggerEvent... */
   state = {
     eventsMap: {},
   }
@@ -48,7 +55,18 @@ const globalState = () => {
         // console.log('XXEvent triggered:', eventName)
       })
     },
-    addEvent: (eventName: string, callback: () => string, cleanup?: () => any, sourceName?: string) => {
+    addOneTimeEvent: (eventName: string, callback: () => string) => {
+      const uuid = uuidv4()
+      state.oneTimeEventsList?.push({
+        eventName,
+        uuid,
+        cleanup: () => {
+          state.oneTimeEventsList = state.oneTimeEventsList.filter((e: any) => e.uuid !== uuid)
+        },
+        callback,
+      })
+    },
+    addEvent: (eventName: string, callback: () => string, cleanup?: () => any, sourceName?: string): string => {
       const uuid = uuidv4()
       if (!state?.eventsMap?.[eventName]) {
         state.eventsMap[eventName] = []
@@ -69,6 +87,7 @@ const globalState = () => {
       // console.log('XXEvent removed:', eventName, 'with ', uuid)
     },
     eventsMap: {},
+    oneTimeEventsList: [],
     player: {},
     enemy: {},
   }
@@ -84,7 +103,8 @@ const globalState = () => {
   state.isThirdPerson = true
   state.isPaused = false
   state.isPointerLocked = false
-  state.isBattleOngoing = true
+  state.isBattleOngoing = false
+  state.isEngineInitialized = false
 
   return state
 }

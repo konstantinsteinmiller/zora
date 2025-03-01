@@ -1,3 +1,4 @@
+import thirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
 import { STRAFE_VELOCITY } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
@@ -22,6 +23,11 @@ export default () => {
   let headBobTimer = 0
 
   fpsCamera = {}
+  fpsCamera.setCameraRotation = (newPhi: number, newTheta: number) => {
+    phi = newPhi
+    theta = newTheta
+  }
+  fpsCamera.getCameraRotation = () => ({ phi, theta })
 
   state.fpsCamera = fpsCamera
 

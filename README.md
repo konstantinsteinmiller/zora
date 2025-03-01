@@ -28,6 +28,9 @@ expected features:
 ### charging a spell
 ![charging-spell](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/charging-spell.png)
 
+### loading screen artwork
+![loading-screen](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg)
+
 ### spell fight
 ![spell-fight-1](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/spell-fight-1.gif)
 

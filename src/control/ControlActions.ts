@@ -1,3 +1,4 @@
+import camera from '@/engine/Camera.ts'
 import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
@@ -135,6 +136,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
             console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
           navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
 
+          console.log(JSON.stringify(state.player.mesh.quaternion, undefined, 2))
           window.onceDebug = false
         }
       },
@@ -155,6 +157,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
           state.isThirdPerson = !state.isThirdPerson
+          state.camera.updateCameraRotation()
         }
         state.controls.lookBack = false
         state.showCrosshair = true

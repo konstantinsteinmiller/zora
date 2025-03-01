@@ -26,10 +26,11 @@
 - [ ] Sounds
   - [x] hurt sound (anime ääähhh)
   - [x] spell shot sound (zushhh)
-  - [ ] flying flap sound (flap flap)
-  - [ ] death sound ()
-  - [ ] game end sound
-  - [x] background music
+  - [x] flying flap sound (flap flap)
+  - [x] death sound ()
+  - [x] battle music
+  - [ ] battle end sound
+  - [ ] background music
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -51,6 +52,11 @@
 - [ ] Main Menu
   - [ ] Start Game
   - [ ] Load Game / Continue
+    - [ ] Loading Screen
+      - [x] Progress Bar
+      - [x] Artwork
+      - [x] AssetLoadingManager to preload assets
+        - [ ] preload World, navmesh and character models and animations
   - [ ] Options
     - [ ] Keybindings change
   - [ ] Exit
@@ -60,6 +66,9 @@
     - [x] Mountain
       - [x] load Mesh
       - [x] Colliders
+  - [ ] Locations
+    - [ ] Fairy forest, big tree with huts hanging at it with leaf roofs and hanging bridges
+    - [ ] town with houses and market
   - [ ] Biomes
     - [ ] Forest
     - [ ] Desert / Steppe
@@ -69,6 +78,11 @@
     - [ ] Water islands
     - [ ] Mushroom forest
     - [ ] Sky islands
+  - [ ] Story: 
+    - [ ] Intro
+    - [ ] Outro
+    - [ ] Quests
+    - [ ] Dialogues
   - Day and night cycle
 - [x] Refactor to function style programming
 - [x] Refactor to frame rate independent movement -> browser and machine independent physics
@@ -79,6 +93,7 @@
   - [x] character dynamic colliders
   - [x] world static colliders
   - [x] wall sliding
+  - [x] fall detection and steep slope sliding
 - [x] Character Controller
   - [x] import character animations
   - [x] state machine
@@ -86,7 +101,8 @@
   - [x] Flying mechanic, jump -> fly
     - [x] spend stamina for flying
   - [x] shoot spell vfx and deal damage on impact
-  - [x] improve hit detection
+  - [ ] improve hit detection
+    - [ ] improve collision box for better hit detection
   - [x] VFX trail
   - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
   - [x] scale damage with charge level
@@ -102,7 +118,7 @@
   - [x] Renderer
   - [x] Light
   - [x] Camera
-  - [ ] Sound
+  - [x] Sound
 - [x] game icon
 - [x] basic vue + eslint + typescript setup 
 

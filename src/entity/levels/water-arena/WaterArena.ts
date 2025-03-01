@@ -1,13 +1,19 @@
 import state from '@/states/GlobalState.ts'
-import { portalConnectionsList, orientationPosition, portalTransitionMap, coverPositions } from '@/entity/levels/water-arena/config.ts'
+import {
+  portalConnectionsList,
+  orientationPosition,
+  portalTransitionMap,
+  coverPositions,
+  startPositions,
+} from '@/entity/levels/water-arena/config.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
 import Water from '@/entity/water/Water.ts'
 import { loadNavMesh } from '@/utils/navigation.ts'
-import { BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three'
 import { createCollidersForGraph } from '@/utils/physics.ts'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
-export default async () => {
+export default async (onFinishedCallback: () => void) => {
   if (state.waterArena) {
     return state.waterArena
   }
@@ -38,7 +44,13 @@ export default async () => {
   }
 
   const pathfinder: any = new Pathfinding()
+  pathfinder.portalConnectionsList = portalConnectionsList
+  pathfinder.portalTransitionMap = portalTransitionMap
+  pathfinder.orientationPosition = orientationPosition
+  pathfinder.coverPositions = coverPositions
+  pathfinder.startPositions = startPositions
   pathfinder.pathfindingHelper = new PathfindingHelper()
+
   loadNavMesh('worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
     const geo = navMesh.clone().geometry.clone()
     geo.rotateX(-Math.PI / 2)
@@ -46,11 +58,6 @@ export default async () => {
     // state.scene.add(navMesh)
     state.waterArena.zone = 'water-arena'
     pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
-    pathfinder.portalConnectionsList = portalConnectionsList
-    pathfinder.portalTransitionMap = portalTransitionMap
-    pathfinder.orientationPosition = orientationPosition
-    pathfinder.coverPositions = coverPositions
-    state.waterArena.pathfinder = pathfinder
     state.waterArena.children.forEach((child: any) => {
       child.entityType = 'level'
     })
@@ -90,9 +97,11 @@ export default async () => {
 
   createCollidersForGraph(state.waterArena, 'fixed')
   state.waterArena.name = 'WaterArenaContainer'
+  state.waterArena.pathfinder = pathfinder
   state.waterArena.movingEntitiesList = []
   state.scene.add(state.waterArena)
   state.level = state.waterArena
+  onFinishedCallback()
 
   return state.waterArena
 }

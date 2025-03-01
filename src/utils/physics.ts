@@ -10,7 +10,9 @@ const descMap: { [key: string]: any } = {
 
 export const createCollidersForGraph = (object: Object3D, rigidType: string = 'fixed', scale?: number) => {
   const colliders: any = []
+  // console.log('object: ', object)
   object.traverse((child: Object3D) => {
+    // console.log('child: ', child, child.isMesh)
     if (child.isMesh) {
       const { collider } = createCollider(child as Mesh, rigidType, scale)
       colliders.push(collider)

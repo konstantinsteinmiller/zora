@@ -1,15 +1,16 @@
 import { STRAFE_VELOCITY } from '@/enums/constants.ts'
 import state from '@/states/GlobalState.ts'
-import * as THREE from 'three'
 import { Quaternion, Vector3 } from 'three'
 import { clamp } from 'three/src/math/MathUtils'
 
-const thirdPersonCamera: any = null
+let thirdPersonCamera: any = null
 export default () => {
   /* thirdPersonCamera is a Singleton */
   if (thirdPersonCamera !== null) {
     return thirdPersonCamera
   }
+
+  thirdPersonCamera = {}
 
   const rotation = new Quaternion()
   const translation = new Vector3(0, 1, 0)
@@ -17,6 +18,12 @@ export default () => {
   let theta = 0
   const phiSpeed = 8
   const thetaSpeed = 5
+
+  thirdPersonCamera.setCameraRotation = (newPhi: number, newTheta: number) => {
+    phi = newPhi
+    theta = newTheta
+  }
+  thirdPersonCamera.getCameraRotation = () => ({ phi, theta })
 
   const updateCamera = () => {
     state.camera.quaternion.copy(rotation)
@@ -49,8 +56,7 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh = state.controls.mouse.mouseX / innerWidth
-
+    let xh: number
     if (state.controls.left || state.controls.right) {
       xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
     } else {
@@ -58,10 +64,8 @@ export default () => {
     }
 
     phi += -xh * phiSpeed
-    const qx = new Quaternion()
-    qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
-    const q = new Quaternion()
-    q.multiply(qx)
+    const qx = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), phi)
+    const q = new Quaternion().multiply(qx)
     return q
   }
 
@@ -92,14 +96,9 @@ export default () => {
     phi += -xh * phiSpeed
     theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
-    const qx = new THREE.Quaternion()
-    qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), phi)
-    const qz = new THREE.Quaternion()
-    qz.setFromAxisAngle(new THREE.Vector3(1, 0, 0), theta)
-
-    const q = new THREE.Quaternion()
-    q.multiply(qx)
-    q.multiply(qz)
+    const qx = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), phi)
+    const qz = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), theta)
+    const q = new Quaternion().multiply(qx).multiply(qz)
 
     rotation.slerp(q, 0.3)
   }
@@ -111,6 +110,7 @@ export default () => {
   }
 
   state.addEvent('renderer.update', (deltaInS: number) => {
+    if (!state.controls) return
     if (state.isThirdPerson) {
       update(deltaInS)
     }

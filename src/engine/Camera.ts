@@ -7,8 +7,19 @@ import { PerspectiveCamera } from 'three'
 export default () => {
   const aspect = window.innerWidth / window.innerHeight
 
-  const camera = new PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 5000)
+  const camera: any = new PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 5000)
   camera.position.set(0, 2, 0)
+
+  camera.updateCameraRotation = () => {
+    if (state.isThirdPerson) {
+      const { phi, theta } = state.fpsCamera.getCameraRotation()
+      state.thirdPersonCamera.setCameraRotation(phi, theta)
+    } else {
+      const { phi, theta } = state.thirdPersonCamera.getCameraRotation()
+      state.fpsCamera.setCameraRotation(phi, theta)
+    }
+  }
+
   state.camera = camera
 
   state.uiCamera = new THREE.OrthographicCamera(-1, 1, aspect, -1 * aspect, 1, 100)

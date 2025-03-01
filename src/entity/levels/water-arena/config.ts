@@ -1,3 +1,5 @@
+import camera from '@/engine/Camera.ts'
+import state from '@/states/GlobalState.ts'
 import type { PortalConnection } from '@/types/state.physics.ts'
 import { saveDataToFile } from '@/utils/io.ts'
 import { generateTransitionMap } from '@/utils/pathfinder.ts'
@@ -9,6 +11,20 @@ export const orientationPosition = {
   z: -3.57,
   // groupId: 1,
 }
+export const startPositions = [
+  {
+    x: 10.5,
+    y: 0,
+    z: 5,
+    orientation: { phi: -1.974497751783192, theta: -0.07528230865746549 },
+  },
+  {
+    x: -10.44,
+    y: 0,
+    z: -5.88,
+    quaternion: [0.0027200013169103635, -0.884378594230388, 0.005153923685818877, 0.46673390784317265],
+  },
+]
 
 const calcAllPortalConnections = (portalsList: PortalConnection[]) => {
   let allConnectionsList: PortalConnection[] = []
