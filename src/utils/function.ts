@@ -126,3 +126,24 @@ export const createDebugBox = (target: THREE.Vector3) => {
 export const remap = (A: number, B: number, C: number, D: number, P: number) => {
   return lerp(C, D, inverseLerp(A, B, P))
 }
+
+/**
+ * Converts a size in bytes to a human-readable string in megabytes (MB).
+ *
+ * @param bytes - The size in bytes to convert.
+ * @param decimals - The number of decimal places to include in the result. Defaults to 2.
+ * @returns A string representing the size in megabytes.
+ */
+export function formatBytesToMB(bytes: number, decimals: number = 2): string {
+  if (bytes === 0) return '0 MB'
+  const megabytes = bytes / (1024 * 1024)
+  return `${megabytes.toFixed(decimals)} MB`
+}
+export function formatBytesToGB(bytes: number, decimals: number = 2): string {
+  if (bytes === 0) return '0 GB'
+  const megabytes = bytes / (1024 * 1024 * 1024)
+  return `${megabytes.toFixed(decimals)} GB`
+}
+export function convertToReadableSize(bytes: number, decimals: number = 2): string {
+  return bytes > 1048576 * 100 ? formatBytesToGB(bytes, decimals) : formatBytesToMB(bytes, decimals)
+}

@@ -8,19 +8,23 @@ import { Mesh, Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-export const loadNavMesh = async (path: string, callback: (navMesh: Mesh) => void) => {
-  if (path.endsWith('.glb')) {
-    const loaderGlb = new GLTFLoader()
-    const model: any = await loaderGlb.loadAsync(path)
-
-    model.children[0].scale.set(1, 1, 1)
+export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void) => {
+  let loader: any
+  if (src.endsWith('.glb')) {
+    loader = new GLTFLoader()
+  } else if (src.endsWith('.fbx')) {
+    loader = new FBXLoader()
+  }
+  try {
+    state.loadingManager.itemStart(src)
+    const model: any = await loader.loadAsync(src, (fileProgressEvent: any) =>
+      state.fileLoader.onFileProgress(src, fileProgressEvent)
+    )
+    state.loadingManager.itemEnd(src)
+    // model.children[0].scale.set(1, 1, 1)
     callback(model?.children[0])
-  } else if (path.endsWith('.fbx')) {
-    const loaderFbx = new FBXLoader()
-    const model: any = await loaderFbx.loadAsync(path)
-
-    model.children[0].scale.set(1, 1, 1)
-    callback(model?.children[0])
+  } catch (e: any) {
+    state.loadingManager.itemError(src)
   }
 }
 
@@ -67,7 +71,12 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
   return closest
 }
 
-const findPathBetweenNavIslands = (path: Vector3[] | null, startPos: Vector3, targetPos: Vector3, startGroupId: number): Vector3[] => {
+const findPathBetweenNavIslands = (
+  path: Vector3[] | null,
+  startPos: Vector3,
+  targetPos: Vector3,
+  startGroupId: number
+): Vector3[] => {
   /* handle islands */
   const pathfinder = state.level.pathfinder
   const zone = state.level.zone
@@ -95,7 +104,12 @@ const findPathBetweenNavIslands = (path: Vector3[] | null, startPos: Vector3, ta
         const distance = currentStartPos.distanceTo(entryPosition)
 
         if (!closestPortal || distance < closestPortal.distance) {
-          closestPortal = { entryPosition: entryPosition as Vector3, exitPosition: exitPosition as Vector3, exitGroupId: exitGroup, distance }
+          closestPortal = {
+            entryPosition: entryPosition as Vector3,
+            exitPosition: exitPosition as Vector3,
+            exitGroupId: exitGroup,
+            distance,
+          }
         }
       }
     })
@@ -304,7 +318,12 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   })
 }
 
-export const moveToTargetPosition = (entity: any, targetPosition: Vector3 | null = null, targetToFace: any, isDirect: boolean) => {
+export const moveToTargetPosition = (
+  entity: any,
+  targetPosition: Vector3 | null = null,
+  targetToFace: any,
+  isDirect: boolean
+) => {
   if (entity.path?.length) {
     // Math.random() < 0.1 && console.log('agent is moving: ')
     return

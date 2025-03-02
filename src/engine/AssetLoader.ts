@@ -1,9 +1,10 @@
-import { AnimationMixer, Mesh, Object3D, Vector3 } from 'three'
+import { AnimationMixer, LoadingManager, Mesh, Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 let loader: any = null
+import state from '@/states/GlobalState.ts'
 
 const createGeoIndex = (mesh: Mesh) => {
   // Check if the geometry has an index
@@ -44,15 +45,25 @@ export default () => {
   }
 
   loader.loadGLBMesh = async (
-    publicPath: string,
+    src: string,
     parent: Object3D,
     scale: number,
     shadows: boolean = true,
     callback?: (scene: Object3D) => void /*
      */
   ) => {
-    const loaderGlb = new GLTFLoader()
-    const glb = await loaderGlb.loadAsync(publicPath)
+    state.loadingManager.itemStart(src)
+    const loaderGlb = new GLTFLoader(state.loadingManager)
+    let glb: any
+    try {
+      glb = await loaderGlb.loadAsync(src, (fileProgressEvent: any) =>
+        state.fileLoader.onFileProgress(src, fileProgressEvent)
+      )
+      state.loadingManager.itemEnd(src)
+    } catch (error: any) {
+      state.loadingManager.itemError(src)
+    }
+
     console.log('glb: ', glb)
     if (shadows) {
       glb.scene.traverse((child: any) => {
@@ -70,15 +81,24 @@ export default () => {
   }
 
   loader.loadFBXMesh = async (
-    publicPath: string,
+    src: string,
     parent: Object3D,
     scale: number,
     shadows: boolean = true,
     callback?: (scene: Object3D) => void /*
      */
   ) => {
-    const loaderFbx = new FBXLoader()
-    const fbx: any = await loaderFbx.loadAsync(publicPath)
+    state.loadingManager.itemStart(src)
+    const loaderFbx = new FBXLoader(state.loadingManager)
+    let fbx: any
+    try {
+      fbx = await loaderFbx.loadAsync(src, (fileProgressEvent: any) =>
+        state.fileLoader.onFileProgress(src, fileProgressEvent)
+      )
+      state.loadingManager.itemEnd(src)
+    } catch (error: any) {
+      state.loadingManager.itemError(src)
+    }
 
     if (shadows) {
       fbx.traverse((child: any) => {
@@ -100,7 +120,7 @@ export default () => {
   }
 
   loader.loadCharacterModelWithAnimations = async ({
-    modelPath,
+    modelPath: src,
     parent,
     position,
     scale,
@@ -121,72 +141,84 @@ export default () => {
     callback?: (scene: Object3D) => void /*
      */
   }) => {
-    const loader = new FBXLoader()
-    const pathPartsList = modelPath.split('/')
+    const loader = new FBXLoader(state.loadingManager)
+    const pathPartsList = src.split('/')
     pathPartsList.pop()
     const animationsPath = `${pathPartsList.join('/')}/`
 
-    loader.load(modelPath, (model: any) => {
-      if (scale >= 0) model.scale.setScalar(scale)
-      // const socket = model.getObjectByName('right_hand_socket')
-      // console.log('socket: ', socket)
-      if (shadows) {
-        model.traverse((c: any) => {
-          c.castShadow = true
-        })
-      }
+    state.loadingManager.itemStart(src)
+    loader.load(
+      src,
+      (model: any) => {
+        state.loadingManager.itemEnd(src)
 
-      /* check for all meshes if they have index data and add if needed */
-      model.traverse((child: any) => {
-        if (child.isMesh) {
-          child = createGeoIndex(child)
-          child.meshName = 'characterMesh'
+        if (scale >= 0) model.scale.setScalar(scale)
+        // const socket = model.getObjectByName('right_hand_socket')
+        // console.log('socket: ', socket)
+        if (shadows) {
+          model.traverse((c: any) => {
+            c.castShadow = true
+          })
         }
-      })
-      if (position) model.position.copy(position)
-      const mesh = model
-      parent.add(mesh)
 
-      const mixer: AnimationMixer = new AnimationMixer(mesh)
-
-      /* as soon as all animations where loaded, set stateMachine to idle state */
-      const loadingManager = new THREE.LoadingManager()
-      loadingManager.onLoad = () => {
-        if (callback) {
-          const scope: any = {
-            mixer,
-            mesh,
-            animationsMap,
+        /* check for all meshes if they have index data and add if needed */
+        model.traverse((child: any) => {
+          if (child.isMesh) {
+            child = createGeoIndex(child)
+            child.meshName = 'characterMesh'
           }
-          callback?.(scope)
+        })
+        if (position) model.position.copy(position)
+        const mesh = model
+        parent.add(mesh)
+
+        const mixer: AnimationMixer = new AnimationMixer(mesh)
+
+        /* as soon as all animations where loaded, set stateMachine to idle state */
+        const loadingManager = new LoadingManager()
+        loadingManager.onLoad = () => {
+          if (callback) {
+            const scope: any = {
+              mixer,
+              mesh,
+              animationsMap,
+            }
+            callback?.(scope)
+          }
+          stateMachine.setState('idle')
         }
-        stateMachine.setState('idle')
-      }
 
-      /* When the animation was loaded, add to animationsMap */
-      const onLoad = (animName: string, anim: any) => {
-        const clip = anim.animations[0]
-        const action = mixer.clipAction(clip)
-        action.name = animName
+        /* When the animation was loaded, add to animationsMap */
+        const onLoad = (animName: string, anim: any) => {
+          const clip = anim.animations[0]
+          const action: any = mixer.clipAction(clip)
+          action.name = animName
 
-        animationsMap[animName] = {
-          clip: clip,
-          action: action,
+          animationsMap[animName] = {
+            clip: clip,
+            action: action,
+          }
+          state.loadingManager.itemEnd(animName)
         }
-      }
 
-      /* load all animations from same folder as the models
-       * path and add to animationsMap */
-      const animLoader = new FBXLoader(loadingManager)
-      animLoader.setPath(animationsPath)
-      animationNamesList.forEach((name: string) =>
-        animLoader.load(
-          `${name}.fbx`,
-          (anim: any) => onLoad(name, anim) /*
-           */
-        )
-      )
-    })
+        /* load all animations from same folder as the models
+         * path and add to animationsMap */
+        const animLoader = new FBXLoader(loadingManager)
+        animLoader.setPath(animationsPath)
+        animationNamesList.forEach((name: string) => {
+          state.loadingManager.itemStart(name)
+          animLoader.load(
+            `${name}.fbx`,
+            (anim: any) => onLoad(name, anim),
+            (fileProgressEvent: any) => state.fileLoader.onFileProgress(name, fileProgressEvent),
+            () => state.loadingManager.itemError(name) /*
+             */
+          )
+        })
+      },
+      (fileProgressEvent: any) => state.fileLoader.onFileProgress(src, fileProgressEvent),
+      () => state.loadingManager.itemError(src)
+    )
   }
 
   return loader

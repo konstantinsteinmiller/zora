@@ -1,5 +1,5 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { browse } from '../tool/function.js'
+import { browse } from '@/utils/function.js'
 
 const loaderGlb = new GLTFLoader()
 

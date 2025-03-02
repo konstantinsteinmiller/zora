@@ -11,11 +11,10 @@ import state from '@/states/GlobalState'
 
 let entity: any = null
 
-export default ({
+const CharacterController = ({
   modelPath,
   stats = {},
   startPosition,
-  startRotation,
   modelHeight = 1.8,
 }: {
   modelPath: string
@@ -194,8 +193,11 @@ export default ({
     entity.updateLife(entity, elapsedTimeInS)
   }
 
-  updateEventUuid = state.addEvent('renderer.update', update)
+  entity.start = () => {
+    updateEventUuid = state.addEvent('renderer.update', update)
+  }
 
   state.player = entity
   return entity
 }
+export default CharacterController

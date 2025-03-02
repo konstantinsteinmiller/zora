@@ -1,5 +1,7 @@
+import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 
+const loadingManager = new LoadingManager()
 let state: {
   triggerEvent: (eventName: string) => void
   addEvent: (
@@ -32,6 +34,7 @@ let state: {
   }
   player: any
   enemy: any
+  loadingManager: any
 } = null
 
 const globalState = () => {
@@ -90,6 +93,7 @@ const globalState = () => {
     oneTimeEventsList: [],
     player: {},
     enemy: {},
+    loadingManager: loadingManager,
   }
   // console.log('XXstate: ', state)
 
@@ -105,6 +109,7 @@ const globalState = () => {
   state.isPointerLocked = false
   state.isBattleOngoing = false
   state.isEngineInitialized = false
+  state.isBattleInitialized = false
 
   return state
 }

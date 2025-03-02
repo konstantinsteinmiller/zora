@@ -7,6 +7,7 @@
     />
     <div class="inner-circle glass absolute bg-red left-4 top-4 w-16 h-16 rounded-full">
       <span
+        v-if="showPercentage"
         :class="`number text-white z-[103] text-xl text-bold absolute
           top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`"
         >{{ percentStr }}</span
@@ -27,6 +28,7 @@ import { computed, ref } from 'vue'
 
 const props = defineProps<{
   current: number
+  showPercentage?: boolean
 }>()
 
 const deg = computed(() => lerp(0, 360, props.current / 100))

@@ -48,15 +48,14 @@
     - [x] Flying mechanic, jump -> fly
     - [x] fix previous endurance bug when regen overwriting previous damage
   - [ ] Skill Box
-  - [ ] Loading Screen
+  - [x] Loading Screen
+    - [x] Progress Bar
+    - [x] Artwork
+    - [x] AssetLoadingManager to preload assets
+      - [x] preload World, navmesh and character models and animations
 - [ ] Main Menu
   - [ ] Start Game
   - [ ] Load Game / Continue
-    - [ ] Loading Screen
-      - [x] Progress Bar
-      - [x] Artwork
-      - [x] AssetLoadingManager to preload assets
-        - [ ] preload World, navmesh and character models and animations
   - [ ] Options
     - [ ] Keybindings change
   - [ ] Exit

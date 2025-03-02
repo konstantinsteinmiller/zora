@@ -1,7 +1,5 @@
-import camera from '@/engine/Camera.ts'
 import { Clock } from 'three'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import state from '@/states/GlobalState'
 
 let renderer: any = null
@@ -11,8 +9,6 @@ export default () => {
   if (renderer !== null) {
     return renderer
   }
-
-  const previousTickTime: number | null = null
 
   const canvas: any = document.querySelector('canvas')
   renderer = new THREE.WebGLRenderer({
@@ -26,7 +22,7 @@ export default () => {
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-  renderer.outputEncoding = THREE.sRGBEncoding
+  renderer.outputEncoding = (THREE as any).sRGBEncoding
   renderer.physicallyCorrectLights = true
 
   renderer.toneMapping = THREE.CineonToneMapping
@@ -45,14 +41,21 @@ export default () => {
     }
 
     while (accumulatedTime >= FIXED_TIME_STEP) {
-      state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
-        callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
-      })
       state.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
         if (eventName === 'renderer.update') {
           callback()
           cleanup()
         }
+      })
+      /* wait for the whole arena to load */
+      // if (!state.isBattleInitialized) {
+      //   accumulatedTime -= FIXED_TIME_STEP
+      //   return
+      // }
+      // console.log('state.isBattleInitialized: ', state.isBattleInitialized)
+
+      state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
+        callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
       })
       accumulatedTime -= FIXED_TIME_STEP
     }
@@ -71,8 +74,7 @@ export default () => {
   }
 
   const onWindowResize = () => {
-    const aspect = innerWidth / innerHeight
-    state.camera.aspect = aspect
+    state.camera.aspect = innerWidth / innerHeight
     state.camera?.updateProjectionMatrix()
     renderer.setSize(innerWidth, innerHeight)
     state.triggerEvent('renderer.resize')

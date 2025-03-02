@@ -13,19 +13,21 @@ import {
 } from '@/utils/controller.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 import { createRigidBodyEntity } from '@/utils/physics.ts'
-import { Object3D, Vector3 } from 'three'
+import { Object3D, type Quaternion, Vector3 } from 'three'
 
 export default ({
   enemy,
   modelPath,
   name,
   startPosition,
+  startRotation,
   modelHeight,
 }: {
   enemy: any
   modelPath: string
   name: string
   startPosition: Vector3
+  startRotation: Quaternion
   modelHeight: number
 }) => {
   let mesh: any = new Object3D()
@@ -78,6 +80,7 @@ export default ({
     const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, entity.colliderRadius)
     entity.rigidBody = rigidBody
     entity.collider = collider
+    entity.rigidBody.setRotation(startRotation)
   }
 
   entity.createOverHeadHealthBar(entity)
@@ -102,10 +105,11 @@ export default ({
     }
 
     if (state?.level?.pathfinder) {
-      const { isEnemyAThreat, canSeeEnemy } = entity.detectEnemyThreat(entity, enemy)
+      const { isEnemyAThreat /*, canSeeEnemy*/ } = entity.detectEnemyThreat(entity, enemy)
       const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
-      // if (isEntityChargeCritical /*&& canSeeEnemy*/) {
+      // if (isEntityChargeCritical && canSeeEnemy) {
+      //   console.log('canSeeEnemy: ', canSeeEnemy)
       // }
 
       if (entity.currentSpell.charge === 0) {
@@ -168,7 +172,9 @@ export default ({
     mixer?.update?.(deltaS)
   }
 
-  updateEventUuid = state.addEvent('renderer.update', update)
+  entity.start = () => {
+    updateEventUuid = state.addEvent('renderer.update', update)
+  }
 
   state.enemy = entity
   return entity

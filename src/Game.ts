@@ -1,3 +1,4 @@
+import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
 import state from '@/states/GlobalState'
 import { Scene } from 'three'
@@ -14,6 +15,7 @@ export default async (level = 'water-arena') => {
   const levelConfig = await import(`@/entity/levels/${level}/config.ts`)
   const { phi, theta } = levelConfig.startPositions[0]?.orientation || { phi: 0, theta: 0 }
 
+  FileLoader()
   Camera()
   state.thirdPersonCamera.setCameraRotation(phi, theta)
   state.fpsCamera.setCameraRotation(phi, theta)

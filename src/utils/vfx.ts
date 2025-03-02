@@ -83,7 +83,7 @@ export const createShotVFX = async (
   let eventUuid: string = ''
   let hasAppliedCallbackOnce = false
 
-  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.7 })
+  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.15 })
 
   eventUuid = state.addEvent(`renderer.update`, (deltaS: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {

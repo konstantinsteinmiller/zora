@@ -9,6 +9,7 @@ export default async () => {
   World(() => {
     const startPos1 = state.level.pathfinder.startPositions[0]
     const startPos2 = state.level.pathfinder.startPositions[1]
+
     CharacterController({
       modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
       stats: {
@@ -22,13 +23,20 @@ export default async () => {
       startRotation: startPos1.quaternion,
       modelHeight: 1.8,
     })
-    EnemyController({
+
+    const enemy = EnemyController({
       enemy: state.player,
       modelPath: 'models/fairy/nature_fairy_1.fbx',
       name: 'enemy',
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
       modelHeight: 1.8,
+    })
+    const enemyUpdateEventUuid = state.addEvent('renderer.update', () => {
+      if (!state.loadingManager.isLoading) {
+        enemy.start()
+        state.removeEvent('renderer.update', enemyUpdateEventUuid)
+      }
     })
 
     Crosshair()
