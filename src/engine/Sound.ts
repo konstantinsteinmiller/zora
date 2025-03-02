@@ -1,10 +1,6 @@
 import state from '@/states/GlobalState.ts'
-import { randomInt } from '@/utils/function.ts'
+import { prependBaseUrl, randomInt, repeat } from '@/utils/function.ts'
 import { Audio, AudioListener, AudioLoader, Group, PositionalAudio } from 'three'
-
-const isProduction = import.meta.env.NODE_ENV === 'production'
-const prependBaseUrl = (url: string): string => (isProduction ? `/zora${url}` : url)
-const repeat = (n: number, callback: (_: any, i: number) => string): string[] => [...new Array(n)].map(callback)
 
 export const soundToTrackSrcMap: { [key: string]: string[] } = {
   hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/auahhhh-hurt-female-${i + 1}.ogg`)),

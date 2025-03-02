@@ -97,11 +97,9 @@
   - [x] import character animations
   - [x] state machine
   - [x] idle, walk, run, cast, jump
-  - [x] Flying mechanic, jump -> fly
-    - [x] spend stamina for flying
+  - [x] Flying mechanic, jump -> fly + spend stamina for flying
   - [x] shoot spell vfx and deal damage on impact
-  - [ ] improve hit detection
-    - [ ] improve collision box for better hit detection
+  - [x] improve collision box for better hit detection
   - [x] VFX trail
   - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
   - [x] scale damage with charge level

@@ -2,29 +2,29 @@ import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
-import { inverseLerp, lerp } from 'three/src/math/MathUtils'
+import { inverseLerp, lerp } from 'three/src/math/MathUtils.js'
 
-const createColliderGeo = (geo, rigidBody, physic) => {
+const createColliderGeo = (geo: any, rigidBody: any, physic: any) => {
   const vertices = new Float32Array(geo.attributes.position.array)
-  const indices = new Float32Array(geo.index.array)
+  const indices: any = new Float32Array(geo.index.array)
   const colliderDesc = ColliderDesc.trimesh(vertices, indices)
   return physic.createCollider(colliderDesc, rigidBody)
 }
 
-const createColliderBall = (radius, rigidBody, physic) => {
+const createColliderBall = (radius: number, rigidBody: any, physic: any) => {
   const colliderDesc = ColliderDesc.ball(radius)
   return physic.createCollider(colliderDesc, rigidBody)
 }
 
-export const createRigidBodyFixed = (mesh, physic) => {
+export const createRigidBodyFixed = (mesh: any, physic: any) => {
   const rigidBodyDesc = RigidBodyDesc.fixed()
   const rigidBody = physic.createRigidBody(rigidBodyDesc)
-  const collider = createColliderGeo(mesh.geometry, rigidBody, physic)
+  /*const collider: any = */ createColliderGeo(mesh.geometry, rigidBody, physic)
 }
 
-export const createRigidBodyEntity = (position, physic) => {
+export const createRigidBodyEntity = (position: Vector3, physic: any) => {
   const rigidBodyDesc = RigidBodyDesc.dynamic()
-  rigidBodyDesc.setTranslation(...position)
+  rigidBodyDesc.setTranslation(position.x, position.y, position.z)
   const rigidBody = physic.createRigidBody(rigidBodyDesc)
   const collider = createColliderBall(0.25, rigidBody, physic)
   return {
@@ -33,11 +33,11 @@ export const createRigidBodyEntity = (position, physic) => {
   }
 }
 
-export function floor(float, max = 0.2) {
+export function floor(float: number, max = 0.2) {
   return Math.abs(float) < max ? 0 : float
 }
 
-export function browse(object, callback) {
+export function browse(object: any, callback: any) {
   if (object.isMesh) callback(object)
   const children = object.children
   // children.forEach(child => browse(child, callback))
@@ -46,21 +46,21 @@ export function browse(object, callback) {
   }
 }
 
-export function angle(x, z) {
+export function angle(x: number, z: number) {
   return Math.atan2(-z, x) + Math.PI / 2
 }
 
 // export const lerp = (x, y, a) => x * (1 - a) + y * a
 // const invlerp = (x, y, a) => clamp((a - x) / (y - x));
 // export const range = (x1, y1, x2, y2, a) => lerp(x2, y2, invlerp(x1, y1, a))
-export const range = (angle1, angle2) => {
+export const range = (angle1: number, angle2: number) => {
   let angle = ((angle1 - angle2 + Math.PI) % (Math.PI * 2)) - Math.PI
   angle = angle < -Math.PI ? angle + Math.PI * 2 : angle
   return angle
 }
 
 const reg = /\[(.*?)\]/
-export const getSrc = src => {
+export const getSrc = (src: string) => {
   const match = src.match(reg)
   if (match !== null) {
     const range = match[1].split('-')
@@ -69,7 +69,7 @@ export const getSrc = src => {
     const size = iEnd - iBegin + 1
     const source = src.split('[')[0]
     const ext = src.split(']')[1]
-    return new Array(size).fill(null).map((e, i) => source + (i + iBegin) + ext)
+    return new Array(size).fill(null).map((e: any, i: number) => source + (i + iBegin) + ext)
   }
   return [src]
 }
@@ -147,3 +147,7 @@ export function formatBytesToGB(bytes: number, decimals: number = 2): string {
 export function convertToReadableSize(bytes: number, decimals: number = 2): string {
   return bytes > 1048576 * 100 ? formatBytesToGB(bytes, decimals) : formatBytesToMB(bytes, decimals)
 }
+
+export const isProduction = import.meta.env.VITE_NODE_ENV === 'production'
+export const prependBaseUrl = (url: string): string => (isProduction ? `/zora${url}` : url)
+export const repeat = (n: number, callback: (_: any, i: number) => string): string[] => [...new Array(n)].map(callback)

@@ -16,7 +16,6 @@ export default () => {
 
   const damageSelf = (entity: any) => {
     entity.dealDamage(entity, entity.currentSpell.damage * 0.5)
-    console.log('damageSelf: ')
   }
 
   singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
@@ -28,7 +27,7 @@ export default () => {
       rotationSpeed
     ).toFixed(1)
 
-    const entityId: string | undefined = intersect?.object?.parent?.entityId
+    const entityId: string | undefined = intersect?.object?.entityId || intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */
     if (entityId && entityId !== `${entity.uuid}`) {
       const hitTarget: any = [state.player, state.enemy].find((character: any) => {
@@ -79,20 +78,22 @@ export default () => {
     // const ignoredObjectTypes = ['AxesHelper', 'Points', 'LineSegments', 'Line']
     // const ignoredObjectNames = ['rayTrace']
     /* find only SkinnedMesh of the characterController and enemyController */
-    const intersect = intersects.find(inter => {
+    const intersect = intersects.find((inter: any) => {
       const entityId: string | undefined = inter.object?.parent?.entityId
+      const isColliderBox = inter.object?.name === 'colliderBox' && entity.uuid !== inter.object?.entityId
       return (
         // !ignoredObjectTypes.includes(inter.object.type) &&
         // !ignoredObjectNames.includes(inter.object.name) /*
         //  */ &&
-        (entityId && entityId !== `${entity.uuid}`) || inter.object?.entityType === 'level'
+        isColliderBox || (entityId && entityId !== `${entity.uuid}`) || inter.object?.entityType === 'level'
       )
     })
     if (intersect?.point) {
       createRayTrace(intersect.point)
 
       intersect.object.type !== 'SkinnedMesh' &&
-        intersect.object.name !== 'WaterArena' /*
+        intersect.object.name !== 'WaterArena' &&
+        intersect.object.name !== 'colliderBox' /*
          */ &&
         console.log('intersect: ', intersect.object)
 

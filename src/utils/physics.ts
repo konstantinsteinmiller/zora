@@ -1,6 +1,6 @@
 import state from '@/states/GlobalState.ts'
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
-import { Mesh, Object3D, Vector3 } from 'three'
+import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
 
 const descMap: { [key: string]: any } = {
   fixed: RigidBodyDesc.fixed(),
@@ -13,7 +13,7 @@ export const createCollidersForGraph = (object: Object3D, rigidType: string = 'f
   // console.log('object: ', object)
   object.traverse((child: Object3D) => {
     // console.log('child: ', child, child.isMesh)
-    if (child.isMesh) {
+    if ((child as Mesh).isMesh) {
       const { collider } = createCollider(child as Mesh, rigidType, scale)
       colliders.push(collider)
     }
@@ -30,6 +30,10 @@ export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: 
     vertices = new Float32Array(geo.attributes.position.array.map((v: number) => v * scale))
   } else {
     vertices = new Float32Array(geo.attributes.position.array)
+  }
+  if (!geo.index) {
+    console.error('No index buffer found for mesh')
+    return { collider: null }
   }
   const indices = new Uint32Array(geo.index.array)
   const colliderDesc = ColliderDesc.trimesh(vertices, indices)
@@ -59,4 +63,23 @@ export const createRigidBodyEntity = (position: Vector3, halfHeight: number, col
     rigidBody,
     collider,
   }
+}
+
+export const createEntityColliderBox = (entity: any) => {
+  const width = entity.colliderRadius * 2.3
+  const colliderBox: any = new Mesh(
+    new BoxGeometry(width, entity.halfHeight * 2, entity.colliderRadius * 1.2),
+    new MeshBasicMaterial({ color: 'blue', wireframe: true })
+  )
+  const pos = entity.mesh.position.clone()
+  pos.y += entity.halfHeight * 100
+  if (entity.name === 'player') {
+    pos.x -= 10
+  }
+  colliderBox.position.copy(pos)
+  colliderBox.name = 'colliderBox'
+  colliderBox.entityId = entity.uuid
+  colliderBox.visible = false
+  colliderBox.scale.set(100, 100, 100)
+  entity.mesh.add(colliderBox)
 }

@@ -2,7 +2,7 @@ import AssetLoader from '@/engine/AssetLoader.ts'
 import { characterAnimationNamesList } from '@/enums/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
-import { createRigidBodyEntity } from '@/utils/physics.ts'
+import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
 import InputController from '@/control/KeyboardController.ts'
@@ -94,7 +94,9 @@ const CharacterController = ({
         mesh = scope.mesh
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
+
         entity.center = entity.calcHalfHeightPosition(entity)
+        createEntityColliderBox(entity)
       },
     })
   }

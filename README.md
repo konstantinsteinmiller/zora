@@ -40,6 +40,6 @@ expected features:
 ### spell fight - full fight
 ![spell-fight](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/spell-fight.gif)
 
-Meshes generated with [meshy.ai](https://www.meshy.ai/workspace)
-Music generated with [Tem.Polor](https://www.tempolor.com/)
+Meshes generated with [meshy.ai](https://www.meshy.ai/workspace) - 
+Music generated with [Tem.Polor](https://www.tempolor.com/) -
 Sounds generated with [elevenLabs](https://elevenlabs.io/app/sound-effects/generate)

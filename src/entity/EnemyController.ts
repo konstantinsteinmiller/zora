@@ -12,7 +12,7 @@ import {
   getBaseStats,
 } from '@/utils/controller.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
-import { createRigidBodyEntity } from '@/utils/physics.ts'
+import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, type Quaternion, Vector3 } from 'three'
 
 export default ({
@@ -72,7 +72,9 @@ export default ({
         mesh = scope.mesh
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
+
         entity.center = entity.calcHalfHeightPosition(entity)
+        createEntityColliderBox(entity)
       },
     })
   }
