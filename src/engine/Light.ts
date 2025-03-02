@@ -1,17 +1,21 @@
-import * as THREE from 'three'
 import state from '@/states/GlobalState'
+import { AmbientLight, DirectionalLight, Group, PointLight, Vector2 } from 'three'
 
 export default () => {
-  const object = new THREE.Object3D()
+  const lightsGroup: any = new Group()
+  lightsGroup.name = 'lights-group'
+  lightsGroup.isBattleProtected = true
 
-  const ambient = new THREE.AmbientLight(0xffffff, 1.5)
-  const point = new THREE.PointLight(0xffffff, 0.5)
+  const ambient: any = new AmbientLight(0xffffff, 1.5)
+  ambient.isBattleProtected = true
+  const point: any = new PointLight(0xffffff, 0.5)
   point.position.set(1, 0, 4)
   point.castShadow = true
   point.shadow.bias = -0.001
-  point.shadow.mapSize = new THREE.Vector2(2048, 2048)
+  point.shadow.mapSize = new Vector2(2048, 2048)
+  point.isBattleProtected = true
 
-  const light = new THREE.DirectionalLight(0xffffff, 0.4)
+  const light: any = new DirectionalLight(0xffffff, 0.4)
   light.position.set(-100, 100, 100)
   light.target.position.set(0, 0, 0)
   light.castShadow = true
@@ -26,17 +30,18 @@ export default () => {
   light.shadow.camera.right = -50
   light.shadow.camera.top = 50
   light.shadow.camera.bottom = -50
+  light.isBattleProtected = true
 
-  object.add(light)
-  object.add(ambient)
-  object.add(point)
+  lightsGroup.add(light)
+  lightsGroup.add(ambient)
+  lightsGroup.add(point)
 
-  state.scene.add(object)
+  state.scene.add(lightsGroup)
 
   const update = () => {
-    object.position.set(0, 10, 0)
+    lightsGroup.position.set(0, 10, 0)
     if (state.player?.position) {
-      object.position.copy(state.player.position)
+      lightsGroup.position.copy(state.player.position)
     }
   }
 
@@ -44,5 +49,5 @@ export default () => {
     update()
   })
 
-  return object
+  return lightsGroup
 }

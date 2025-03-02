@@ -27,10 +27,10 @@
   - [x] hurt sound (anime ääähhh)
   - [x] spell shot sound (zushhh)
   - [x] flying flap sound (flap flap)
-  - [x] death sound ()
+  - [x] death sound
   - [x] battle music
   - [ ] battle end sound
-  - [ ] background music
+  - [x] background music
 - [ ] Inventory
   - [ ] Drag and Drop
   - [ ] Item Slot
@@ -43,11 +43,14 @@
   - [x] Pausing Game for menu access
   - [x] Charge indicator around crosshair
   - [x] Life bar
+    - [ ] fix 100 hp bug
   - [x] Mana bar
   - [x] Endurance bar
     - [x] Flying mechanic, jump -> fly
     - [x] fix previous endurance bug when regen overwriting previous damage
   - [ ] Skill Box
+  - [ ] Battle Over screen
+    - [x] stop background music
   - [x] Loading Screen
     - [x] Progress Bar
     - [x] Artwork
@@ -61,6 +64,7 @@
   - [ ] Exit
 - [ ] World
   - [x] Water Shader
+  - [x] skybox
   - [ ] Arenas
     - [x] Mountain
       - [x] load Mesh
@@ -94,10 +98,13 @@
   - [x] wall sliding
   - [x] fall detection and steep slope sliding
 - [x] Character Controller
+  - [x] First person camera with Keyboard and Mouse
+  - [x] Third person camera with Keyboard and Mouse
   - [x] import character animations
   - [x] state machine
   - [x] idle, walk, run, cast, jump
   - [x] Flying mechanic, jump -> fly + spend stamina for flying
+  - [x] Refactor InputController to decouple actions from peripheral inputs
   - [x] shoot spell vfx and deal damage on impact
   - [x] improve collision box for better hit detection
   - [x] VFX trail
@@ -105,12 +112,8 @@
   - [x] scale damage with charge level
   - [x] show vfx as indicator for charge level of enemy and player
   - [ ] add strafing
-  - [ ] fix vfx cleanup or GPURenderer reuse
-- [x] Refactor InputController to decouple actions from peripheral inputs
-- [x] skybox
-- [x] First person camera with Keyboard and Mouse
-- [x] Third person camera with Keyboard and Mouse
-- [ ] basic three game engine 
+  - [x] fix vfx cleanup or GPURenderer reuse
+- [x] basic three game engine 
   - [x] Physics
   - [x] Renderer
   - [x] Light

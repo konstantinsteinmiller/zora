@@ -80,6 +80,7 @@ export const createEntityColliderBox = (entity: any) => {
   colliderBox.name = 'colliderBox'
   colliderBox.entityId = entity.uuid
   colliderBox.visible = false
+  // colliderBox.visible = true
   colliderBox.scale.set(100, 100, 100)
   entity.mesh.add(colliderBox)
 }

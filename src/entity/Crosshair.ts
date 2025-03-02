@@ -17,7 +17,7 @@ import state from '@/states/GlobalState'
 import SpellFire from '@/entity/SpellFire'
 
 let singleton: any = null
-export default () => {
+const Crosshair = () => {
   if (singleton !== null) return singleton
   singleton = {}
 
@@ -73,11 +73,16 @@ export default () => {
     }
     const crosshairStar = createPlaneFromTexture('images/crosshair/crosshair-stars.png')
     const crosshairDots = createPlaneFromTexture('images/crosshair/crosshair-dots.png')
+    crosshairStar.name = 'crosshairStar'
+    crosshairDots.name = 'crosshairDots'
 
     /* create groups */
     const crosshairGroup = new Group()
+    crosshairGroup.name = 'crosshairGroup'
     crosshairGroup.add(crosshairSprite)
+
     const crosshairRotatingGroup = new Group()
+    crosshairRotatingGroup.name = 'crosshairRotatingGroup'
     crosshairRotatingGroup.add(crosshairStar)
     crosshairRotatingGroup.add(crosshairDots)
     crosshairGroup.add(crosshairRotatingGroup)
@@ -108,7 +113,12 @@ export default () => {
     crosshairDots.visible = false
     crosshairStar.visible = false
     state.player.currentSpell.charge = 0
-    state.player.destroyChargeIndicatorVFX(chargeIndicatorNebulaSystem, chargeIndicatorEventUuid, state.player)
+    state.player.destroyChargeIndicatorVFX(
+      chargeIndicatorNebulaSystem,
+      vfxRenderer,
+      chargeIndicatorEventUuid,
+      state.player
+    )
     chargeIndicatorNebulaSystem = null
   })
 
@@ -121,12 +131,13 @@ export default () => {
     chargeStartTime = Date.now()
   })
   let chargeIndicatorNebulaSystem: any = null
+  let vfxRenderer: any = null
   let chargeIndicatorEventUuid: string = ''
   let firstCharge = true
 
   state.addEvent('renderer.update', async (deltaInS: number) => {
     const entity = state?.player
-    if (!entity.currentSpell || !entity || entity.isDead()) return
+    if (!entity.currentSpell || !entity || entity.isDead() || state.isBattleOver) return
 
     /* while attack button pressed => rotate crosshair */
     if (!state.controls.attack || forcedSpellRelease) return
@@ -136,6 +147,7 @@ export default () => {
       const chargeVFX = await entity.createChargeIndicator(entity)
       chargeIndicatorNebulaSystem = chargeVFX.nebulaSystem
       chargeIndicatorEventUuid = chargeVFX.eventUuid
+      vfxRenderer = chargeVFX.vfxRenderer
     }
     if (chargeIndicatorNebulaSystem) {
       entity.updateChargeIndicator(entity, rotationSpeed, chargeIndicatorNebulaSystem)
@@ -178,7 +190,7 @@ export default () => {
       crosshairDots.visible = true
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
-      console.log('rotationSpeed: ', rotationSpeed)
+      // console.log('rotationSpeed: ', rotationSpeed)
       fireRaycaster(rotationSpeed, state.player, state.enemy)
       canFire = false
       forcedSpellRelease = true
@@ -187,8 +199,14 @@ export default () => {
       state.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
-      state.player.destroyChargeIndicatorVFX(chargeIndicatorNebulaSystem, chargeIndicatorEventUuid, state.player)
+      state.player.destroyChargeIndicatorVFX(
+        chargeIndicatorNebulaSystem,
+        vfxRenderer,
+        chargeIndicatorEventUuid,
+        state.player
+      )
       chargeIndicatorNebulaSystem = null
     }
   })
 }
+export default Crosshair

@@ -7,10 +7,10 @@ export const soundToTrackSrcMap: { [key: string]: string[] } = {
   spellShot: [prependBaseUrl('/sounds/zushhh_flying_spell.ogg'), prependBaseUrl('/sounds/flying_spell.ogg')],
   flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/flying-flap-${i + 1}.ogg`)),
   death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death-${i + 1}.ogg`)),
+  battle: [prependBaseUrl('/music/thunderous-march_battle.ogg')],
   background: [
-    prependBaseUrl('/music/thunderous-march_battle.ogg'),
     prependBaseUrl('/music/beneath-the-soft-moonlight_slow-harmonic-beautiful_background-music.ogg'),
-    prependBaseUrl('/music/shadows-in-silence_slow-tired-powerless_main-menu.ogg'),
+    // prependBaseUrl('/music/shadows-in-silence_slow-tired-powerless_main-menu.ogg'),
   ],
 }
 
@@ -28,6 +28,8 @@ export default () => {
     trackBuffersMap: new Map(),
     soundToTrackSrcMap,
   }
+
+  const activeSoundsList: any[] = []
 
   singleton.createSounds = ({
     name,
@@ -53,7 +55,9 @@ export default () => {
       sound.setBuffer(buffer)
       sound.setLoop(loop)
       sound.setVolume(volume)
-      if (refDist >= 0) sound.setRefDistance(refDist)
+      sound.name = name
+      if (refDist > 0) sound?.setRefDistance?.(refDist)
+      activeSoundsList.push(sound)
       return sound
     }
 
@@ -117,11 +121,14 @@ export default () => {
     const sound = singleton.createSounds({
       name,
       random: true,
-      refDist: options.refDist,
+      refDist: options.refDist || 0,
       volume: options.volume,
       loop: options.loop,
     })[0]
     if (sound) sound.play()
+  }
+  singleton.stop = (name: string) => {
+    activeSoundsList.find((sound: any) => sound.name === name)?.stop()
   }
 
   singleton.playRandomTrack = (soundsList: any[]) => {
@@ -169,14 +176,6 @@ export default () => {
     }
   }
 
-  // Object.keys(soundToTrackSrcMap).forEach((name: string) => singleton.load(name, audioLoader, loadingManager))
-  //
-  // loadingManager.onLoad = () => {
-  //   console.log('%c All sound assets loaded', 'color: lightgrey')
-  //   if (state.isBattleOngoing) {
-  //     singleton.play('background', { volume: 0.01, loop: true })
-  //   }
-  // }
   singleton.loadSounds = () => {
     const soundNamesList = Object.keys(soundToTrackSrcMap)
 

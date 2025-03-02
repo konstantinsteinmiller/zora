@@ -1,11 +1,12 @@
 import EnemyController from '@/entity/EnemyController.ts'
+import { cleanupLevel } from '@/Game.ts'
 import state from '@/states/GlobalState'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import CharacterController from '@/entity/CharacterController.ts'
 import Crosshair from '@/entity/Crosshair'
 
-export default async () => {
+const Arena = async (level = 'water-arena') => {
   World(() => {
     const startPos1 = state.level.pathfinder.startPositions[0]
     const startPos2 = state.level.pathfinder.startPositions[1]
@@ -34,12 +35,28 @@ export default async () => {
     })
     const enemyUpdateEventUuid = state.addEvent('renderer.update', () => {
       if (!state.loadingManager.isLoading) {
-        enemy.start()
         state.removeEvent('renderer.update', enemyUpdateEventUuid)
+        enemy.start()
       }
     })
 
     Crosshair()
+
+    state.addEvent('battle.cleanup', () => {
+      cleanupLevel(true)
+    })
+
+    const arenaEndEventUuid = state.addEvent('renderer.update', () => {
+      if (state.isBattleOver) {
+        state.removeEvent('renderer.update', arenaEndEventUuid)
+        state.triggerEvent('battle.cleanup')
+        setTimeout(() => {
+          state.clearAllEvents()
+        }, 1000)
+      }
+    })
+
     state.isBattleInitialized = true
   })
 }
+export default Arena

@@ -5,7 +5,12 @@
     <div
       class="inner absolute bg-transparent left-0 top-0 rounded-full z-[102] w-[94px] h-[94px] flex justify-center items-center"
     />
-    <div class="inner-circle glass absolute bg-red left-4 top-4 w-16 h-16 rounded-full">
+    <div
+      class="inner-circle glass absolute bg-red left-4 top-4 w-16 h-16 rounded-full"
+      :class="{
+        'with-bg': showPercentage,
+      }"
+    >
       <span
         v-if="showPercentage"
         :class="`number text-white z-[103] text-xl text-bold absolute
@@ -58,8 +63,10 @@ const intermediateColor = computed(() => {
   mask-image: radial-gradient(circle 2rem at center, transparent 99%, black 100%)
 .inner-circle.glass
   border: 1px solid var(--glass-color)
-  background-color: var(--glass-accent-color)
   z-index: 104
+  background-color: transparent
+  &.with-bg
+    background-color: var(--glass-accent-color)
 .pin
   position: absolute
   z-index: 101

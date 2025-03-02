@@ -39,13 +39,17 @@ onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
   state.addOneTimeEvent('renderer.update', () => {
-    /* initialize loadingManager and load sounds */
     state.fileLoader.loadData(() => {
-      const character = CharacterController({})
+      const character = state.player
       character.start()
 
-      const enemy = EnemyController({})
-      enemy.start()
+      // const enemy = state.enemy
+      // enemy.start() // already started in the Arena loop
+
+      if (state.isBattleInitialized) {
+        state.sounds.play('battle', { volume: 0.01, loop: true })
+        // state.sounds.play('background', { volume: 0.01, loop: true })
+      }
     })
 
     /* load other assets */

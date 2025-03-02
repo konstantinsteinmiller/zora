@@ -162,10 +162,12 @@ export default () => {
         }
 
         /* check for all meshes if they have index data and add if needed */
+        model.isBattleProtected = true
         model.traverse((child: any) => {
           if (child.isMesh) {
             child = createGeoIndex(child)
             child.meshName = 'characterMesh'
+            child.isBattleProtected = true
           }
         })
         if (position) model.position.copy(position)

@@ -50,6 +50,7 @@ export default ({
   }
 
   entity.currentSpell.speed = 6
+  entity.currentSpell.damage = 40
 
   let mixer: any = {}
   const animationsMap: any = {}
@@ -103,8 +104,11 @@ export default ({
     if (entity.isDead(entity)) {
       state.removeEvent('renderer.update', updateEventUuid)
       entity.die(entity)
+
+      state.isBattleOver = true
       return
     }
+    entity.stop()
 
     if (state?.level?.pathfinder) {
       const { isEnemyAThreat /*, canSeeEnemy*/ } = entity.detectEnemyThreat(entity, enemy)
@@ -176,6 +180,12 @@ export default ({
 
   entity.start = () => {
     updateEventUuid = state.addEvent('renderer.update', update)
+  }
+
+  entity.stop = () => {
+    if (state.isBattleOver) {
+      state.removeEvent('renderer.update', updateEventUuid)
+    }
   }
 
   state.enemy = entity

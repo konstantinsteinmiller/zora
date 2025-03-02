@@ -1,5 +1,6 @@
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
+import { computed } from 'vue'
 
 const loadingManager = new LoadingManager()
 let state: {
@@ -11,6 +12,7 @@ let state: {
     sourceName?: string
   ) => string
   removeEvent: (eventName: string, uuid: string) => void
+  clearAllEvents: () => void
   [key: string]: any /* global objects */
   eventsMap: {
     [key: string]: {
@@ -84,10 +86,14 @@ const globalState = () => {
       return uuid
     },
     removeEvent: (eventName: string, uuid: string) => {
-      const event = state.eventsMap[eventName]
-      event.cleanup?.()
-      state.eventsMap[eventName] = state.eventsMap[eventName].filter((e: any) => e.uuid !== uuid)
+      // const event = state.eventsMap[eventName]
+      // event.cleanup?.()
+      state.eventsMap[eventName] = state.eventsMap?.[eventName]?.filter((e: any) => e.uuid !== uuid)
       // console.log('XXEvent removed:', eventName, 'with ', uuid)
+    },
+    clearAllEvents: () => {
+      state.eventsMap = {}
+      state.oneTimeEventsList = []
     },
     eventsMap: {},
     oneTimeEventsList: [],
@@ -107,9 +113,10 @@ const globalState = () => {
   state.isThirdPerson = true
   state.isPaused = false
   state.isPointerLocked = false
-  state.isBattleOngoing = false
+  state.isBattleOver = false
   state.isEngineInitialized = false
   state.isBattleInitialized = false
+  state.vfxList = []
 
   return state
 }

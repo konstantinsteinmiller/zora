@@ -47,7 +47,7 @@ const CharacterController = ({
     halfHeight,
   }
   // console.log('entity: ', entity)
-  /* @Todo remove */
+  entity.currentSpell.damage = 40
   // entity.currentSpell.speed = undefined
 
   entity.getPosition = () => {
@@ -168,8 +168,11 @@ const CharacterController = ({
     if (entity.isDead(entity)) {
       state.removeEvent('renderer.update', updateEventUuid)
       entity.die(entity)
+
+      state.isBattleOver = true
       return
     }
+    entity.stop()
 
     entity.updateEndurance(entity, deltaS, elapsedTimeInS)
 
@@ -197,6 +200,11 @@ const CharacterController = ({
 
   entity.start = () => {
     updateEventUuid = state.addEvent('renderer.update', update)
+  }
+  entity.stop = () => {
+    if (state.isBattleOver) {
+      state.removeEvent('renderer.update', updateEventUuid)
+    }
   }
 
   state.player = entity

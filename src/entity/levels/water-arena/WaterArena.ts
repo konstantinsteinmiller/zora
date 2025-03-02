@@ -32,6 +32,12 @@ export default async (onFinishedCallback: () => void) => {
         persistence: 1.89,
         lacunarity: 4.76,
         speed: 0.25,
+        customPlaneProps: [
+          {
+            key: 'isBattleProtected',
+            value: true,
+          },
+        ],
       },
       resolution: waterResolution.size,
       environmentMap: state.scene.environment,
@@ -60,7 +66,9 @@ export default async (onFinishedCallback: () => void) => {
     pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
     state.waterArena.children.forEach((child: any) => {
       child.entityType = 'level'
+      child.isBattleProtected = true
     })
+    state.waterArena.isBattleProtected = true
 
     if (state.enableDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
