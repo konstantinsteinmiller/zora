@@ -3,6 +3,8 @@ import { LOOK_AROUND_SPEED, Options } from '@/enums/constants.ts'
 import state from '@/states/GlobalState'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, Enum, EnumStringToList } from '@/types/general.ts'
+import { onUnlockedMouseMove } from '@/utils/find-pointer.ts'
+import Confetti from 'canvas-confetti'
 
 let input: {
   keysMap: BoolEnum
@@ -152,23 +154,52 @@ export default () => {
     'input'
   )
 
+  document.addEventListener('click', e => onClick(e), false)
   document.addEventListener('keydown', e => onKeyDown(e), false)
   document.addEventListener('keyup', e => onKeyUp(e), false)
   document.addEventListener('contextmenu', e => e.preventDefault(), false)
   document.addEventListener('mousedown', e => onMouseDown(e), false)
   document.addEventListener('mouseup', e => onMouseUp(e), false)
   // document.addEventListener('pointermove', e => onMouseMove(e), false)
+  document.addEventListener('mousemove', onUnlockedMouseMove, false)
   document.addEventListener('pointerlockchange', () => {
     if (document.pointerLockElement === document.body) {
       // console.log('Pointer locked')
+      toggleCursor(true)
+      document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
       // console.log('Pointer unlocked')
+      toggleCursor(false)
       document.removeEventListener('mousemove', onMouseMove, false)
+      document.addEventListener('mousemove', onUnlockedMouseMove, false)
     }
   })
 
+  function onClick(event: MouseEvent) {
+    if (isCursorVisible() && state.isBattleOver) {
+      const { clientX, clientY } = event
+      // const star = Confetti.shapeFromPath({
+      //   path: 'M 47.755 3.765 l 11.525 23.353 c 0.448 0.907 1.313 1.535 2.314 1.681 l 25.772 3.745 c 2.52 0.366 3.527 3.463 1.703 5.241 L 70.42 55.962 c -0.724 0.706 -1.055 1.723 -0.884 2.72 l 4.402 25.667 c 0.431 2.51 -2.204 4.424 -4.458 3.239 L 46.43 75.47 c -0.895 -0.471 -1.965 -0.471 -2.86 0 L 20.519 87.588 c -2.254 1.185 -4.889 -0.729 -4.458 -3.239 l 4.402 -25.667 c 0.171 -0.997 -0.16 -2.014 -0.884 -2.72 L 0.931 37.784 c -1.824 -1.778 -0.817 -4.875 1.703 -5.241 l 25.772 -3.745 c 1.001 -0.145 1.866 -0.774 2.314 -1.681 L 42.245 3.765 C 43.372 1.481 46.628 1.481 47.755 3.765 z',
+      // })
+      Confetti({
+        particleCount: 25,
+        shapes: ['star'],
+        angle: 155,
+        startVelocity: 3.5,
+        gravity: 0.2,
+        scalar: 0.25,
+        drift: 0.15,
+        decay: 0.9,
+        zIndex: 199,
+        colors: ['#f3eaea', '#fddc5c', '#ffc627', '#cca994', '#fcd975', '#ffdf00' /*'#', '#'*/],
+        spread: 70,
+        origin: { x: clientX / innerWidth, y: clientY / innerHeight },
+      })
+    }
+  }
   function setPointerLock() {
+    if (state.isBattleOver) return
     state.isPointerLocked = true
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
@@ -184,10 +215,25 @@ export default () => {
     if (document.pointerLockElement) {
       state.isPointerLocked = false
       document.exitPointerLock()
-      console.log('%c Pointer lock released.', 'color: grey')
+      // console.log('%c Pointer lock released.', 'color: grey')
     } else {
-      console.log('%c Pointer is not locked.', 'color: grey')
+      // console.log('%c Pointer is not locked.', 'color: grey')
     }
+  }
+
+  function toggleCursor(hideCursorOverwrite: boolean) {
+    const classList: any = document.querySelector('.cursor')?.classList
+    if (hideCursorOverwrite === undefined) {
+      classList?.toggle('cursor--hidden')
+    } else if (!hideCursorOverwrite) {
+      classList?.remove('cursor--hidden')
+    } else if (hideCursorOverwrite) {
+      classList?.add('cursor--hidden')
+    }
+  }
+
+  function isCursorVisible() {
+    return !document.querySelector('.cursor')?.classList?.contains('cursor--hidden')
   }
 
   state.input = input
@@ -198,6 +244,8 @@ export default () => {
   state.controls.removePointerLock = removePointerLock
   state.controls.setPointerLock = setPointerLock
   state.controls.togglePointerLock = togglePointerLock
+  state.controls.toggleCursor = toggleCursor
+  state.controls.onUnlockedMouseMove = onUnlockedMouseMove
 
   return input
 }

@@ -6,6 +6,11 @@
     >
       <router-view />
     </main>
+    <img
+      src="/images/cursor-icon.png"
+      class="cursor z-[999]"
+      alt="cursor"
+    />
   </div>
 </template>
 
@@ -26,14 +31,11 @@ const cssProps = computed(() => ({ 'cursor--hidden': !state.showCursor }))
   -moz-osx-font-smoothing: grayscale
   text-align: center
   color: #2c3e50
-
-.game
-  cursor: auto
-  &.cursor--hidden
-    cursor: none
 </style>
 
 <style lang="sass">
+*
+  cursor: none
 body
   margin: 0
   display: flex
@@ -41,4 +43,17 @@ body
   min-width: 320px
   min-height: 100vh
   overflow: hidden
+  cursor: wait
+  &.cursor--hidden
+    cursor: none
+
+  .cursor
+    left: -50px
+    top: -50px
+    width: 32px
+    height: 32px
+    position: fixed
+    transform: translate(-30%, -25%)
+    &.cursor--hidden
+      display: none
 </style>

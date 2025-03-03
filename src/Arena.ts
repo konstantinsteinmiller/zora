@@ -44,6 +44,8 @@ const Arena = async (level = 'water-arena') => {
 
     state.addEvent('battle.cleanup', () => {
       cleanupLevel(true)
+      state.showCursor = true
+      state.controls.removePointerLock()
     })
 
     const arenaEndEventUuid = state.addEvent('renderer.update', () => {

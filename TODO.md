@@ -51,6 +51,9 @@
   - [ ] Skill Box
   - [ ] Battle Over screen
     - [x] stop background music
+    - [x] show custom cursor when unlocked and in window
+    - [ ] back to main menu button
+    - [ ] experience gained UI
   - [x] Loading Screen
     - [x] Progress Bar
     - [x] Artwork

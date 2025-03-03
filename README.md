@@ -31,6 +31,9 @@ expected features:
 ### loading screen artwork
 ![loading-screen](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg)
 
+#### finishing game
+![game-over](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/promotion/game-over.png)
+
 ### spell fight
 ![spell-fight-1](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/spell-fight-1.gif)
 

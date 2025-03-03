@@ -146,10 +146,12 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {
         state.isThirdPerson = false
         state.showCrosshair = false
+        state.controls.toggleCursor(false)
         document.querySelector('.game')?.classList.remove('cursor--hidden')
       },
       onDeactivate: (entity: any) => {
         state.showCrosshair = true
+        state.controls.toggleCursor(true)
         document.querySelector('.game')?.classList?.add('cursor--hidden')
       },
     },

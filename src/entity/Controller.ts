@@ -47,9 +47,37 @@ const CharacterController = ({
     halfHeight,
   }
   // console.log('entity: ', entity)
-  entity.currentSpell.speed = state.isDebug ? 8 : 3
-  entity.currentSpell.damage = state.isDebug ? 300 : 40
+  entity.currentSpell.damage = 40
   // entity.currentSpell.speed = undefined
+
+  entity.clone = function () {
+    const proto = Object.getPrototypeOf(this)
+    const cloned = Object.create(proto)
+
+    const cloneRecursive = (obj: any) => {
+      Object.keys(obj).forEach((key: string) => {
+        if (obj[key] instanceof 'object') {
+          console.log('object[key]: ', obj[key])
+          cloneRecursive(obj[key])
+          // cloned[key] = { ...cloned[key] }
+        }
+        if (obj[key] instanceof 'array') {
+          console.log('array: ', obj[key])
+          cloned[key] = [...obj[key]]
+        }
+        if (obj[key] instanceof 'string' || obj[key] instanceof 'number' || obj[key] instanceof 'boolean') {
+          console.log('literal: ', obj[key])
+          cloned[key] = obj[key]
+        }
+      })
+    }
+    cloneRecursive(this)
+
+    // cloned._name = this._name
+    // cloned._cartItems = [...this._cartItems]
+
+    return cloned
+  }
 
   entity.getPosition = () => {
     if (!mesh) {

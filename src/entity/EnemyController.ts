@@ -50,7 +50,7 @@ export default ({
   }
 
   entity.currentSpell.speed = 6
-  entity.currentSpell.damage = 40
+  entity.currentSpell.damage = state.isDebug ? 140 : 40
 
   let mixer: any = {}
   const animationsMap: any = {}

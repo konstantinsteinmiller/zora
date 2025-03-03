@@ -1,8 +1,8 @@
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
-import { computed } from 'vue'
 
 const loadingManager = new LoadingManager()
+
 let state: {
   triggerEvent: (eventName: string) => void
   addEvent: (

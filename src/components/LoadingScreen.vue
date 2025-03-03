@@ -26,14 +26,21 @@
 import Arena from '@/Arena.ts'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
-import CharacterController from '@/entity/CharacterController.ts'
-import EnemyController from '@/entity/EnemyController.ts'
 import state from '@/states/GlobalState.ts'
+import { findPointer, onUnlockedMouseMove } from '@/utils/find-pointer.ts'
 import { type ComputedRef, onMounted } from 'vue'
+
+const emit = defineEmits(['loading-finished'])
 
 const fileLoader = FileLoader()
 let isLoading: ComputedRef<boolean> | boolean = fileLoader.isLoading
 let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
+
+const setPointer = async () => {
+  const { clientX, clientY }: any = await findPointer()
+  onUnlockedMouseMove({ clientX, clientY })
+}
+setPointer()
 
 onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
@@ -47,7 +54,8 @@ onMounted(() => {
       // enemy.start() // already started in the Arena loop
 
       if (state.isBattleInitialized) {
-        state.sounds.play('battle', { volume: 0.01, loop: true })
+        emit('loading-finished')
+        !state.isDebug && state.sounds.play('battle', { volume: 0.01, loop: true })
         // state.sounds.play('background', { volume: 0.01, loop: true })
       }
     })

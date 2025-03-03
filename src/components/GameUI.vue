@@ -1,7 +1,7 @@
 <template>
   <!--  <h1 class="font-bold text-xl text-red-600 absolute top-0 left-1/2">Zora</h1>-->
 
-  <canvas style="width: 100%; height: 100vh"></canvas>
+  <canvas style="width: 100%; height: 100vh" />
   <template v-if="!isBattleOver">
     <img
       class="absolute top-1 left-4 w-16 h-16"
@@ -29,7 +29,8 @@
     <GameOverScreen v-if="hasOneTeamLost" />
   </template>
 
-  <LoadingScreen />
+  <LoadingScreen @loading-finished="onLoadingFinished" />
+  <div class="find-pointer w-full h-full absolute top-0 left-0"></div>
 </template>
 
 <script setup lang="ts">
@@ -38,10 +39,15 @@ import GameOverScreen from '@/components/GameOverScreen.vue'
 import StatBar from '@/components/StatBar.vue'
 import state from '@/states/GlobalState'
 import Game from '@/Game'
-import { onMounted, type Ref, ref } from 'vue'
+import { computed, onMounted, type Ref, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const isBattleOver: Ref<boolean> = ref(false)
 const hasOneTeamLost: Ref<boolean> = ref(false)
+state.isDebug = route.query.debug === 'true'
+
+const onLoadingFinished = () => {}
 
 onMounted(async () => {
   await Game()
