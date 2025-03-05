@@ -1,4 +1,4 @@
-import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
+import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ClosestPortal, PortalConnection } from '@/types/state.physics.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'

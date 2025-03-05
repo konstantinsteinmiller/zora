@@ -88,8 +88,6 @@ export default () => {
   renderer.clock.start()
   tick()
 
-  state.vfxRenderer = new GPURenderer(state.scene, THREE)
-
   state.renderer = renderer
 
   return renderer

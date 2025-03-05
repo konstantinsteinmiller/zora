@@ -1,5 +1,5 @@
 import camera from '@/engine/Camera.ts'
-import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/enums/constants.ts'
+import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import state from '@/states/GlobalState'

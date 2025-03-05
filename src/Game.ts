@@ -66,4 +66,9 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
       }, 3000)
     })
   }
+  if (!excludeBattleProtected) {
+    state.isBattleOver = false
+    state.isBattleInitialized = false
+    state.renderer.dispose()
+  }
 }

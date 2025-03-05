@@ -1,4 +1,4 @@
-import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/enums/constants.ts'
+import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'

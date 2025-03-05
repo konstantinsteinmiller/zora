@@ -16,6 +16,8 @@
     "@types/three": "^0.173.0",
     "canvas-confetti": "^1.9.3",
     "gsap": "^3.12.7",
+    "i18n": "^0.15.1",
+    "lodash.clonedeep": "^4.5.0",
     "pixi-viewport": "^6.0.3",
     "pixi.js": "^8.7.3",
     "three": "^0.172.0",
@@ -24,10 +26,12 @@
     "tweakpane": "^4.0.5",
     "uuid": "^11.0.5",
     "vue": "^3.5.13",
+    "vue-i18n": "^11.1.1",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@babel/runtime": "^7.26.7",
+    "@intlify/vite-plugin-vue-i18n": "^7.0.0",
     "@eslint/js": "^9.18.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-vue": "^5.2.1",

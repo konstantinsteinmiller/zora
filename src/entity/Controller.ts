@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'

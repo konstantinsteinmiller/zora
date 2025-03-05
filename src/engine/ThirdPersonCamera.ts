@@ -1,4 +1,4 @@
-import { STRAFE_VELOCITY } from '@/enums/constants.ts'
+import { STRAFE_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { Quaternion, Vector3 } from 'three'
 import { clamp } from 'three/src/math/MathUtils'

@@ -14,9 +14,42 @@
     <div class="flex justify-center items-center h-full">
       <h1 class="text-red-800 text-[10rem]">GAME OVER</h1>
     </div>
+    <div class="flex w-full my-3 -mt-[40vh]">
+      <div class="mx-auto">
+        <div class="flex justify-center">
+          <XButton
+            class="with-bg leading-[1rem]"
+            @click="backToMainMenu"
+            @keydown.enter="backToMainMenu"
+          >
+            {{ t('backToMainMenu') }}
+          </XButton>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import XButton from '@/components/atoms/XButton.vue'
+import { cleanupLevel } from '@/Game.ts'
+import router from '@/router'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
+const route = useRoute()
+const backToMainMenu = () => {
+  cleanupLevel()
+  router.push({ name: 'main-menu', query: route.query })
+}
+</script>
 
 <style scoped lang="sass"></style>
+
+<i18n>
+en:
+  backToMainMenu: "Back to Main Menu"
+de:
+  backToMainMenu: "Zurück zum Hauptmenü"
+</i18n>

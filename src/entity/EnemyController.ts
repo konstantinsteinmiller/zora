@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { characterAnimationNamesList } from '@/utils/constants.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'

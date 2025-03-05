@@ -8,7 +8,7 @@
     </main>
     <img
       src="/images/cursor-icon.png"
-      class="cursor z-[999]"
+      class="absolute cursor z-[999] pointer-events-none"
       alt="cursor"
     />
   </div>

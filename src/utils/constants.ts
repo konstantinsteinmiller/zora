@@ -1,5 +1,6 @@
 import { Color } from 'three'
 
+export const IS_ZORA = true
 export const BASE_NAVIGATION_MOVE_SPEED = 3
 export const LOOK_AROUND_SPEED = 1.5
 export const MAX_FLY_IMPULSE = 0.2
@@ -37,3 +38,7 @@ export const ZORA_TOTAL_LOAD_SIZE_NAME = 'zora_total_load_size'
 export const Options = {
   unadjustedMovement: true,
 }
+
+export const GAME_USER_LANGUAGE: string = 'zoraUserLanguage'
+export const GAME_USER_SOUND_VOLUME: string = 'zoraSoundVolume'
+export const GAME_USER_MUSIC_VOLUME: string = 'zoraMusicVolume'

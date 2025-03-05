@@ -1,4 +1,4 @@
-import { MIN_FLY_IMPULSE } from '@/enums/constants.ts'
+import { MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import State, { isMovingEntity } from '@/states/State'
 import { LoopOnce } from 'three'
 import state from '@/states/GlobalState'

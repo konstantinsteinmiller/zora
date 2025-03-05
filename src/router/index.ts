@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import MainMenuView from '@/components/MainMenu.vue'
+import MainMenu from '@/components/MainMenu.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -7,8 +7,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'main-menu',
-      redirect: 'game',
-      // component: MainMenuView,
+      // redirect: 'game',
+      component: MainMenu,
     },
     {
       path: '/game',
@@ -20,4 +20,5 @@ const router = createRouter({
     },
   ],
 })
+
 export default router

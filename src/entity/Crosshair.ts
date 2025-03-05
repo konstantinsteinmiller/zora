@@ -8,7 +8,7 @@ import {
   MIN_CHARGE_END_COLOR,
   MIN_CHARGE_SPEED,
   MIN_CHARGE_START_COLOR,
-} from '@/enums/constants.ts'
+} from '@/utils/constants.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils'

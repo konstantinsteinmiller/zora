@@ -3,19 +3,20 @@
 # Zora
 
 a Zanzarah-like battle game in a fantasy arena. Created in 
-three.js + rapier.js * three-nebula.js
+three.js + rapier.js + three-nebula.js + Vue.js
 <div style="display: flex; justify-items: center;">
     <img src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/three-js-logo.png" alt="three.js-logo" width="60" />
     <img style="transform: translateY(30%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/rapier-logo.svg" alt="rapier-logo" width="120" />
     <img style="transform: translateY(30%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/three-nebula-logo.png" alt="three-nebula-logo" width="120" />
+    <img src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/vue-logo.png" alt="vue-logo" width="60" />
 </div>
 
 
-#### you can try the current version here: [demo](https://konstantinsteinmiller.github.io/zora/#/game) but first load is slow because of the big models (>40mb total)
+#### you can try the current WIP version here: [demo](https://konstantinsteinmiller.github.io/zora/#/game) but first load is slow because of the big models (>40mb total)
 
 expected features:
 - 3D arena
-- Character controller with First and Third person view
+- Character controller with First- and Third Person View
 - Character can look behind
 - AI with pathfinding and collision
 - AI can detect enemy threat and hide behind obstacles to prevent getting hit
@@ -32,7 +33,7 @@ expected features:
 ![loading-screen](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg)
 
 #### finishing game
-![game-over](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/promotion/game-over.png)
+![game-over](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/game-over.png)
 
 ### spell fight
 ![spell-fight-1](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/spell-fight-1.gif)

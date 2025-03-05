@@ -10,7 +10,7 @@ import {
   MIN_CHARGE_END_COLOR,
   MIN_CHARGE_SPEED,
   MIN_CHARGE_START_COLOR,
-} from '@/enums/constants.ts'
+} from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ControllerUtils } from '@/types/entity.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'

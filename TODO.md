@@ -48,10 +48,13 @@
   - [x] Endurance bar
     - [x] Flying mechanic, jump -> fly
     - [x] fix previous endurance bug when regen overwriting previous damage
+    - [ ] fix bar scaling
   - [ ] Skill Box
   - [ ] Battle Over screen
     - [x] stop background music
     - [x] show custom cursor when unlocked and in window
+      - [ ] sprinkles trail
+      - [ ] store mouse positions in array
     - [ ] back to main menu button
     - [ ] experience gained UI
   - [x] Loading Screen
@@ -59,16 +62,17 @@
     - [x] Artwork
     - [x] AssetLoadingManager to preload assets
       - [x] preload World, navmesh and character models and animations
-- [ ] Main Menu
-  - [ ] Start Game
+- [x] Main Menu
+  - [x] Start Game
   - [ ] Load Game / Continue
-  - [ ] Options
+  - [x] Options
     - [ ] Keybindings change
-  - [ ] Exit
+  - [x] Exit
 - [ ] World
   - [x] Water Shader
   - [x] skybox
   - [ ] Arenas
+    - [x] Water arena
     - [x] Mountain
       - [x] load Mesh
       - [x] Colliders

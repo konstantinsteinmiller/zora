@@ -1,5 +1,5 @@
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
-import { LOOK_AROUND_SPEED, Options } from '@/enums/constants.ts'
+import { LOOK_AROUND_SPEED, Options } from '@/utils/constants.ts'
 import state from '@/states/GlobalState'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, Enum, EnumStringToList } from '@/types/general.ts'
@@ -178,24 +178,7 @@ export default () => {
 
   function onClick(event: MouseEvent) {
     if (isCursorVisible() && state.isBattleOver) {
-      const { clientX, clientY } = event
-      // const star = Confetti.shapeFromPath({
-      //   path: 'M 47.755 3.765 l 11.525 23.353 c 0.448 0.907 1.313 1.535 2.314 1.681 l 25.772 3.745 c 2.52 0.366 3.527 3.463 1.703 5.241 L 70.42 55.962 c -0.724 0.706 -1.055 1.723 -0.884 2.72 l 4.402 25.667 c 0.431 2.51 -2.204 4.424 -4.458 3.239 L 46.43 75.47 c -0.895 -0.471 -1.965 -0.471 -2.86 0 L 20.519 87.588 c -2.254 1.185 -4.889 -0.729 -4.458 -3.239 l 4.402 -25.667 c 0.171 -0.997 -0.16 -2.014 -0.884 -2.72 L 0.931 37.784 c -1.824 -1.778 -0.817 -4.875 1.703 -5.241 l 25.772 -3.745 c 1.001 -0.145 1.866 -0.774 2.314 -1.681 L 42.245 3.765 C 43.372 1.481 46.628 1.481 47.755 3.765 z',
-      // })
-      Confetti({
-        particleCount: 25,
-        shapes: ['star'],
-        angle: 155,
-        startVelocity: 3.5,
-        gravity: 0.2,
-        scalar: 0.25,
-        drift: 0.15,
-        decay: 0.9,
-        zIndex: 199,
-        colors: ['#f3eaea', '#fddc5c', '#ffc627', '#cca994', '#fcd975', '#ffdf00' /*'#', '#'*/],
-        spread: 70,
-        origin: { x: clientX / innerWidth, y: clientY / innerHeight },
-      })
+      spraySprincles(event)
     }
   }
   function setPointerLock() {
@@ -250,6 +233,23 @@ export default () => {
   return input
 }
 
+export function spraySprincles(event: MouseEvent) {
+  const { clientX, clientY } = event
+  Confetti({
+    particleCount: 25,
+    shapes: ['star'],
+    angle: 155,
+    startVelocity: 3.5,
+    gravity: 0.2,
+    scalar: 0.25,
+    drift: 0.15,
+    decay: 0.9,
+    zIndex: 199,
+    colors: ['#f3eaea', '#fddc5c', '#ffc627', '#cca994', '#fcd975', '#ffdf00' /*'#', '#'*/],
+    spread: 70,
+    origin: { x: clientX / innerWidth, y: clientY / innerHeight },
+  })
+}
 /*
 const KeyboardKeys = [
   'IntlBackslash',

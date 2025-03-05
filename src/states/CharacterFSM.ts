@@ -1,4 +1,4 @@
-import { characterAnimationNamesList } from '@/enums/constants.ts'
+import { characterAnimationNamesList } from '@/utils/constants.ts'
 import FSM from '@/states/FSM.ts'
 import IdleState from '@/states/IdleState.ts'
 import WalkState from '@/states/WalkState.ts'
@@ -16,7 +16,18 @@ const modules = import.meta.glob('@/states/*State.ts', { eager: true })
 
 /* auto import all Files ending with State.ts with vite */
 const states: Record<string, any> = {}
-const list = [IdleState, WalkState, WalkBackState, DanceState, RunState, RunBackState, CastState, JumpState, FlyState, HitState]
+const list = [
+  IdleState,
+  WalkState,
+  WalkBackState,
+  DanceState,
+  RunState,
+  RunBackState,
+  CastState,
+  JumpState,
+  FlyState,
+  HitState,
+]
 for (const path in modules) {
   const moduleName = path.split('/').pop()?.replace('.ts', '') || 'unknown'
   states[moduleName] = (modules[path] as any).default

@@ -13,6 +13,11 @@ export const findPointer = () => {
   })
 }
 
+export const showCustomPointer = async () => {
+  const { clientX, clientY }: any = await findPointer()
+  onUnlockedMouseMove({ clientX, clientY })
+}
+
 const setCursorPosition = (clientX: number, clientY: number, cursorNode: any) => {
   const [currentX] = cursorNode.style.left.split('px')
   const [currentY] = cursorNode.style.top.split('px')

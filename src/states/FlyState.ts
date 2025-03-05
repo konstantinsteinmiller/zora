@@ -1,4 +1,4 @@
-import { MAX_FLY_IMPULSE } from '@/enums/constants.ts'
+import { MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import State, { isMovingEntity } from '@/states/State'
 
 export default class FlyState extends State {

@@ -1,5 +1,5 @@
 import thirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
-import { STRAFE_VELOCITY } from '@/enums/constants.ts'
+import { STRAFE_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
 import { clamp } from 'three/src/math/MathUtils'
