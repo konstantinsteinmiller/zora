@@ -1,6 +1,7 @@
 import renderer from '@/engine/Renderer.ts'
 import sound from '@/engine/Sound.ts'
 import SpellFire from '@/entity/SpellFire.ts'
+import useUser from '@/use/useUser.ts'
 import {
   DEFAULT_CHARGE_DURATION,
   ENDURANCE_REGEN_SPEED,
@@ -119,6 +120,7 @@ export const statsUtils = () => {
       return target?.hp <= 0
     },
     die(entity: any, deltaS: number) {
+      const { userSoundVolume } = useUser()
       const targetScale = 0.001
       const scaleFactor = 0.93
       const position: Vector3 = entity.mesh.position.clone()
@@ -151,7 +153,7 @@ export const statsUtils = () => {
       const movementVector = calcRapierMovementVector(entity, new Vector3(0, 0, 0), deltaS)
       entity.rigidBody.setNextKinematicTranslation(movementVector)
 
-      state.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.5 })
+      state.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.25 * userSoundVolume.value * 0.25 })
 
       /* cleanup all sound effects on the character */
       const soundsGroup = entity.mesh.children.find((child: any) => child.name === 'sounds-group')

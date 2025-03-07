@@ -14,6 +14,17 @@
       src="../assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg"
       alt="loading-screen-artwork"
     />
+    <div
+      v-if="route.query.debug == 'true'"
+      class="absolute top-4 right-4"
+    >
+      <XButton
+        class="with-bg w-64 h-32"
+        @click="router.push({ name: 'main-menu', query: route.query })"
+      >
+        Reload
+      </XButton>
+    </div>
     <ProgressBar
       :current="current"
       class="scale-150 left-12 bottom-12"
@@ -24,23 +35,22 @@
 
 <script setup lang="ts">
 import Arena from '@/Arena.ts'
+import XButton from '@/components/atoms/XButton.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
+import router from '@/router'
 import state from '@/states/GlobalState.ts'
-import { findPointer, onUnlockedMouseMove } from '@/utils/find-pointer.ts'
+import useUser from '@/use/useUser.ts'
 import { type ComputedRef, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 const emit = defineEmits(['loading-finished'])
+const route = useRoute()
 
+const { userMusicVolume } = useUser()
 const fileLoader = FileLoader()
 let isLoading: ComputedRef<boolean> | boolean = fileLoader.isLoading
 let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
-
-const setPointer = async () => {
-  const { clientX, clientY }: any = await findPointer()
-  onUnlockedMouseMove({ clientX, clientY })
-}
-setPointer()
 
 onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
@@ -55,8 +65,9 @@ onMounted(() => {
 
       if (state.isBattleInitialized) {
         emit('loading-finished')
-        !state.isDebug && state.sounds.play('battle', { volume: 0.01, loop: true })
-        // state.sounds.play('background', { volume: 0.01, loop: true })
+
+        state.sounds.stop('background')
+        state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
       }
     })
 

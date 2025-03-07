@@ -1,3 +1,4 @@
+import useUser from '@/use/useUser.ts'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import System, { GPURenderer } from 'three-nebula'
@@ -74,6 +75,7 @@ export const createShotVFX = async (
   directionN: Vector3,
   hitCallback: () => void = () => {}
 ) => {
+  const { userSoundVolume } = useUser()
   const adjustedPosition = entity.getPosition().clone()
   adjustedPosition.y += 1
 
@@ -105,7 +107,7 @@ export const createShotVFX = async (
   let eventUuid: string = ''
   let hasAppliedCallbackOnce = false
 
-  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.15 })
+  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.5 * userSoundVolume.value * 0.25 })
 
   let wasSpellRemoved: boolean = false
 

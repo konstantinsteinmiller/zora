@@ -15,6 +15,7 @@
     "@dimforge/rapier3d-compat": "^0.14.0",
     "@types/three": "^0.173.0",
     "canvas-confetti": "^1.9.3",
+    "events": "^3.3.0",
     "gsap": "^3.12.7",
     "i18n": "^0.15.1",
     "lodash.clonedeep": "^4.5.0",
@@ -31,8 +32,8 @@
   },
   "devDependencies": {
     "@babel/runtime": "^7.26.7",
-    "@intlify/vite-plugin-vue-i18n": "^7.0.0",
     "@eslint/js": "^9.18.0",
+    "@intlify/vite-plugin-vue-i18n": "^7.0.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue-macros/reactivity-transform": "^1.1.6",

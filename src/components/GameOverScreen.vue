@@ -11,19 +11,19 @@
     <!--      src="../assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg"-->
     <!--      alt="loading-screen-artwork"-->
     <!--    />-->
-    <div class="flex justify-center items-center h-full">
-      <h1 class="text-red-800 text-[10rem]">GAME OVER</h1>
-    </div>
-    <div class="flex w-full my-3 -mt-[40vh]">
-      <div class="mx-auto">
-        <div class="flex justify-center">
-          <XButton
-            class="with-bg leading-[1rem]"
-            @click="backToMainMenu"
-            @keydown.enter="backToMainMenu"
-          >
-            {{ t('backToMainMenu') }}
-          </XButton>
+    <div class="flex flex-col justify-center items-center h-full flex-wrap">
+      <h1 class="text-red-800 lg:text-[10rem] text-[5rem] shrink-0 text-center">GAME OVER</h1>
+      <div class="flex w-full my-3">
+        <div class="mx-auto">
+          <div class="flex justify-center">
+            <XButton
+              class="with-bg leading-[1rem]"
+              @click="backToMainMenu"
+              @keydown.enter="backToMainMenu"
+            >
+              {{ t('backToMainMenu') }}
+            </XButton>
+          </div>
         </div>
       </div>
     </div>
@@ -40,8 +40,10 @@ const { t } = useI18n()
 
 const route = useRoute()
 const backToMainMenu = () => {
-  cleanupLevel()
-  router.push({ name: 'main-menu', query: route.query })
+  cleanupLevel(false, true)
+  setTimeout(() => {
+    router.push({ name: 'main-menu', query: route.query })
+  }, 100)
 }
 </script>
 

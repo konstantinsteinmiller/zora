@@ -52,10 +52,11 @@
   - [ ] Skill Box
   - [ ] Battle Over screen
     - [x] stop background music
+    - [x] fix Game over and button alignment
     - [x] show custom cursor when unlocked and in window
       - [ ] sprinkles trail
       - [ ] store mouse positions in array
-    - [ ] back to main menu button
+    - [x] back to main menu button
     - [ ] experience gained UI
   - [x] Loading Screen
     - [x] Progress Bar

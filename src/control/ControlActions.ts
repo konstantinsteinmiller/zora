@@ -1,4 +1,5 @@
 import camera from '@/engine/Camera.ts'
+import useUser from '@/use/useUser.ts'
 import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
@@ -88,9 +89,10 @@ export default (defaultControlsConfig: EnumStringToList) => {
     hurt: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
+          const { userSoundVolume } = useUser()
           entity.stateMachine.setState('hit')
           entity.dealDamage(entity, 15)
-          state.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.7 })
+          state.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.025 * userSoundVolume.value * 0.25 })
         }
       },
       onDeactivate: (entity: any) => {},
@@ -98,13 +100,15 @@ export default (defaultControlsConfig: EnumStringToList) => {
     fly: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (!document.pointerLockElement) return
+
+        const { userSoundVolume } = useUser()
         if (hasChanged) {
           if (entity.endurance >= FLY_COST) {
             entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
             entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
             entity.utils.takeOffFrames = 3
-            state.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.05 })
+            state.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.25 * userSoundVolume.value * 0.25 })
           }
         }
       },

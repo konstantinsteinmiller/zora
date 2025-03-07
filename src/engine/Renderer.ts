@@ -1,6 +1,5 @@
 import { Clock, WebGLRenderer } from 'three'
 import * as THREE from 'three'
-import { GPURenderer } from 'three-nebula'
 import state from '@/states/GlobalState'
 
 let renderer: any = null
@@ -12,10 +11,12 @@ export default () => {
   }
 
   const canvas: any = document.querySelector('canvas')
-  renderer = new WebGLRenderer({
-    canvas,
-    antialias: true,
-  })
+  renderer = state.renderer
+    ? state.renderer
+    : new WebGLRenderer({
+        canvas,
+        antialias: true,
+      })
 
   renderer.clock = new Clock()
 

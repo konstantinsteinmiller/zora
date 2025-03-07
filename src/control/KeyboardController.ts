@@ -1,3 +1,4 @@
+import arena from '@/Arena.ts'
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
 import { LOOK_AROUND_SPEED, Options } from '@/utils/constants.ts'
 import state from '@/states/GlobalState'
@@ -154,15 +155,9 @@ export default () => {
     'input'
   )
 
-  document.addEventListener('click', e => onClick(e), false)
-  document.addEventListener('keydown', e => onKeyDown(e), false)
-  document.addEventListener('keyup', e => onKeyUp(e), false)
-  document.addEventListener('contextmenu', e => e.preventDefault(), false)
-  document.addEventListener('mousedown', e => onMouseDown(e), false)
-  document.addEventListener('mouseup', e => onMouseUp(e), false)
-  // document.addEventListener('pointermove', e => onMouseMove(e), false)
-  document.addEventListener('mousemove', onUnlockedMouseMove, false)
-  document.addEventListener('pointerlockchange', () => {
+  const onContextMenu = (e: any) => e.preventDefault()
+
+  const onPointerLockChange = () => {
     if (document.pointerLockElement === document.body) {
       // console.log('Pointer locked')
       toggleCursor(true)
@@ -174,6 +169,32 @@ export default () => {
       document.removeEventListener('mousemove', onMouseMove, false)
       document.addEventListener('mousemove', onUnlockedMouseMove, false)
     }
+  }
+
+  document.addEventListener('click', onClick, false)
+  document.addEventListener('keydown', onKeyDown, false)
+  document.addEventListener('keyup', onKeyUp, false)
+  document.addEventListener('contextmenu', onContextMenu, false)
+  document.addEventListener('mousedown', onMouseDown, false)
+  document.addEventListener('mouseup', onMouseUp, false)
+  document.addEventListener('mousemove', onUnlockedMouseMove, false)
+  document.addEventListener('pointerlockchange', onPointerLockChange)
+
+  state.addEvent('battle.cleanup', () => {
+    // document.removeEventListener('click', e => onClick(e), false)
+    // document.removeEventListener('pointerlockchange', onPointerLockChange)
+    document.removeEventListener('keydown', onKeyDown, false)
+    document.removeEventListener('keyup', onKeyUp, false)
+    document.removeEventListener('contextmenu', onContextMenu, false)
+    document.removeEventListener('mousedown', onMouseDown, false)
+    document.removeEventListener('mouseup', onMouseUp, false)
+    document.removeEventListener('mousemove', onUnlockedMouseMove, false)
+    document.removeEventListener('mousemove', onMouseMove, false)
+  })
+
+  state.addEvent('arena.cleanup', () => {
+    document.removeEventListener('click', onClick, false)
+    document.removeEventListener('pointerlockchange', onPointerLockChange)
   })
 
   function onClick(event: MouseEvent) {

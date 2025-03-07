@@ -18,6 +18,9 @@
             <input
               v-if="item.type === 'range'"
               v-model="item.value"
+              min="0"
+              max="1"
+              step="0.01"
               type="range"
               class="text-red-700 w-48"
               :style="`--range-value:${item.value}`"
@@ -76,12 +79,12 @@ const languagesList = computed(() => {
 
 const itemsList = ref([
   {
-    name: 'gameSound',
+    name: 'soundVolume',
     type: 'range',
     value: userSoundVolume,
   },
   {
-    name: 'music',
+    name: 'musicVolume',
     type: 'range',
     value: userMusicVolume,
   },
@@ -103,8 +106,8 @@ const onClose = () => {
 <i18n>
 en:
   title: "Options"
-  gameSound: "Game Sound"
-  music: "Music"
+  soundVolume: "Game Sound"
+  musicVolume: "Music"
   language: "Language"
   en: "English"
   de: "German"
@@ -127,8 +130,8 @@ en:
   ar: "Arabic"
 de:
   title: "Einstellungen"
-  gameSound: "Sound"
-  music: "Musik"
+  soundVolume: "Sound"
+  musicVolume: "Musik"
   language: "Sprache"
   en: "Englisch"
   de: "Deutsch"

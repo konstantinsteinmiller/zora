@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { spraySprincles } from '@/control/KeyboardController.ts'
+import Camera from '@/engine/Camera.ts'
+import FileLoader from '@/engine/FileLoader.ts'
+import Sound from '@/engine/Sound.ts'
 import router from '@/router'
-import { onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
+import state from '@/states/GlobalState.ts'
+import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
@@ -22,6 +26,18 @@ const startGame = () => {
 const onExit = () => {
   console.log('exit game')
 }
+
+const setPointer = async () => {
+  const { clientX, clientY }: any = await findPointer()
+  onUnlockedMouseMove({ clientX, clientY })
+}
+setPointer()
+
+!state.sounds && Sound()
+state.sounds.playBackgroundMusic()
+
+!state.fileLoader && FileLoader()
+!state.camera && Camera()
 
 const game$: any = document.querySelector('.game')
 onMounted(() => {

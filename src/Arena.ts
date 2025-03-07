@@ -43,7 +43,7 @@ const Arena = async (level = 'water-arena') => {
     Crosshair()
 
     state.addEvent('battle.cleanup', () => {
-      cleanupLevel(true)
+      cleanupLevel(true, true)
       state.showCursor = true
       state.controls.removePointerLock()
     })
@@ -52,9 +52,6 @@ const Arena = async (level = 'water-arena') => {
       if (state.isBattleOver) {
         state.removeEvent('renderer.update', arenaEndEventUuid)
         state.triggerEvent('battle.cleanup')
-        setTimeout(() => {
-          state.clearAllEvents()
-        }, 1000)
       }
     })
 

@@ -6,8 +6,8 @@ a Zanzarah-like battle game in a fantasy arena. Created in
 three.js + rapier.js + three-nebula.js + Vue.js
 <div style="display: flex; justify-items: center;">
     <img src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/three-js-logo.png" alt="three.js-logo" width="60" />
-    <img style="transform: translateY(30%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/rapier-logo.svg" alt="rapier-logo" width="120" />
-    <img style="transform: translateY(30%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/three-nebula-logo.png" alt="three-nebula-logo" width="120" />
+    <img style="transform: translateY(15%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/rapier-logo.svg" alt="rapier-logo" width="120" />
+    <img style="transform: translateY(15%);" src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/three-nebula-logo.png" alt="three-nebula-logo" width="120" />
     <img src="https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/vue-logo.png" alt="vue-logo" width="60" />
 </div>
 

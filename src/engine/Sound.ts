@@ -1,6 +1,9 @@
 import state from '@/states/GlobalState.ts'
+import useUser from '@/use/useUser.ts'
 import { prependBaseUrl, randomInt, repeat } from '@/utils/function.ts'
 import { Audio, AudioListener, AudioLoader, Group, PositionalAudio } from 'three'
+import { EventEmitter } from 'events'
+import { watch } from 'vue'
 
 export const soundToTrackSrcMap: { [key: string]: string[] } = {
   hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/auahhhh-hurt-female-${i + 1}.ogg`)),
@@ -18,15 +21,24 @@ let singleton: any = null
 export default () => {
   if (singleton !== null) return singleton
 
+  const { userMusicVolume } = useUser()
   /* create camera listener */
+  const emitter = new EventEmitter()
   const listener = new AudioListener()
-  state.camera.add(listener)
+  state.addOneTimeEvent(() => state.camera.add(listener))
+  watch(
+    () => userMusicVolume.value,
+    () => {
+      activeSoundsList.forEach((sound: any) => sound.setVolume(userMusicVolume.value * 0.25))
+    }
+  )
 
   const audioLoader = new AudioLoader(state.loadingManager)
 
   singleton = {
     trackBuffersMap: new Map(),
     soundToTrackSrcMap,
+    emitter,
   }
 
   const activeSoundsList: any[] = []
@@ -94,6 +106,7 @@ export default () => {
             singleton.trackBuffersMap.set(name, trackBuffersList)
           }
           state.loadingManager.itemEnd(src)
+          singleton.emitter.emit('loaded:background', { name })
         },
         onProgress,
         error => {
@@ -183,7 +196,25 @@ export default () => {
       soundNamesList.forEach((name: string) =>
         state.sounds.load(name, (event: any) => state.fileLoader.onFileProgress(name, event))
       )
-      return
+    }
+  }
+  singleton.loadBackgroundMusic = () => {
+    const name = 'background'
+    state.sounds.load(name, (event: any) => state.fileLoader.onFileProgress(name, event))
+  }
+
+  singleton.playBackgroundMusic = () => {
+    const name = 'background'
+    if (!singleton.trackBuffersMap.get(name)) {
+      singleton.load(name)
+
+      const onLoadedBackgroundMusic = () => {
+        /*!state.isDebug && */ singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
+        emitter.off(`loaded:${name}`, onLoadedBackgroundMusic)
+      }
+      emitter.on(`loaded:${name}`, onLoadedBackgroundMusic)
+    } else {
+      singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
     }
   }
 

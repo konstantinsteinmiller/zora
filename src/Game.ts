@@ -6,7 +6,6 @@ import { Scene } from 'three'
 import Light from '@/engine/Light'
 import Renderer from '@/engine/Renderer'
 import Physics from '@/engine/Physics'
-import Camera from '@/engine/Camera'
 
 export default async (level = 'water-arena') => {
   await Physics()
@@ -16,12 +15,8 @@ export default async (level = 'water-arena') => {
   const levelConfig = await import(`@/entity/levels/${level}/config.ts`)
   const { phi, theta } = levelConfig.startPositions[0]?.orientation || { phi: 0, theta: 0 }
 
-  FileLoader()
-  Camera()
   state.thirdPersonCamera.setCameraRotation(phi, theta)
   state.fpsCamera.setCameraRotation(phi, theta)
-
-  Sound()
 
   Light()
   Renderer()
@@ -61,7 +56,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   if (removeVfx) {
     state.vfxList.forEach(({ name, vfxRenderer, nebulaSystem }: any) => {
       setTimeout(() => {
-        console.log('name: ', name)
+        // console.log('name: ', name)
         destroyVfx({ nebulaSystem: nebulaSystem, vfxRenderer })
       }, 3000)
     })
@@ -69,6 +64,9 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   if (!excludeBattleProtected) {
     state.isBattleOver = false
     state.isBattleInitialized = false
-    state.renderer.dispose()
+    state.triggerEvent('arena.cleanup')
+    state.clearAllEvents()
+    // state.renderer.dispose()
+    setTimeout(() => {}, 1000)
   }
 }
