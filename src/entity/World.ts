@@ -1,16 +1,9 @@
 import WaterArena from '@/entity/levels/water-arena/WaterArena.ts'
-import { CubeTextureLoader, Object3D } from 'three'
+import { CubeTextureLoader } from 'three'
 import state from '@/states/GlobalState'
 import * as THREE from 'three'
 
-let world: any = null
 export default (onFinishedCallback: () => void) => {
-  if (world !== null) {
-    return world
-  }
-
-  world = new Object3D()
-
   const createSkybox = () => {
     const loader = new CubeTextureLoader(state.loadingManager)
     const src = 'skybox'
@@ -36,11 +29,4 @@ export default (onFinishedCallback: () => void) => {
   createSkybox()
   // MountainArena()
   WaterArena(onFinishedCallback)
-
-  // world.add(state.mountainArena)
-  // world.add(state.waterArena)
-
-  state.scene.add(world)
-
-  return world
 }

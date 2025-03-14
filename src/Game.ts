@@ -1,5 +1,4 @@
 import FileLoader from '@/engine/FileLoader.ts'
-import Sound from '@/engine/Sound.ts'
 import state from '@/states/GlobalState'
 import { destroyVfx } from '@/utils/vfx.ts'
 import { Scene } from 'three'
@@ -12,6 +11,11 @@ export default async (level = 'water-arena') => {
   state.scene = new Scene()
   state.uiScene = new Scene()
 
+  state.addEvent('arena.cleanup', () => {
+    state.scene = null
+    state.uiScene = null
+  })
+
   const levelConfig = await import(`@/entity/levels/${level}/config.ts`)
   const { phi, theta } = levelConfig.startPositions[0]?.orientation || { phi: 0, theta: 0 }
 
@@ -21,7 +25,6 @@ export default async (level = 'water-arena') => {
   Light()
   Renderer()
 
-  state.isEngineInitialized = true
   return true
 }
 
@@ -51,7 +54,6 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     state.scene.remove(child)
     child = null
   })
-  // console.log('state.scene: ', state.scene
 
   if (removeVfx) {
     state.vfxList.forEach(({ name, vfxRenderer, nebulaSystem }: any) => {
@@ -62,10 +64,15 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     })
   }
   if (!excludeBattleProtected) {
+    state.isEngineInitialized = false
     state.isBattleOver = false
     state.isBattleInitialized = false
+
+    const fileLoader = FileLoader()
+    fileLoader.clearData()
     state.triggerEvent('arena.cleanup')
     state.clearAllEvents()
+
     // state.renderer.dispose()
     setTimeout(() => {}, 1000)
   }

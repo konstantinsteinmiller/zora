@@ -3,14 +3,8 @@ import state from '@/states/GlobalState.ts'
 import { Quaternion, Vector3 } from 'three'
 import { clamp } from 'three/src/math/MathUtils'
 
-let thirdPersonCamera: any = null
 export default () => {
-  /* thirdPersonCamera is a Singleton */
-  if (thirdPersonCamera !== null) {
-    return thirdPersonCamera
-  }
-
-  thirdPersonCamera = {}
+  let thirdPersonCamera: any = {}
 
   const rotation = new Quaternion()
   const translation = new Vector3(0, 1, 0)
@@ -110,10 +104,14 @@ export default () => {
   }
 
   state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.controls) return
-    if (state.isThirdPerson) {
-      update(deltaInS)
-    }
+    if (!state.controls || !state.isThirdPerson) return
+
+    update(deltaInS)
+  })
+
+  state.addEvent('arena.cleanup', () => {
+    thirdPersonCamera = null
+    state.thirdPersonCamera = null
   })
 
   state.thirdPersonCamera = thirdPersonCamera

@@ -14,17 +14,17 @@
       src="../assets/documentation/promotion/loading_screen_ethereal_vistas_1280x720.jpg"
       alt="loading-screen-artwork"
     />
-    <div
-      v-if="route.query.debug == 'true'"
-      class="absolute top-4 right-4"
-    >
-      <XButton
-        class="with-bg w-64 h-32"
-        @click="router.push({ name: 'main-menu', query: route.query })"
-      >
-        Reload
-      </XButton>
-    </div>
+    <!--    <div-->
+    <!--      v-if="route.query.debug == 'true'"-->
+    <!--      class="absolute top-4 right-4"-->
+    <!--    >-->
+    <!--      <XButton-->
+    <!--        class="with-bg w-64 h-32"-->
+    <!--        @click="router.push({ name: 'main-menu', query: route.query })"-->
+    <!--      >-->
+    <!--        Reload-->
+    <!--      </XButton>-->
+    <!--    </div>-->
     <ProgressBar
       :current="current"
       class="scale-150 left-12 bottom-12"
@@ -35,10 +35,8 @@
 
 <script setup lang="ts">
 import Arena from '@/Arena.ts'
-import XButton from '@/components/atoms/XButton.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
-import router from '@/router'
 import state from '@/states/GlobalState.ts'
 import useUser from '@/use/useUser.ts'
 import { type ComputedRef, onMounted } from 'vue'
@@ -65,6 +63,8 @@ onMounted(() => {
 
       if (state.isBattleInitialized) {
         emit('loading-finished')
+
+        state.controls.setPointerLock()
 
         state.sounds.stop('background')
         state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })

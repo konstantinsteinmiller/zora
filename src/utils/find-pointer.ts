@@ -1,3 +1,4 @@
+import Confetti from 'canvas-confetti'
 import { Vector2 } from 'three'
 import { lerp } from 'three/src/math/MathUtils'
 
@@ -39,8 +40,8 @@ const setCursorPosition = (clientX: number, clientY: number, cursorNode: any) =>
   cursorNode.style.top = `${interpolatedY}px`
 }
 
-const isCursorOnScreen = (clientX: number, clientY: number) => {
-  let hoveredElement = document.querySelectorAll(':hover')
+const isCursorOnScreen = () => {
+  let hoveredElement: any = document.querySelectorAll(':hover')
   hoveredElement = hoveredElement[hoveredElement.length - 1] // Get the most specific hovered element
 
   const classList = document.querySelector('.cursor')?.classList
@@ -52,10 +53,29 @@ const isCursorOnScreen = (clientX: number, clientY: number) => {
   }
 }
 
+let counter: number = 0
 export const onUnlockedMouseMove = (event: any) => {
   const { clientX, clientY } = event
   const cursorNode: any = document.querySelector('.cursor')
   if (!cursorNode) return
+
+  counter++
+  /* sprinkles trail */
+  counter % 2 === 0 &&
+    Confetti({
+      particleCount: 1,
+      shapes: ['star'],
+      angle: -90,
+      startVelocity: 2.5,
+      gravity: 0.35,
+      scalar: 0.18,
+      drift: 0.35,
+      decay: 0.95,
+      zIndex: 199,
+      colors: ['#f3eaea', '#fddc5c', '#ffc627', '#cca994', '#fcd975', '#ffdf00' /*'#', '#'*/],
+      spread: 70,
+      origin: { x: (clientX + 16) / innerWidth, y: (clientY + 0) / innerHeight },
+    })
 
   setTimeout(() => {
     isCursorOnScreen()

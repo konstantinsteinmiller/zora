@@ -1,7 +1,8 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import camera from '@/engine/Camera.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
+import { statsUtils, controllerUtils, getBaseStats, chargeUtils, characterCleanupUtils } from '@/utils/controller.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -38,6 +39,7 @@ const CharacterController = ({
     ...stats,
     ...controllerUtils(),
     ...statsUtils(),
+    // ...characterCleanupUtils(),
     ...{
       updateChargeIndicator: chargeUtilsObj.updateChargeIndicator,
       createChargeIndicator: chargeUtilsObj.createChargeIndicator,
@@ -207,6 +209,11 @@ const CharacterController = ({
       state.removeEvent('renderer.update', updateEventUuid)
     }
   }
+
+  state.addEvent('arena.cleanup', () => {
+    entity = null
+    state.player = null
+  })
 
   state.player = entity
   return entity

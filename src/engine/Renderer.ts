@@ -2,16 +2,9 @@ import { Clock, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
 
-let renderer: any = null
-
 export default () => {
-  /* renderer is a Singleton */
-  if (renderer !== null) {
-    return renderer
-  }
-
   const canvas: any = document.querySelector('canvas')
-  renderer = state.renderer
+  let renderer: any = state.renderer
     ? state.renderer
     : new WebGLRenderer({
         canvas,
@@ -34,6 +27,9 @@ export default () => {
   let accumulatedTime = 0
 
   const tick = () => {
+    /* exit previous game loop */
+    if (!state.isEngineInitialized) return
+
     const deltaS = renderer.clock.getDelta()
     accumulatedTime += deltaS
 
@@ -49,12 +45,6 @@ export default () => {
           cleanup()
         }
       })
-      /* wait for the whole arena to load */
-      // if (!state.isBattleInitialized) {
-      //   accumulatedTime -= FIXED_TIME_STEP
-      //   return
-      // }
-      // console.log('state.isBattleInitialized: ', state.isBattleInitialized)
 
       state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
         callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
@@ -84,9 +74,17 @@ export default () => {
 
   window.addEventListener('resize', onWindowResize, false)
 
+  state.addEvent('arena.cleanup', () => {
+    window.removeEventListener('resize', onWindowResize, false)
+    renderer = null
+    state.renderer = null
+  })
+
   /* start game loop */
   renderer.clock.elapsedTime = 0
   renderer.clock.start()
+
+  state.isEngineInitialized = true
   tick()
 
   state.renderer = renderer

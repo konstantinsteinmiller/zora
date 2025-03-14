@@ -1,18 +1,10 @@
-import thirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
 import { STRAFE_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import * as THREE from 'three'
 import { clamp } from 'three/src/math/MathUtils'
 import { Quaternion, Vector3 } from 'three'
 
-let fpsCamera: any = null
-
 export default () => {
-  /* fpsCamera is a Singleton */
-  if (fpsCamera !== null) {
-    return fpsCamera
-  }
-
   const rotation = new THREE.Quaternion()
   const translation = new THREE.Vector3(0, 2, 0)
   let phi = 0
@@ -22,14 +14,12 @@ export default () => {
   let isHeadBobActive = false
   let headBobTimer = 0
 
-  fpsCamera = {}
+  let fpsCamera: any = {}
   fpsCamera.setCameraRotation = (newPhi: number, newTheta: number) => {
     phi = newPhi
     theta = newTheta
   }
   fpsCamera.getCameraRotation = () => ({ phi, theta })
-
-  state.fpsCamera = fpsCamera
 
   const updateTranslation = (timeElapsedInS: number) => {
     const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
@@ -149,10 +139,16 @@ export default () => {
   }
 
   state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.isThirdPerson) {
-      update(deltaInS)
-    }
+    if (!state.controls || state.isThirdPerson) return
+
+    update(deltaInS)
   })
 
+  state.addEvent('arena.cleanup', () => {
+    fpsCamera = null
+    state.fpsCamera = null
+  })
+
+  state.fpsCamera = fpsCamera
   return fpsCamera
 }

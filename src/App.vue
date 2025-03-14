@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen sm:h-full">
+  <div class="flex flex-col h-screen sm:h-full w-screen">
     <main
       class="game"
       :class="cssProps"

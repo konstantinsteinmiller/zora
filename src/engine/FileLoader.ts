@@ -26,6 +26,7 @@ const FileLoader = () => {
     fileProgressMap = {}
     overallTotal = 0
     totalLoaded = 0
+    isLoading.value = true
     currentlyLoadedPercent.value = 0
   }
 
@@ -50,8 +51,8 @@ const FileLoader = () => {
 
   singleton.loadData = (onFinished: () => void) => {
     state.loadingManager.onLoad = () => {
-      const total = convertToReadableSize(state.fileLoader.backUpTotal)
-      console.log('%c All assets loaded', 'color: lightgrey', total)
+      // const total = convertToReadableSize(state.fileLoader.backUpTotal)
+      // console.log('%c All assets loaded', 'color: lightgrey', total)
 
       setTimeout(() => (isLoading.value = false), 100)
 

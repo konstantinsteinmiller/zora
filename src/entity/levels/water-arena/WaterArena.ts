@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import state, { type GlobalState } from '@/states/GlobalState.ts'
 import {
   portalConnectionsList,
   orientationPosition,
@@ -14,15 +14,11 @@ import { createCollidersForGraph } from '@/utils/physics.ts'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
 export default async (onFinishedCallback: () => void) => {
-  if (state.waterArena) {
-    return state.waterArena
-  }
-
-  state.waterArena = new Object3D()
+  const waterArena: any = new Object3D()
   const { loadMesh } = AssetLoader()
-  await loadMesh('worlds/arenas/water-arena.fbx', state.waterArena, 1)
+  await loadMesh('worlds/arenas/water-arena.fbx', waterArena, 1)
 
-  // state.waterArena.position.set(2.98, -0.06, -0.02)
+  // waterArena.position.set(2.98, -0.06, -0.02)
   if (state.enableWater) {
     const waterResolution = { size: 256 }
     const water = Water({
@@ -62,13 +58,13 @@ export default async (onFinishedCallback: () => void) => {
     geo.rotateX(-Math.PI / 2)
 
     // state.scene.add(navMesh)
-    state.waterArena.zone = 'water-arena'
-    pathfinder.setZoneData(state.waterArena.zone, Pathfinding.createZone(geo))
-    state.waterArena.children.forEach((child: any) => {
+    waterArena.zone = 'water-arena'
+    pathfinder.setZoneData(waterArena.zone, Pathfinding.createZone(geo))
+    waterArena.children.forEach((child: any) => {
       child.entityType = 'level'
       child.isBattleProtected = true
     })
-    state.waterArena.isBattleProtected = true
+    waterArena.isBattleProtected = true
 
     if (state.enableDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
@@ -99,17 +95,17 @@ export default async (onFinishedCallback: () => void) => {
     const coverBox = new Mesh(coverBoxGeometry, coverBoxMaterial)
     coverBox.position.copy(coverPos)
     coverBox.name = 'cover'
-    state.waterArena.add(coverBox)
+    waterArena.add(coverBox)
     state.scene.updateMatrixWorld(true)
   })*/
 
-  createCollidersForGraph(state.waterArena, 'fixed')
-  state.waterArena.name = 'WaterArenaContainer'
-  state.waterArena.pathfinder = pathfinder
-  state.waterArena.movingEntitiesList = []
-  state.scene.add(state.waterArena)
-  state.level = state.waterArena
+  createCollidersForGraph(waterArena, 'fixed')
+  waterArena.name = 'WaterArenaContainer'
+  waterArena.pathfinder = pathfinder
+  waterArena.movingEntitiesList = []
+  state.scene.add(waterArena)
+  state.level = waterArena
   onFinishedCallback()
 
-  return state.waterArena
+  return waterArena
 }

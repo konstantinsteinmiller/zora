@@ -5,6 +5,7 @@ import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
 import router from '@/router'
 import state from '@/states/GlobalState.ts'
+import useMatch from '@/use/useMatch.ts'
 import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -12,6 +13,7 @@ import OptionsModal from '@/components/OptionsModal.vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { useRoute } from 'vue-router'
 
+const { isStartingGame } = useMatch()
 const route = useRoute()
 const { t } = useI18n()
 const isOptionsModalOpen = ref(false)
@@ -20,7 +22,8 @@ const isNative = import.meta.env.VITE_PLATTFORM === 'native'
 showCustomPointer()
 
 const startGame = () => {
-  router.push({ name: 'game', query: route.query })
+  isStartingGame.value = true
+  router.push({ name: 'battle', query: route.query })
 }
 
 const onExit = () => {

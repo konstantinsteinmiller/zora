@@ -289,6 +289,8 @@ export const chargeUtils = () => ({
   },
 })
 
+export const characterCleanupUtils = () => ({})
+
 export const createOverHeadHealthBar = (entity: any) => {
   let healthBarEventUuid = ''
   const updateHealthBar = (entity: any) => {

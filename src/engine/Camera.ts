@@ -6,7 +6,7 @@ import { OrthographicCamera, PerspectiveCamera } from 'three'
 export default () => {
   const aspect = innerWidth / innerHeight
 
-  const camera: any = new PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 5000)
+  let camera: any = new PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 5000)
   camera.position.set(0, 2, 0)
 
   camera.updateCameraRotation = () => {
@@ -30,6 +30,12 @@ export default () => {
   state.uiCamera.top = 1
   state.uiCamera.bottom = -1
   state.uiCamera?.updateProjectionMatrix()
+
+  state.addEvent('arena.cleanup', () => {
+    camera = null
+    state.camera = null
+    state.uiCamera = null
+  })
 
   ThirdPersonCamera()
   FirstPersonCamera()

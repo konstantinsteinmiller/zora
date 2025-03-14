@@ -256,20 +256,20 @@ if (transitionData === null) {
 }
 export const portalTransitionMap = transitionData
 
-const loadTransitionDataFromFile = async () => {
-  let data
-  const fileName = 'portalTransitionMap.json'
-  const tryLoadPortalTransitionMap = async () => {
-    try {
-      data = await import(`./${fileName}`)
-    } catch (e: any) {
-      data = null
-    }
-  }
-  await tryLoadPortalTransitionMap()
-  transitionData = data ? data?.default : generateTransitionMap(portalConnectionsList)
-  if (!data) saveDataToFile(transitionData, fileName)
-}
+// const loadTransitionDataFromFile = async () => {
+//   let data
+//   const fileName = 'portalTransitionMap.json'
+//   const tryLoadPortalTransitionMap = async () => {
+//     try {
+//       data = await import(`./${fileName}`)
+//     } catch (e: any) {
+//       data = null
+//     }
+//   }
+//   await tryLoadPortalTransitionMap()
+//   transitionData = data ? data?.default : generateTransitionMap(portalConnectionsList)
+//   if (!data) saveDataToFile(transitionData, fileName)
+// }
 
 export const coverPositions = [
   { x: 8.45, y: -2.28, z: 11.73 },

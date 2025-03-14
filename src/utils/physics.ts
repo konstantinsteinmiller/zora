@@ -8,7 +8,7 @@ const descMap: { [key: string]: any } = {
   kinematic: RigidBodyDesc.kinematicVelocityBased(),
 }
 
-export const createCollidersForGraph = (object: Object3D, rigidType: string = 'fixed', scale?: number) => {
+export const createCollidersForGraph = (object: any, rigidType: string = 'fixed', scale?: number) => {
   const colliders: any = []
   // console.log('object: ', object)
   object.traverse((child: Object3D) => {

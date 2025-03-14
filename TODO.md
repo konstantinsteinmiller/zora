@@ -43,20 +43,21 @@
   - [x] Pausing Game for menu access
   - [x] Charge indicator around crosshair
   - [x] Life bar
-    - [ ] fix 100 hp bug
+    - [x] fix 100 hp bug
   - [x] Mana bar
   - [x] Endurance bar
     - [x] Flying mechanic, jump -> fly
     - [x] fix previous endurance bug when regen overwriting previous damage
-    - [ ] fix bar scaling
+    - [x] fix bar scaling
   - [ ] Skill Box
   - [ ] Battle Over screen
     - [x] stop background music
     - [x] fix Game over and button alignment
     - [x] show custom cursor when unlocked and in window
-      - [ ] sprinkles trail
+      - [x] sprinkles trail
       - [ ] store mouse positions in array
     - [x] back to main menu button
+    - [x] cleanup after game over and restart arena battle
     - [ ] experience gained UI
   - [x] Loading Screen
     - [x] Progress Bar
@@ -129,5 +130,6 @@
   - [x] Sound
 - [x] game icon
 - [x] basic vue + eslint + typescript setup 
+- [x] fix routing on reload
 
 ## Bugs

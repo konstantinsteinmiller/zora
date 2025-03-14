@@ -12,7 +12,7 @@ three.js + rapier.js + three-nebula.js + Vue.js
 </div>
 
 
-#### you can try the current WIP version here: [demo](https://konstantinsteinmiller.github.io/zora/#/game) but first load is slow because of the big models (>40mb total)
+#### you can try the current WIP version here: [demo](https://konstantinsteinmiller.github.io/zora) but first load is slow because of the big models (>40mb total)
 
 expected features:
 - 3D arena

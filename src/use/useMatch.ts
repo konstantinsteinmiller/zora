@@ -5,10 +5,10 @@ import type { Ref } from 'vue'
 const isDebug = import.meta.env.VITE_DEBUG || !!sessionStorage.getItem('isDebug')
 
 const isStartingGame: Ref<boolean> = ref(false)
-const isFakeOnlineGame: Ref<boolean> = ref(false)
-const isResizing: Ref<boolean> = ref(false)
+// const isStartingGame: Ref<boolean> = ref(false)
+// const isResizing: Ref<boolean> = ref(false)
 const isSplashScreenVisible: Ref<boolean> = ref(true)
-const showSplashScreen: Ref<boolean> = ref(true)
+// const showSplashScreen: Ref<boolean> = ref(true)
 const isDbInitialized: Ref<boolean> = ref(false)
 
 const controls: any = ref({
@@ -21,25 +21,28 @@ const controls: any = ref({
 })
 
 const useMatch = () => {
-  const resetMatch = () => {
-    // if (game.enemyTeam.teamUuid !== 'NPC') {
-    //   // this.registerForRandomMatch()
-    //   /* Todo reset game for random match and for invite match */
-    // } else {
-    //   setPlayerTeam({ resource: 0, unitsList: null })
-    //   setEnemyTeam({ resource: 0, unitsList: null })
-    //   resetPlaceholderUnit()
-    // }
+  const resetMatch = () => {}
+
+  if (!isStartingGame.value && window.location.hash.includes('/battle')) {
+    let themeQuery = ''
+    console.log('window.location.hash: ', window.location.hash)
+    if (window.location.hash.includes('debug=')) {
+      const queries = window.location.hash.split('?')[1]?.split('&')
+      themeQuery = `?${queries.find(query => query.includes('debug'))}`
+    }
+    window.location.pathname = '/'
+    window.location.hash = `#/${themeQuery}`
+    window.location.reload()
   }
 
   return {
     resetMatch,
-    isResizing,
-    isFakeOnlineGame,
-    isSplashScreenVisible,
-    showSplashScreen,
-    isDbInitialized,
+    // isResizing,
+    // isFakeOnlineGame,
+    // showSplashScreen,
     isStartingGame,
+    isSplashScreenVisible,
+    isDbInitialized,
     controls,
     game,
   }

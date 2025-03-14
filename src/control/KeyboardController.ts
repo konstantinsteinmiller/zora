@@ -1,19 +1,11 @@
-import arena from '@/Arena.ts'
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
 import { LOOK_AROUND_SPEED, Options } from '@/utils/constants.ts'
 import state from '@/states/GlobalState'
-import type { ActionFunctionMap } from '@/types/controller-types.ts'
-import type { BoolEnum, Enum, EnumStringToList } from '@/types/general.ts'
+import type { Enum, EnumStringToList } from '@/types/general.ts'
 import { onUnlockedMouseMove } from '@/utils/find-pointer.ts'
 import Confetti from 'canvas-confetti'
 
-let input: {
-  keysMap: BoolEnum
-  actions: ActionFunctionMap
-  actionsMap: { [action: string]: boolean | BoolEnum; previous: BoolEnum }
-  mouse: { [key: string]: number }
-  updateControlsConfig: (newConfig: Partial<Enum>) => void
-} = {}
+let input: any = {}
 
 // Default key bindings
 const defaultControlsConfig: EnumStringToList = {
@@ -160,11 +152,15 @@ export default () => {
   const onPointerLockChange = () => {
     if (document.pointerLockElement === document.body) {
       // console.log('Pointer locked')
+      if (!state.isPointerLocked) return // Prevents double firing
+
       toggleCursor(true)
       document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
       // console.log('Pointer unlocked')
+      if (state.isPointerLocked) return // Prevents double firing
+
       toggleCursor(false)
       document.removeEventListener('mousemove', onMouseMove, false)
       document.addEventListener('mousemove', onUnlockedMouseMove, false)
@@ -250,6 +246,11 @@ export default () => {
   state.controls.togglePointerLock = togglePointerLock
   state.controls.toggleCursor = toggleCursor
   state.controls.onUnlockedMouseMove = onUnlockedMouseMove
+
+  state.addEvent('arena.cleanup', () => {
+    input = null
+    state.controls = null
+  })
 
   return input
 }

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-w-32 h-[7%] p-[0.125%] absolute"
+    class="h-[7%] p-[0.125%] absolute"
     :class="containerClasses"
     :style="containerStyles"
   >
@@ -18,7 +18,7 @@
         }"
       />
       <img
-        class="absolute top-0 left-0 h-full z-40 scale-[1.1] -translate-x-[2px]"
+        class="absolute top-0 left-0 h-full z-40 -translate-x-[2px]"
         src="/images/stat/stat-frame.png"
         alt="stat-frame"
         :style="frameStyles"
@@ -31,83 +31,36 @@
         }"
       >
         <img
-          v-if="type === 'life'"
-          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+          class="absolute top-0 left-0 h-full z-10 -translate-x-[3px]"
           :class="barClasses"
           :style="barStyles"
-          src="/images/stat/stat-life.png"
-          alt="life-bar"
-        />
-        <img
-          v-if="type === 'mana'"
-          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-          :class="barClasses"
-          :style="barStyles"
-          src="/images/stat/stat-mana.png"
-          alt="mana-bar"
-        />
-        <img
-          v-if="type === 'endurance'"
-          class="absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-          :class="barClasses"
-          :style="barStyles"
-          src="/images/stat/stat-endurance.png"
-          alt="endurance-bar"
+          :src="typeToImgMap[type]"
+          alt="current-value-bar"
         />
       </div>
       <!--  loss value  -->
       <div
         class="absolute top-0 left-0 loss-bar-container h-full overflow-hidden"
-        :style="{
-          width: `${lossPercentage}%`,
-        }"
+        :style="{ width: `${lossPercentage}%` }"
       >
+        <div v-if="type === 'life' && props.ownerId !== 'player'"></div>
         <img
-          v-if="type === 'life' && props.ownerId === 'player'"
-          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
+          v-else
+          class="opacity-60 absolute top-0 left-0 h-full z-0 -translate-x-[3px]"
           :style="barStyles"
-          src="/images/stat/stat-life.png"
-          alt="loss-life-bar"
-        />
-        <img
-          v-if="type === 'mana'"
-          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
-          :style="barStyles"
-          src="/images/stat/stat-mana.png"
-          alt="loss-life-bar"
-        />
-        <img
-          v-if="type === 'endurance'"
-          class="opacity-70 absolute top-0 left-0 h-full z-0 scale-[1.08] -translate-x-[3px]"
-          :style="barStyles"
-          src="/images/stat/stat-endurance.png"
-          alt="loss-life-bar"
+          :src="typeToImgMap[type]"
+          alt="loss-bar"
         />
       </div>
       <!--  background  -->
       <img
-        v-if="type === 'life'"
-        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
+        class="opacity-30 absolute top-0 left-0 h-full z-10 -translate-x-[3px]"
         :class="{
-          'opacity-20': props.ownerId === 'enemy',
+          'opacity-20': props.ownerId === 'enemy' && type === 'life',
         }"
         :style="barStyles"
-        src="/images/stat/stat-life.png"
-        alt="background-life-bar"
-      />
-      <img
-        v-if="type === 'mana'"
-        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-        :style="barStyles"
-        src="/images/stat/stat-mana.png"
-        alt="background-mana-bar"
-      />
-      <img
-        v-if="type === 'endurance'"
-        class="opacity-40 absolute top-0 left-0 h-full z-10 scale-[1.08] -translate-x-[3px]"
-        :style="barStyles"
-        src="/images/stat/stat-endurance.png"
-        alt="background-endurance-bar"
+        :src="typeToImgMap[type]"
+        alt="background-bar"
       />
     </div>
   </div>
@@ -117,7 +70,15 @@
 import state from '@/states/GlobalState.ts'
 import { lerp, clamp } from 'three/src/math/MathUtils'
 import { computed, ref } from 'vue'
+import LifeImg from '/images/stat/stat-life.png'
+import ManaImg from '/images/stat/stat-mana.png'
+import EnduranceImg from '/images/stat/stat-endurance.png'
 
+const typeToImgMap: any = {
+  life: LifeImg,
+  mana: ManaImg,
+  endurance: EnduranceImg,
+}
 const props = defineProps({
   ownerId: { type: String, required: true },
   type: { type: String, default: 'life' },
@@ -150,6 +111,8 @@ const updateCallback = (deltaS: number) => {
   entity = state?.[props.ownerId]
   uuid.value = entity?.uuid
 
+  if (!entity) return
+
   if (props.type === 'life') {
     const { hp, previousHp, maxHp } = state?.[props.ownerId]
     typeSelectionList = [hp, previousHp, maxHp, 'hp', 'previousHp', 'maxHp']
@@ -170,6 +133,7 @@ const updateCallback = (deltaS: number) => {
   if (condition) {
     current = typeSelectionList[1]
     target = typeSelectionList[0]
+    props.type === 'life' && console.log('current: ', current, target)
     // console.log('current: ', current, target, target - current, Math.abs(target - current))
     totalDist = Math.abs(target - current)
     // console.log('targetHp, current: ', target, current)
@@ -190,7 +154,7 @@ const updateCallback = (deltaS: number) => {
     const dist: number = +clamp(absDist, 0.1, typeSelectionList[2]).toFixed(1)
     const delta = +clamp(deltaS * (totalDist / dist) * ANIMATION_SPEED, 0.01, 1).toFixed(3)
 
-    if (dist <= 1) {
+    if (dist <= totalDist * 0.12) {
       current = target
       owner.value[typeSelectionList[3]] = target
       owner.value[typeSelectionList[4]] = target
@@ -205,11 +169,14 @@ const updateCallback = (deltaS: number) => {
 }
 state.addEvent('renderer.update', updateCallback)
 
-const MAX_SIZE = '24vw'
+let maxSize = ref(innerWidth < 500 ? '30vw' : innerWidth < 1000 ? '24vw' : '300px')
+state.addEvent('renderer.resize', () => {
+  maxSize.value = innerWidth < 500 ? '30vw' : innerWidth < 1000 ? '28vw' : '300px'
+})
+
 const barStyles = computed(() => ({
-  width: MAX_SIZE,
-  minWidth: MAX_SIZE,
-  // maxWidth: MAX_SIZE,
+  width: maxSize.value,
+  minWidth: maxSize.value,
 }))
 const frameStyles = computed(() => ({
   width: '100%',
@@ -220,7 +187,8 @@ const ornamentStyles = computed(() => ({
 }))
 const containerStyles = computed(() => ({
   width: '100%',
-  maxWidth: MAX_SIZE,
+  maxWidth: maxSize.value,
+  minWidth: maxSize.value,
 }))
 const barClasses = computed(() => ({
   // [`min-w-[${MAX_SIZE}] w-[${MAX_SIZE}]`]: true,

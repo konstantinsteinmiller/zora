@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const loadingManager = new LoadingManager()
 
-let state: {
+export interface GlobalState {
   triggerEvent: (eventName: string) => void
   addEvent: (
     eventName: string,
@@ -37,7 +37,9 @@ let state: {
   player: any
   enemy: any
   loadingManager: any
-} = null
+}
+
+let state: GlobalState = null
 
 const globalState = () => {
   /* state is a Singleton */
@@ -107,7 +109,6 @@ const globalState = () => {
   state.enableWater = true
   state.enableDebug = false
   // state.debugPhysics = true
-  // state.showCursor = false
   state.showCursor = true
   state.showCrosshair = true
   state.isThirdPerson = true

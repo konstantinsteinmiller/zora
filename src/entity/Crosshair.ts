@@ -16,11 +16,7 @@ import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, 
 import state from '@/states/GlobalState'
 import SpellFire from '@/entity/SpellFire'
 
-let singleton: any = null
 const Crosshair = () => {
-  if (singleton !== null) return singleton
-  singleton = {}
-
   const createCrosshair = () => {
     const textureLoader = new TextureLoader()
     const crosshair = textureLoader.load('images/crosshair/crosshair-transparent.png')
@@ -130,6 +126,7 @@ const Crosshair = () => {
     crosshairStar.visible = false
     chargeStartTime = Date.now()
   })
+
   let chargeIndicatorNebulaSystem: any = null
   let vfxRenderer: any = null
   let chargeIndicatorEventUuid: string = ''

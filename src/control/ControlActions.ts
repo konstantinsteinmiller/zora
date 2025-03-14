@@ -92,6 +92,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
           const { userSoundVolume } = useUser()
           entity.stateMachine.setState('hit')
           entity.dealDamage(entity, 15)
+          entity.dealDamage(state.enemy, 115)
           state.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.025 * userSoundVolume.value * 0.25 })
         }
       },
@@ -161,6 +162,8 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     toggleCamera: {
       onActivate: (entity: any, hasChanged: boolean) => {
+        if (state.input.keysMap['ControlLeft']) return
+
         if (hasChanged) {
           state.isThirdPerson = !state.isThirdPerson
           state.camera.updateCameraRotation()
