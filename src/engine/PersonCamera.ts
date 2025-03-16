@@ -61,10 +61,10 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh: number
+    let xh: number = 0
     if (state.controls.rotateLeft || state.controls.rotateRight) {
       xh = state.controls.rotateLeft ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
-    } else {
+    } else if (document.pointerLockElement) {
       xh = state.controls.mouse.mouseX / innerWidth
     }
 
@@ -111,6 +111,7 @@ export default () => {
   }
 
   const updateRotation = () => {
+    if (!document.pointerLockElement) return
     /* calc the delta to rotate the character vertically and horizontally */
     const xh = state.controls.mouse.mouseX / innerWidth
     const yh = state.controls.mouse.mouseY / innerHeight

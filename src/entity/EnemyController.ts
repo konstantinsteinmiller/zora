@@ -123,7 +123,7 @@ export default ({
       }
 
       if (isEnemyAThreat && !entity.isAwaitingCoverCalculation) {
-        console.log('%c threat detected: ', 'color: darkred', entity.isAwaitingCoverCalculation)
+        // console.log('%c threat detected: ', 'color: darkred', entity.isAwaitingCoverCalculation)
         entity.isAwaitingCoverCalculation = true
         entity.findCoverPosition(entity, enemy).then((coverPosition: Vector3) => {
           // coverPosition calculation returned from web worker

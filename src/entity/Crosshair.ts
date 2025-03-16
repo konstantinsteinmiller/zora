@@ -116,6 +116,7 @@ const Crosshair = () => {
       state.player
     )
     chargeIndicatorNebulaSystem = null
+    chargeStartTime = Date.now()
   })
 
   /* start charging spell on mouse down and hold */
@@ -124,6 +125,7 @@ const Crosshair = () => {
     forcedSpellRelease = false
     crosshairDots.visible = false
     crosshairStar.visible = false
+    state.player.currentSpell.charge = 0
     chargeStartTime = Date.now()
   })
 
@@ -137,7 +139,7 @@ const Crosshair = () => {
     if (!entity.currentSpell || !entity || entity.isDead() || state.isBattleOver) return
 
     /* while attack button pressed => rotate crosshair */
-    if (!state.controls.attack || forcedSpellRelease) return
+    if (!state.controls.attack || forcedSpellRelease || !document.pointerLockElement) return
 
     if (!chargeIndicatorNebulaSystem) {
       chargeIndicatorNebulaSystem = true

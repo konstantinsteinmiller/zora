@@ -54,7 +54,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         state.triggerEvent('controls.attack1.down')
       },
       onDeactivate: (entity: any) => {
-        if (!state.isPointerLocked) return
+        if (!document.pointerLockElement) return
         state.triggerEvent('controls.attack1.up')
       },
     },
@@ -150,7 +150,6 @@ export default (defaultControlsConfig: EnumStringToList) => {
           navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
 
           console.log(JSON.stringify(state.player.mesh.quaternion, undefined, 2))
-          window.onceDebug = false
         }
       },
       onDeactivate: (entity: any) => {},
@@ -191,6 +190,14 @@ export default (defaultControlsConfig: EnumStringToList) => {
     toggleDebug: {
       onActivate: (entity: any, hasChanged: boolean) => {
         state.enableDebug = !state.enableDebug
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    esc: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        if (hasChanged) {
+          state.controls.removePointerLock()
+        }
       },
       onDeactivate: (entity: any) => {},
     },

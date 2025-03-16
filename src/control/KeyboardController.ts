@@ -29,6 +29,7 @@ const defaultControlsConfig: EnumStringToList = {
   toggleCamera: ['KeyH'],
   moveToTargetPosition: ['ControlLeft', 'KeyV'],
   toggleDebug: ['ControlLeft', 'KeyC'],
+  esc: ['Escape'],
 }
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))
 
@@ -92,7 +93,7 @@ export default () => {
 
     setAction(`Mouse${event.button}`)
     setTimeout(() => {
-      setPointerLock()
+      !document.pointerLockElement && setPointerLock()
     })
     // case 0: // left mouse button
     // case 1: // cursor wheel button
@@ -154,14 +155,23 @@ export default () => {
   const onPointerLockChange = () => {
     if (document.pointerLockElement === document.body) {
       // console.log('Pointer locked')
-      if (!state.isPointerLocked) return // Prevents double firing
+
+      if (state.controls.attack) {
+        state.triggerEvent('controls.attack1.down')
+      }
+
+      if (!document.pointerLockElement) return // Prevents double firing
 
       toggleCursor(true)
       document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
       // console.log('Pointer unlocked')
-      if (state.isPointerLocked) return // Prevents double firing
+
+      if (state.controls.attack) {
+        state.triggerEvent('controls.attack1.up')
+      }
+      if (document.pointerLockElement) return // Prevents double firing
 
       toggleCursor(false)
       document.removeEventListener('mousemove', onMouseMove, false)
@@ -202,7 +212,6 @@ export default () => {
   }
   function setPointerLock() {
     if (state.isBattleOver) return
-    state.isPointerLocked = true
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
     })
@@ -215,7 +224,6 @@ export default () => {
   }
   function removePointerLock() {
     if (document.pointerLockElement) {
-      state.isPointerLocked = false
       document.exitPointerLock()
       // console.log('%c Pointer lock released.', 'color: grey')
     } else {
@@ -226,11 +234,11 @@ export default () => {
   function toggleCursor(hideCursorOverwrite: boolean) {
     const classList: any = document.querySelector('.cursor')?.classList
     if (hideCursorOverwrite === undefined) {
-      classList?.toggle('cursor--hidden')
+      classList?.toggle('hidden')
     } else if (!hideCursorOverwrite) {
-      classList?.remove('cursor--hidden')
+      classList?.remove('hidden')
     } else if (hideCursorOverwrite) {
-      classList?.add('cursor--hidden')
+      classList?.add('hidden')
     }
   }
 

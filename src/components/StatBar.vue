@@ -133,7 +133,7 @@ const updateCallback = (deltaS: number) => {
   if (condition) {
     current = typeSelectionList[1]
     target = typeSelectionList[0]
-    props.type === 'life' && console.log('current: ', current, target)
+    // props.type === 'life' && console.log('current: ', current, target)
     // console.log('current: ', current, target, target - current, Math.abs(target - current))
     totalDist = Math.abs(target - current)
     // console.log('targetHp, current: ', target, current)
