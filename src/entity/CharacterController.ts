@@ -1,8 +1,7 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import camera from '@/engine/Camera.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { statsUtils, controllerUtils, getBaseStats, chargeUtils, characterCleanupUtils } from '@/utils/controller.ts'
+import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import * as THREE from 'three'
@@ -75,7 +74,7 @@ const CharacterController = ({
   InputController()
   let mixer: any = {}
   const animationsMap: any = {}
-  const decceleration = new Vector3(-0.0005, -0.0001, -5.0)
+  const decceleration = new Vector3(-5.0, -0.0001, -5.0)
   const acceleration = new Vector3(1, 0.25, 15.0)
   const currentVelocity = new Vector3(0, 0, 0)
 
@@ -124,10 +123,6 @@ const CharacterController = ({
 
     velocity.add(frameDecceleration)
 
-    const _Q = new Quaternion()
-    const _A = new Vector3()
-    const _R = mesh.quaternion.clone()
-
     const acc = acceleration.clone()
     if (state.controls.sprint) {
       acc.multiplyScalar(2.0)
@@ -148,17 +143,10 @@ const CharacterController = ({
     if (state.controls.backward) {
       velocity.z -= acc.z * deltaS
     }
-    if (state.controls.left) {
-      _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * deltaS * acceleration.y)
-      _R.multiply(_Q)
-    }
-    if (state.controls.right) {
-      _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * deltaS * acceleration.y)
-      _R.multiply(_Q)
-    }
-    return { _R, velocity }
+    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
+    velocity.x += 12 * acc.x * strafeVelocity * deltaS
+
+    return { velocity }
   }
 
   let updateEventUuid = ''
@@ -179,9 +167,7 @@ const CharacterController = ({
 
     entity.updateEndurance(entity, deltaS, elapsedTimeInS)
 
-    const { _R, velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
-
-    entity.mesh.quaternion.slerp(_R, 0.1) // Smooth interpolation
+    const { velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
 
     const movementVector = calcRapierMovementVector(entity, velocity, deltaS)
 

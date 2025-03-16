@@ -11,6 +11,7 @@ export const soundToTrackSrcMap: { [key: string]: string[] } = {
   flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/flying-flap-${i + 1}.ogg`)),
   death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death-${i + 1}.ogg`)),
   battle: [prependBaseUrl('/music/thunderous-march_battle.ogg')],
+  battleEnd: [prependBaseUrl('/music/drifting_through_quiet_valleys_slow-beautiful-ocarina-like_battle-end.ogg')],
   background: [
     prependBaseUrl('/music/beneath-the-soft-moonlight_slow-harmonic-beautiful_background-music.ogg'),
     // prependBaseUrl('/music/shadows-in-silence_slow-tired-powerless_main-menu.ogg'),

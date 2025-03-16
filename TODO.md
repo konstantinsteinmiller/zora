@@ -9,7 +9,6 @@
     - [x] randomly moving around on navmesh
     - [x] randomly moving with collision and gravity
     - [x] facing target while moving and runs backwards if target is behind him
-    - [ ] smooth out path following with bezier curve
     - [x] navigation to off navmesh islands
       - [x] pathfinding
       - [x] flying to islands
@@ -23,13 +22,13 @@
     - [x] attacking by charging and releasing spell after threshold and on sight of enemy
     - [x] prevent self hurting
     - [x] adjust threat charge levels
-- [ ] Sounds
+- [x] Sounds
   - [x] hurt sound (anime ääähhh)
   - [x] spell shot sound (zushhh)
   - [x] flying flap sound (flap flap)
   - [x] death sound
   - [x] battle music
-  - [ ] battle end sound
+  - [x] battle end sound
   - [x] background music
 - [ ] Inventory
   - [ ] Drag and Drop
@@ -50,7 +49,7 @@
     - [x] fix previous endurance bug when regen overwriting previous damage
     - [x] fix bar scaling
   - [ ] Skill Box
-  - [ ] Battle Over screen
+  - [x] Battle Over screen
     - [x] stop background music
     - [x] fix Game over and button alignment
     - [x] show custom cursor when unlocked and in window
@@ -120,7 +119,7 @@
   - [x] refactor mouse movement and add mouse lock to center of screen while not in menus
   - [x] scale damage with charge level
   - [x] show vfx as indicator for charge level of enemy and player
-  - [ ] add strafing
+  - [x] add strafing
   - [x] fix vfx cleanup or GPURenderer reuse
 - [x] basic three game engine 
   - [x] Physics

@@ -47,6 +47,9 @@ export default class RunState extends State {
     if (transitionTo('jump', this.parent)) return
     if (transitionTo('walk', this.parent)) return
     if (transitionTo('run-back', this.parent)) return
+    if ((input.forward || input.left || input.right) && input.sprint) {
+      return
+    }
 
     this.parent.setState('idle')
   }

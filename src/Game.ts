@@ -1,5 +1,6 @@
 import FileLoader from '@/engine/FileLoader.ts'
 import state from '@/states/GlobalState'
+import useUser from '@/use/useUser.ts'
 import { destroyVfx } from '@/utils/vfx.ts'
 import { Scene } from 'three'
 import Light from '@/engine/Light'
@@ -30,6 +31,12 @@ export default async (level = 'water-arena') => {
 export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) => {
   state.sounds.stop('background')
   state.sounds.stop('battle')
+  if (excludeBattleProtected) {
+    const { userMusicVolume } = useUser()
+    state.sounds.play('battleEnd', { volume: 1.5 * userMusicVolume.value * 0.25, loop: true })
+  } else {
+    state.sounds.stop('battleEnd')
+  }
 
   state.uiScene.traverse((child: any) => {
     // console.log('child: ', child)

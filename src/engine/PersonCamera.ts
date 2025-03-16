@@ -1,4 +1,4 @@
-import { STRAFE_VELOCITY } from '@/utils/constants.ts'
+import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { clamp } from 'three/src/math/MathUtils'
 import { Quaternion, Vector3 } from 'three'
@@ -62,8 +62,8 @@ export default () => {
 
   const getXRotation = () => {
     let xh: number
-    if (state.controls.left || state.controls.right) {
-      xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
+    if (state.controls.rotateLeft || state.controls.rotateRight) {
+      xh = state.controls.rotateLeft ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
     } else {
       xh = state.controls.mouse.mouseX / innerWidth
     }
@@ -139,7 +139,8 @@ export default () => {
 
   const update = (elapsedTimeInS: number) => {
     updateRotation()
-    updateTranslation(elapsedTimeInS)
+    /* updateTranslation is obsolete as the movement is handled in collision.ts */
+    // updateTranslation(elapsedTimeInS)
     updateCamera()
     !state.isThirdPerson && updateHeadBob(elapsedTimeInS)
   }

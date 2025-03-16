@@ -29,7 +29,8 @@ export default class IdleState extends State {
 
     // if (transitionTo('cast', this.parent)) return
     if (transitionTo('jump', this.parent)) return
-    if (input.forward) {
+    // transitionTo('walk', this.parent)
+    if (input.forward || input.left || input.right) {
       this.parent.setState('walk')
     } else if (input.backward) {
       this.parent.setState('walk-back')

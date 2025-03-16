@@ -82,6 +82,14 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},
     },
+    rotateLeft: {
+      onActivate: (entity: any, hasChanged: boolean) => {},
+      onDeactivate: (entity: any) => {},
+    },
+    rotateRight: {
+      onActivate: (entity: any, hasChanged: boolean) => {},
+      onDeactivate: (entity: any) => {},
+    },
     jump: {
       onActivate: (entity: any, hasChanged: boolean) => {},
       onDeactivate: (entity: any) => {},

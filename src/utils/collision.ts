@@ -1,4 +1,3 @@
-import { MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
 import { ArrowHelper, Vector3 } from 'three'
