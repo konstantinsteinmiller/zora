@@ -73,7 +73,7 @@
 - [ ] World
   - [x] Water Shader
   - [x] skybox
-  - [ ] Arenas
+  - [x] Arenas
     - [x] Water arena
     - [x] Mountain
       - [x] load Mesh
@@ -127,6 +127,7 @@
   - [x] Renderer
   - [x] Light
   - [x] Camera
+    - [x] refactor Third- and FirstPerson Camera into PersonCamera
   - [x] Sound
 - [x] game icon
 - [x] basic vue + eslint + typescript setup 

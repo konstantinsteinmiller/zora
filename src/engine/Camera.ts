@@ -1,5 +1,4 @@
-import FirstPersonCamera from '@/engine/FirstPersonCamera.ts'
-import ThirdPersonCamera from '@/engine/ThirdPersonCamera.ts'
+import PersonCamera from '@/engine/PersonCamera.ts'
 import state from '@/states/GlobalState.ts'
 import { OrthographicCamera, PerspectiveCamera } from 'three'
 
@@ -10,6 +9,7 @@ export default () => {
   camera.position.set(0, 2, 0)
 
   camera.updateCameraRotation = () => {
+    /* obsolete code after PersonCamera to update from one camera to other */
     if (state.isThirdPerson) {
       const { phi, theta } = state.fpsCamera.getCameraRotation()
       state.thirdPersonCamera.setCameraRotation(phi, theta)
@@ -37,8 +37,8 @@ export default () => {
     state.uiCamera = null
   })
 
-  ThirdPersonCamera()
-  FirstPersonCamera()
+  /* manipulates state.camera */
+  PersonCamera()
 
   return camera
 }

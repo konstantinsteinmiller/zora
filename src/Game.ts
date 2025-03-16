@@ -19,8 +19,7 @@ export default async (level = 'water-arena') => {
   const levelConfig = await import(`@/entity/levels/${level}/config.ts`)
   const { phi, theta } = levelConfig.startPositions[0]?.orientation || { phi: 0, theta: 0 }
 
-  state.thirdPersonCamera.setCameraRotation(phi, theta)
-  state.fpsCamera.setCameraRotation(phi, theta)
+  state.personCamera.setCameraRotation(phi, theta)
 
   Light()
   Renderer()

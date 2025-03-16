@@ -166,7 +166,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
 
         if (hasChanged) {
           state.isThirdPerson = !state.isThirdPerson
-          state.camera.updateCameraRotation()
+          // state.camera.updateCameraRotation()
         }
         state.controls.lookBack = false
         state.showCrosshair = true

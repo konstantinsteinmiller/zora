@@ -5,7 +5,7 @@ import { Quaternion, Vector3 } from 'three'
 
 export default () => {
   const rotation = new Quaternion()
-  const translation = new Vector3(0, 2, 0)
+  const translation = new Vector3(0, 1, 0)
   let phi = 0
   let theta = 0
   const phiSpeed = 8
@@ -13,12 +13,65 @@ export default () => {
   let isHeadBobActive = false
   let headBobTimer = 0
 
-  let fpsCamera: any = {}
-  fpsCamera.setCameraRotation = (newPhi: number, newTheta: number) => {
+  let personCamera: any = {}
+  personCamera.setCameraRotation = (newPhi: number, newTheta: number) => {
     phi = newPhi
     theta = newTheta
   }
-  fpsCamera.getCameraRotation = () => ({ phi, theta })
+  personCamera.getCameraRotation = () => ({ phi, theta })
+
+  const updateCamera = () => {
+    state.camera.quaternion.copy(rotation)
+    state.camera.position.copy(translation)
+
+    const playerModelQuaternion = state.player.getRotation()
+    const playerModelPosition = state.player.getPosition()
+
+    state.player.setRotation(getXRotation())
+    if (state.controls.lookBack) {
+      state.camera.quaternion.slerp(playerModelQuaternion, 0.3)
+      /* define distance to playerModel position 1 up and 2 away */
+      const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
+      idealCameraPosition.applyQuaternion(playerModelQuaternion)
+      idealCameraPosition.add(playerModelPosition)
+      state.camera.position.copy(idealCameraPosition)
+    } else {
+      state.camera.quaternion.multiply(
+        new Quaternion().setFromAxisAngle(
+          new Vector3(0, 1, 0),
+          -Math.PI /*
+           */
+        )
+      )
+
+      if (state.isThirdPerson) {
+        const idealCameraOffset = new Vector3(-0.5, 2, -3.5)
+        idealCameraOffset.applyQuaternion(playerModelQuaternion)
+        idealCameraOffset.add(playerModelPosition)
+        state.camera.position.copy(idealCameraOffset)
+      } else {
+        state.camera.position.copy(playerModelPosition)
+        state.camera.position.y += 1.0
+      }
+    }
+
+    if (!state.isThirdPerson) {
+      state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
+    }
+  }
+
+  const getXRotation = () => {
+    let xh: number
+    if (state.controls.left || state.controls.right) {
+      xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
+    } else {
+      xh = state.controls.mouse.mouseX / innerWidth
+    }
+
+    phi += -xh * phiSpeed
+    const qx = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), phi)
+    return new Quaternion().multiply(qx)
+  }
 
   const updateTranslation = (timeElapsedInS: number) => {
     const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
@@ -39,7 +92,7 @@ export default () => {
     translation.add(forward)
     translation.add(left)
 
-    if (forwardVelocity !== 0 || strafeVelocity !== 0) {
+    if (!state.isThirdPerson && (forwardVelocity !== 0 || strafeVelocity !== 0)) {
       isHeadBobActive = true
     }
   }
@@ -58,9 +111,7 @@ export default () => {
   }
 
   const updateRotation = () => {
-    /* calc the delta to rotate the character vertically
-     * and horizontally */
-
+    /* calc the delta to rotate the character vertically and horizontally */
     const xh = state.controls.mouse.mouseX / innerWidth
     const yh = state.controls.mouse.mouseY / innerHeight
 
@@ -71,83 +122,38 @@ export default () => {
      * -> [-60°, 60°] or [-PI/3, PI/3] in radians */
     theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
-    const qx = new Quaternion()
     /* (0, 1, 0) is Up Vector / y positive Vector and rotate it by phi,
      *  so setFromAxisAngle uses following formula:
      *  q = cos(phi/2) + sin(phi/2) * ^n, where ^n is the normalized axis vector   */
-    qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
-    const qz = new Quaternion()
+    const qx = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), phi)
+
     /* (1, 0, 0) is Right Vector / x positive Vector and rotate it by theta */
-    qz.setFromAxisAngle(new Vector3(1, 0, 0), theta)
+    const qz = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), theta)
 
     /* multiply both quaternions to apply both rotations around the
      * y-axis with angle phi and around the x-axis with angle theta */
-    const quaternionRotationTotal = new Quaternion()
-    quaternionRotationTotal.multiply(qx)
-    quaternionRotationTotal.multiply(qz)
+    const quaternionRotationTotal = new Quaternion().multiply(qx).multiply(qz)
 
-    rotation.copy(quaternionRotationTotal)
+    rotation.slerp(quaternionRotationTotal, 0.3)
   }
 
-  const getXRotation = () => {
-    let xh = state.controls.mouse.mouseX / innerWidth
-
-    if (state.controls.left || state.controls.right) {
-      xh = state.controls.left ? -STRAFE_VELOCITY / innerWidth : STRAFE_VELOCITY / innerWidth
-    } else {
-      xh = state.controls.mouse.mouseX / innerWidth
-    }
-
-    phi += -xh * phiSpeed
-    const qx = new Quaternion()
-    qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
-    const q = new Quaternion()
-    q.multiply(qx)
-    return q
-  }
-
-  const updateCamera = () => {
-    state.camera.quaternion.copy(rotation)
-    state.camera.position.copy(translation)
-
-    const playerModelQuaternion = state.player.getRotation()
-    const playerModelPosition = state.player.getPosition()
-
-    state.player.setRotation(getXRotation())
-    if (state.controls.lookBack) {
-      state.camera.quaternion.copy(playerModelQuaternion)
-      /* define distance to playerModel position 1 up 2 away */
-      const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
-      idealCameraPosition.applyQuaternion(playerModelQuaternion)
-      idealCameraPosition.add(playerModelPosition)
-      state.camera.position.copy(idealCameraPosition)
-    } else {
-      state.camera.quaternion.multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), -Math.PI))
-      state.camera.position.copy(playerModelPosition)
-      state.camera.position.y += 1.0
-    }
-
-    state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
-  }
-
-  const update = (timeElapsedInS: number) => {
+  const update = (elapsedTimeInS: number) => {
     updateRotation()
-    updateTranslation(timeElapsedInS)
+    updateTranslation(elapsedTimeInS)
     updateCamera()
-    updateHeadBob(timeElapsedInS)
+    !state.isThirdPerson && updateHeadBob(elapsedTimeInS)
   }
 
   state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.controls || state.isThirdPerson) return
-
+    if (!state.controls) return
     update(deltaInS)
   })
 
   state.addEvent('arena.cleanup', () => {
-    fpsCamera = null
-    state.fpsCamera = null
+    personCamera = null
+    state.personCamera = null
   })
 
-  state.fpsCamera = fpsCamera
-  return fpsCamera
+  state.personCamera = personCamera
+  return personCamera
 }
