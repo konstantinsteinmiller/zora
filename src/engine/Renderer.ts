@@ -1,3 +1,4 @@
+import world from '@/entity/World.ts'
 import { Clock, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import state from '@/states/GlobalState'
@@ -20,8 +21,10 @@ export default () => {
   renderer.outputEncoding = (THREE as any).sRGBEncoding
   renderer.physicallyCorrectLights = true
 
-  renderer.toneMapping = THREE.CineonToneMapping
-  renderer.toneMappingExposure = 1.75
+  // renderer.toneMapping = THREE.CineonToneMapping
+  // renderer.toneMappingExposure = 1.75
+  renderer.toneMapping = THREE.ACESFilmicToneMapping // Use ACES tone mapping for PBR
+  renderer.toneMappingExposure = 1.25 // Adjust exposure to fine-tune brightness
 
   const FIXED_TIME_STEP = 1 / 60 // 60 FPS baseline
   let accumulatedTime = 0

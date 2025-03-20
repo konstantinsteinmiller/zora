@@ -1,4 +1,6 @@
-import state, { type GlobalState } from '@/states/GlobalState.ts'
+import AttackPowerUp from '@/entity/power-ups/AttackPowerUp.ts'
+import DefensePowerUp from '@/entity/power-ups/DefensePowerUp.ts'
+import state from '@/states/GlobalState.ts'
 import {
   portalConnectionsList,
   orientationPosition,
@@ -16,9 +18,8 @@ import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 export default async (onFinishedCallback: () => void) => {
   const waterArena: any = new Object3D()
   const { loadMesh } = AssetLoader()
-  await loadMesh('worlds/arenas/water-arena.fbx', waterArena, 1)
+  await loadMesh('worlds/arenas/water-arena.comp.glb', waterArena, 1)
 
-  // waterArena.position.set(2.98, -0.06, -0.02)
   if (state.enableWater) {
     const waterResolution = { size: 256 }
     const water = Water({
@@ -99,10 +100,17 @@ export default async (onFinishedCallback: () => void) => {
     state.scene.updateMatrixWorld(true)
   })*/
 
-  createCollidersForGraph(waterArena, 'fixed')
+  createCollidersForGraph(waterArena, 'fixed', undefined, Math.PI / 2)
   waterArena.name = 'WaterArenaContainer'
   waterArena.pathfinder = pathfinder
   waterArena.movingEntitiesList = []
+  waterArena.objects = []
+
+  const defPowerUp = DefensePowerUp()
+  defPowerUp.addToLevel(waterArena)
+  const attackPowerUp = AttackPowerUp()
+  attackPowerUp.addToLevel(waterArena)
+
   state.scene.add(waterArena)
   state.level = waterArena
   onFinishedCallback()

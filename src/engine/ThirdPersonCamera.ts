@@ -1,7 +1,7 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { Quaternion, Vector3 } from 'three'
-import { clamp } from 'three/src/math/MathUtils'
+import { clamp } from 'three/src/math/MathUtils.js'
 
 export default () => {
   let thirdPersonCamera: any = {}

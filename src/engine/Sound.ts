@@ -26,7 +26,7 @@ export default () => {
   /* create camera listener */
   const emitter = new EventEmitter()
   const listener = new AudioListener()
-  state.addOneTimeEvent(() => state.camera.add(listener))
+  state.addOneTimeEvent('renderer.update', () => state.camera.add(listener))
   watch(
     () => userMusicVolume.value,
     () => {

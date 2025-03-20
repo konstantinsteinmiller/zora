@@ -322,7 +322,7 @@ export const moveToTargetPosition = (
   entity: any,
   targetPosition: Vector3 | null = null,
   targetToFace: any,
-  isDirect: boolean
+  isDirect: boolean = false
 ) => {
   if (entity.path?.length) {
     // Math.random() < 0.1 && console.log('agent is moving: ')

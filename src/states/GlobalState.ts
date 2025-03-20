@@ -4,10 +4,10 @@ import { v4 as uuidv4 } from 'uuid'
 const loadingManager = new LoadingManager()
 
 export interface GlobalState {
-  triggerEvent: (eventName: string) => void
+  triggerEvent: (eventName: string, uuid?: string) => void
   addEvent: (
     eventName: string,
-    callback: (a?: any, b?: any) => any,
+    callback: (a: any, b: any, c: any, d: any) => void,
     cleanup?: () => any | undefined,
     sourceName?: string
   ) => string
@@ -17,7 +17,7 @@ export interface GlobalState {
   eventsMap: {
     [key: string]: {
       uuid: string
-      callback: () => any
+      callback: (a?: any) => any
       cleanup?: any
       sourceName?: string
     }[]
@@ -28,6 +28,7 @@ export interface GlobalState {
     callback: () => any
     cleanup?: any
   }[]
+  entitiesMap: Map<string, any>
   level: {
     name: string
     zone: string
@@ -37,6 +38,7 @@ export interface GlobalState {
   player: any
   enemy: any
   loadingManager: any
+  physics: any
 }
 
 let state: GlobalState = null
@@ -52,13 +54,9 @@ const globalState = () => {
     eventsMap: {},
   }
   state = {
-    triggerEvent: (eventName: string) => {
+    triggerEvent: (eventName: string, uuid?: string) => {
       state.eventsMap[eventName]?.forEach((event: any) => {
-        if (!event) {
-          console.warn('Event not found')
-          return
-        }
-        event.callback?.()
+        event.callback?.(uuid)
         // console.log('XXEvent triggered:', eventName)
       })
     },
@@ -99,6 +97,7 @@ const globalState = () => {
     },
     eventsMap: {},
     oneTimeEventsList: [],
+    entitiesMap: new Map(),
     player: {},
     enemy: {},
     loadingManager: loadingManager,
@@ -122,3 +121,7 @@ const globalState = () => {
 }
 const currentState = globalState()
 export default currentState
+
+export const getEntity = (uuid: string) => {
+  return state.entitiesMap.get(uuid)
+}

@@ -1,6 +1,6 @@
 import Confetti from 'canvas-confetti'
 import { Vector2 } from 'three'
-import { lerp } from 'three/src/math/MathUtils'
+import { lerp } from 'three/src/math/MathUtils.js'
 
 export const findPointer = () => {
   return new Promise(resolve => {

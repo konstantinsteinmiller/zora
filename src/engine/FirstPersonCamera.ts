@@ -1,6 +1,6 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
-import { clamp } from 'three/src/math/MathUtils'
+import { clamp } from 'three/src/math/MathUtils.js'
 import { Quaternion, Vector3 } from 'three'
 
 export default () => {

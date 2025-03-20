@@ -33,7 +33,6 @@ export default ({
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
-
   const entity = {
     ...new Object3D(),
     position: startPosition.clone(),
@@ -80,7 +79,7 @@ export default ({
     })
   }
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, entity.colliderRadius)
+    const { rigidBody, collider } = createRigidBodyEntity({ position: startPosition, entity })
     entity.rigidBody = rigidBody
     entity.collider = collider
     entity.rigidBody.setRotation(startRotation)
@@ -188,6 +187,7 @@ export default ({
     }
   }
 
+  state.entitiesMap.set(entity.mesh.entityUuid, entity)
   state.enemy = entity
   return entity
 }

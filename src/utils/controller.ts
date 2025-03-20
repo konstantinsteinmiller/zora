@@ -7,7 +7,6 @@ import {
   ENDURANCE_REGEN_SPEED,
   INITIAL_ROTATION_SPEED,
   MAX_ROTATION_SPEED,
-  MIN_CHARGE_CRITICAL_SPEED,
   MIN_CHARGE_END_COLOR,
   MIN_CHARGE_SPEED,
   MIN_CHARGE_START_COLOR,
@@ -35,11 +34,15 @@ export const getBaseStats: any = () => ({
   previousEndurance: 100,
   maxEndurance: 100,
   enduranceRegen: 1,
+  defense: {
+    buff: 0,
+  },
   currentSpell: {
     name: 'shot',
     speed: 1,
     damage: 25,
     charge: 0 /* [0,1] */,
+    buff: 1,
   },
   isGrounded: false,
   appliedFlyImpulse: 0,
@@ -206,7 +209,7 @@ export const chargeUtils = () => ({
         entity.currentSpell.canFire = false
         entity.currentSpell.forcedSpellRelease = true
         entity.currentSpell.charge = 0
-        console.log('overload: ')
+
         state.removeEvent('renderer.update', chargingUuid)
         entity.destroyChargeIndicatorVFX(nebulaSystem, vfxRenderer, chargeIndicatorEventUuid, entity)
         fireRaycaster(rotationSpeed, entity, target)
@@ -288,8 +291,6 @@ export const chargeUtils = () => ({
     destroyVfx({ nebulaSystem, vfxRenderer })
   },
 })
-
-export const characterCleanupUtils = () => ({})
 
 export const createOverHeadHealthBar = (entity: any) => {
   let healthBarEventUuid = ''

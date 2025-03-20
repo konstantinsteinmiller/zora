@@ -73,6 +73,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     state.isEngineInitialized = false
     state.isBattleOver = false
     state.isBattleInitialized = false
+    state.entitiesMap.clear()
 
     const fileLoader = FileLoader()
     fileLoader.clearData()

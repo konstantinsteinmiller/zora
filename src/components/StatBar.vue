@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import state from '@/states/GlobalState.ts'
-import { lerp, clamp } from 'three/src/math/MathUtils'
+import { lerp, clamp } from 'three/src/math/MathUtils.js'
 import { computed, ref } from 'vue'
 import LifeImg from '/images/stat/stat-life.png'
 import ManaImg from '/images/stat/stat-mana.png'

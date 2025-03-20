@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { Color } from 'three'
-import { lerp } from 'three/src/math/MathUtils'
+import { lerp } from 'three/src/math/MathUtils.js'
 import { computed, ref } from 'vue'
 
 const props = defineProps<{

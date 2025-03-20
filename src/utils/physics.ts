@@ -1,5 +1,5 @@
 import state from '@/states/GlobalState.ts'
-import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
+import Rapier, { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
 
 const descMap: { [key: string]: any } = {
@@ -8,29 +8,33 @@ const descMap: { [key: string]: any } = {
   kinematic: RigidBodyDesc.kinematicVelocityBased(),
 }
 
-export const createCollidersForGraph = (object: any, rigidType: string = 'fixed', scale?: number) => {
+export const createCollidersForGraph = (object: any, rigidType: string = 'fixed', scale?: number, rotate?: number) => {
   const colliders: any = []
   // console.log('object: ', object)
   object.traverse((child: Object3D) => {
     // console.log('child: ', child, child.isMesh)
     if ((child as Mesh).isMesh) {
-      const { collider } = createCollider(child as Mesh, rigidType, scale)
+      const { collider } = createCollider(child as Mesh, rigidType, scale, rotate)
       colliders.push(collider)
     }
   })
   return colliders
 }
-export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: number) => {
+export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: number, rotate?: number) => {
   const desc = descMap[rigidType]
   const rigidBody = state.physics.createRigidBody(desc)
 
-  const geo = mesh.geometry
+  let geo = mesh.geometry
+  if (rotate !== null && rotate !== undefined) {
+    geo = geo.clone().rotateX(rotate)
+  }
   let vertices
   if (scale) {
     vertices = new Float32Array(geo.attributes.position.array.map((v: number) => v * scale))
   } else {
     vertices = new Float32Array(geo.attributes.position.array)
   }
+
   if (!geo.index) {
     console.error('No index buffer found for mesh')
     return { collider: null }
@@ -39,25 +43,58 @@ export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: 
   const colliderDesc = ColliderDesc.trimesh(vertices, indices)
   colliderDesc.setCollisionGroups(0xffffffff) /* part of all groups and interacts with all groups */
   const collider = state.physics.createCollider(colliderDesc, rigidBody)
-  return {
-    collider,
-  }
+  return { collider }
 }
 
 export const createColliderBall = (radius: number, rigidBody: any) => {
   const colliderDesc = ColliderDesc.ball(radius)
   return state.physics.createCollider(colliderDesc, rigidBody)
 }
+export const createBoxCollider = ({
+  size,
+  position,
+  isSensor = false,
+}: {
+  size: number
+  position: Vector3
+  isSensor: boolean
+}) => {
+  const rigidBody = state.physics.createRigidBody(RigidBodyDesc.fixed())
+  rigidBody.setTranslation(new Rapier.Vector3(position.x, position.y, position.z), false)
 
-export const createRigidBodyEntity = (position: Vector3, halfHeight: number, colliderRadius: number) => {
+  const collDesc = ColliderDesc.cuboid(size, size, size)
+  const colliderDesc = isSensor ? collDesc.setSensor(isSensor) : collDesc
+
+  colliderDesc.setActiveEvents(Rapier.ActiveEvents.COLLISION_EVENTS)
+  colliderDesc.setCollisionGroups(0x0010fff0)
+  colliderDesc.setSolverGroups(0x00100000) // No solver interaction
+  colliderDesc.setActiveCollisionTypes(
+    Rapier.ActiveCollisionTypes.DEFAULT | Rapier.ActiveCollisionTypes.KINEMATIC_FIXED
+  )
+
+  // Create the collider
+  const collider = state.physics.createCollider(colliderDesc, rigidBody)
+  collider.userData = { type: 'fixed', uuid: 'power-up' }
+  return { collider, rigidBody }
+}
+
+export const createRigidBodyEntity = ({ position, entity }: { position: Vector3; entity: any }) => {
   const desc: any = RigidBodyDesc.kinematicPositionBased()
   const offsetPosition = position.clone()
   desc.setTranslation(...offsetPosition)
   const rigidBody = state.physics.createRigidBody(desc)
 
-  const colliderDesc = ColliderDesc.capsule(halfHeight, colliderRadius)
+  const colliderDesc = ColliderDesc.capsule(entity.halfHeight, entity.colliderRadius)
+
   colliderDesc.setCollisionGroups(0xffffffff) /* part of all groups and interacts with all groups */
+  colliderDesc.setSolverGroups(0xffffffff)
+  colliderDesc.setActiveEvents(Rapier.ActiveEvents.COLLISION_EVENTS)
+  colliderDesc.setActiveCollisionTypes(
+    Rapier.ActiveCollisionTypes.DEFAULT | Rapier.ActiveCollisionTypes.KINEMATIC_FIXED
+  )
+
   const collider = state.physics.createCollider(colliderDesc, rigidBody)
+  collider.userData = { type: 'kinematic', uuid: entity.mesh.entityUuid, name: entity.name }
 
   return {
     rigidBody,

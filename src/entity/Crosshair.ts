@@ -11,7 +11,7 @@ import {
 } from '@/utils/constants.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { remap } from '@/utils/function.ts'
-import { lerp } from 'three/src/math/MathUtils'
+import { lerp } from 'three/src/math/MathUtils.js'
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
 import state from '@/states/GlobalState'
 import SpellFire from '@/entity/SpellFire'

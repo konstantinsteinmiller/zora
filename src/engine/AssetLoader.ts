@@ -2,6 +2,7 @@ import { AnimationMixer, LoadingManager, Mesh, Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 let loader: any = null
 import state from '@/states/GlobalState.ts'
@@ -54,6 +55,14 @@ export default () => {
   ) => {
     state.loadingManager.itemStart(src)
     const loaderGlb = new GLTFLoader(state.loadingManager)
+
+    if (src.endsWith('.comp.glb')) {
+      const dracoLoader = new DRACOLoader()
+      dracoLoader.setDecoderPath('/node_modules/three/examples/jsm/libs/draco/')
+      dracoLoader.setDecoderConfig({ type: 'js' })
+      loaderGlb.setDRACOLoader(dracoLoader)
+    }
+
     let glb: any
     try {
       glb = await loaderGlb.loadAsync(src, (fileProgressEvent: any) =>
@@ -64,18 +73,25 @@ export default () => {
       state.loadingManager.itemError(src)
     }
 
-    console.log('glb: ', glb)
+    // console.log('glb: ', glb)
     if (shadows) {
       glb.scene.traverse((child: any) => {
-        if (child instanceof THREE.Mesh) {
-          console.log('child: ', child)
-          child.scale.setScalar(scale)
+        if (child instanceof Mesh) {
+          // console.log('child: ', child)
+          if (scale >= 0) child.scale.setScalar(scale)
+          child.material.map.encoding = (THREE as any).sRGBEncoding
           child.castShadow = true
           child.receiveShadow = true
+
+          child = createGeoIndex(child)
+
           parent.add(child)
         }
       })
     }
+
+    // src.endsWith('.comp.glb') && console.log('Compressed GLB loaded!')
+
     callback?.(glb.scene)
     return glb.scene
   }
@@ -101,10 +117,12 @@ export default () => {
     }
 
     if (shadows) {
+      // console.log('fbx: ', fbx)
       fbx.traverse((child: any) => {
-        if (child instanceof THREE.Mesh) {
+        if (child instanceof Mesh) {
           // console.log('child: ', child)
           if (scale >= 0) child.scale.setScalar(scale)
+          child.material.map.encoding = (THREE as any).sRGBEncoding
           child.castShadow = true
           child.receiveShadow = true
 

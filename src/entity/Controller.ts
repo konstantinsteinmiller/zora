@@ -132,7 +132,7 @@ const CharacterController = ({
   loadModels()
 
   const initPhysics = () => {
-    const { rigidBody, collider } = createRigidBodyEntity(startPosition, halfHeight, entity.colliderRadius)
+    const { rigidBody, collider } = createRigidBodyEntity({ position: startPosition, entity })
     entity.rigidBody = rigidBody
     entity.collider = collider
   }

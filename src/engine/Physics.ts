@@ -1,9 +1,10 @@
-import Rapier, { DebugRenderPipeline } from '@dimforge/rapier3d-compat'
+import Rapier from '@dimforge/rapier3d-compat'
 import state from '@/states/GlobalState'
 import { BufferAttribute, BufferGeometry, LineBasicMaterial, LineSegments } from 'three'
 
 export default async () => {
   await Rapier.init()
+  const eventQueue = new Rapier.EventQueue(true)
   const physics = new Rapier.World(new Rapier.Vector3(0, -9.81, 0))
   state.physics = physics
 
@@ -13,8 +14,17 @@ export default async () => {
   const debugLines = new LineSegments(debugGeometry, debugMaterial)
   let added = false
 
-  state.addEvent('renderer.update', () => {
-    physics.step()
+  state.addEvent('renderer.update', (deltaS: number) => {
+    physics.step(eventQueue)
+
+    eventQueue.drainCollisionEvents((handle1, handle2, started) => {
+      const colliderA = state.physics.getCollider(handle1)
+      const colliderB = state.physics.getCollider(handle2)
+
+      state.eventsMap?.['physics.collision']?.forEach(({ callback }: any) => {
+        callback?.(colliderA, colliderB, started, deltaS)
+      })
+    })
 
     if (state.enableDebug) {
       if (!added) {
