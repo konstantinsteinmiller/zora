@@ -21,7 +21,7 @@ export default (onFinishedCallback: () => void) => {
       (fileProgressEvent: any) => state.fileLoader.onFileProgress(src, fileProgressEvent),
       () => state.loadingManager.itemError(src)
     )
-    environmentMap.encoding = THREE.sRGBEncoding
+    environmentMap.encoding = (THREE as any).sRGBEncoding
     state.scene.background = environmentMap
     state.scene.environment = environmentMap
   }

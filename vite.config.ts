@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import glsl from 'vite-plugin-glsl'
-import vueI18n from '@intlify/vite-plugin-vue-i18n'
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import { fileURLToPath, URL } from 'node:url'
 import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
 
@@ -13,9 +13,12 @@ export default defineConfig({
     glsl(),
     ReactivityTransform(),
     vueI18n({
+      compositionOnly: true, // Enable SFC `<i18n>` block suppor
       runtimeOnly: false,
-      include: fileURLToPath(new URL('./src/i18n/**', import.meta.url)),
+      include: fileURLToPath(new URL('./src/i18n/locales/**', import.meta.url)),
       defaultSFCLang: 'yaml',
+      fullInstall: true, // Install all Vue I18n components
+      forceStringify: true, // Force stringify JSON files
     }),
   ],
   resolve: {

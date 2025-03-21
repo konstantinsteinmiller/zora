@@ -114,7 +114,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         if (hasChanged) {
           if (entity.endurance >= FLY_COST) {
             entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
-            entity.name === 'player' && entity.dealEnduranceDamage(entity, FLY_COST)
+            entity.guild === 'guild-0' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
             entity.utils.takeOffFrames = 3
             state.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.25 * userSoundVolume.value * 0.25 })

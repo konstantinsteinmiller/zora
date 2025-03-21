@@ -33,7 +33,7 @@ const defaultControlsConfig: EnumStringToList = {
 }
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))
 
-export default () => {
+export default (entity: any) => {
   if (input?.mouse) return input
 
   const prefilledActionsMap = getPrefilledActionsMap(defaultControlsConfig)
@@ -81,8 +81,8 @@ export default () => {
         const hasChanged = input.actionsMap[action] !== input.actionsMap.previous[action]
         input.actionsMap[action] /*
          */
-          ? input.actions[action]?.onActivate?.(state.player, hasChanged)
-          : input.actions[action]?.onDeactivate?.(state.player)
+          ? input.actions[action]?.onActivate?.(entity, hasChanged)
+          : input.actions[action]?.onDeactivate?.(entity)
       }
     }
   }

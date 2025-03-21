@@ -12,7 +12,7 @@ export default () => {
       /* on collide buff logic */
 
       /* this is a pickup item, so we remove it here, we might have other logic here later */
-      state.triggerEvent(`level.object.remove`, uuid)
+      state.triggerEvent('level.object.remove', uuid)
     },
     onCollisionEnd: () => {},
     onCleanup: () => {},

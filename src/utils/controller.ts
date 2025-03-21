@@ -114,7 +114,7 @@ export const statsUtils = () => {
         didDamage = false
       }
     },
-    updateEndurance(target: any, deltaS: number) {
+    regenEndurance(target: any, deltaS: number) {
       if (target.stateMachine.currentState.name !== 'fly' && target.utils.groundedTime.value > 0.5) {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
@@ -233,7 +233,7 @@ export const chargeUtils = () => ({
     entity.currentSpell.charge = 0
   },
   updateChargeIndicator(entity: any, rotationSpeed: number, nebulaSystem: any) {
-    if ((!state.isThirdPerson && entity.name === 'player') || !entity || !nebulaSystem?.emitters?.length) return
+    if ((!state.isThirdPerson && entity.guild === 'guild-0') || !entity || !nebulaSystem?.emitters?.length) return
     const meshWorldPosition = new Vector3()
     entity.mesh.updateMatrixWorld(true)
     entity.mesh.getWorldPosition(meshWorldPosition)
@@ -280,7 +280,7 @@ export const chargeUtils = () => ({
     scaleBehaviour.scaleB.b = doubleScale
   },
   async createChargeIndicator(entity: any) {
-    if ((!state.isThirdPerson && entity.name === 'player') || !entity?.center)
+    if ((!state.isThirdPerson && entity.guild === 'guild-0') || !entity?.center)
       return { eventUuid: '', nebulaSystem: null }
     const position = entity.center.clone()
     const { eventUuid, nebulaSystem, vfxRenderer } = await createVFX(position, 'charge', false)

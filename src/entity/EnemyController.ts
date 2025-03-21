@@ -1,4 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState.ts'
@@ -41,8 +42,6 @@ export default ({
     ...statsUtils(),
     ...controllerAwarenessUtils(),
     ...chargeUtils(),
-    createOverHeadHealthBar,
-    moveToTargetPosition,
     mesh,
     halfHeight,
     name,
@@ -56,6 +55,8 @@ export default ({
 
   const stateMachine = new CharacterFSM(animationsMap, entity)
   entity.stateMachine = stateMachine
+  const movementStrategy = createEnemyMovementStrategy()
+  entity.currentVelocity = new Vector3(0, 0, 0)
 
   const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
@@ -85,30 +86,13 @@ export default ({
     entity.rigidBody.setRotation(startRotation)
   }
 
-  entity.createOverHeadHealthBar(entity)
+  createOverHeadHealthBar(entity)
 
   loadModels()
   initPhysics()
 
-  const decceleration = new Vector3(-0.0005, -0.0001, -5.0)
-  // const acceleration = new Vector3(1, 0.25, 15.0)
-  const velocity = new Vector3(0, 0, 0)
-
-  let updateEventUuid: string = ''
   entity.isAwaitingCoverCalculation = false
-  const update = (deltaS: number) => {
-    if (!entity.mesh || entity.stateMachine.currentState === null) {
-      return
-    }
-    if (entity.isDead(entity)) {
-      state.removeEvent('renderer.update', updateEventUuid)
-      entity.die(entity)
-
-      state.isBattleOver = true
-      return
-    }
-    entity.stop()
-
+  const performAgentLogic = () => {
     if (state?.level?.pathfinder) {
       const { isEnemyAThreat /*, canSeeEnemy*/ } = entity.detectEnemyThreat(entity, enemy)
       const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
@@ -130,7 +114,7 @@ export default ({
             isEntityChargeCritical &&
               console.log('%c isEntityChargeCritical: ', 'background: black; color: white;', isEntityChargeCritical)
             entity.path = null
-            entity.moveToTargetPosition(entity, enemy.mesh.position, enemy, true)
+            moveToTargetPosition(entity, enemy.mesh.position, enemy, true)
             return
           }
 
@@ -139,7 +123,7 @@ export default ({
             entity.path = null
             entity.lastCoverPosition = coverPosition
             /* go directly to cover position */
-            entity.moveToTargetPosition(entity, coverPosition, enemy, true)
+            moveToTargetPosition(entity, coverPosition, enemy, true)
           } else {
             entity.lastCoverPosition = null
             entity.isAwaitingCoverCalculation = false
@@ -148,31 +132,46 @@ export default ({
       } else if (!entity.lastCoverPosition) {
         /* move around randomly */
         const targetPosition = null // use a random point in the map
-        entity.moveToTargetPosition(entity, targetPosition, enemy)
+        moveToTargetPosition(entity, targetPosition, enemy)
       }
     }
+  }
 
-    const frameDecceleration = new Vector3(
-      velocity.x * decceleration.x,
-      velocity.y * decceleration.y,
-      velocity.z * decceleration.z
-    )
-    frameDecceleration.multiplyScalar(deltaS)
-    frameDecceleration.z =
-      Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
-
-    velocity.add(frameDecceleration)
-
-    const movementVector = calcRapierMovementVector(entity, velocity, deltaS)
+  const updatePosition = (deltaS: number) => {
+    const movementVector = calcRapierMovementVector(entity, entity.currentVelocity, deltaS)
+    entity.rigidBody.setNextKinematicRotation(entity.getRotation())
     entity.rigidBody.setNextKinematicTranslation(movementVector)
 
     /* correct mesh position in physics capsule */
-    const meshPos = new Vector3(0, -entity.halfHeight, 0).add(entity.rigidBody.translation())
+    const meshPos = new Vector3(0, -halfHeight, 0).add(entity.rigidBody.translation())
     // Update Three.js Mesh Position
     entity.position.copy(meshPos)
     mesh.position.copy(meshPos)
-    const rigidPos = entity.rigidBody.translation()
-    entity.center = new Vector3(rigidPos.x, rigidPos.y, rigidPos.z)
+    entity.center = entity.calcHalfHeightPosition(entity)
+  }
+
+  const checkIsCharacterDead = () => {
+    if (entity.isDead(entity)) {
+      entity.die(entity)
+      state.isBattleOver = true
+      return
+    }
+  }
+
+  let updateEventUuid: string = ''
+  const update = (deltaS: number) => {
+    if (!entity.mesh || entity.stateMachine.currentState === null) {
+      return
+    }
+    checkIsCharacterDead()
+
+    entity.checkBattleOver(updateEventUuid)
+
+    performAgentLogic()
+
+    entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
+
+    updatePosition(deltaS)
 
     mixer?.update?.(deltaS)
   }
@@ -181,7 +180,7 @@ export default ({
     updateEventUuid = state.addEvent('renderer.update', update)
   }
 
-  entity.stop = () => {
+  entity.checkBattleOver = (updateEventUuid: string) => {
     if (state.isBattleOver) {
       state.removeEvent('renderer.update', updateEventUuid)
     }

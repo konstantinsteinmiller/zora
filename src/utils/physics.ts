@@ -94,7 +94,7 @@ export const createRigidBodyEntity = ({ position, entity }: { position: Vector3;
   )
 
   const collider = state.physics.createCollider(colliderDesc, rigidBody)
-  collider.userData = { type: 'kinematic', uuid: entity.mesh.entityUuid, name: entity.name }
+  collider.userData = { type: 'kinematic', uuid: entity.uuid, name: entity.name }
 
   return {
     rigidBody,
@@ -110,7 +110,7 @@ export const createEntityColliderBox = (entity: any) => {
   )
   const pos = entity.mesh.position.clone()
   pos.y += entity.halfHeight * 100
-  if (entity.name === 'player') {
+  if (entity.guild === 'guild-0') {
     pos.x -= 10
   }
   colliderBox.position.copy(pos)

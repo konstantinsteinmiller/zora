@@ -16,23 +16,6 @@ const createColliderBall = (radius: number, rigidBody: any, physic: any) => {
   return physic.createCollider(colliderDesc, rigidBody)
 }
 
-export const createRigidBodyFixed = (mesh: any, physic: any) => {
-  const rigidBodyDesc = RigidBodyDesc.fixed()
-  const rigidBody = physic.createRigidBody(rigidBodyDesc)
-  /*const collider: any = */ createColliderGeo(mesh.geometry, rigidBody, physic)
-}
-
-export const createRigidBodyEntity = (position: Vector3, physic: any) => {
-  const rigidBodyDesc = RigidBodyDesc.dynamic()
-  rigidBodyDesc.setTranslation(position.x, position.y, position.z)
-  const rigidBody = physic.createRigidBody(rigidBodyDesc)
-  const collider = createColliderBall(0.25, rigidBody, physic)
-  return {
-    rigidBody,
-    collider,
-  }
-}
-
 export function floor(float: number, max = 0.2) {
   return Math.abs(float) < max ? 0 : float
 }

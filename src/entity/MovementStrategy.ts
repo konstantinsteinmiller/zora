@@ -1,40 +1,49 @@
+import state from '@/states/GlobalState.ts'
 import { Vector3 } from 'three'
 
 const baseDeceleration = new Vector3(-5.0, -0.0001, -5.0)
 const baseAcceleration = new Vector3(1, 0.25, 15.0)
 
-const addFrameDecceleration = (velocity: Vector3, deltaS: number) => {
-  const frameDecceleration = new Vector3(
+const addFrameDeceleration = (velocity: Vector3, deltaS: number) => {
+  const frameDeceleration = new Vector3(
     velocity.x * baseDeceleration.x,
     velocity.y * baseDeceleration.y,
     velocity.z * baseDeceleration.z
   )
-  frameDecceleration.multiplyScalar(deltaS)
-  frameDecceleration.z =
-    Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
+  frameDeceleration.multiplyScalar(deltaS)
+  frameDeceleration.z = Math.sign(frameDeceleration.z) * Math.min(Math.abs(frameDeceleration.z), Math.abs(velocity.z))
 
-  velocity.add(frameDecceleration)
+  velocity.add(frameDeceleration)
 }
 
 export const createPlayerMovementStrategy = () => {
-  const calculateVelocity = (velocity: Vector3, deltaS: number, controls: any) => {
-    addFrameDecceleration(velocity, deltaS)
+  const calculateVelocity = (entity: any, deltaS: number, controls: any) => {
+    addFrameDeceleration(entity.currentVelocity, deltaS)
 
     const acc = baseAcceleration.clone()
     if (controls.sprint) {
       acc.multiplyScalar(2.0)
     }
 
+    const stopStates = ['cast', 'hit']
+    if (stopStates.includes(entity.stateMachine.currentState.name)) {
+      acc.multiplyScalar(0.0)
+    }
+
+    if (entity.stateMachine.currentState.name === 'jump' && !state.controls.sprint) {
+      acc.multiplyScalar(1.5)
+    }
+
     if (controls.forward) {
-      velocity.z += acc.z * deltaS
+      entity.currentVelocity.z += acc.z * deltaS
     }
     if (controls.backward) {
-      velocity.z -= acc.z * deltaS
+      entity.currentVelocity.z -= acc.z * deltaS
     }
     const strafeVelocity = (controls.left ? 1 : 0) + (controls.right ? -1 : 0)
-    velocity.x += 12 * acc.x * strafeVelocity * deltaS
+    entity.currentVelocity.x += 12 * acc.x * strafeVelocity * deltaS
 
-    return velocity
+    return entity.currentVelocity
   }
 
   return { calculateVelocity }
@@ -42,7 +51,7 @@ export const createPlayerMovementStrategy = () => {
 
 export const createEnemyMovementStrategy = () => {
   const calculateVelocity = (velocity: Vector3, deltaS: number) => {
-    addFrameDecceleration(velocity, deltaS)
+    addFrameDeceleration(velocity, deltaS)
     return velocity
   }
 

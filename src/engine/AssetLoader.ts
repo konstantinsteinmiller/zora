@@ -1,3 +1,4 @@
+import { prependBaseUrl } from '@/utils/function.ts'
 import { AnimationMixer, LoadingManager, Mesh, Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
@@ -58,7 +59,7 @@ export default () => {
 
     if (src.endsWith('.comp.glb')) {
       const dracoLoader = new DRACOLoader()
-      dracoLoader.setDecoderPath('/node_modules/three/examples/jsm/libs/draco/')
+      dracoLoader.setDecoderPath(prependBaseUrl('/draco/'))
       dracoLoader.setDecoderConfig({ type: 'js' })
       loaderGlb.setDRACOLoader(dracoLoader)
     }

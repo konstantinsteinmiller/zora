@@ -1,4 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
+import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { statsUtils, controllerUtils, getBaseStats, chargeUtils } from '@/utils/controller.ts'
@@ -8,8 +9,6 @@ import * as THREE from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import state from '@/states/GlobalState'
-
-let entity: any = null
 
 const CharacterController = ({
   modelPath,
@@ -23,10 +22,7 @@ const CharacterController = ({
   startRotation: Quaternion
   modelHeight: number
 }) => {
-  if (entity !== null) {
-    return entity
-  }
-
+  let entity: any = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
   const halfHeight = modelHeight * 0.5
@@ -38,7 +34,6 @@ const CharacterController = ({
     ...stats,
     ...controllerUtils(),
     ...statsUtils(),
-    // ...characterCleanupUtils(),
     ...{
       updateChargeIndicator: chargeUtilsObj.updateChargeIndicator,
       createChargeIndicator: chargeUtilsObj.createChargeIndicator,
@@ -71,15 +66,14 @@ const CharacterController = ({
     return mesh.quaternion.copy(prevQuat)
   }
 
-  InputController()
+  InputController(entity)
   let mixer: any = {}
   const animationsMap: any = {}
-  const decceleration = new Vector3(-5.0, -0.0001, -5.0)
-  const acceleration = new Vector3(1, 0.25, 15.0)
-  const currentVelocity = new Vector3(0, 0, 0)
+  entity.currentVelocity = new Vector3(0, 0, 0)
 
   const stateMachine = new CharacterFSM(animationsMap, entity)
   entity.stateMachine = stateMachine
+  const movementStrategy = createPlayerMovementStrategy()
 
   const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
@@ -103,7 +97,6 @@ const CharacterController = ({
     })
   }
   loadModels()
-
   const initPhysics = () => {
     const { rigidBody, collider } = createRigidBodyEntity({ position: startPosition, entity })
     entity.rigidBody = rigidBody
@@ -111,65 +104,16 @@ const CharacterController = ({
   }
   initPhysics()
 
-  const calcVelocityAndRotation = (velocity: Vector3, deltaS: number) => {
-    const frameDecceleration = new Vector3(
-      velocity.x * decceleration.x,
-      velocity.y * decceleration.y,
-      velocity.z * decceleration.z
-    )
-    frameDecceleration.multiplyScalar(deltaS)
-    frameDecceleration.z =
-      Math.sign(frameDecceleration.z) * Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z))
-
-    velocity.add(frameDecceleration)
-
-    const acc = acceleration.clone()
-    if (state.controls.sprint) {
-      acc.multiplyScalar(2.0)
-    }
-
-    const stopStates = ['cast', 'hit']
-    if (stopStates.includes(stateMachine.currentState.name)) {
-      acc.multiplyScalar(0.0)
-    }
-
-    if (stateMachine.currentState.name === 'jump' && !state.controls.sprint) {
-      acc.multiplyScalar(1.5)
-    }
-
-    if (state.controls.forward) {
-      velocity.z += acc.z * deltaS
-    }
-    if (state.controls.backward) {
-      velocity.z -= acc.z * deltaS
-    }
-    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
-    velocity.x += 12 * acc.x * strafeVelocity * deltaS
-
-    return { velocity }
-  }
-
-  let updateEventUuid = ''
-  const update = (deltaS: number, elapsedTimeInS: number) => {
-    if (!mesh || stateMachine.currentState === null) {
-      return
-    }
-    stateMachine.update(deltaS, state.controls)
-
+  const checkIsCharacterDead = () => {
     if (entity.isDead(entity)) {
-      state.removeEvent('renderer.update', updateEventUuid)
       entity.die(entity)
-
       state.isBattleOver = true
       return
     }
-    entity.stop()
+  }
 
-    entity.updateEndurance(entity, deltaS, elapsedTimeInS)
-
-    const { velocity } = calcVelocityAndRotation(currentVelocity, deltaS)
-
-    const movementVector = calcRapierMovementVector(entity, velocity, deltaS)
+  const updatePosition = (deltaS: number) => {
+    const movementVector = calcRapierMovementVector(entity, entity.currentVelocity, deltaS)
 
     /* apply rotation and translation to physical body */
     entity.rigidBody.setNextKinematicRotation(entity.getRotation())
@@ -181,16 +125,34 @@ const CharacterController = ({
     entity.position.copy(meshPos)
     mesh.position.copy(meshPos)
     entity.center = entity.calcHalfHeightPosition(entity)
+  }
+
+  let updateEventUuid = ''
+  const update = (deltaS: number /*, elapsedTimeInS: number*/) => {
+    if (!mesh || stateMachine.currentState === null) {
+      return
+    }
+    stateMachine.update(deltaS, state.controls)
+
+    checkIsCharacterDead()
+
+    entity.checkBattleOver(updateEventUuid)
+
+    entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, state.controls)
+
+    updatePosition(deltaS)
 
     mixer?.update?.(deltaS)
 
-    entity.updateLife(entity, elapsedTimeInS)
+    entity.regenEndurance(entity, deltaS)
+    // entity.updateLife(entity, elapsedTimeInS)
   }
 
   entity.start = () => {
     updateEventUuid = state.addEvent('renderer.update', update)
   }
-  entity.stop = () => {
+
+  entity.checkBattleOver = (updateEventUuid: string) => {
     if (state.isBattleOver) {
       state.removeEvent('renderer.update', updateEventUuid)
     }

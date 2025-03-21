@@ -1,9 +1,10 @@
-import EnemyController from '@/entity/EnemyController.ts'
+import AIController from '@/entity/AIController.ts'
+import PlayerController from '@/entity/PlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import state from '@/states/GlobalState'
+import type { Guild } from '@/types/entity.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
-import CharacterController from '@/entity/CharacterController.ts'
 import Crosshair from '@/entity/Crosshair'
 
 const Arena = async (level = 'water-arena') => {
@@ -11,27 +12,28 @@ const Arena = async (level = 'water-arena') => {
     const startPos1 = state.level.pathfinder.startPositions[0]
     const startPos2 = state.level.pathfinder.startPositions[1]
 
-    CharacterController({
+    PlayerController({
       modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
       stats: {
         name: 'player',
-        hp: 100,
-        previousHp: 100,
+        hp: 80,
+        previousHp: 80,
         mp: 77,
         previousMp: 77,
       },
       startPosition: new Vector3(startPos1.x, startPos1.y, startPos1.z),
       startRotation: startPos1.quaternion,
       modelHeight: 1.8,
+      guild: 'guild-0' as Guild,
     })
 
-    const enemy = EnemyController({
-      enemy: state.player,
+    const enemy = AIController({
       modelPath: 'models/fairy/nature_fairy_1.fbx',
-      name: 'enemy',
+      stats: { name: 'enemy' },
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
       modelHeight: 1.8,
+      guild: 'guild-1' as Guild,
     })
     const enemyUpdateEventUuid = state.addEvent('renderer.update', () => {
       if (!state.loadingManager.isLoading) {

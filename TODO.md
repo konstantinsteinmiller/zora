@@ -94,7 +94,8 @@
     - [ ] Outro
     - [ ] Quests
     - [ ] Dialogues
-  - Day and night cycle
+    - [ ] Story and world concept
+  - [ ] (Not MVP) Day and night cycle
 - [x] Refactor to function style programming
 - [x] Refactor to frame rate independent movement -> browser and machine independent physics
 - [x] Refactor model importing
@@ -121,6 +122,8 @@
   - [x] show vfx as indicator for charge level of enemy and player
   - [x] add strafing
   - [x] fix vfx cleanup or GPURenderer reuse
+  - [x] refactor derive PlayerController and EnemyController from basic Controller for logic reuse and maintainability
+  - [x] add guild for enemy detection
 - [x] basic three game engine 
   - [x] Physics
   - [x] Renderer

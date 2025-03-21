@@ -6,7 +6,7 @@ export default class State {
 
   constructor(parent: any) {
     this.parent = parent
-    this.isPlayer = parent.owner.name === 'player'
+    this.isPlayer = parent.owner.guild === 'guild-0'
   }
 
   enter(previousState: any) {}

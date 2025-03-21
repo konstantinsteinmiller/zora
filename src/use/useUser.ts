@@ -16,6 +16,9 @@ const useUser = () => {
   const setSettingValue = (name: string, value: any) => {
     // const storageKey = USER_SETTINGS_MAP[name]
     // storageKey && sessionStorage.setItem(storageKey, value)
+    if (name === 'language') {
+      value = `'${value}'`
+    }
     eval(`user${name[0].toUpperCase()}${name.slice(1)}.value = ${value}`)
     // switch (name) {
     //   case 'soundVolume':

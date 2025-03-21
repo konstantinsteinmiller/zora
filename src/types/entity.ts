@@ -42,6 +42,7 @@ export interface EntityProps {
   colliderRadius: number
   halfHeight: number
   isAwaitingCoverCalculation: boolean
+  lastCoverPosition: Vector3
   utils: {
     takeOffFrames: number
     groundedTime: {
@@ -66,3 +67,5 @@ export interface Waypoint {
   z: number
   isPortal?: boolean
 }
+
+export type Guild = 'guild-0' | 'guild-1'

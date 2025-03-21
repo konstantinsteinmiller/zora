@@ -49,7 +49,7 @@ export default () => {
     }
     // entity.stateMachine.setState('cast')
     let directionN: Vector3 = new Vector3()
-    if (entity.name === 'player') {
+    if (entity.guild === 'guild-0') {
       raycaster.setFromCamera(pointer, state.camera)
       directionN = raycaster.ray.direction
     } else {
@@ -66,7 +66,7 @@ export default () => {
     const intersects = raycaster.intersectObjects(state.scene.children, true)
 
     if (intersects.length === 0) {
-      if (entity.name === 'player') {
+      if (entity.guild === 'guild-0') {
         /* no object intersected, shoot into the air */
         const directionN = raycaster.ray.direction
         const point = entity.mesh.position.clone().add(directionN.clone().multiplyScalar(200))
