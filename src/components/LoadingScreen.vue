@@ -28,6 +28,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
 import state from '@/states/GlobalState.ts'
 import useUser from '@/use/useUser.ts'
+import { startPoisonCloud } from '@/vfx/poison-cloud-sprite.ts'
 import { type ComputedRef, onMounted } from 'vue'
 
 const emit = defineEmits(['loading-finished'])
@@ -52,6 +53,8 @@ onMounted(() => {
         emit('loading-finished')
 
         state.controls.setPointerLock()
+
+        startPoisonCloud()
 
         state.sounds.stop('background')
         state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })

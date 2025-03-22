@@ -1,18 +1,18 @@
-import AttackPowerUp from '@/entity/power-ups/AttackPowerUp.ts'
-import DefensePowerUp from '@/entity/power-ups/DefensePowerUp.ts'
-import state from '@/states/GlobalState.ts'
+import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
+import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
+import state from '@/states/GlobalState'
 import {
   portalConnectionsList,
   orientationPosition,
   portalTransitionMap,
   coverPositions,
   startPositions,
-} from '@/entity/levels/water-arena/config.ts'
-import AssetLoader from '@/engine/AssetLoader.ts'
-import Water from '@/entity/water/Water.ts'
-import { loadNavMesh } from '@/utils/navigation.ts'
+} from '@/entity/levels/water-arena/config'
+import AssetLoader from '@/engine/AssetLoader'
+import Water from '@/entity/water/Water'
+import { loadNavMesh } from '@/utils/navigation'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three'
-import { createCollidersForGraph } from '@/utils/physics.ts'
+import { createCollidersForGraph } from '@/utils/physics'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
 export default async (onFinishedCallback: () => void) => {

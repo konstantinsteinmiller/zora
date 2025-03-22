@@ -6,10 +6,15 @@ import { EventEmitter } from 'events'
 import { watch } from 'vue'
 
 export const soundToTrackSrcMap: { [key: string]: string[] } = {
-  hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/auahhhh-hurt-female-${i + 1}.ogg`)),
-  spellShot: [prependBaseUrl('/sounds/zushhh_flying_spell.ogg'), prependBaseUrl('/sounds/flying_spell.ogg')],
-  flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/flying-flap-${i + 1}.ogg`)),
-  death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death-${i + 1}.ogg`)),
+  hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/hit/auahhhh-hurt-female-${i + 1}.ogg`)),
+  spellShot: [
+    prependBaseUrl('/sounds/spell/zushhh_flying_spell.ogg'),
+    prependBaseUrl('/sounds/spell/flying_spell.ogg'),
+  ],
+  flap: repeat(4, (_, i) => prependBaseUrl(`/sounds/fly/flying-flap-${i + 1}.ogg`)),
+  death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death/death-${i + 1}.ogg`)),
+  cough: repeat(3, (_, i) => prependBaseUrl(`/sounds/cough/cough-female-${i + 1}.ogg`)),
+  item: [prependBaseUrl('/sounds/item/power-up-1.ogg'), prependBaseUrl('/sounds/item/power-up-2.ogg')],
   battle: [prependBaseUrl('/music/thunderous-march_battle.ogg')],
   battleEnd: [prependBaseUrl('/music/drifting_through_quiet_valleys_slow-beautiful-ocarina-like_battle-end.ogg')],
   background: [

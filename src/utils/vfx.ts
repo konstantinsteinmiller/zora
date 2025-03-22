@@ -7,12 +7,15 @@ import state from '@/states/GlobalState'
 import ShotVFX from '@/vfx/shot.json'
 import DeathStarVFX from '@/vfx/death-star.json'
 import ChargeVFX from '@/vfx/charge.json'
+import shimmeringSphereVFX from '@/vfx/shimmering-sphere.json'
 import { v4 } from 'uuid'
 
+export type VFXType = 'shot' | 'deathStar' | 'charge' | 'shimmeringSphere'
 const vfxMap: { [key: string]: any } = {
   shot: ShotVFX,
   deathStar: DeathStarVFX,
   charge: ChargeVFX,
+  shimmeringSphere: shimmeringSphereVFX,
 }
 
 export const destroyVfx = ({ nebulaSystem, vfxRenderer }: { vfxRenderer: GPURenderer; nebulaSystem: any }) => {
@@ -30,7 +33,7 @@ export const destroyVfx = ({ nebulaSystem, vfxRenderer }: { vfxRenderer: GPURend
 
 export const createVFX = async (
   position: Vector3,
-  vfxName: string,
+  vfxName: VFXType,
   removeOnDeath: boolean = true,
   onFinished?: () => void
 ): Promise<{ eventUuid: string; nebulaSystem: any; vfxRenderer: any }> => {

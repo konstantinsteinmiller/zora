@@ -19,7 +19,7 @@ import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
 import { removePath } from '@/utils/navigation.ts'
 import { createVFX, destroyVfx } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
-import { Color, type Quaternion, Raycaster, Vector3 } from 'three'
+import { Color, Object3D, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 
 export const getBaseStats: any = () => ({
@@ -35,14 +35,24 @@ export const getBaseStats: any = () => ({
   maxEndurance: 100,
   enduranceRegen: 1,
   defense: {
-    buff: 0,
+    buff: {
+      name: 'defense',
+      value: 1,
+      duration: 1,
+      endTime: 0,
+    },
   },
   currentSpell: {
     name: 'shot',
     speed: 1,
     damage: 25,
     charge: 0 /* [0,1] */,
-    buff: 1,
+    buff: {
+      name: 'attack',
+      value: 1,
+      duration: 1,
+      endTime: 0,
+    },
   },
   isGrounded: false,
   appliedFlyImpulse: 0,
@@ -286,7 +296,7 @@ export const chargeUtils = () => ({
     const { eventUuid, nebulaSystem, vfxRenderer } = await createVFX(position, 'charge', false)
     return { eventUuid, nebulaSystem, vfxRenderer }
   },
-  destroyChargeIndicatorVFX(nebulaSystem: any, vfxRenderer: any, chargeIndicatorEventUuid: string, entity: any) {
+  destroyChargeIndicatorVFX(nebulaSystem: any, vfxRenderer: any, chargeIndicatorEventUuid: string) {
     state.removeEvent('renderer.update', chargeIndicatorEventUuid)
     destroyVfx({ nebulaSystem, vfxRenderer })
   },
@@ -379,7 +389,11 @@ export const controllerAwarenessUtils = () => ({
     // Set raycaster
     threatRaycaster.set(entityPosition, direction)
     lastRaycastTime = Date.now()
-    const intersects = threatRaycaster.intersectObjects(state.scene.children, true)
+
+    const objectsToIntersect = state.scene.children.filter((child: Object3D) => {
+      return !child.name.startsWith('vfx-') // Exclude the particlesGroup by name
+    })
+    const intersects = threatRaycaster.intersectObjects(objectsToIntersect, true)
 
     if (intersects.length > 0) {
       // intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
@@ -452,6 +466,7 @@ function raycastDebug(data: any) {
     const directionN = new Vector3().subVectors(coverPos, enemyPos).normalize()
     raycaster.set(enemyPos, directionN)
     // return
+    /* TODO: FIIIXXX THIS BRAHAHH */
     const intersects = raycaster.intersectObjects(state.scene.children[5].children, true)
 
     if (intersects.length > 0) {

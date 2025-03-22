@@ -1,0 +1,122 @@
+{
+  "headerState": {
+    "projectName": "ShimmeringSphereEffect",
+    "version": {
+      "loading": false,
+      "error": null,
+      "data": {
+        "version": "1.0.8-alpha"
+      }
+    },
+    "release": {
+      "loading": false,
+      "error": null,
+      "data": null
+    },
+    "shouldShowReleaseDownloadDialog": false
+  },
+  "particleSystemState": {
+    "preParticles": 1000,
+    "integrationType": "EULER",
+    "emitters": [
+      {
+        "id": "sphere-emitter",
+        "totalEmitTimes": null,
+        "life": 2,
+        "cache": {
+          "totalEmitTimes": 0,
+          "life": 2
+        },
+        "rate": {
+          "particlesMin": 10,
+          "particlesMax": 20,
+          "perSecondMin": 10,
+          "perSecondMax": 20
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "initializers": [
+          {
+            "id": "mass-initializer",
+            "type": "Mass",
+            "properties": {
+              "min": 1,
+              "max": 1,
+              "isEnabled": true
+            }
+          },
+          {
+            "id": "life-initializer",
+            "type": "Life",
+            "properties": {
+              "min": 1,
+              "max": 2,
+              "isEnabled": true
+            }
+          },
+          {
+            "id": "radius-initializer",
+            "type": "Radius",
+            "properties": {
+              "radius": 5,
+              "isEnabled": true
+            }
+          },
+          {
+            "id": "radial-velocity-initializer",
+            "type": "RadialVelocity",
+            "properties": {
+              "radius": 5,
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "theta": 0,
+              "isEnabled": true
+            }
+          }
+        ],
+        "behaviours": [
+          {
+            "id": "alpha-behaviour",
+            "type": "Alpha",
+            "properties": {
+              "alphaA": 1,
+              "alphaB": 0,
+              "life": null,
+              "easing": "easeInOutCubic"
+            }
+          },
+          {
+            "id": "color-behaviour",
+            "type": "Color",
+            "properties": {
+              "colorA": "#ffffff",
+              "colorB": "#aabbff",
+              "life": null,
+              "easing": "easeInOutCubic"
+            }
+          },
+          {
+            "id": "scale-behaviour",
+            "type": "Scale",
+            "properties": {
+              "scaleA": 0.5,
+              "scaleB": 1.5,
+              "life": null,
+              "easing": "easeInOutCubic"
+            }
+          }
+        ],
+        "emitterBehaviours": []
+      }
+    ]
+  }
+}

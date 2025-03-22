@@ -1,6 +1,5 @@
 import { ZORA_TOTAL_LOAD_SIZE_NAME } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
-import { convertToReadableSize } from '@/utils/function.ts'
 import { ref, type Ref } from 'vue'
 
 const currentOverallSize = 28060383

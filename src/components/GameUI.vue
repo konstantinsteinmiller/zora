@@ -24,6 +24,8 @@
       owner-id="player"
       type="endurance"
     />
+
+    <BuffsList />
   </template>
   <template v-else>
     <GameOverScreen v-if="hasOneTeamLost" />
@@ -34,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import BuffsList from '@/components/BuffsList.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import GameOverScreen from '@/components/GameOverScreen.vue'
 import StatBar from '@/components/StatBar.vue'
