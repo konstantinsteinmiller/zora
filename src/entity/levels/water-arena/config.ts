@@ -1,7 +1,4 @@
-import camera from '@/engine/Camera.ts'
-import state from '@/states/GlobalState.ts'
 import type { PortalConnection } from '@/types/state.physics.ts'
-import { saveDataToFile } from '@/utils/io.ts'
 import { generateTransitionMap } from '@/utils/pathfinder.ts'
 import { Vector3 } from 'three'
 

@@ -1,18 +1,18 @@
-import AttackPowerUp from '@/entity/power-ups/AttackPowerUp.ts'
-import DefensePowerUp from '@/entity/power-ups/DefensePowerUp.ts'
-import state from '@/states/GlobalState.ts'
+import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
+import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
+import state from '@/states/GlobalState'
 import {
   portalConnectionsList,
   orientationPosition,
   portalTransitionMap,
   coverPositions,
   startPositions,
-} from '@/entity/levels/water-arena/config.ts'
-import AssetLoader from '@/engine/AssetLoader.ts'
-import Water from '@/entity/water/Water.ts'
-import { loadNavMesh } from '@/utils/navigation.ts'
-import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three'
-import { createCollidersForGraph } from '@/utils/physics.ts'
+} from '@/entity/levels/water-arena/config'
+import AssetLoader from '@/engine/AssetLoader'
+import Water from '@/entity/water/Water'
+import { loadNavMesh } from '@/utils/navigation'
+import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
+import { createCollidersForGraph } from '@/utils/physics'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 
 export default async (onFinishedCallback: () => void) => {
@@ -106,10 +106,16 @@ export default async (onFinishedCallback: () => void) => {
   waterArena.movingEntitiesList = []
   waterArena.objects = []
 
-  const defPowerUp = DefensePowerUp()
-  defPowerUp.addToLevel(waterArena)
-  const attackPowerUp = AttackPowerUp()
-  attackPowerUp.addToLevel(waterArena)
+  const powerUpList: any[] = [DefensePowerUp, AttackPowerUp]
+  pathfinder.portalConnectionsList.forEach((connection: any) => {
+    const { entryPosition, entryGroup } = connection
+    if (entryGroup === 1) return
+
+    const randomInt: number = Math.random() < 0.5 ? 0 : 1
+    const position = entryPosition.clone().add(new Vector3(0, 0.5, 0))
+    const powerUp = powerUpList[randomInt](position)
+    powerUp.addToLevel(waterArena)
+  })
 
   state.scene.add(waterArena)
   state.level = waterArena

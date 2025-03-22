@@ -2,7 +2,7 @@ import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
-import { Vector3 } from 'three'
+import { Object3D, Vector3 } from 'three'
 import * as THREE from 'three'
 
 let singleton: any = null
@@ -15,17 +15,12 @@ export default () => {
   const pointer = new THREE.Vector2(state.controls.mouse.crosshairX, state.controls.mouse.crosshairY)
 
   const damageSelf = (entity: any) => {
-    entity.dealDamage(entity, entity.currentSpell.damage * 0.5)
+    entity.dealDamage(entity, entity.currentSpell.damage * entity.currentSpell.buff.value * 0.5)
   }
 
   singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {
-    const damage: number = +remap(
-      MIN_CHARGE_SPEED,
-      MAX_ROTATION_SPEED,
-      entity.currentSpell.damage * 0.1,
-      entity.currentSpell.damage,
-      rotationSpeed
-    ).toFixed(1)
+    const dmg = entity.currentSpell.damage * entity.currentSpell.buff.value
+    const damage: number = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, dmg * 0.1, dmg, rotationSpeed).toFixed(1)
 
     const entityId: string | undefined = intersect?.object?.entityId || intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */
@@ -35,8 +30,9 @@ export default () => {
       })
       if (hitTarget) {
         hitTarget.stateMachine.setState('hit')
-        hitTarget.dealDamage(hitTarget, damage)
-        console.log('%c enemy hit: ', 'color: red', damage)
+        const dmg = hitTarget.defense.buff.value * damage
+        hitTarget.dealDamage(hitTarget, dmg)
+        console.log('%c enemy hit: ', 'color: red', dmg)
       }
     }
   }
@@ -63,7 +59,10 @@ export default () => {
       raycaster.set(origin, directionN)
     }
 
-    const intersects = raycaster.intersectObjects(state.scene.children, true)
+    const objectsToIntersect = state.scene.children.filter((child: Object3D) => {
+      return !child.name.startsWith('vfx-') // Exclude the particlesGroup by name
+    })
+    const intersects = raycaster.intersectObjects(objectsToIntersect, true)
 
     if (intersects.length === 0) {
       if (entity.guild === 'guild-0') {

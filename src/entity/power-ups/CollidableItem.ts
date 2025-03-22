@@ -1,19 +1,24 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import waterArena from '@/entity/levels/water-arena/WaterArena.ts'
+import { guildList } from '@/types/entity.ts'
+import useUser from '@/use/useUser.ts'
 import { createBoxCollider } from '@/utils/physics.ts'
 import { Group, Mesh, Vector3 } from 'three'
-import state from '@/states/GlobalState.ts'
+import state, { getEntity } from '@/states/GlobalState.ts'
 import { v4 } from 'uuid'
 
 interface CollidableProps {
   meshPath: string
   name: string
   once?: boolean
-  onCollisionStart?: (colliderA: any, colliderB: any, uuid: string) => void
-  onCollisionEnd?: (colliderA: any, colliderB: any, uuid: string) => void
+  onCollisionStart?: (colliderA: any, colliderB: any, uuid: string, entity?: any) => void
+  onCollisionEnd?: (colliderA: any, colliderB: any, uuid: string, entity?: any) => void
   onCleanup?: (collisionEvenUuid: string) => void
   position: Vector3
   colliderType?: string
+  collisionSound?: {
+    name: string
+    options: any
+  }
   rotateMesh?: boolean
   size: number
 }
@@ -26,13 +31,17 @@ export default ({
   onCleanup,
   position,
   colliderType = 'fixed',
+  collisionSound,
   once = true,
   rotateMesh = false,
   size,
 }: CollidableProps) => {
+  const { userSoundVolume } = useUser()
+
   const object: any = new Group()
   let mesh: any = new Mesh()
   const uuid = v4()
+
   const loadModels = async () => {
     const { loadMesh } = AssetLoader()
     await loadMesh(meshPath, object, 1)
@@ -60,7 +69,18 @@ export default ({
   const collisionUuid = state.addEvent('physics.collision', (colliderA: any, colliderB: any, started: boolean) => {
     if (colliderA.userData.uuid === uuid || colliderB.userData.uuid === uuid) {
       if (started) {
-        onCollisionStart?.(colliderA, colliderB, uuid)
+        let entity = null
+        const entityA = getEntity(colliderA.userData.uuid)
+        const entityB = getEntity(colliderB.userData.uuid)
+        entity = guildList.includes(entityA?.guild) ? entityA : guildList.includes(entityB?.guild) ? entityB : null
+
+        if (entity && collisionSound?.name && entity.guild === 'guild-0') {
+          state.sounds.addAndPlayPositionalSound(entity, 'item', {
+            volume: userSoundVolume.value * (collisionSound.options?.volume || 1),
+          })
+        }
+
+        onCollisionStart?.(colliderA, colliderB, uuid, entity)
 
         if (once) {
           state.removeEvent('physics.collision', collisionUuid)

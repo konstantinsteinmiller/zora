@@ -1,8 +1,10 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import type { Guild } from '@/types/entity.ts'
+import useUser from '@/use/useUser.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
+import { isPlayerInPoisonCloud } from '@/vfx/poison-cloud-sprite.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import state from '@/states/GlobalState.ts'
 import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
@@ -101,6 +103,18 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     }
   }
 
+  const { userSoundVolume } = useUser()
+  let soundCounter = 1
+  const checkPoisonCloud = () => {
+    soundCounter++
+    const playerPosition = entity.position
+    if (isPlayerInPoisonCloud(playerPosition)) {
+      entity.dealDamage(entity, 0.1)
+      soundCounter % 160 === 0 &&
+        state.sounds.addAndPlayPositionalSound(entity, 'cough', { volume: 0.5 * userSoundVolume.value * 0.25 })
+    }
+  }
+
   entity.update = (deltaS: number) => {
     if (!mesh || stateMachine.currentState === null) {
       return false
@@ -111,6 +125,8 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     updatePosition(deltaS)
 
     mixer?.update?.(deltaS)
+
+    checkPoisonCloud()
 
     return true
   }
