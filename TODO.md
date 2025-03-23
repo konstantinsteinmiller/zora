@@ -26,18 +26,17 @@
   - [x] hurt sound (anime ääähhh)
   - [x] spell shot sound (zushhh)
   - [x] flying flap sound (flap flap)
+  - [x] pickup item sounds
+  - [x] pickup power up sounds
+  - [x] pickup fairy dust sounds
+  - [x] poison cloud damage sound (caugh)
   - [x] death sound
   - [x] battle music
   - [x] battle end sound
   - [x] background music
-- [ ] Inventory
-  - [ ] Drag and Drop
-  - [ ] Item Slot
-  - [ ] Items
-    - [ ] Gold
-    - [ ] Fairy Dust
-    - [ ] Consumables
-    - [ ] Quest Items
+- [ ] Tutorial
+  - [ ] Popover on screen for controls etc and descriptions
+  - [ ] don't ask again switch
 - [ ] UI
   - [x] Pausing Game for menu access
   - [x] Charge indicator around crosshair
@@ -48,6 +47,7 @@
     - [x] Flying mechanic, jump -> fly
     - [x] fix previous endurance bug when regen overwriting previous damage
     - [x] fix bar scaling
+  - [x] Fairy dust collected indicator
   - [ ] Skill Box
   - [x] Battle Over screen
     - [x] stop background music
@@ -63,12 +63,35 @@
     - [x] Artwork
     - [x] AssetLoadingManager to preload assets
       - [x] preload World, navmesh and character models and animations
+      - [x] cleanup vfx sprite loading with manager
+      - [ ] move texture loading to texture atlas in LoadingManager
+  - [ ] Fairy loadout UI
+  - [ ] Spell selection UI
+  - [ ] Map UI
+  - [ ] Inventory
+    - [ ] Drag and Drop
+    - [ ] Item Slot
+    - [ ] Items
+      - [ ] Gold
+      - [ ] Fairy Dust
+      - [ ] Consumables
+      - [ ] Quest Items
 - [x] Main Menu
   - [x] Start Game
   - [ ] Load Game / Continue
   - [x] Options
     - [ ] Keybindings change
   - [x] Exit
+- [ ] Arena Gameplay
+  - [x] Poison cloud growing towards the middle of the arena
+  - [x] Power ups that increase damage and defense
+  - [x] create fairy dust item
+  - [x] enemies dropping fairy dust on hit
+  - [x] fairy dust blinking before disappearing
+  - [ ] every spell shot uses mana
+  - [ ] mana regenerates slowly over time
+  - [ ] if not enough mana for the spell, health is used instead of missing mana amount
+  - [ ] if a fairy falls to the void, it dies at y < -10
 - [ ] World
   - [x] Water Shader
   - [x] skybox

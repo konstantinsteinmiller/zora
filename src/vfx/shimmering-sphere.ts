@@ -1,13 +1,14 @@
+import AssetLoader from '@/engine/AssetLoader.ts'
 import state from '@/states/GlobalState'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { EventEmitter } from 'events'
-import { AdditiveBlending, Group, Sprite, SpriteMaterial, TextureLoader, Vector3 } from 'three'
+import { AdditiveBlending, Group, Sprite, SpriteMaterial, Vector3 } from 'three'
 
 // Load the custom particle texture
-const textureLoader = new TextureLoader()
 let particleTexture: any
 const loadTexture = async () => {
-  particleTexture = await textureLoader.loadAsync(prependBaseUrl('/images/glow.png')) // Replace with your image path
+  const { loadTexture: load } = AssetLoader()
+  particleTexture = await load(prependBaseUrl('/images/glow.png'))
 }
 loadTexture()
 
@@ -17,7 +18,7 @@ const goldColors = [
   0xdaa520, // Goldenrod
   0xb8860b, // Dark goldenrod
 ]
-const grey = '#9f5bdc'
+// const grey = '#9f5bdc'
 const particleCount = 350 // Number of particles
 const sphereRadius = 0.65 // Radius of the sphere
 const shimmerSpeed = 0.025 // Speed of the shimmering effect
@@ -64,7 +65,7 @@ export const startShimmeringSphere = (position: Vector3) => {
     particle.scale.set(initialScale, initialScale, initialScale)
 
     // Disable raycasting for this sprite
-    particle.raycast = null
+    particle.raycast = () => null
 
     // Calculate initial position on the surface of the sphere
     const vertex = new Vector3()
@@ -158,9 +159,8 @@ export const startShimmeringSphere = (position: Vector3) => {
     state.removeEvent('renderer.update', eventUuid)
   }
 
-  emitter.on('cleanup', () => {
-    cleanup()
-  })
+  emitter.on('cleanup', cleanup)
+  state.addEvent('arena.cleanup', cleanup)
 
   return emitter
 }

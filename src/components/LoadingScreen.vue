@@ -28,7 +28,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
 import state from '@/states/GlobalState.ts'
 import useUser from '@/use/useUser.ts'
-import { startPoisonCloud } from '@/vfx/poison-cloud-sprite.ts'
+import { startPoisonCloudVFX } from '@/vfx/poison-cloud-sprite.ts'
 import { type ComputedRef, onMounted } from 'vue'
 
 const emit = defineEmits(['loading-finished'])
@@ -41,29 +41,32 @@ let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
 onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
+  const startBattle = () => {
+    const character = state.player
+    character.start()
+
+    // const enemy = state.enemy
+    // enemy.start() // already started in the Arena loop
+
+    if (state.isBattleInitialized) {
+      emit('loading-finished')
+
+      state.controls.setPointerLock()
+
+      state.sounds.stop('background')
+      state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
+    }
+  }
   state.addOneTimeEvent('renderer.update', () => {
     state.fileLoader.loadData(() => {
-      const character = state.player
-      character.start()
-
-      // const enemy = state.enemy
-      // enemy.start() // already started in the Arena loop
-
-      if (state.isBattleInitialized) {
-        emit('loading-finished')
-
-        state.controls.setPointerLock()
-
-        startPoisonCloud()
-
-        state.sounds.stop('background')
-        state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
-      }
+      startBattle()
     })
 
     /* load other assets */
     state.sounds.loadSounds()
     Arena()
+
+    startPoisonCloudVFX()
   })
 })
 </script>

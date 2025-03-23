@@ -42,3 +42,9 @@ export const Options = {
 export const GAME_USER_LANGUAGE: string = 'zoraUserLanguage'
 export const GAME_USER_SOUND_VOLUME: string = 'zoraSoundVolume'
 export const GAME_USER_MUSIC_VOLUME: string = 'zoraMusicVolume'
+
+// Define collision groups (using bitmasks)
+export const WORLD_GROUP = 0b0001 // Group 1 for world objects
+export const FAIRY_DUST_GROUP = 0b0010 // Group 2 for fairy dust
+export const OTHER_GROUP = 0b0100 // Group 3 for other objects
+export const CHARACTER_GROUP = 0b1000 // Group 4 for characters

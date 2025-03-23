@@ -1,7 +1,8 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import { guildList } from '@/types/entity.ts'
+import { type Guild, guildList } from '@/types/entity.ts'
 import useUser from '@/use/useUser.ts'
 import { createBoxCollider } from '@/utils/physics.ts'
+import { EventEmitter } from 'events'
 import { Group, Mesh, Vector3 } from 'three'
 import state, { getEntity } from '@/states/GlobalState.ts'
 import { v4 } from 'uuid'
@@ -19,6 +20,7 @@ interface CollidableProps {
     name: string
     options: any
   }
+  onlyInteractableByGuild?: Guild
   rotateMesh?: boolean
   size: number
 }
@@ -33,6 +35,7 @@ export default ({
   colliderType = 'fixed',
   collisionSound,
   once = true,
+  onlyInteractableByGuild,
   rotateMesh = false,
   size,
 }: CollidableProps) => {
@@ -41,6 +44,8 @@ export default ({
   const object: any = new Group()
   let mesh: any = new Mesh()
   const uuid = v4()
+  const emitter = new EventEmitter()
+  object.emitter = emitter
 
   const loadModels = async () => {
     const { loadMesh } = AssetLoader()
@@ -52,19 +57,24 @@ export default ({
     if (rotateMesh) {
       mesh.geometry.computeBoundingBox()
       mesh.geometry.center() // Moves geometry so center is at (0,0,0)
-      state.addEvent('renderer.update', () => {
-        mesh.rotation.set(mesh.rotation.x, mesh.rotation.y + 0.03, mesh.rotation.z)
-      })
     }
   }
   loadModels()
 
-  const { collider } = createBoxCollider({
+  const { rigidBody, collider } = createBoxCollider({
     size,
     position: position.clone().add(new Vector3(0, size * 0.5, 0)),
     isSensor: false,
   })
   collider.userData = { type: colliderType, uuid, name: name }
+
+  const updateUuid = state.addEvent('renderer.update', () => {
+    mesh.rotation.set(mesh.rotation.x, mesh.rotation.y + 0.03, mesh.rotation.z)
+
+    if (!object?.rigidBody || !rigidBody || !object.rigidBody.isValid()) return
+    /* sync the collider box position with the dynamic body */
+    rigidBody.setTranslation(object.rigidBody.translation())
+  })
 
   const collisionUuid = state.addEvent('physics.collision', (colliderA: any, colliderB: any, started: boolean) => {
     if (colliderA.userData.uuid === uuid || colliderB.userData.uuid === uuid) {
@@ -74,8 +84,11 @@ export default ({
         const entityB = getEntity(colliderB.userData.uuid)
         entity = guildList.includes(entityA?.guild) ? entityA : guildList.includes(entityB?.guild) ? entityB : null
 
+        /* don't allow collision if onlyInteractableByGuild is set */
+        if (entity && onlyInteractableByGuild !== undefined && entity.guild !== onlyInteractableByGuild) return
+
         if (entity && collisionSound?.name && entity.guild === 'guild-0') {
-          state.sounds.addAndPlayPositionalSound(entity, 'item', {
+          state.sounds.addAndPlayPositionalSound(entity, collisionSound.name, {
             volume: userSoundVolume.value * (collisionSound.options?.volume || 1),
           })
         }
@@ -97,13 +110,21 @@ export default ({
     level.add(object)
     level.objects.push(object)
 
-    const eventUuid = state.addEvent(`level.object.remove`, (colUuid: string | undefined) => {
-      if (uuid !== colUuid) return
-      // console.log('--remove mesh from level--')
+    const cleanup = () => {
+      // console.log('--collidable cleanup--')
+      if (rigidBody) {
+        state.physics.removeRigidBody(rigidBody)
+      }
+
       level.remove(object)
       level.objects = level.objects.filter((obj: any) => obj.uuid !== object.entityUuid)
-      state.removeEvent(`level.object.remove`, eventUuid)
-    })
+      mesh.geometry.dispose()
+      mesh.material.dispose()
+
+      state.removeEvent('renderer.update', updateUuid)
+      emitter.off('cleanup', cleanup)
+    }
+    emitter.on('cleanup', cleanup)
   }
 
   object.entityUuid = uuid

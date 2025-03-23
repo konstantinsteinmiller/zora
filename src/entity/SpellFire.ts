@@ -1,3 +1,4 @@
+import { createFairyDustObjects } from '@/entity/FairyDust.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import { createRayTrace, remap } from '@/utils/function.ts'
@@ -32,7 +33,8 @@ export default () => {
         hitTarget.stateMachine.setState('hit')
         const dmg = hitTarget.defense.buff.value * damage
         hitTarget.dealDamage(hitTarget, dmg)
-        console.log('%c enemy hit: ', 'color: red', dmg)
+        hitTarget.guild === 'guild-1' && createFairyDustObjects(rotationSpeed, hitTarget.position)
+        console.log('%c unit hit: ', 'color: red', dmg)
       }
     }
   }

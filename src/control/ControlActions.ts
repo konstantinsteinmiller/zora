@@ -1,6 +1,6 @@
-import camera from '@/engine/Camera.ts'
+import { createFairyDustObjects } from '@/entity/FairyDust.ts'
 import useUser from '@/use/useUser.ts'
-import { FLY_COST, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
+import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import state from '@/states/GlobalState'
@@ -61,6 +61,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
     inventory: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
+          createFairyDustObjects(3.8 * Math.PI, state.enemy.position)
           // entity.toggleInventory()
         }
       },

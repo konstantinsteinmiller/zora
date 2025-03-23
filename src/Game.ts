@@ -62,7 +62,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   })
 
   if (removeVfx) {
-    state.vfxList.forEach(({ name, vfxRenderer, nebulaSystem }: any) => {
+    state.vfxList.forEach(({ /*name, */ vfxRenderer, nebulaSystem }: any) => {
       setTimeout(() => {
         // console.log('name: ', name)
         destroyVfx({ nebulaSystem: nebulaSystem, vfxRenderer })
@@ -73,6 +73,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     state.isEngineInitialized = false
     state.isBattleOver = false
     state.isBattleInitialized = false
+    state.player.currency.fairyDustCollected = 0
     state.entitiesMap.clear()
 
     const fileLoader = FileLoader()

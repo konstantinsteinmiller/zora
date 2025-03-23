@@ -18,7 +18,7 @@ const updateParticles = (particles: any) => {
   }
 }
 
-export const startPoisonCloud = () => {
+export const startPoisonCloudVFX = () => {
   // Create a particle system
   const particles = new BufferGeometry()
   const positions = new Float32Array(particleCount * 3) // Each particle has x, y, z coordinates

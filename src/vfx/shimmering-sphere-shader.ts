@@ -1,10 +1,6 @@
 import state from '@/states/GlobalState'
-import { prependBaseUrl } from '@/utils/function.ts'
-import { AdditiveBlending, Mesh, ShaderMaterial, SphereGeometry, TextureLoader, Vector3 } from 'three'
+import { AdditiveBlending, Mesh, ShaderMaterial, SphereGeometry, Vector3 } from 'three'
 import { EventEmitter } from 'events'
-
-// Load the custom glow texture
-const textureLoader = new TextureLoader()
 
 // Define the GLSL shaders
 const vertexShader = `
@@ -35,7 +31,8 @@ const fragmentShader = `
 
 let sphereGeometry: any, glowTexture: any, shaderMaterial: any, sphereMesh: any
 const init = async () => {
-  glowTexture = await textureLoader.loadAsync(prependBaseUrl('/images/glow.avif')) // Replace with your glow texture
+  // const { loadTexture } = AssetLoader()
+  // const glowTexture: any = loadTexture(prependBaseUrl('/images/glow.png'))
 
   // Create a sphere geometry
   const sphereRadius = 0.65

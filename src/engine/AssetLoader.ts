@@ -1,5 +1,5 @@
 import { prependBaseUrl } from '@/utils/function.ts'
-import { AnimationMixer, LoadingManager, Mesh, Object3D, Vector3 } from 'three'
+import { AnimationMixer, BoxGeometry, LoadingManager, Mesh, Object3D, Texture, TextureLoader, Vector3 } from 'three'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -40,6 +40,15 @@ export default () => {
     callback?: (scene: Object3D) => void /*
      */
   ) => {
+    if (!publicPath) {
+      const emptyMesh = new Mesh(
+        new BoxGeometry(0.1, 0.1, 0.1),
+        new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: false })
+      )
+      emptyMesh.name = 'empty-mesh'
+      parent.add(emptyMesh)
+      return
+    }
     if (publicPath.endsWith('.fbx')) {
       return loader.loadFBXMesh(publicPath, parent, scale, shadows, callback)
     }
@@ -240,6 +249,24 @@ export default () => {
       (fileProgressEvent: any) => state.fileLoader.onFileProgress(src, fileProgressEvent),
       () => state.loadingManager.itemError(src)
     )
+  }
+
+  loader.loadTexture = async (src: string) => {
+    const textureLoader = new TextureLoader(state.loadingManager)
+    state.loadingManager.itemStart(src)
+    try {
+      const texture: any = await textureLoader.loadAsync(src, (fileProgressEvent: any) =>
+        state.fileLoader.onFileProgress(src, fileProgressEvent)
+      )
+      state.loadingManager.itemEnd(src)
+      return texture
+    } catch (error: any) {
+      state.loadingManager.itemError(src)
+      console.error('Failed to load texture:', error)
+    } finally {
+      state.loadingManager.itemEnd(src)
+    }
+    return Promise.resolve(new Texture())
   }
 
   return loader

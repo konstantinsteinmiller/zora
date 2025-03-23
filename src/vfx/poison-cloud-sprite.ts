@@ -1,12 +1,13 @@
+import AssetLoader from '@/engine/AssetLoader.ts'
 import state from '@/states/GlobalState'
 import { prependBaseUrl } from '@/utils/function.ts'
-import { AdditiveBlending, Group, Sprite, SpriteMaterial, TextureLoader } from 'three'
+import { AdditiveBlending, Group, Sprite, SpriteMaterial } from 'three'
 
 // Load the custom particle texture
-const textureLoader = new TextureLoader()
 let particleTexture: any
 const loadTexture = async () => {
-  particleTexture = await textureLoader.loadAsync(prependBaseUrl('/images/poison-cloud.png')) // Replace with your image path
+  const { loadTexture: load } = AssetLoader()
+  particleTexture = await load(prependBaseUrl('/images/poison-cloud.png'))
 }
 loadTexture()
 
@@ -63,7 +64,7 @@ const updateParticles = (particles: Sprite[], deltaS: number) => {
       particle.scale.set(initialScale, initialScale, initialScale)
 
       // Disable raycasting for this sprite
-      particle.raycast = null
+      particle.raycast = () => null
 
       // Add particle to the scene and the particles array
       particleGroup.add(particle)
@@ -131,7 +132,7 @@ const updateParticles = (particles: Sprite[], deltaS: number) => {
 
   // Remove excess particles if particle count decreases
   while (particles.length > particleCount) {
-    const particle = particles.pop() // Remove the last particle
+    const particle: any = particles.pop() // Remove the last particle
     particleGroup.remove(particle) // Remove from the group
     particle.material.dispose() // Dispose of the material
 
@@ -140,7 +141,7 @@ const updateParticles = (particles: Sprite[], deltaS: number) => {
   }
 }
 
-export const startPoisonCloud = () => {
+export const startPoisonCloudVFX = () => {
   startTime = Date.now() // Track the start time for the radius decrease
   state.scene.add(particleGroup)
 
@@ -176,6 +177,8 @@ export const startPoisonCloud = () => {
     // Dispose of the texture
     particleTexture.dispose()
   }
+
+  state.addEvent('arena.cleanup', cleanup)
 }
 
 /**

@@ -15,6 +15,7 @@ export const createCollidersForGraph = (object: any, rigidType: string = 'fixed'
     // console.log('child: ', child, child.isMesh)
     if ((child as Mesh).isMesh) {
       const { collider } = createCollider(child as Mesh, rigidType, scale, rotate)
+      collider.setFriction(0.5) // Important: World needs friction too!
       colliders.push(collider)
     }
   })
@@ -74,7 +75,7 @@ export const createBoxCollider = ({
 
   // Create the collider
   const collider = state.physics.createCollider(colliderDesc, rigidBody)
-  collider.userData = { type: 'fixed', uuid: 'power-up' }
+  collider.userData = { type: 'fixed', uuid: 'collidable' }
   return { collider, rigidBody }
 }
 

@@ -1,12 +1,11 @@
 import CollidableItem from '@/entity/power-ups/CollidableItem.ts'
-import state from '@/states/GlobalState.ts'
 import { startShimmeringSphere } from '@/vfx/shimmering-sphere.ts'
 import { Vector3 } from 'three'
 
 export default (position: Vector3) => {
   const vfx = startShimmeringSphere(position)
 
-  return CollidableItem({
+  const collidable: any = CollidableItem({
     name: 'attack-power-up',
     meshPath: 'models/power-ups/swords.comp.glb',
     size: 0.4,
@@ -23,7 +22,7 @@ export default (position: Vector3) => {
       }
 
       /* this is a pickup item, so we remove it here, we might have other logic here later */
-      state.triggerEvent('level.object.remove', uuid)
+      collidable.emitter.emit('cleanup')
       vfx.emit('cleanup')
     },
     onCollisionEnd: () => {},
@@ -35,4 +34,6 @@ export default (position: Vector3) => {
     position,
     rotateMesh: true,
   })
+
+  return collidable
 }

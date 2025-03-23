@@ -1,3 +1,4 @@
+import FairyDust from '@/entity/FairyDust.ts'
 import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
 import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
 import state from '@/states/GlobalState'
@@ -119,6 +120,10 @@ export default async (onFinishedCallback: () => void) => {
 
   state.scene.add(waterArena)
   state.level = waterArena
+
+  FairyDust({ position: new Vector3(9.5, -2.1, 7) })
+  FairyDust({ position: new Vector3(8, 5, 2.4) })
+
   onFinishedCallback()
 
   return waterArena

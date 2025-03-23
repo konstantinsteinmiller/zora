@@ -1,3 +1,4 @@
+import arena from '@/Arena.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
 import type { Guild } from '@/types/entity.ts'
 import useUser from '@/use/useUser.ts'
@@ -94,6 +95,9 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
       entity.die(entity)
       state.isBattleOver = true
       return
+    }
+    if (state.level.name.toLowerCase().includes('arena') && entity.position.y < -15) {
+      entity.dealDamage(entity, entity.hp)
     }
   }
 
