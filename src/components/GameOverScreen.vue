@@ -39,6 +39,9 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const route = useRoute()
+
+/* if someone fled the game, state.fledGame = true */
+
 const backToMainMenu = () => {
   cleanupLevel(false, true)
   setTimeout(() => {

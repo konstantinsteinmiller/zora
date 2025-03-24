@@ -37,7 +37,6 @@ const CharacterController = ({
     ...{
       updateChargeIndicator: chargeUtilsObj.updateChargeIndicator,
       createChargeIndicator: chargeUtilsObj.createChargeIndicator,
-      destroyChargeIndicatorVFX: chargeUtilsObj.destroyChargeIndicatorVFX,
     },
     mesh: mesh,
     halfHeight,

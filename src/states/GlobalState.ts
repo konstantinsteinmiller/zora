@@ -112,6 +112,8 @@ const globalState = () => {
   state.showCrosshair = true
   state.isThirdPerson = true
   state.isPaused = false
+  state.canFlee = true
+  state.fledGame = false
   state.isBattleOver = false
   state.isEngineInitialized = false
   state.isBattleInitialized = false

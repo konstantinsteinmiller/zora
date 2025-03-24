@@ -1,4 +1,5 @@
 import FairyDust from '@/entity/FairyDust.ts'
+import FleeOrb from '@/entity/levels/FleeOrb.ts'
 import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
 import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
 import state from '@/states/GlobalState'
@@ -83,6 +84,10 @@ export default async (onFinishedCallback: () => void) => {
     }
     state.scene.add(pathfinder.pathfindingHelper)
   })
+
+  /* add flee point */
+  const fleePoint = new Vector3(-1.44, 8, -0.45)
+  FleeOrb(fleePoint)
 
   const coverBoxGeometry = new BoxGeometry(0.5, 0.5, 0.5)
   coverBoxGeometry.computeBoundingBox()

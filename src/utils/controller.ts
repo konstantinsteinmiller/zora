@@ -17,7 +17,7 @@ import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
 import { removePath } from '@/utils/navigation.ts'
-import { createVFX, destroyVfx } from '@/utils/vfx.ts'
+import { createVFX } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import { Color, Object3D, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
@@ -156,7 +156,11 @@ export const statsUtils = () => {
       const position: Vector3 = entity.mesh.position.clone()
       position.setY(position.y + 0.1)
 
-      createVFX(position, 'deathStar', true /*, () => console.log('vfx finished: ')}*/)
+      createVFX({
+        vfxName: 'deathStar',
+        position: position,
+        removeOnDeath: true,
+      })
       removePath()
 
       const deathEventUuid: string = state.addEvent('renderer.update', () => {
@@ -207,11 +211,7 @@ export const chargeUtils = () => ({
     const { fireRaycaster } = SpellFire()
     entity.currentSpell.canFire = false
     entity.currentSpell.forcedSpellRelease = false
-    const {
-      eventUuid: chargeIndicatorEventUuid,
-      nebulaSystem,
-      vfxRenderer,
-    } = await entity.createChargeIndicator(entity)
+    const { nebulaSystem, chargeEmitter } = await entity.createChargeIndicator(entity)
 
     const chargingUuid = state.addEvent('renderer.update', () => {
       if (!entity.currentSpell || entity.currentSpell.forcedSpellRelease) return
@@ -238,14 +238,14 @@ export const chargeUtils = () => ({
         entity.currentSpell.charge = 0
 
         state.removeEvent('renderer.update', chargingUuid)
-        entity.destroyChargeIndicatorVFX(nebulaSystem, vfxRenderer, chargeIndicatorEventUuid, entity)
+        chargeEmitter?.emit('cleanup')
         fireRaycaster(rotationSpeed, entity, target)
       } else {
         const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
         if (isEntityChargeCritical) {
           state.removeEvent('renderer.update', chargingUuid)
-          entity.destroyChargeIndicatorVFX(nebulaSystem, vfxRenderer, chargeIndicatorEventUuid, entity)
+          chargeEmitter?.emit('cleanup')
           entity.fireSpell(entity, target, rotationSpeed)
         }
       }
@@ -310,12 +310,12 @@ export const chargeUtils = () => ({
     if ((!state.isThirdPerson && entity.guild === 'guild-0') || !entity?.center)
       return { eventUuid: '', nebulaSystem: null }
     const position = entity.center.clone()
-    const { eventUuid, nebulaSystem, vfxRenderer } = await createVFX(position, 'charge', false)
-    return { eventUuid, nebulaSystem, vfxRenderer }
-  },
-  destroyChargeIndicatorVFX(nebulaSystem: any, vfxRenderer: any, chargeIndicatorEventUuid: string) {
-    state.removeEvent('renderer.update', chargeIndicatorEventUuid)
-    destroyVfx({ nebulaSystem, vfxRenderer })
+    const { nebulaSystem, emitter: chargeEmitter } = await createVFX({
+      vfxName: 'charge',
+      position: position,
+      removeOnDeath: false,
+    })
+    return { nebulaSystem, chargeEmitter }
   },
 })
 

@@ -21,7 +21,6 @@ const PlayerController = (config: PlayerControllerProps) => {
   let entity = Controller(config)
   entity.updateChargeIndicator = chargeUtilsObj.updateChargeIndicator
   entity.createChargeIndicator = chargeUtilsObj.createChargeIndicator
-  entity.destroyChargeIndicatorVFX = chargeUtilsObj.destroyChargeIndicatorVFX
 
   entity.getPosition = () => {
     if (!entity.mesh) {

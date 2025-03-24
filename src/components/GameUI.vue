@@ -28,7 +28,7 @@
     <BuffsList />
   </template>
   <template v-else>
-    <GameOverScreen v-if="hasOneTeamLost" />
+    <GameOverScreen v-if="hasOneTeamLost || fledGame" />
   </template>
 
   <LoadingScreen @loading-finished="onLoadingFinished" />
@@ -51,6 +51,7 @@ const route = useRoute()
 
 const isBattleOver: Ref<boolean> = ref(!!state?.isBattleOver)
 const hasOneTeamLost: Ref<boolean> = ref(false)
+const fledGame: Ref<boolean> = ref(false)
 state.isDebug = route.query.debug === 'true'
 
 const onLoadingFinished = () => {}
@@ -67,6 +68,8 @@ onMounted(async () => {
           return true
         }
       })
+
+      fledGame.value = state.fledGame
       state.removeEvent('renderer.update', updateUuid)
     }
   })

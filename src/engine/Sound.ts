@@ -15,6 +15,7 @@ export const soundToTrackSrcMap: { [key: string]: string[] } = {
   death: repeat(3, (_, i) => prependBaseUrl(`/sounds/death/death-${i + 1}.ogg`)),
   cough: repeat(3, (_, i) => prependBaseUrl(`/sounds/cough/cough-female-${i + 1}.ogg`)),
   item: [prependBaseUrl('/sounds/item/power-up-1.ogg'), prependBaseUrl('/sounds/item/power-up-2.ogg')],
+  flee: [prependBaseUrl('/sounds/death/death-3.ogg')],
   fairyDust: [prependBaseUrl('/sounds/item/pickup-coin-1.ogg'), prependBaseUrl('/sounds/item/pickup-coin-2.ogg')],
   battle: [prependBaseUrl('/music/thunderous-march_battle.ogg')],
   battleEnd: [prependBaseUrl('/music/drifting_through_quiet_valleys_slow-beautiful-ocarina-like_battle-end.ogg')],

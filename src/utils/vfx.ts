@@ -1,4 +1,5 @@
 import useUser from '@/use/useUser.ts'
+import { EventEmitter } from 'events'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import System, { GPURenderer } from 'three-nebula'
@@ -8,14 +9,16 @@ import ShotVFX from '@/vfx/shot.json'
 import DeathStarVFX from '@/vfx/death-star.json'
 import ChargeVFX from '@/vfx/charge.json'
 import shimmeringSphereVFX from '@/vfx/shimmering-sphere.json'
+import fleeOrbVFX from '@/vfx/flee-orb.json'
 import { v4 } from 'uuid'
 
-export type VFXType = 'shot' | 'deathStar' | 'charge' | 'shimmeringSphere'
+export type VFXType = 'shot' | 'deathStar' | 'charge' | 'shimmeringSphere' | 'fleeOrb'
 const vfxMap: { [key: string]: any } = {
   shot: ShotVFX,
   deathStar: DeathStarVFX,
   charge: ChargeVFX,
   shimmeringSphere: shimmeringSphereVFX,
+  fleeOrb: fleeOrbVFX,
 }
 
 export const destroyVfx = ({ nebulaSystem, vfxRenderer }: { vfxRenderer: GPURenderer; nebulaSystem: any }) => {
@@ -31,12 +34,24 @@ export const destroyVfx = ({ nebulaSystem, vfxRenderer }: { vfxRenderer: GPURend
   }
 }
 
-export const createVFX = async (
-  position: Vector3,
-  vfxName: VFXType,
-  removeOnDeath: boolean = true,
+interface CreateVFXProps {
+  position: Vector3
+  vfxName: VFXType
+  removeOnDeath?: boolean
   onFinished?: () => void
-): Promise<{ eventUuid: string; nebulaSystem: any; vfxRenderer: any }> => {
+  options?: {
+    depthTest: boolean
+  }
+}
+
+export const createVFX = async ({
+  vfxName,
+  position,
+  removeOnDeath = true,
+  onFinished,
+  options,
+}: CreateVFXProps): Promise<{ nebulaSystem: any; emitter: any }> => {
+  const emitter = new EventEmitter()
   const vfx = vfxMap[vfxName]
   if (!vfx) {
     console.error(`VFX not found: ${vfxName}`)
@@ -48,6 +63,7 @@ export const createVFX = async (
   const vfxRenderer = new GPURenderer(state.scene, THREE)
   vfxRenderer.vfxName = `${vfxName}_${v4()}`
   const nebulaSystem = system.addRenderer(vfxRenderer)
+  nebulaSystem.depthTest = options?.depthTest || false
 
   state.vfxList.push({ name: vfxRenderer.vfxName, vfxRenderer: vfxRenderer, vfxSystem: nebulaSystem })
 
@@ -69,7 +85,15 @@ export const createVFX = async (
       }, 1000)
     }
   })
-  return Promise.resolve({ eventUuid, nebulaSystem, vfxRenderer })
+
+  const cleanup = () => {
+    state.removeEvent(`renderer.update`, eventUuid)
+    destroyVfx({ nebulaSystem, vfxRenderer })
+  }
+  emitter.on('cleanup', cleanup)
+  state.addEvent('arena.cleanup', cleanup)
+
+  return Promise.resolve({ nebulaSystem, emitter })
 }
 
 export const createShotVFX = async (

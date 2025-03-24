@@ -100,6 +100,7 @@ const Crosshair = () => {
 
   let canFire = false
   let forcedSpellRelease = false
+  let chargeEmitter: any = null
 
   /* release shot if attack button is released */
   state.addEvent('controls.attack1.up', () => {
@@ -109,12 +110,8 @@ const Crosshair = () => {
     crosshairDots.visible = false
     crosshairStar.visible = false
     state.player.currentSpell.charge = 0
-    state.player.destroyChargeIndicatorVFX(
-      chargeIndicatorNebulaSystem,
-      vfxRenderer,
-      chargeIndicatorEventUuid,
-      state.player
-    )
+
+    chargeEmitter.emit('cleanup')
     chargeIndicatorNebulaSystem = null
     chargeStartTime = Date.now()
   })
@@ -130,8 +127,6 @@ const Crosshair = () => {
   })
 
   let chargeIndicatorNebulaSystem: any = null
-  let vfxRenderer: any = null
-  let chargeIndicatorEventUuid: string = ''
   let firstCharge = true
 
   state.addEvent('renderer.update', async (deltaInS: number) => {
@@ -143,10 +138,9 @@ const Crosshair = () => {
 
     if (!chargeIndicatorNebulaSystem) {
       chargeIndicatorNebulaSystem = true
-      const chargeVFX = await entity.createChargeIndicator(entity)
-      chargeIndicatorNebulaSystem = chargeVFX.nebulaSystem
-      chargeIndicatorEventUuid = chargeVFX.eventUuid
-      vfxRenderer = chargeVFX.vfxRenderer
+      const { nebulaSystem, chargeEmitter: emitter } = await entity.createChargeIndicator(entity)
+      chargeIndicatorNebulaSystem = nebulaSystem
+      chargeEmitter = emitter
     }
     if (chargeIndicatorNebulaSystem) {
       entity.updateChargeIndicator(entity, rotationSpeed, chargeIndicatorNebulaSystem)
@@ -198,12 +192,7 @@ const Crosshair = () => {
       state.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
-      state.player.destroyChargeIndicatorVFX(
-        chargeIndicatorNebulaSystem,
-        vfxRenderer,
-        chargeIndicatorEventUuid,
-        state.player
-      )
+      chargeEmitter.emit('cleanup')
       chargeIndicatorNebulaSystem = null
     }
   })
