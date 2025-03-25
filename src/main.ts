@@ -1,7 +1,7 @@
 import { GAME_USER_LANGUAGE } from '@/utils/constants.ts'
 import { createApp, ref } from 'vue'
-import '#/css/index.sass'
 import '#/css/glass.sass'
+import '#/css/index.sass'
 import translations from '@/i18n'
 import router from '@/router'
 import App from '@/App.vue'

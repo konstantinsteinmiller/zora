@@ -9,10 +9,12 @@ const useUserDb = ({
   userSoundVolume,
   userMusicVolume,
   userLanguage,
+  userTutorialsDoneMap,
 }: {
   userSoundVolume: Ref<number>
   userMusicVolume: Ref<number>
   userLanguage: Ref<string>
+  userTutorialsDoneMap: Ref<string>
 }) => {
   // Open our database; it is created if it doesn't already exist
   const request = window.indexedDB.open('user_db', 1)
@@ -40,6 +42,7 @@ const useUserDb = ({
     objectStore.createIndex('userSoundVolume', 'userSoundVolume', { unique: false })
     objectStore.createIndex('userMusicVolume', 'userMusicVolume', { unique: false })
     objectStore.createIndex('userLanguage', 'userLanguage', { unique: false })
+    objectStore.createIndex('userTutorialsDoneMap', 'userTutorialsDoneMap', { unique: false })
     // console.log('Database setup complete')
   })
 
@@ -54,11 +57,15 @@ const useUserDb = ({
         userSoundVolume.value = request.result.userSoundVolume
         userMusicVolume.value = request.result.userMusicVolume
         userLanguage.value = request.result.userLanguage
+        if (request.result.userTutorialsDoneMap) {
+          userTutorialsDoneMap.value = JSON.parse(request.result.userTutorialsDoneMap)
+        }
       } else {
         storeUser({
           userSoundVolume: userSoundVolume.value,
           userMusicVolume: userMusicVolume.value,
           userLanguage: userLanguage.value,
+          userTutorialsDoneMap: userTutorialsDoneMap.value,
         })
       }
       isDbInitialized.value = true
@@ -72,13 +79,14 @@ const useUserDb = ({
     })
   }
 
-  // Define the storeVideo() function
+  // Define the storeUser() function
   function storeUser(params: any) {
     const store = db.transaction(['user_os'], 'readwrite').objectStore('user_os')
 
     const record = {
       name: 'user',
       ...params,
+      // userTutorialsDoneMap: JSON.stringify(params.userTutorialsDoneMap),
     }
     const request = store.put(record)
 

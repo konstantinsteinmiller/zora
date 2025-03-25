@@ -11,10 +11,10 @@
         <div
           v-for="(item, index) in itemsList"
           :key="index"
-          class="flex flex-row justify-between items-center w-full"
+          class="grid grid-cols-3 w-full"
         >
-          <h5 class="text-l">{{ t(item.name) }}</h5>
-          <div class="flex justify-start items-start">
+          <h5 class="text-l flex items-center justify-center">{{ t(item.name) }}</h5>
+          <div class="flex justify-start items-center col-span-2 w-full flex-grow">
             <input
               v-if="item.type === 'range'"
               v-model="item.value"
@@ -22,7 +22,7 @@
               max="1"
               step="0.01"
               type="range"
-              class="text-red-700 w-48"
+              class="text-red-700 w-full"
               :style="`--range-value:${item.value}`"
               @input="onInput(item.name, item.value)"
             />
@@ -30,6 +30,13 @@
               v-if="item.type === 'select' && item.items"
               v-model="item.value"
               :items="item.items"
+              @change="onInput(item.name, item.value)"
+            />
+            <XSwitch
+              v-if="item.type === 'switch'"
+              v-model="item.value"
+              :title="item.title"
+              class="w-full"
               @change="onInput(item.name, item.value)"
             />
           </div>
@@ -44,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import XSwitch from '@/components/atoms/XSwitch.vue'
 import { useI18n } from 'vue-i18n'
 import VModal from '@/components/atoms/VModal.vue'
 import useUser from '@/use/useUser'
@@ -54,7 +62,8 @@ import XSelect from '@/components/atoms/XSelect.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const { locale }: any = useI18n({ useScope: 'global' })
-const { userSoundVolume, userMusicVolume, userLanguage, setSettingValue } = useUser()
+const { userSoundVolume, userMusicVolume, userLanguage, userTutorialsDoneMap, allowTutorial, setSettingValue } =
+  useUser()
 
 defineProps({
   show: Boolean,
@@ -64,10 +73,17 @@ const emit = defineEmits(['close'])
 watch(userLanguage, (newValue: string) => {
   locale.value = newValue
 })
-
-const onInput = (name: string, newVolume: any) => {
-  setSettingValue(name, newVolume)
+const onInput = (name: string, newValue: any) => {
+  if (name === 'tutorial') {
+    allowTutorial.value = newValue
+    userTutorialsDoneMap.value = newValue ? {} : userTutorialsDoneMap.value
+    newValue && setSettingValue('tutorialsDoneMap', JSON.stringify(userTutorialsDoneMap.value))
+    return
+  }
+  setSettingValue(name, newValue)
 }
+
+const allowTutorialCRef: any = computed(() => t('allowTutorial'))
 
 const languagesList = computed(() => {
   return LANGUAGES.map((locale: string) => ({
@@ -94,6 +110,12 @@ const itemsList = ref([
     value: userLanguage,
     items: languagesList,
   },
+  {
+    name: 'tutorial',
+    type: 'switch',
+    value: allowTutorial,
+    title: allowTutorialCRef,
+  },
 ])
 const onClose = () => {
   // isOptionsModalOpen.value = !isOptionsModalOpen.value
@@ -108,6 +130,7 @@ en:
   title: "Options"
   soundVolume: "Game Sound"
   musicVolume: "Music"
+  allowTutorial: "Reset Tutorial"
   language: "Language"
   en: "English"
   de: "German"
@@ -132,6 +155,7 @@ de:
   title: "Einstellungen"
   soundVolume: "Sound"
   musicVolume: "Musik"
+  allowTutorial: "Tutorial zurücksetzen"
   language: "Sprache"
   en: "Englisch"
   de: "Deutsch"

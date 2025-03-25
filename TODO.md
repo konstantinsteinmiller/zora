@@ -35,7 +35,9 @@
   - [x] battle end sound
   - [x] background music
 - [ ] Tutorial
-  - [ ] Popover on screen for controls etc and descriptions
+  - [x] Popover on screen for controls etc and descriptions
+  - [x] Character controls tutorial
+  - [x] add reset tutorial to options menu
   - [ ] don't ask again switch
 - [ ] UI
   - [x] Pausing Game for menu access

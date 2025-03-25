@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { spraySprincles } from '@/control/KeyboardController.ts'
+import InputController, { spraySprincles } from '@/control/KeyboardController.ts'
 import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
@@ -10,6 +10,7 @@ import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/fin
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
+import TutorialPopover from '@/components/TutorialPopover.vue'
 import XButton from '@/components/atoms/XButton.vue'
 import { useRoute } from 'vue-router'
 
@@ -36,6 +37,7 @@ const setPointer = async () => {
 }
 setPointer()
 
+// InputController()
 !state.sounds && Sound()
 state.sounds.playBackgroundMusic()
 
@@ -108,8 +110,6 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped lang="sass"></style>
 
 <i18n>
 en:

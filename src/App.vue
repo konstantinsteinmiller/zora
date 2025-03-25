@@ -11,10 +11,12 @@
       class="absolute cursor z-[999] pointer-events-none"
       alt="cursor"
     />
+    <Tutorial />
   </div>
 </template>
 
 <script setup lang="ts">
+import Tutorial from '@/components/Tutorial.vue'
 import { computed } from 'vue'
 import state from '@/states/GlobalState'
 

@@ -1,4 +1,5 @@
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
+import { useKeyboard } from '@/use/useKeyboard.ts'
 import { LOOK_AROUND_SPEED, Options } from '@/utils/constants.ts'
 import state from '@/states/GlobalState'
 import type { Enum, EnumStringToList } from '@/types/general.ts'
@@ -33,8 +34,9 @@ const defaultControlsConfig: EnumStringToList = {
 }
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))
 
-export default (entity: any) => {
+export default (entity?: any) => {
   if (input?.mouse) return input
+  const { activatedKeysMap } = useKeyboard()
 
   const prefilledActionsMap = getPrefilledActionsMap(defaultControlsConfig)
   input = {
@@ -73,7 +75,7 @@ export default (entity: any) => {
   const setAction = (code: string) => {
     for (const action in controlsConfig) {
       const list: string[] = controlsConfig[action]
-      if (list.includes(code)) {
+      if (list.includes(code) && entity) {
         /* set previous action to current action state, then update the current action state */
         input.actionsMap.previous[action] = input.actionsMap[action]
         input.actionsMap[action] = list.every((key: string) => input.keysMap[key])
@@ -90,6 +92,9 @@ export default (entity: any) => {
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = true
+    activatedKeysMap.value[`Mouse${event.button}`] = true
+
+    if (!entity) return
 
     setAction(`Mouse${event.button}`)
     setTimeout(() => {
@@ -115,6 +120,7 @@ export default (entity: any) => {
     if (event.ctrlKey && preventedControlCommandsList.includes(event.code)) event.preventDefault()
 
     input.keysMap[event.code] = true
+    activatedKeysMap.value[event.code] = true
     setAction(event.code)
   }
 
@@ -282,91 +288,102 @@ export function spraySprincles(event: MouseEvent) {
     origin: { x: clientX / innerWidth, y: clientY / innerHeight },
   })
 }
-/*
-const KeyboardKeys = [
-  'IntlBackslash',
-  'Digit1',
-  'Digit2',
-  'Digit3',
-  'Digit4',
-  'Digit5',
-  'Digit6',
-  'Digit7',
-  'Digit8',
-  'Digit9',
-  'Digit0',
-  'Minus',
-  'Equal',
-  'Backspace',
-  'Tab',
-  'KeyQ',
-  'KeyW',
-  'KeyE',
-  'KeyR',
-  'KeyT',
-  'KeyY',
-  'KeyU',
-  'KeyI',
-  'KeyO',
-  'KeyP',
-  'BracketLeft',
-  'BracketRight',
-  'Enter',
-  'CapsLock',
-  'KeyA',
-  'KeyS',
-  'KeyD',
-  'KeyF',
-  'KeyG',
-  'KeyH',
-  'KeyJ',
-  'KeyK',
-  'KeyL',
-  'Semicolon',
-  'Quote',
-  'Backslash',
-  'ShiftLeft',
-  'Backquote',
-  'KeyZ',
-  'KeyX',
-  'KeyC',
-  'KeyV',
-  'KeyB',
-  'KeyN',
-  'KeyM',
-  'Comma',
-  'Period',
-  'Slash',
-  'ShiftRight',
-  'ControlLeft',
-  'AltLeft',
-  'MetaLeft',
-  'MetaRight',
-  'AltRight',
-  'ControlRight',
-  'Space',
-  'Numpad1',
-  'Numpad2',
-  'Numpad3',
-  'Numpad6',
-  'Numpad5',
-  'Numpad4',
-  'Numpad7',
-  'Numpad8',
-  'Numpad9',
-  'NumLock',
-  'NumpadEqual',
-  'NumpadDivide',
-  'NumpadMultiply',
-  'NumpadSubtract',
-  'NumpadAdd',
-  'NumpadEnter',
-  'Numpad0',
-  'NumpadDecimal',
-  'Delete',
-  'End',
-  'Home',
-  'PageUp',
-  'PageDown',
-]
-*/
+
+export const KeyboardKeysMap = {
+  Mouse0: 'LMB',
+  Mouse1: 'Mouse1',
+  Mouse2: 'RMB',
+  IntlBackslash: 'IntlBackslash',
+  Digit1: '1',
+  Digit2: '2',
+  Digit3: '3',
+  Digit4: '4',
+  Digit5: '5',
+  Digit6: '6',
+  Digit7: '7',
+  Digit8: '8',
+  Digit9: '9',
+  Digit0: '0',
+  Minus: 'Minus',
+  Equal: 'Equal',
+  Backspace: 'Backspace',
+  Tab: 'Tab',
+  KeyQ: 'Q',
+  KeyW: 'W',
+  KeyE: 'E',
+  KeyR: 'R',
+  KeyT: 'T',
+  KeyY: 'Y',
+  KeyU: 'U',
+  KeyI: 'I',
+  KeyO: 'O',
+  KeyP: 'P',
+  BracketLeft: 'BracketLeft',
+  BracketRight: 'BracketRight',
+  Enter: 'Enter',
+  CapsLock: 'CapsLock',
+  KeyA: 'A',
+  KeyS: 'S',
+  KeyD: 'D',
+  KeyF: 'F',
+  KeyG: 'G',
+  KeyH: 'H',
+  KeyJ: 'J',
+  KeyK: 'K',
+  KeyL: 'L',
+  Semicolon: 'Semicolon',
+  Quote: 'Quote',
+  Backslash: 'Backslash',
+  ShiftLeft: 'ShiftLeft',
+  Backquote: 'Backquote',
+  KeyZ: 'Z',
+  KeyX: 'X',
+  KeyC: 'C',
+  KeyV: 'V',
+  KeyB: 'B',
+  KeyN: 'N',
+  KeyM: 'M',
+  Comma: 'Comma',
+  Period: 'Period',
+  Slash: 'Slash',
+  ShiftRight: 'SHIFT Left',
+  ControlLeft: 'CTRL',
+  AltLeft: 'Alt_L',
+  MetaLeft: 'MetaLeft',
+  MetaRight: 'MetaRight',
+  AltRight: 'Alt_R',
+  ControlRight: 'CTRL_R',
+  Space: 'Space',
+  Numpad1: 'Numpad1',
+  Numpad2: 'Numpad2',
+  Numpad3: 'Numpad3',
+  Numpad4: 'Numpad4',
+  Numpad5: 'Numpad5',
+  Numpad6: 'Numpad6',
+  Numpad7: 'Numpad7',
+  Numpad8: 'Numpad8',
+  Numpad9: 'Numpad9',
+  NumLock: 'NumLock',
+  NumpadEqual: 'NumpadEqual',
+  NumpadDivide: 'NumpadDivide',
+  NumpadMultiply: 'NumpadMultiply',
+  NumpadSubtract: 'NumpadSubtract',
+  NumpadAdd: 'NumpadAdd',
+  NumpadEnter: 'NumpadEnter',
+  Numpad0: 'Numpad0',
+  NumpadDecimal: 'NumpadDecimal',
+  Delete: 'Delete',
+  End: 'End',
+  Home: 'Home',
+  PageUp: 'PageUp',
+  PageDown: 'PageDown',
+  ArrowUp: 'ArrowUp',
+  ArrowDown: 'ArrowDown',
+  ArrowLeft: 'ArrowLeft',
+  ArrowRight: 'ArrowRight',
+  Escape: 'Escape',
+  PrintScreen: 'PrintScreen',
+  ScrollLock: 'ScrollLock',
+  Pause: 'Pause',
+  Insert: 'Insert',
+}

@@ -27,7 +27,9 @@ import Arena from '@/Arena.ts'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
 import state from '@/states/GlobalState.ts'
+import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
+import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
 import { startPoisonCloudVFX } from '@/vfx/poison-cloud-sprite.ts'
 import { type ComputedRef, onMounted } from 'vue'
 
@@ -38,7 +40,11 @@ const fileLoader = FileLoader()
 let isLoading: ComputedRef<boolean> | boolean = fileLoader.isLoading
 let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
 
+const { levelType } = useMatch()
+const { tutorialPhase } = useUser()
+
 onMounted(() => {
+  levelType.value = LEVELS.ARENA
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
   const startBattle = () => {
@@ -55,6 +61,10 @@ onMounted(() => {
 
       state.sounds.stop('background')
       state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
+
+      if (levelType.value === LEVELS.ARENA) {
+        tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
+      }
     }
   }
   state.addOneTimeEvent('renderer.update', () => {

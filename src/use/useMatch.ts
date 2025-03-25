@@ -10,6 +10,7 @@ const isStartingGame: Ref<boolean> = ref(false)
 const isSplashScreenVisible: Ref<boolean> = ref(true)
 // const showSplashScreen: Ref<boolean> = ref(true)
 const isDbInitialized: Ref<boolean> = ref(false)
+const levelType: Ref<string> = ref('')
 
 const controls: any = ref({
   show: false,
@@ -44,6 +45,7 @@ const useMatch = () => {
     isSplashScreenVisible,
     isDbInitialized,
     controls,
+    levelType,
     game,
   }
 }

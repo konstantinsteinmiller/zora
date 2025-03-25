@@ -2,7 +2,7 @@ import globals from 'globals'
 import pluginJs from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
-// import autoImport from 'eslint-plugin-auto-import'
+import pluginPug from 'eslint-plugin-pug'
 import prettier from 'eslint-plugin-prettier/recommended'
 import vueConfigTypescript from '@vue/eslint-config-typescript'
 import vueConfigPrettier from '@vue/eslint-config-prettier'
@@ -29,7 +29,6 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'max-params': ['error', 5],
@@ -49,17 +48,32 @@ export default [
       ],
     },
   },
+
+  // Pug rules for .pug files
+  {
+    files: ['**/*.pug', '**/*.vue'],
+    plugins: {
+      pug: pluginPug,
+    },
+    rules: {
+      // 'pug/no-unused-vars': 'error',
+    },
+    processor: 'pug/pug', // This enables Pug template parsing
+  },
+
   // vue
   ...pluginVue.configs['flat/recommended'],
   {
     files: ['*.vue', '**/*.vue'],
+    plugins: {
+      vue: pluginVue,
+    },
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
       },
     },
-  },
-  {
     rules: {
       ...vueConfigTypescript.rules,
       ...vueConfigPrettier.rules,
@@ -92,7 +106,6 @@ export default [
       'array-bracket-spacing': ['error', 'never'],
       'object-curly-spacing': ['error', 'always'],
       curly: 'error',
-      // "vue/max-attributes-per-line": "off",
       'vue/max-attributes-per-line': [
         'error',
         {
@@ -100,10 +113,6 @@ export default [
           multiline: 1,
         },
       ],
-      // "vue/first-attribute-linebreak": ["error", {
-      //   "singleline": "beside",
-      //   "multiline": "below"
-      // }],
       'vue/html-closing-bracket-newline': ['error', { multiline: 'always', singleline: 'never' }],
       'vue/html-closing-bracket-spacing': ['error', { selfClosingTag: 'always' }],
       'vue/prop-name-casing': ['error', 'camelCase'],
@@ -112,9 +121,6 @@ export default [
 
       'jest/no-disabled-tests': 'off',
     },
-  },
-  {
-    ignores: ['node_modules', '.nuxt', '.output', 'dist'],
   },
   // prettier
   prettier,
@@ -135,13 +141,9 @@ export default [
       ],
     },
   },
-  // ...autoImport.configs.recommended,
-  // {
-  //   rules: {
-  //     "rootPath": "./src",
-  //     'packages': {
-  //       "three": "three",
-  //     }
-  //   },
-  // },
+
+  // Ignore patterns
+  {
+    ignores: ['node_modules', '.nuxt', '.output', 'dist', '**/*.d.ts'],
+  },
 ]

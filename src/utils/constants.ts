@@ -42,6 +42,7 @@ export const Options = {
 export const GAME_USER_LANGUAGE: string = 'zoraUserLanguage'
 export const GAME_USER_SOUND_VOLUME: string = 'zoraSoundVolume'
 export const GAME_USER_MUSIC_VOLUME: string = 'zoraMusicVolume'
+export const GAME_USER_TUTORIAL_DONE_MAP: string = 'zoraTutorialDoneMap'
 
 // Define collision groups (using bitmasks)
 export const WORLD_GROUP = 0b0001 // Group 1 for world objects
