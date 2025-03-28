@@ -1,3 +1,4 @@
+import useUser from '@/use/useUser.ts'
 import {
   CRITICAL_CHARGE_END_COLOR,
   CRITICAL_CHARGE_START_COLOR,
@@ -10,6 +11,7 @@ import {
   MIN_CHARGE_START_COLOR,
 } from '@/utils/constants.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
+import { TUTORIALS } from '@/utils/enums.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils.js'
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
@@ -102,6 +104,15 @@ const Crosshair = () => {
   let forcedSpellRelease = false
   let chargeEmitter: any = null
 
+  const calcAttackMpDamage = (entity: any, rotationSpeed: number) => {
+    const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.cost, rotationSpeed).toFixed(2)
+
+    if (mpCost > entity.mp) {
+      const mpDiff = mpCost - entity.mp
+      entity.dealDamage(entity, mpDiff)
+    }
+    entity.dealMpDamage(entity, mpCost)
+  }
   /* release shot if attack button is released */
   state.addEvent('controls.attack1.up', () => {
     canFire && fireRaycaster(rotationSpeed, state.player, state.enemy)
@@ -111,11 +122,14 @@ const Crosshair = () => {
     crosshairStar.visible = false
     state.player.currentSpell.charge = 0
 
+    calcAttackMpDamage(state.player, rotationSpeed)
+
     chargeEmitter.emit('cleanup')
     chargeIndicatorNebulaSystem = null
     chargeStartTime = Date.now()
   })
 
+  const { userSoundVolume, tutorialPhase, userTutorialsDoneMap } = useUser()
   /* start charging spell on mouse down and hold */
   state.addEvent('controls.attack1.down', () => {
     canFire = false
@@ -124,6 +138,13 @@ const Crosshair = () => {
     crosshairStar.visible = false
     state.player.currentSpell.charge = 0
     chargeStartTime = Date.now()
+    /* warn player with sound that he might harm himself because of missing mana */
+    if (state.player.mp < state.player.currentSpell.cost * 0.5) {
+      state.sounds.addAndPlayPositionalSound(state.player, 'missingMana', { volume: 0.5 * userSoundVolume.value })
+
+      if (userTutorialsDoneMap.value[TUTORIALS.MISSING_MANA]) return
+      tutorialPhase.value = TUTORIALS.MISSING_MANA
+    }
   })
 
   let chargeIndicatorNebulaSystem: any = null
@@ -194,6 +215,7 @@ const Crosshair = () => {
       crosshairStar.visible = false
       chargeEmitter.emit('cleanup')
       chargeIndicatorNebulaSystem = null
+      calcAttackMpDamage(state.player, rotationSpeed)
     }
   })
 }

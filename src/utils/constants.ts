@@ -7,6 +7,7 @@ export const MAX_FLY_IMPULSE = 0.2
 export const MIN_FLY_IMPULSE = MAX_FLY_IMPULSE * 0.1
 export const FLY_COST = 15
 export const ENDURANCE_REGEN_SPEED = 10
+export const MP_REGEN_SPEED = 0.5
 
 export const characterAnimationNamesList: string[] = [
   'idle',

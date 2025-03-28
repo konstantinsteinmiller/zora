@@ -132,6 +132,8 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
 
     checkPoisonCloud()
 
+    entity.regenMana(entity, deltaS)
+
     return true
   }
 

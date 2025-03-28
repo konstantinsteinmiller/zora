@@ -31,6 +31,7 @@
   - [x] pickup fairy dust sounds
   - [x] poison cloud damage sound (caugh)
   - [x] death sound
+  - [x] missing mana sound
   - [x] battle music
   - [x] battle end sound
   - [x] background music
@@ -38,6 +39,7 @@
   - [x] Popover on screen for controls etc and descriptions
   - [x] Character controls tutorial
   - [x] add reset tutorial to options menu
+  - [x] Missing mana tutorial
   - [ ] don't ask again switch
 - [ ] UI
   - [x] Pausing Game for menu access
@@ -75,7 +77,7 @@
     - [ ] Item Slot
     - [ ] Items
       - [ ] Gold
-      - [ ] Fairy Dust
+      - [x] Fairy Dust
       - [ ] Consumables
       - [ ] Quest Items
 - [x] Main Menu
@@ -90,9 +92,9 @@
   - [x] create fairy dust item
   - [x] enemies dropping fairy dust on hit
   - [x] fairy dust blinking before disappearing
-  - [ ] every spell shot uses mana
-  - [ ] mana regenerates slowly over time
-  - [ ] if not enough mana for the spell, health is used instead of missing mana amount
+  - [x] every spell shot uses mana
+  - [x] mana regenerates slowly over time
+  - [x] if not enough mana for the spell, health is used instead of missing mana amount
   - [x] if a fairy falls to the void, it dies at y < -10
   - [x] wild fairies and the player can fly in a wild fairy fight
 - [ ] World

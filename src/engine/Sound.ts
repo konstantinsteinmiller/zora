@@ -17,6 +17,7 @@ export const soundToTrackSrcMap: { [key: string]: string[] } = {
   item: [prependBaseUrl('/sounds/item/power-up-1.ogg'), prependBaseUrl('/sounds/item/power-up-2.ogg')],
   flee: [prependBaseUrl('/sounds/death/death-3.ogg')],
   fairyDust: [prependBaseUrl('/sounds/item/pickup-coin-1.ogg'), prependBaseUrl('/sounds/item/pickup-coin-2.ogg')],
+  missingMana: [prependBaseUrl('/sounds/missingMana/missing-mana-xylophon.ogg')],
   battle: [prependBaseUrl('/music/thunderous-march_battle.ogg')],
   battleEnd: [prependBaseUrl('/music/drifting_through_quiet_valleys_slow-beautiful-ocarina-like_battle-end.ogg')],
   background: [

@@ -1,5 +1,3 @@
-import renderer from '@/engine/Renderer.ts'
-import sound from '@/engine/Sound.ts'
 import SpellFire from '@/entity/SpellFire.ts'
 import useUser from '@/use/useUser.ts'
 import {
@@ -10,6 +8,7 @@ import {
   MIN_CHARGE_END_COLOR,
   MIN_CHARGE_SPEED,
   MIN_CHARGE_START_COLOR,
+  MP_REGEN_SPEED,
 } from '@/utils/constants.ts'
 import state from '@/states/GlobalState.ts'
 import type { ControllerUtils } from '@/types/entity.ts'
@@ -30,6 +29,7 @@ export const getBaseStats: any = () => ({
   mp: 100,
   previousMp: 100,
   maxMp: 100,
+  mpRegen: 1,
   endurance: 100,
   previousEndurance: 100,
   maxEndurance: 100,
@@ -46,6 +46,7 @@ export const getBaseStats: any = () => ({
     name: 'shot',
     speed: 1,
     damage: 25,
+    cost: 25,
     charge: 0 /* [0,1] */,
     buff: {
       name: 'attack',
@@ -139,6 +140,15 @@ export const statsUtils = () => {
         didDamage = true
       } else if (didDamage && elapsedTimeInS % TIME_INTERVAL > TIME_INTERVAL - 1.0) {
         didDamage = false
+      }
+    },
+    regenMana(target: any, deltaS: number) {
+      if (
+        target.stateMachine.currentState.name !== 'fly' &&
+        target.utils.groundedTime.value > 0.5 &&
+        state.player.currentSpell.charge === 0
+      ) {
+        this.dealMpDamage(target, -MP_REGEN_SPEED * target.mpRegen * deltaS)
       }
     },
     regenEndurance(target: any, deltaS: number) {
