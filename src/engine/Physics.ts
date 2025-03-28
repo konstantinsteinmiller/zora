@@ -1,12 +1,12 @@
 import Rapier from '@dimforge/rapier3d-compat'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { BufferAttribute, BufferGeometry, LineBasicMaterial, LineSegments } from 'three'
 
 export default async () => {
   await Rapier.init()
   const eventQueue = new Rapier.EventQueue(true)
   const physics = new Rapier.World(new Rapier.Vector3(0, -9.81, 0))
-  state.physics = physics
+  $.physics = physics
 
   // Initialize Rapier Debug Renderer
   const debugMaterial = new LineBasicMaterial({ color: 0xff0000, linewidth: 2 })
@@ -14,22 +14,22 @@ export default async () => {
   const debugLines = new LineSegments(debugGeometry, debugMaterial)
   let added = false
 
-  state.addEvent('renderer.update', (deltaS: number) => {
+  $.addEvent('renderer.update', (deltaS: number) => {
     physics.step(eventQueue)
 
     eventQueue.drainCollisionEvents((handle1, handle2, started) => {
-      const colliderA = state.physics.getCollider(handle1)
-      const colliderB = state.physics.getCollider(handle2)
+      const colliderA = $.physics.getCollider(handle1)
+      const colliderB = $.physics.getCollider(handle2)
 
-      state.eventsMap?.['physics.collision']?.forEach(({ callback }: any) => {
+      $.eventsMap?.['physics.collision']?.forEach(({ callback }: any) => {
         callback?.(colliderA, colliderB, started, deltaS)
       })
     })
 
-    if (state.enableDebug) {
+    if ($.enableDebug) {
       if (!added) {
         added = true
-        state.scene.add(debugLines)
+        $.scene.add(debugLines)
       }
       // Update the debug renderer
       const { vertices } = physics.debugRender()

@@ -7,7 +7,7 @@ import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { isPlayerInPoisonCloud } from '@/vfx/poison-cloud-sprite.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 
@@ -47,7 +47,7 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     const { loadCharacterModelWithAnimations } = AssetLoader()
     await loadCharacterModelWithAnimations({
       modelPath,
-      parent: state.scene,
+      parent: $.scene,
       position: startPosition,
       scale: 0.01,
       stateMachine,
@@ -93,17 +93,17 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
   const checkIsCharacterDead = () => {
     if (entity.isDead(entity)) {
       entity.die(entity)
-      state.isBattleOver = true
+      $.isBattleOver = true
       return
     }
-    if (state.level.name.toLowerCase().includes('arena') && entity.position.y < -15) {
+    if ($.level.name.toLowerCase().includes('arena') && entity.position.y < -15) {
       entity.dealDamage(entity, entity.hp)
     }
   }
 
   entity.checkBattleOver = (updateEventUuid: string) => {
-    if (state.isBattleOver) {
-      state.removeEvent('renderer.update', updateEventUuid)
+    if ($.isBattleOver) {
+      $.removeEvent('renderer.update', updateEventUuid)
     }
   }
 
@@ -115,7 +115,7 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     if (isPlayerInPoisonCloud(playerPosition)) {
       entity.dealDamage(entity, 0.1)
       soundCounter % 160 === 0 &&
-        state.sounds.addAndPlayPositionalSound(entity, 'cough', { volume: 0.5 * userSoundVolume.value * 0.25 })
+        $.sounds.addAndPlayPositionalSound(entity, 'cough', { volume: 0.5 * userSoundVolume.value * 0.25 })
     }
   }
 

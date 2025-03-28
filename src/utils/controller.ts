@@ -10,7 +10,7 @@ import {
   MIN_CHARGE_START_COLOR,
   MP_REGEN_SPEED,
 } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import type { ControllerUtils } from '@/types/entity.ts'
 import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
@@ -146,7 +146,7 @@ export const statsUtils = () => {
       if (
         target.stateMachine.currentState.name !== 'fly' &&
         target.utils.groundedTime.value > 0.5 &&
-        state.player.currentSpell.charge === 0
+        $.player.currentSpell.charge === 0
       ) {
         this.dealMpDamage(target, -MP_REGEN_SPEED * target.mpRegen * deltaS)
       }
@@ -173,7 +173,7 @@ export const statsUtils = () => {
       })
       removePath()
 
-      const deathEventUuid: string = state.addEvent('renderer.update', () => {
+      const deathEventUuid: string = $.addEvent('renderer.update', () => {
         const mesh = entity.mesh
         const originalScale = entity.mesh.scale.clone()
 
@@ -183,10 +183,10 @@ export const statsUtils = () => {
           mesh.scale.set(scale, scale, scale)
         }
         if (entity.mesh.scale.y < targetScale) {
-          state.removeEvent('renderer.update', deathEventUuid)
+          $.removeEvent('renderer.update', deathEventUuid)
           entity.mesh.geometry?.dispose()
           entity.mesh.material?.dispose()
-          state.scene.remove(entity.mesh)
+          $.scene.remove(entity.mesh)
           // console.log('%c is dying: ', 'color: violet')
         }
       })
@@ -197,7 +197,7 @@ export const statsUtils = () => {
       const movementVector = calcRapierMovementVector(entity, new Vector3(0, 0, 0), deltaS)
       entity.rigidBody.setNextKinematicTranslation(movementVector)
 
-      state.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.25 * userSoundVolume.value * 0.25 })
+      $.sounds.addAndPlayPositionalSound(entity, 'death', { volume: 0.25 * userSoundVolume.value * 0.25 })
 
       /* cleanup all sound effects on the character */
       const soundsGroup = entity.mesh.children.find((child: any) => child.name === 'sounds-group')
@@ -208,9 +208,9 @@ export const statsUtils = () => {
   }
 }
 
-export const chargeUtils = () => ({
+export const aiChargeUtils = () => ({
   async chargeAttack(entity: any, target: any) {
-    if (state.isBattleOver) return
+    if ($.isBattleOver) return
     if (entity.currentSpell.charge > 0) return
     entity.currentSpell.charge += 0.00001
 
@@ -223,7 +223,7 @@ export const chargeUtils = () => ({
     entity.currentSpell.forcedSpellRelease = false
     const { nebulaSystem, chargeEmitter } = await entity.createChargeIndicator(entity)
 
-    const chargingUuid = state.addEvent('renderer.update', () => {
+    const chargingUuid = $.addEvent('renderer.update', () => {
       if (!entity.currentSpell || entity.currentSpell.forcedSpellRelease) return
 
       /* ~ 12 - 4 seconds */
@@ -247,16 +247,20 @@ export const chargeUtils = () => ({
         entity.currentSpell.forcedSpellRelease = true
         entity.currentSpell.charge = 0
 
-        state.removeEvent('renderer.update', chargingUuid)
+        $.removeEvent('renderer.update', chargingUuid)
         chargeEmitter?.emit('cleanup')
         fireRaycaster(rotationSpeed, entity, target)
+
+        entity.calcAttackMpDamage(entity, rotationSpeed)
       } else {
         const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
         if (isEntityChargeCritical) {
-          state.removeEvent('renderer.update', chargingUuid)
+          $.removeEvent('renderer.update', chargingUuid)
           chargeEmitter?.emit('cleanup')
           entity.fireSpell(entity, target, rotationSpeed)
+
+          entity.calcAttackMpDamage(entity, rotationSpeed)
         }
       }
     })
@@ -269,8 +273,11 @@ export const chargeUtils = () => ({
     entity.currentSpell.canFire = false
     entity.currentSpell.charge = 0
   },
+})
+
+export const chargeUtils = () => ({
   updateChargeIndicator(entity: any, rotationSpeed: number, nebulaSystem: any) {
-    if ((!state.isThirdPerson && entity.guild === 'guild-0') || !entity || !nebulaSystem?.emitters?.length) return
+    if ((!$.isThirdPerson && entity.guild === 'guild-0') || !entity || !nebulaSystem?.emitters?.length) return
     const meshWorldPosition = new Vector3()
     entity.mesh.updateMatrixWorld(true)
     entity.mesh.getWorldPosition(meshWorldPosition)
@@ -317,7 +324,7 @@ export const chargeUtils = () => ({
     scaleBehaviour.scaleB.b = doubleScale
   },
   async createChargeIndicator(entity: any) {
-    if ((!state.isThirdPerson && entity.guild === 'guild-0') || !entity?.center)
+    if ((!$.isThirdPerson && entity.guild === 'guild-0') || !entity?.center)
       return { eventUuid: '', nebulaSystem: null }
     const position = entity.center.clone()
     const { nebulaSystem, emitter: chargeEmitter } = await createVFX({
@@ -326,6 +333,15 @@ export const chargeUtils = () => ({
       removeOnDeath: false,
     })
     return { nebulaSystem, chargeEmitter }
+  },
+  calcAttackMpDamage(entity: any, rotationSpeed: number) {
+    const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.cost, rotationSpeed).toFixed(2)
+
+    if (mpCost > entity.mp) {
+      const mpDiff = mpCost - entity.mp
+      entity.dealDamage(entity, mpDiff)
+    }
+    entity.dealMpDamage(entity, mpCost)
   },
 })
 
@@ -341,12 +357,12 @@ export const createOverHeadHealthBar = (entity: any) => {
     enemyPosition.y += entity.halfHeight * entityScale * 2 + 0.1 // Adjust height to be above the enemy
 
     // Convert 3D position to 2D screen space
-    const screenPosition = enemyPosition.clone().project(state.camera)
+    const screenPosition = enemyPosition.clone().project($.camera)
     const x = (screenPosition.x * 0.5 + 0.5) * window.innerWidth
     const y = (1 - (screenPosition.y * 0.5 + 0.5)) * window.innerHeight
 
     // Calculate distance from camera
-    const distance = state.camera.position.distanceTo(enemyPosition)
+    const distance = $.camera.position.distanceTo(enemyPosition)
     let width = '100%'
     // Scale health bar size based on distance (closer = bigger, farther = smaller)
     let scaleFactor = Math.max(0.3, Math.min(1.0, 5 / distance)) // Clamps scale between 0.5 and 1.5
@@ -358,7 +374,7 @@ export const createOverHeadHealthBar = (entity: any) => {
         healthBarContainer.style.maxWidth = `${width}px`
         healthBarContainer.style.width = `${width}px`
         healthBarContainer.style.minWidth = `${width}px`
-        state.removeEvent('renderer.update', healthBarEventUuid)
+        $.removeEvent('renderer.update', healthBarEventUuid)
       }
     }
 
@@ -373,7 +389,7 @@ export const createOverHeadHealthBar = (entity: any) => {
     }
   }
 
-  healthBarEventUuid = state.addEvent('renderer.update', () => updateHealthBar(entity))
+  healthBarEventUuid = $.addEvent('renderer.update', () => updateHealthBar(entity))
 }
 
 const threatRaycaster = new Raycaster()
@@ -385,7 +401,7 @@ let lastRaycastTime = Date.now()
 const coverPointsWorker = new Worker(new URL('@/webworkers/coverPointsWorker.ts', import.meta.url), { type: 'module' })
 
 function extractWorldGeometry() {
-  const geo = state.level?.children[0].geometry
+  const geo = $.level?.children[0].geometry
   const vertices = new Float32Array(geo.attributes.position.array)
   const indices = new Uint32Array(geo.index.array)
 
@@ -417,7 +433,7 @@ export const controllerAwarenessUtils = () => ({
     threatRaycaster.set(entityPosition, direction)
     lastRaycastTime = Date.now()
 
-    const objectsToIntersect = state.scene.children.filter((child: Object3D) => {
+    const objectsToIntersect = $.scene.children.filter((child: Object3D) => {
       return !child.name.startsWith('vfx-') // Exclude the particlesGroup by name
     })
     const intersects = threatRaycaster.intersectObjects(objectsToIntersect, true)
@@ -432,7 +448,7 @@ export const controllerAwarenessUtils = () => ({
   },
   findCoverPosition: (entity: any, enemy: any): Promise<Vector3> => {
     return new Promise((resolve, reject) => {
-      const { coverPositions } = state.level.pathfinder
+      const { coverPositions } = $.level.pathfinder
       const world = extractWorldGeometry()
 
       // const bestCover = raycastDebug({ entity, enemy })
@@ -449,10 +465,10 @@ export const controllerAwarenessUtils = () => ({
 
       coverPointsWorker.onmessage = function (event: any) {
         const { bestCover } = event.data
-        state.enableDebug && bestCover && console.log('bestCover: ', bestCover)
+        $.enableDebug && bestCover && console.log('bestCover: ', bestCover)
         if (bestCover) {
           // Add a green box at the cover position
-          state.enableDebug && createDebugBox(bestCover)
+          $.enableDebug && createDebugBox(bestCover)
 
           resolve(bestCover as Vector3)
         } else {
@@ -467,7 +483,7 @@ const raycaster = new Raycaster()
 
 function raycastDebug(data: any) {
   const { enemy, entity } = data
-  const { coverPositions } = state.level.pathfinder
+  const { coverPositions } = $.level.pathfinder
 
   const enemyPos = new Vector3().copy(enemy.mesh.position)
   enemyPos.setY(enemyPos.y + enemy.halfHeight)
@@ -484,7 +500,7 @@ function raycastDebug(data: any) {
       return { ...cover, distance }
     })
     .sort((a: any, b: any) => a.distance - b.distance)
-  state.scene.updateMatrixWorld(true)
+  $.scene.updateMatrixWorld(true)
 
   /* start raycasting from the closests, if one is blocked -> a cover position is found */
   const bestCCover = coverPointsWithCoverPointsList.find((cover: any) => {
@@ -494,7 +510,7 @@ function raycastDebug(data: any) {
     raycaster.set(enemyPos, directionN)
     // return
     /* TODO: FIIIXXX THIS BRAHAHH */
-    const intersects = raycaster.intersectObjects(state.scene.children[5].children, true)
+    const intersects = raycaster.intersectObjects($.scene.children[5].children, true)
 
     if (intersects.length > 0) {
       const foundCover = intersects.find(intersect => intersect.object?.name === 'cover')

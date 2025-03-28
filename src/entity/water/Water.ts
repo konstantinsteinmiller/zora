@@ -2,7 +2,7 @@ import { Mesh, PlaneGeometry } from 'three'
 import * as THREE from 'three'
 import vertexShader from '@/entity/water/water.vert?raw'
 import fragmentShader from '@/entity/water/water.frag?raw'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 export default (options: any) => {
   const mesh: any = new Mesh()
@@ -49,13 +49,13 @@ export default (options: any) => {
     mesh.material.uniforms.uTime.value = elapsedTime
   }
 
-  state.addEvent('renderer.update', (deltaInS: number, elapsedTime: number) => {
+  $.addEvent('renderer.update', (deltaInS: number, elapsedTime: number) => {
     update(elapsedTime)
   })
 
-  if (!state.scene) {
-    setTimeout(() => state.scene.add(mesh))
-  } else state.scene.add(mesh)
+  if (!$.scene) {
+    setTimeout(() => $.scene.add(mesh))
+  } else $.scene.add(mesh)
 
   return mesh
 }

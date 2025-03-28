@@ -1,6 +1,10 @@
-import type { PortalConnection } from '@/types/state.physics.ts'
+import type { PortalConnection } from '@/types/world'
 
-export const findShortestPath = (graph: Map<number, number[]>, startGroup: number, targetGroup: number): number[] | null => {
+export const findShortestPath = (
+  graph: Map<number, number[]>,
+  startGroup: number,
+  targetGroup: number
+): number[] | null => {
   if (startGroup === targetGroup) return [] // ✅ Already at target
 
   const queue: [number, number[]][] = [[startGroup, [startGroup]]]
@@ -33,7 +37,9 @@ const buildGroupGraph = (connections: PortalConnection[]): Map<number, number[]>
 }
 
 // Modified function to return a plain object instead of a Map
-export const generateTransitionMap = (connections: PortalConnection[]): Record<number, Record<number, number[] | null>> => {
+export const generateTransitionMap = (
+  connections: PortalConnection[]
+): Record<number, Record<number, number[] | null>> => {
   const graph = buildGroupGraph(connections)
   const transitionMap: Record<number, Record<number, number[] | null>> = {}
 

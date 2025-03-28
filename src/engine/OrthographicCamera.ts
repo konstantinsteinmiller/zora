@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 export default class OrthographicCamera extends THREE.PerspectiveCamera {
   constructor() {
@@ -10,9 +10,9 @@ export default class OrthographicCamera extends THREE.PerspectiveCamera {
   }
 
   update(player: any) {
-    this.position.copy(state.player.getPosition())
+    this.position.copy($.player.getPosition())
     this.position.y += 4
     this.position.z += 4
-    this.lookAt(state.player.getPosition())
+    this.lookAt($.player.getPosition())
   }
 }

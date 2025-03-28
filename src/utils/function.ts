@@ -1,7 +1,7 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import * as THREE from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { inverseLerp, lerp } from 'three/src/math/MathUtils.js'
 
 const createColliderGeo = (geo: any, rigidBody: any, physic: any) => {
@@ -66,7 +66,7 @@ export const clamp = (x: number, a: number, b: number) => {
 }
 
 export const createRayTrace = (target: THREE.Vector3) => {
-  if (state.enableDebug) {
+  if ($.enableDebug) {
     // Draw a line from pointA in the given direction at distance 1
     const geometry = new THREE.SphereGeometry(0.1, 16, 16)
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
@@ -76,9 +76,9 @@ export const createRayTrace = (target: THREE.Vector3) => {
     sphereMesh.scale.set(1, 1, 1)
     sphereMesh.frustumCulled = false
     sphereMesh.castShadow = true
-    state.scene.add(sphereMesh)
+    $.scene.add(sphereMesh)
     setTimeout(() => {
-      state.scene.remove(sphereMesh)
+      $.scene.remove(sphereMesh)
       geometry.dispose()
       material.dispose()
     }, 10000)
@@ -90,7 +90,7 @@ export const createDebugBox = (target: THREE.Vector3) => {
   const coverBoxMaterial = new MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 1 })
   const coverBox = new Mesh(coverBoxGeometry, coverBoxMaterial)
   coverBox.position.copy(target || new Vector3(0, 0, 0))
-  state.scene.add(coverBox)
+  $.scene.add(coverBox)
 
   // Fade out and remove after 5 seconds
   setTimeout(() => {
@@ -98,7 +98,7 @@ export const createDebugBox = (target: THREE.Vector3) => {
       coverBoxMaterial.opacity -= 0.02
       if (coverBoxMaterial.opacity <= 0) {
         clearInterval(fadeOut)
-        state.scene.remove(coverBox)
+        $.scene.remove(coverBox)
         coverBoxGeometry.dispose()
         coverBoxMaterial.dispose()
       }

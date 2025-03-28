@@ -1,5 +1,5 @@
 import CollidableItem from '@/entity/power-ups/CollidableItem.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import { remap } from '@/utils/function.ts'
@@ -42,12 +42,12 @@ const FairyDust = ({ position, onlyInteractableByGuild }: { position: Vector3; o
     .setCcdEnabled(true)
     .setLinearDamping(0.95) // Air resistance
     .setAngularDamping(0.9) // Rotational resistance
-  collidable.rigidBody = state.physics.createRigidBody(rigidBodyDesc)
+  collidable.rigidBody = $.physics.createRigidBody(rigidBodyDesc)
 
   // Create collider with friction
   const colliderDesc = ColliderDesc.ball(0.2).setRestitution(0.5) // Bounciness
 
-  state.physics.createCollider(colliderDesc, collidable.rigidBody)
+  $.physics.createCollider(colliderDesc, collidable.rigidBody)
 
   // Sync the sprite and VFX position with the rigid body
   const updatePosition = () => {
@@ -60,16 +60,16 @@ const FairyDust = ({ position, onlyInteractableByGuild }: { position: Vector3; o
   }
 
   // Add the update function to the render loop
-  const updateUuid = state.addEvent('renderer.update', updatePosition)
+  const updateUuid = $.addEvent('renderer.update', updatePosition)
 
   const cleanup = () => {
-    state.removeEvent('renderer.update', updateUuid)
+    $.removeEvent('renderer.update', updateUuid)
     vfx.emit('cleanup')
     collidable.emitter.emit('cleanup')
-    state.physics.removeRigidBody(collidable.rigidBody)
+    $.physics.removeRigidBody(collidable.rigidBody)
   }
 
-  collidable.addToLevel(state.level)
+  collidable.addToLevel($.level)
   return collidable
 }
 export default FairyDust

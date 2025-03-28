@@ -3,7 +3,7 @@ import useUser from '@/use/useUser.ts'
 import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 
 /* set all actions initially to false */
@@ -51,17 +51,17 @@ export default (defaultControlsConfig: EnumStringToList) => {
     attack: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (!(hasChanged && document.pointerLockElement)) return
-        state.triggerEvent('controls.attack1.down')
+        $.triggerEvent('controls.attack1.down')
       },
       onDeactivate: (entity: any) => {
         if (!document.pointerLockElement) return
-        state.triggerEvent('controls.attack1.up')
+        $.triggerEvent('controls.attack1.up')
       },
     },
     inventory: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
-          createFairyDustObjects(3.8 * Math.PI, state.enemy.position)
+          createFairyDustObjects(3.8 * Math.PI, $.enemy.position)
           // entity.toggleInventory()
         }
       },
@@ -101,8 +101,8 @@ export default (defaultControlsConfig: EnumStringToList) => {
           const { userSoundVolume } = useUser()
           entity.stateMachine.setState('hit')
           entity.dealDamage(entity, 15)
-          entity.dealDamage(state.enemy, 115)
-          state.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.025 * userSoundVolume.value * 0.25 })
+          entity.dealDamage($.enemy, 115)
+          $.sounds.addAndPlayPositionalSound(entity, 'hit', { volume: 0.025 * userSoundVolume.value * 0.25 })
         }
       },
       onDeactivate: (entity: any) => {},
@@ -118,7 +118,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
             entity.guild === 'guild-0' && entity.dealEnduranceDamage(entity, FLY_COST)
             entity.appliedFlyImpulse = MAX_FLY_IMPULSE
             entity.utils.takeOffFrames = 3
-            state.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.25 * userSoundVolume.value * 0.25 })
+            $.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.25 * userSoundVolume.value * 0.25 })
           }
         }
       },
@@ -140,64 +140,64 @@ export default (defaultControlsConfig: EnumStringToList) => {
       onActivate: (entity: any, hasChanged: boolean) => {
         /* do once */
         if (hasChanged) {
-          state.isPaused = !state.isPaused
-          state.controls.removePointerLock()
+          $.isPaused = !$.isPaused
+          $.controls.removePointerLock()
           /* print the current position of the player mesh and save it as Vector3 to clipboard */
-          const pos = state.player.mesh.position
-          const groupId = state.level.pathfinder.getGroup(state.level.zone, pos)
-          const closest = state.level.pathfinder.getClosestNode(pos, state.level.zone, groupId, true)
+          const pos = $.player.mesh.position
+          const groupId = $.level.pathfinder.getGroup($.level.zone, pos)
+          const closest = $.level.pathfinder.getClosestNode(pos, $.level.zone, groupId, true)
           closest &&
             console.log('pos: ', pos, 'closest?.centroid:', JSON.stringify(closest?.centroid, undefined, 2), groupId)
-          navigator.clipboard.writeText(JSON.stringify(state.player.mesh.position, undefined, 2))
+          navigator.clipboard.writeText(JSON.stringify($.player.mesh.position, undefined, 2))
 
-          console.log(JSON.stringify(state.player.mesh.quaternion, undefined, 2))
+          console.log(JSON.stringify($.player.mesh.quaternion, undefined, 2))
         }
       },
       onDeactivate: (entity: any) => {},
     },
     lookBack: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        state.isThirdPerson = false
-        state.showCrosshair = false
-        state.controls.toggleCursor(false)
+        $.isThirdPerson = false
+        $.showCrosshair = false
+        $.controls.toggleCursor(false)
         document.querySelector('.game')?.classList.remove('cursor--hidden')
       },
       onDeactivate: (entity: any) => {
-        state.showCrosshair = true
-        state.controls.toggleCursor(true)
+        $.showCrosshair = true
+        $.controls.toggleCursor(true)
         document.querySelector('.game')?.classList?.add('cursor--hidden')
       },
     },
     toggleCamera: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        if (state.input.keysMap['ControlLeft']) return
+        if ($.input.keysMap['ControlLeft']) return
 
         if (hasChanged) {
-          state.isThirdPerson = !state.isThirdPerson
-          // state.camera.updateCameraRotation()
+          $.isThirdPerson = !$.isThirdPerson
+          // $.camera.updateCameraRotation()
         }
-        state.controls.lookBack = false
-        state.showCrosshair = true
+        $.controls.lookBack = false
+        $.showCrosshair = true
       },
       onDeactivate: (entity: any) => {},
     },
     moveToTargetPosition: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        state.player.path = null
-        moveToTargetPosition(state.player, null, null)
+        $.player.path = null
+        moveToTargetPosition($.player, null, null)
       },
       onDeactivate: (entity: any) => {},
     },
     toggleDebug: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        state.enableDebug = !state.enableDebug
+        $.enableDebug = !$.enableDebug
       },
       onDeactivate: (entity: any) => {},
     },
     esc: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
-          state.controls.removePointerLock()
+          $.controls.removePointerLock()
         }
       },
       onDeactivate: (entity: any) => {},

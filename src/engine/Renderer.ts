@@ -1,12 +1,12 @@
 import world from '@/entity/World.ts'
 import { Clock, WebGLRenderer } from 'three'
 import * as THREE from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 export default () => {
   const canvas: any = document.querySelector('canvas')
-  let renderer: any = state.renderer
-    ? state.renderer
+  let renderer: any = $.renderer
+    ? $.renderer
     : new WebGLRenderer({
         canvas,
         antialias: true,
@@ -31,25 +31,25 @@ export default () => {
 
   const tick = () => {
     /* exit previous game loop */
-    if (!state.isEngineInitialized) return
+    if (!$.isEngineInitialized) return
 
     const deltaS = renderer.clock.getDelta()
     accumulatedTime += deltaS
 
-    if (state.isPaused) {
+    if ($.isPaused) {
       requestAnimationFrame(tick)
       return
     }
 
     while (accumulatedTime >= FIXED_TIME_STEP) {
-      state.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
+      $.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {
         if (eventName === 'renderer.update') {
           callback()
           cleanup()
         }
       })
 
-      state.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
+      $.eventsMap?.['renderer.update']?.forEach(({ callback }: any) => {
         callback?.(FIXED_TIME_STEP, renderer.clock.getElapsedTime())
       })
       accumulatedTime -= FIXED_TIME_STEP
@@ -58,39 +58,39 @@ export default () => {
     /* auto clear here to be able to render uiScene on top
      * of the animated object scene */
     renderer.autoClear = true
-    renderer.render(state.scene, state.camera)
+    renderer.render($.scene, $.camera)
     renderer.autoClear = false
-    if (state.showCrosshair) {
+    if ($.showCrosshair) {
       renderer.clearDepth()
-      renderer.render(state.uiScene, state.uiCamera)
+      renderer.render($.uiScene, $.uiCamera)
     }
 
     requestAnimationFrame(tick)
   }
 
   const onWindowResize = () => {
-    state.camera.aspect = innerWidth / innerHeight
-    state.camera?.updateProjectionMatrix()
+    $.camera.aspect = innerWidth / innerHeight
+    $.camera?.updateProjectionMatrix()
     renderer.setSize(innerWidth, innerHeight)
-    state.triggerEvent('renderer.resize')
+    $.triggerEvent('renderer.resize')
   }
 
   window.addEventListener('resize', onWindowResize, false)
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     window.removeEventListener('resize', onWindowResize, false)
     renderer = null
-    state.renderer = null
+    $.renderer = null
   })
 
   /* start game loop */
   renderer.clock.elapsedTime = 0
   renderer.clock.start()
 
-  state.isEngineInitialized = true
+  $.isEngineInitialized = true
   tick()
 
-  state.renderer = renderer
+  $.renderer = renderer
 
   return renderer
 }

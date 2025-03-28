@@ -1,5 +1,5 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { Quaternion, Vector3 } from 'three'
 
@@ -21,22 +21,22 @@ export default () => {
   personCamera.getCameraRotation = () => ({ phi, theta })
 
   const updateCamera = () => {
-    state.camera.quaternion.copy(rotation)
-    state.camera.position.copy(translation)
+    $.camera.quaternion.copy(rotation)
+    $.camera.position.copy(translation)
 
-    const playerModelQuaternion = state.player.getRotation()
-    const playerModelPosition = state.player.getPosition()
+    const playerModelQuaternion = $.player.getRotation()
+    const playerModelPosition = $.player.getPosition()
 
-    state.player.setRotation(getXRotation())
-    if (state.controls.lookBack) {
-      state.camera.quaternion.slerp(playerModelQuaternion, 0.3)
+    $.player.setRotation(getXRotation())
+    if ($.controls.lookBack) {
+      $.camera.quaternion.slerp(playerModelQuaternion, 0.3)
       /* define distance to playerModel position 1 up and 2 away */
       const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
       idealCameraPosition.applyQuaternion(playerModelQuaternion)
       idealCameraPosition.add(playerModelPosition)
-      state.camera.position.copy(idealCameraPosition)
+      $.camera.position.copy(idealCameraPosition)
     } else {
-      state.camera.quaternion.multiply(
+      $.camera.quaternion.multiply(
         new Quaternion().setFromAxisAngle(
           new Vector3(0, 1, 0),
           -Math.PI /*
@@ -44,28 +44,28 @@ export default () => {
         )
       )
 
-      if (state.isThirdPerson) {
+      if ($.isThirdPerson) {
         const idealCameraOffset = new Vector3(-0.5, 2, -3.5)
         idealCameraOffset.applyQuaternion(playerModelQuaternion)
         idealCameraOffset.add(playerModelPosition)
-        state.camera.position.copy(idealCameraOffset)
+        $.camera.position.copy(idealCameraOffset)
       } else {
-        state.camera.position.copy(playerModelPosition)
-        state.camera.position.y += 1.0
+        $.camera.position.copy(playerModelPosition)
+        $.camera.position.y += 1.0
       }
     }
 
-    if (!state.isThirdPerson) {
-      state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
+    if (!$.isThirdPerson) {
+      $.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
     }
   }
 
   const getXRotation = () => {
     let xh: number = 0
-    if (state.controls.rotateLeft || state.controls.rotateRight) {
-      xh = state.controls.rotateLeft ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
+    if ($.controls.rotateLeft || $.controls.rotateRight) {
+      xh = $.controls.rotateLeft ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
     } else if (document.pointerLockElement) {
-      xh = state.controls.mouse.mouseX / innerWidth
+      xh = $.controls.mouse.mouseX / innerWidth
     }
 
     phi += -xh * phiSpeed
@@ -74,8 +74,8 @@ export default () => {
   }
 
   const updateTranslation = (timeElapsedInS: number) => {
-    const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
-    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
+    const forwardVelocity = ($.controls.forward ? 1 : 0) + ($.controls.backward ? -1 : 0)
+    const strafeVelocity = ($.controls.left ? 1 : 0) + ($.controls.right ? -1 : 0)
 
     const qx = new Quaternion()
     qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
@@ -92,7 +92,7 @@ export default () => {
     translation.add(forward)
     translation.add(left)
 
-    if (!state.isThirdPerson && (forwardVelocity !== 0 || strafeVelocity !== 0)) {
+    if (!$.isThirdPerson && (forwardVelocity !== 0 || strafeVelocity !== 0)) {
       isHeadBobActive = true
     }
   }
@@ -113,15 +113,15 @@ export default () => {
   const updateRotation = () => {
     if (!document.pointerLockElement) return
     /* calc the delta to rotate the character vertically and horizontally */
-    const xh = state.controls.mouse.mouseX / innerWidth
-    const yh = state.controls.mouse.mouseY / innerHeight
+    const xh = $.controls.mouse.mouseX / innerWidth
+    const yh = $.controls.mouse.mouseY / innerHeight
 
     /* apply some speed constant to get an angle in radians [0, 2 PI] */
     phi += -xh * phiSpeed
     /* apply some speed constant to get an angle in radians [0, 2 PI],
      * but don't allow user to rotate too far up or too far down
      * -> [-60°, 60°] or [-PI/3, PI/3] in radians */
-    theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
+    theta = clamp(theta + ($.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
     /* (0, 1, 0) is Up Vector / y positive Vector and rotate it by phi,
      *  so setFromAxisAngle uses following formula:
@@ -143,19 +143,19 @@ export default () => {
     /* updateTranslation is obsolete as the movement is handled in collision.ts */
     // updateTranslation(elapsedTimeInS)
     updateCamera()
-    !state.isThirdPerson && updateHeadBob(elapsedTimeInS)
+    !$.isThirdPerson && updateHeadBob(elapsedTimeInS)
   }
 
-  state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.controls) return
+  $.addEvent('renderer.update', (deltaInS: number) => {
+    if (!$.controls) return
     update(deltaInS)
   })
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     personCamera = null
-    state.personCamera = null
+    $.personCamera = null
   })
 
-  state.personCamera = personCamera
+  $.personCamera = personCamera
   return personCamera
 }

@@ -1,7 +1,7 @@
 import ControlActions, { getPrefilledActionsMap } from '@/control/ControlActions.ts'
 import { useKeyboard } from '@/use/useKeyboard.ts'
 import { LOOK_AROUND_SPEED, Options } from '@/utils/constants.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import type { Enum, EnumStringToList } from '@/types/general.ts'
 import { onUnlockedMouseMove } from '@/utils/find-pointer.ts'
 import Confetti from 'canvas-confetti'
@@ -115,7 +115,7 @@ export default (entity?: any) => {
   const preventedKeyDownEventsList = ['Space']
   const preventedControlCommandsList = ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyH']
   const onKeyDown = (event: KeyboardEvent) => {
-    // state.enableDebug && console.log('event.code: ', event.code, event.keyCode)
+    // $.enableDebug && console.log('event.code: ', event.code, event.keyCode)
     if (preventedKeyDownEventsList.includes(event.code)) event.preventDefault()
     if (event.ctrlKey && preventedControlCommandsList.includes(event.code)) event.preventDefault()
 
@@ -147,7 +147,7 @@ export default (entity?: any) => {
     input.mouse.mouseYDelta = 0 // Resetting Y delta
   }
 
-  state.addEvent(
+  $.addEvent(
     'renderer.update',
     () => {
       update()
@@ -162,8 +162,8 @@ export default (entity?: any) => {
     if (document.pointerLockElement === document.body) {
       // console.log('Pointer locked')
 
-      if (state.controls.attack) {
-        state.triggerEvent('controls.attack1.down')
+      if ($.controls.attack) {
+        $.triggerEvent('controls.attack1.down')
       }
 
       if (!document.pointerLockElement) return // Prevents double firing
@@ -174,8 +174,8 @@ export default (entity?: any) => {
     } else {
       // console.log('Pointer unlocked')
 
-      if (state.controls.attack) {
-        state.triggerEvent('controls.attack1.up')
+      if ($.controls.attack) {
+        $.triggerEvent('controls.attack1.up')
       }
       if (document.pointerLockElement) return // Prevents double firing
 
@@ -194,7 +194,7 @@ export default (entity?: any) => {
   document.addEventListener('mousemove', onUnlockedMouseMove, false)
   document.addEventListener('pointerlockchange', onPointerLockChange)
 
-  state.addEvent('battle.cleanup', () => {
+  $.addEvent('battle.cleanup', () => {
     // document.removeEventListener('click', e => onClick(e), false)
     // document.removeEventListener('pointerlockchange', onPointerLockChange)
     document.removeEventListener('keydown', onKeyDown, false)
@@ -206,18 +206,18 @@ export default (entity?: any) => {
     document.removeEventListener('mousemove', onMouseMove, false)
   })
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     document.removeEventListener('click', onClick, false)
     document.removeEventListener('pointerlockchange', onPointerLockChange)
   })
 
   function onClick(event: MouseEvent) {
-    if (isCursorVisible() && state.isBattleOver) {
+    if (isCursorVisible() && $.isBattleOver) {
       spraySprincles(event)
     }
   }
   function setPointerLock() {
-    if (state.isBattleOver) return
+    if ($.isBattleOver) return
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
     })
@@ -252,20 +252,20 @@ export default (entity?: any) => {
     return !document.querySelector('.cursor')?.classList?.contains('cursor--hidden')
   }
 
-  state.input = input
-  state.controls = input.actionsMap
-  state.controls.mouse = input.mouse
-  state.controls.keysMap = input.keysMap
-  state.controls.isPointerLocked = isPointerLocked
-  state.controls.removePointerLock = removePointerLock
-  state.controls.setPointerLock = setPointerLock
-  state.controls.togglePointerLock = togglePointerLock
-  state.controls.toggleCursor = toggleCursor
-  state.controls.onUnlockedMouseMove = onUnlockedMouseMove
+  $.input = input
+  $.controls = input.actionsMap
+  $.controls.mouse = input.mouse
+  $.controls.keysMap = input.keysMap
+  $.controls.isPointerLocked = isPointerLocked
+  $.controls.removePointerLock = removePointerLock
+  $.controls.setPointerLock = setPointerLock
+  $.controls.togglePointerLock = togglePointerLock
+  $.controls.toggleCursor = toggleCursor
+  $.controls.onUnlockedMouseMove = onUnlockedMouseMove
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     input = null
-    state.controls = null
+    $.controls = null
   })
 
   return input

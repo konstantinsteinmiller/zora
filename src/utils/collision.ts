@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
 import { ArrowHelper, Vector3 } from 'three'
 
@@ -41,11 +41,11 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   movementVector.x += rigidPos.x
   movementVector.y += rigidPos.y
   movementVector.z += rigidPos.z
-  if (state.enableDebug) {
+  if ($.enableDebug) {
     const arrowHelper = new ArrowHelper(directionN, rigidPos, 2, 0xff1100, 0.6, 0.3)
-    state.scene.add(arrowHelper)
+    $.scene.add(arrowHelper)
     setTimeout(() => {
-      state.scene.remove(arrowHelper)
+      $.scene.remove(arrowHelper)
     }, 5)
   }
 
@@ -70,7 +70,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   let pushOut = new Vector3(0, 0, 0)
   // 🟣 Wall Collision & Sliding Fix
   let adjustedWallHit = null
-  const wallHit = state.physics.castShape(
+  const wallHit = $.physics.castShape(
     shapePos,
     shapeRot,
     shapeVel,
@@ -100,7 +100,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     attemptedMovement = beforeCorrection.lengthSq() > 0.001 // Only if movement input was given
 
     // Re-check if adjusted movement still collides
-    adjustedWallHit = state.physics.castShape(
+    adjustedWallHit = $.physics.castShape(
       shapePos,
       shapeRot,
       projectedMovement,
@@ -123,7 +123,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
   const groundHitShape = new Capsule(0.01, 0.1)
   const groundHitVector = new Rapier.Vector3(0, -0.95, 0)
   const groundHitMaxToi = entity.halfHeight
-  const groundHit = state.physics.castShape(
+  const groundHit = $.physics.castShape(
     rigidPos,
     shapeRot,
     groundHitVector,
@@ -161,7 +161,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     const fallHitShape = new Capsule(entity.colliderRadius, entity.colliderRadius)
     const fallHitVector = new Rapier.Vector3(0, -0.1, 0)
     const fallHitMaxToi = 0.1
-    const fallHit = state.physics.castShape(
+    const fallHit = $.physics.castShape(
       shapePos,
       shapeRot,
       fallHitVector,
@@ -221,7 +221,7 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
       movementVector.z = rigidPos.z + projectedMovement.z
 
       // 🟣 Re-check if adjusted movement still collides
-      const adjustedFallHit = state.physics.castShape(
+      const adjustedFallHit = $.physics.castShape(
         shapePos,
         shapeRot,
         projectedMovement,

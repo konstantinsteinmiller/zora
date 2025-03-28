@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { EventEmitter } from 'events'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial, Vector3 } from 'three'
@@ -37,7 +37,7 @@ export const startShimmeringSphere = (position: Vector3) => {
   particleGroup.name = 'vfx-shimmering-sphere-particles'
 
   const emitter = new EventEmitter()
-  state.scene.add(particleGroup)
+  $.scene.add(particleGroup)
 
   // Position the particle group at the specified location
   particleGroup.position.copy(position)
@@ -97,14 +97,14 @@ export const startShimmeringSphere = (position: Vector3) => {
   }
 
   // Add the update event
-  const eventUuid = state.addEvent('renderer.update', () => {
+  const eventUuid = $.addEvent('renderer.update', () => {
     // Update particle positions for a shimmering effect
     updateParticles(particles)
   })
 
   const updateParticles = (particles: Sprite[]) => {
     // Calculate the distance between the player and the particle system
-    const playerPosition = state.player.position
+    const playerPosition = $.player.position
     const particleSystemPosition = particleGroup.position
     const distance = playerPosition.distanceTo(particleSystemPosition)
 
@@ -156,11 +156,11 @@ export const startShimmeringSphere = (position: Vector3) => {
     particles.length = 0
     particleData.length = 0
     particleTexture.dispose()
-    state.removeEvent('renderer.update', eventUuid)
+    $.removeEvent('renderer.update', eventUuid)
   }
 
   emitter.on('cleanup', cleanup)
-  state.addEvent('arena.cleanup', cleanup)
+  $.addEvent('arena.cleanup', cleanup)
 
   return emitter
 }

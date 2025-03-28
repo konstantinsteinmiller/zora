@@ -1,5 +1,5 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { Quaternion, Vector3 } from 'three'
 
@@ -21,8 +21,8 @@ export default () => {
   fpsCamera.getCameraRotation = () => ({ phi, theta })
 
   const updateTranslation = (timeElapsedInS: number) => {
-    const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
-    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
+    const forwardVelocity = ($.controls.forward ? 1 : 0) + ($.controls.backward ? -1 : 0)
+    const strafeVelocity = ($.controls.left ? 1 : 0) + ($.controls.right ? -1 : 0)
 
     const qx = new Quaternion()
     qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
@@ -61,15 +61,15 @@ export default () => {
     /* calc the delta to rotate the character vertically
      * and horizontally */
 
-    const xh = state.controls.mouse.mouseX / innerWidth
-    const yh = state.controls.mouse.mouseY / innerHeight
+    const xh = $.controls.mouse.mouseX / innerWidth
+    const yh = $.controls.mouse.mouseY / innerHeight
 
     /* apply some speed constant to get an angle in radians [0, 2 PI] */
     phi += -xh * phiSpeed
     /* apply some speed constant to get an angle in radians [0, 2 PI],
      * but don't allow user to rotate too far up or too far down
      * -> [-60°, 60°] or [-PI/3, PI/3] in radians */
-    theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
+    theta = clamp(theta + ($.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
     const qx = new Quaternion()
     /* (0, 1, 0) is Up Vector / y positive Vector and rotate it by phi,
@@ -90,12 +90,12 @@ export default () => {
   }
 
   const getXRotation = () => {
-    let xh = state.controls.mouse.mouseX / innerWidth
+    let xh = $.controls.mouse.mouseX / innerWidth
 
-    if (state.controls.left || state.controls.right) {
-      xh = state.controls.left ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
+    if ($.controls.left || $.controls.right) {
+      xh = $.controls.left ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
     } else {
-      xh = state.controls.mouse.mouseX / innerWidth
+      xh = $.controls.mouse.mouseX / innerWidth
     }
 
     phi += -xh * phiSpeed
@@ -107,27 +107,27 @@ export default () => {
   }
 
   const updateCamera = () => {
-    state.camera.quaternion.copy(rotation)
-    state.camera.position.copy(translation)
+    $.camera.quaternion.copy(rotation)
+    $.camera.position.copy(translation)
 
-    const playerModelQuaternion = state.player.getRotation()
-    const playerModelPosition = state.player.getPosition()
+    const playerModelQuaternion = $.player.getRotation()
+    const playerModelPosition = $.player.getPosition()
 
-    state.player.setRotation(getXRotation())
-    if (state.controls.lookBack) {
-      state.camera.quaternion.copy(playerModelQuaternion)
+    $.player.setRotation(getXRotation())
+    if ($.controls.lookBack) {
+      $.camera.quaternion.copy(playerModelQuaternion)
       /* define distance to playerModel position 1 up 2 away */
       const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
       idealCameraPosition.applyQuaternion(playerModelQuaternion)
       idealCameraPosition.add(playerModelPosition)
-      state.camera.position.copy(idealCameraPosition)
+      $.camera.position.copy(idealCameraPosition)
     } else {
-      state.camera.quaternion.multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), -Math.PI))
-      state.camera.position.copy(playerModelPosition)
-      state.camera.position.y += 1.0
+      $.camera.quaternion.multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), -Math.PI))
+      $.camera.position.copy(playerModelPosition)
+      $.camera.position.y += 1.0
     }
 
-    state.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
+    $.camera.position.y += Math.sin(headBobTimer * 10) * 0.025
   }
 
   const update = (timeElapsedInS: number) => {
@@ -137,17 +137,17 @@ export default () => {
     updateHeadBob(timeElapsedInS)
   }
 
-  state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.controls || state.isThirdPerson) return
+  $.addEvent('renderer.update', (deltaInS: number) => {
+    if (!$.controls || $.isThirdPerson) return
 
     update(deltaInS)
   })
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     fpsCamera = null
-    state.fpsCamera = null
+    $.fpsCamera = null
   })
 
-  state.fpsCamera = fpsCamera
+  $.fpsCamera = fpsCamera
   return fpsCamera
 }

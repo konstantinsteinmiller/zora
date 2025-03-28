@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { Vector3 } from 'three'
 
 const baseDeceleration = new Vector3(-5.0, -0.0001, -5.0)
@@ -30,7 +30,7 @@ export const createPlayerMovementStrategy = () => {
       acc.multiplyScalar(0.0)
     }
 
-    if (entity.stateMachine.currentState.name === 'jump' && !state.controls.sprint) {
+    if (entity.stateMachine.currentState.name === 'jump' && !$.controls.sprint) {
       acc.multiplyScalar(1.5)
     }
 

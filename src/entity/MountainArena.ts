@@ -1,28 +1,28 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import { Object3D } from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 export default async () => {
-  if (state.mountainArena) {
-    return state.mountainArena
+  if ($.mountainArena) {
+    return $.mountainArena
   }
 
-  state.mountainArena = new Object3D()
+  $.mountainArena = new Object3D()
   const { loadMesh } = AssetLoader()
   loadMesh(
     'worlds/arenas/mountain-arena.fbx',
-    state.mountainArena,
+    $.mountainArena,
     35 /*, (scene: Object3D) => {
     console.log('callback: ')
     scene.position.set(0, 0.5, 0)
   }*/
   )
-  state.mountainArena.position.set(0, 0.5, 0)
+  $.mountainArena.position.set(0, 0.5, 0)
   const createColliders = () => {}
 
-  state.mountainArena.name = 'MountainArenaContainer'
+  $.mountainArena.name = 'MountainArenaContainer'
   // mesh.objects = objects
-  state.scene.add(state.mountainArena)
+  $.scene.add($.mountainArena)
 
-  return state.mountainArena
+  return $.mountainArena
 }

@@ -1,6 +1,6 @@
 import { createFairyDustObjects } from '@/entity/FairyDust.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
 import { Object3D, Vector3 } from 'three'
@@ -13,7 +13,7 @@ export default () => {
   singleton = {}
 
   const raycaster = new THREE.Raycaster()
-  const pointer = new THREE.Vector2(state.controls.mouse.crosshairX, state.controls.mouse.crosshairY)
+  const pointer = new THREE.Vector2($.controls.mouse.crosshairX, $.controls.mouse.crosshairY)
 
   const damageSelf = (entity: any) => {
     entity.dealDamage(entity, entity.currentSpell.damage * entity.currentSpell.buff.value * 0.5)
@@ -26,7 +26,7 @@ export default () => {
     const entityId: string | undefined = intersect?.object?.entityId || intersect?.object?.parent?.entityId
     /* find intersected target and deal damage */
     if (entityId && entityId !== `${entity.uuid}`) {
-      const hitTarget: any = [state.player, state.enemy].find((character: any) => {
+      const hitTarget: any = [$.player, $.enemy].find((character: any) => {
         return character.uuid === entityId
       })
       if (hitTarget) {
@@ -48,7 +48,7 @@ export default () => {
     // entity.stateMachine.setState('cast')
     let directionN: Vector3 = new Vector3()
     if (entity.guild === 'guild-0') {
-      raycaster.setFromCamera(pointer, state.camera)
+      raycaster.setFromCamera(pointer, $.camera)
       directionN = raycaster.ray.direction
     } else {
       const origin = entity.mesh.position.clone()
@@ -61,7 +61,7 @@ export default () => {
       raycaster.set(origin, directionN)
     }
 
-    const objectsToIntersect = state.scene.children.filter((child: Object3D) => {
+    const objectsToIntersect = $.scene.children.filter((child: Object3D) => {
       return !child.name.startsWith('vfx-') // Exclude the particlesGroup by name
     })
     const intersects = raycaster.intersectObjects(objectsToIntersect, true)

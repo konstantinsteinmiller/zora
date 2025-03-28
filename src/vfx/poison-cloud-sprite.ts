@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial } from 'three'
 
@@ -143,17 +143,17 @@ const updateParticles = (particles: Sprite[], deltaS: number) => {
 
 export const startPoisonCloudVFX = () => {
   startTime = Date.now() // Track the start time for the radius decrease
-  state.scene.add(particleGroup)
+  $.scene.add(particleGroup)
 
   // Add the particle group to the scene
-  const eventUuid = state.addEvent('renderer.update', deltaS => {
+  const eventUuid = $.addEvent('renderer.update', deltaS => {
     // Update particle positions for a drifting effect
     updateParticles(particles, deltaS)
 
     // Cleanup after the total duration
     if (Date.now() - startTime >= totalDuration + 30000) {
       cleanup()
-      state.removeEvent('renderer.update', eventUuid)
+      $.removeEvent('renderer.update', eventUuid)
     }
   })
 
@@ -178,7 +178,7 @@ export const startPoisonCloudVFX = () => {
     particleTexture.dispose()
   }
 
-  state.addEvent('arena.cleanup', cleanup)
+  $.addEvent('arena.cleanup', cleanup)
 }
 
 /**

@@ -4,7 +4,7 @@ import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
 import router from '@/router'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import useMatch from '@/use/useMatch.ts'
 import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
@@ -38,11 +38,11 @@ const setPointer = async () => {
 setPointer()
 
 // InputController()
-!state.sounds && Sound()
-state.sounds.playBackgroundMusic()
+!$.sounds && Sound()
+$.sounds.playBackgroundMusic()
 
-!state.fileLoader && FileLoader()
-!state.camera && Camera()
+!$.fileLoader && FileLoader()
+!$.camera && Camera()
 
 const game$: any = document.querySelector('.game')
 onMounted(() => {

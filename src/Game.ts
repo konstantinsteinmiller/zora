@@ -1,5 +1,5 @@
 import FileLoader from '@/engine/FileLoader.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import useUser from '@/use/useUser.ts'
 import { destroyVfx } from '@/utils/vfx.ts'
 import { Scene } from 'three'
@@ -9,18 +9,18 @@ import Physics from '@/engine/Physics'
 
 export default async (level = 'water-arena') => {
   await Physics()
-  state.scene = new Scene()
-  state.uiScene = new Scene()
+  $.scene = new Scene()
+  $.uiScene = new Scene()
 
-  state.addEvent('arena.cleanup', () => {
-    state.scene = null
-    state.uiScene = null
+  $.addEvent('arena.cleanup', () => {
+    $.scene = null
+    $.uiScene = null
   })
 
   const levelConfig = await import(`@/entity/levels/${level}/config.ts`)
   const { phi, theta } = levelConfig.startPositions[0]?.orientation || { phi: 0, theta: 0 }
 
-  state.personCamera.setCameraRotation(phi, theta)
+  $.personCamera.setCameraRotation(phi, theta)
 
   Light()
   Renderer()
@@ -29,26 +29,26 @@ export default async (level = 'water-arena') => {
 }
 
 export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) => {
-  state.sounds.stop('background')
-  state.sounds.stop('battle')
+  $.sounds.stop('background')
+  $.sounds.stop('battle')
   if (excludeBattleProtected) {
     const { userMusicVolume } = useUser()
-    state.sounds.play('battleEnd', { volume: 1.5 * userMusicVolume.value * 0.25, loop: true })
+    $.sounds.play('battleEnd', { volume: 1.5 * userMusicVolume.value * 0.25, loop: true })
   } else {
-    state.sounds.stop('battleEnd')
+    $.sounds.stop('battleEnd')
   }
 
-  state.uiScene.traverse((child: any) => {
+  $.uiScene.traverse((child: any) => {
     // console.log('child: ', child)
     if (child) {
-      state.uiScene.remove(child)
+      $.uiScene.remove(child)
       child.geometry?.dispose?.()
       child.material?.dispose?.()
       child = null
     }
   })
   const childeren: any = []
-  state?.scene?.traverse?.((child: any) => {
+  $?.scene?.traverse?.((child: any) => {
     if (child) {
       if (excludeBattleProtected && child.isBattleProtected) return
       childeren.push(child)
@@ -57,12 +57,12 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   childeren.reverse().forEach((child: any) => {
     child.geometry?.dispose?.()
     child.material?.dispose?.()
-    state.scene.remove(child)
+    $.scene.remove(child)
     child = null
   })
 
   if (removeVfx) {
-    state.vfxList.forEach(({ /*name, */ vfxRenderer, nebulaSystem }: any) => {
+    $.vfxList.forEach(({ /*name, */ vfxRenderer, nebulaSystem }: any) => {
       setTimeout(() => {
         // console.log('name: ', name)
         destroyVfx({ nebulaSystem: nebulaSystem, vfxRenderer })
@@ -70,18 +70,18 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     })
   }
   if (!excludeBattleProtected) {
-    state.isEngineInitialized = false
-    state.isBattleOver = false
-    state.isBattleInitialized = false
-    state.player.currency.fairyDustCollected = 0
-    state.entitiesMap.clear()
+    $.isEngineInitialized = false
+    $.isBattleOver = false
+    $.isBattleInitialized = false
+    $.player.currency.fairyDustCollected = 0
+    $.entitiesMap.clear()
 
     const fileLoader = FileLoader()
     fileLoader.clearData()
-    state.triggerEvent('arena.cleanup')
-    state.clearAllEvents()
+    $.triggerEvent('arena.cleanup')
+    $.clearAllEvents()
 
-    // state.renderer.dispose()
+    // $.renderer.dispose()
     setTimeout(() => {}, 1000)
   }
 }

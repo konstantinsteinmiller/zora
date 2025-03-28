@@ -26,7 +26,7 @@
 import Arena from '@/Arena.ts'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
@@ -48,32 +48,32 @@ onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
   const startBattle = () => {
-    const character = state.player
+    const character = $.player
     character.start()
 
-    // const enemy = state.enemy
+    // const enemy = $.enemy
     // enemy.start() // already started in the Arena loop
 
-    if (state.isBattleInitialized) {
+    if ($.isBattleInitialized) {
       emit('loading-finished')
 
-      state.controls.setPointerLock()
+      $.controls.setPointerLock()
 
-      state.sounds.stop('background')
-      state.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
+      $.sounds.stop('background')
+      $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
 
       if (levelType.value === LEVELS.ARENA) {
         tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
       }
     }
   }
-  state.addOneTimeEvent('renderer.update', () => {
-    state.fileLoader.loadData(() => {
+  $.addOneTimeEvent('renderer.update', () => {
+    $.fileLoader.loadData(() => {
       startBattle()
     })
 
     /* load other assets */
-    state.sounds.loadSounds()
+    $.sounds.loadSounds()
     Arena()
 
     startPoisonCloudVFX()

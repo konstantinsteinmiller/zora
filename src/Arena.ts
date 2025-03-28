@@ -1,7 +1,7 @@
 import AIController from '@/entity/AIController.ts'
 import PlayerController from '@/entity/PlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
@@ -9,8 +9,8 @@ import Crosshair from '@/entity/Crosshair'
 
 const Arena = async (level = 'water-arena') => {
   World(() => {
-    const startPos1 = state.level.pathfinder.startPositions[0]
-    const startPos2 = state.level.pathfinder.startPositions[1]
+    const startPos1 = $.level.pathfinder.startPositions[0]
+    const startPos2 = $.level.pathfinder.startPositions[1]
 
     PlayerController({
       modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
@@ -35,29 +35,29 @@ const Arena = async (level = 'water-arena') => {
       modelHeight: 1.8,
       guild: 'guild-1' as Guild,
     })
-    const enemyUpdateEventUuid = state.addEvent('renderer.update', () => {
-      if (!state.loadingManager.isLoading) {
-        state.removeEvent('renderer.update', enemyUpdateEventUuid)
+    const enemyUpdateEventUuid = $.addEvent('renderer.update', () => {
+      if (!$.loadingManager.isLoading) {
+        $.removeEvent('renderer.update', enemyUpdateEventUuid)
         enemy.start()
       }
     })
 
     Crosshair()
 
-    state.addEvent('battle.cleanup', () => {
+    $.addEvent('battle.cleanup', () => {
       cleanupLevel(true, true)
-      state.showCursor = true
-      state.controls.removePointerLock()
+      $.showCursor = true
+      $.controls.removePointerLock()
     })
 
-    const arenaEndEventUuid = state.addEvent('renderer.update', () => {
-      if (state.isBattleOver) {
-        state.removeEvent('renderer.update', arenaEndEventUuid)
-        state.triggerEvent('battle.cleanup')
+    const arenaEndEventUuid = $.addEvent('renderer.update', () => {
+      if ($.isBattleOver) {
+        $.removeEvent('renderer.update', arenaEndEventUuid)
+        $.triggerEvent('battle.cleanup')
       }
     })
 
-    state.isBattleInitialized = true
+    $.isBattleInitialized = true
   })
 }
 export default Arena

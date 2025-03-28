@@ -40,7 +40,7 @@ const { t } = useI18n()
 
 const route = useRoute()
 
-/* if someone fled the game, state.fledGame = true */
+/* if someone fled the game, $.fledGame = true */
 
 const backToMainMenu = () => {
   cleanupLevel(false, true)

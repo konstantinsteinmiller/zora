@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import useUser from '@/use/useUser.ts'
 import { prependBaseUrl, randomInt, repeat } from '@/utils/function.ts'
 import { Audio, AudioListener, AudioLoader, Group, PositionalAudio } from 'three'
@@ -34,7 +34,7 @@ export default () => {
   /* create camera listener */
   const emitter = new EventEmitter()
   const listener = new AudioListener()
-  state.addOneTimeEvent('renderer.update', () => state.camera.add(listener))
+  $.addOneTimeEvent('renderer.update', () => $.camera.add(listener))
   watch(
     () => userMusicVolume.value,
     () => {
@@ -42,7 +42,7 @@ export default () => {
     }
   )
 
-  const audioLoader = new AudioLoader(state.loadingManager)
+  const audioLoader = new AudioLoader($.loadingManager)
 
   singleton = {
     trackBuffersMap: new Map(),
@@ -104,7 +104,7 @@ export default () => {
     const trackBuffersList: AudioBuffer[] = []
     let counter = 0
     srcList.forEach((src: string) => {
-      state.loadingManager.itemStart(src)
+      $.loadingManager.itemStart(src)
       audioLoader.load(
         src,
         buffer => {
@@ -114,13 +114,13 @@ export default () => {
           if (counter === srcList.length) {
             singleton.trackBuffersMap.set(name, trackBuffersList)
           }
-          state.loadingManager.itemEnd(src)
+          $.loadingManager.itemEnd(src)
           singleton.emitter.emit('loaded:background', { name })
         },
         onProgress,
         error => {
           console.error(`Error loading ${src}:`, error)
-          state.loadingManager.itemError(src)
+          $.loadingManager.itemError(src)
         }
       )
     })
@@ -182,8 +182,8 @@ export default () => {
       refDist?: number
     }
   ) => {
-    if (state.sounds.isSoundLoaded(name)) {
-      const positionalSound = state.sounds
+    if ($.sounds.isSoundLoaded(name)) {
+      const positionalSound = $.sounds
         .createSounds({
           name,
           volume: options?.volume || 0.7,
@@ -193,7 +193,7 @@ export default () => {
         .pop()
 
       positionalSound.name = name
-      state.sounds.attachToParent(positionalSound, entity)
+      $.sounds.attachToParent(positionalSound, entity)
       positionalSound.play()
     }
   }
@@ -203,13 +203,13 @@ export default () => {
 
     if (!singleton.trackBuffersMap?.length) {
       soundNamesList.forEach((name: string) =>
-        state.sounds.load(name, (event: any) => state.fileLoader.onFileProgress(name, event))
+        $.sounds.load(name, (event: any) => $.fileLoader.onFileProgress(name, event))
       )
     }
   }
   singleton.loadBackgroundMusic = () => {
     const name = 'background'
-    state.sounds.load(name, (event: any) => state.fileLoader.onFileProgress(name, event))
+    $.sounds.load(name, (event: any) => $.fileLoader.onFileProgress(name, event))
   }
 
   singleton.playBackgroundMusic = () => {
@@ -218,7 +218,7 @@ export default () => {
       singleton.load(name)
 
       const onLoadedBackgroundMusic = () => {
-        /*!state.isDebug && */ singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
+        /*!$.isDebug && */ singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
         emitter.off(`loaded:${name}`, onLoadedBackgroundMusic)
       }
       emitter.on(`loaded:${name}`, onLoadedBackgroundMusic)
@@ -227,7 +227,7 @@ export default () => {
     }
   }
 
-  state.sounds = singleton
+  $.sounds = singleton
 
   return singleton
 }

@@ -1,8 +1,8 @@
 import Controller from '@/entity/Controller.ts'
 import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
-import { chargeUtils, controllerAwarenessUtils, createOverHeadHealthBar } from '@/utils/controller.ts'
+import { aiChargeUtils, chargeUtils, controllerAwarenessUtils, createOverHeadHealthBar } from '@/utils/controller.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 import { type Quaternion, Vector3 } from 'three'
 
@@ -16,7 +16,7 @@ const AIController = (config: {
 }) => {
   const entity = Controller(config)
 
-  const utils: any = { ...controllerAwarenessUtils(), ...chargeUtils() }
+  const utils: any = { ...controllerAwarenessUtils(), ...chargeUtils(), ...aiChargeUtils() }
   for (const key in utils) {
     entity[key] = utils[key]
   }
@@ -31,7 +31,7 @@ const AIController = (config: {
   let enemy: any = null
   const performAgentLogic = () => {
     if (!enemy || enemy?.isDead()) {
-      const entityIterator = state.entitiesMap[Symbol.iterator]()
+      const entityIterator = $.entitiesMap[Symbol.iterator]()
 
       const candidatesList = []
       for (const item of entityIterator) {
@@ -55,7 +55,7 @@ const AIController = (config: {
     }
 
     // AI Logic: Threat Detection and Pathfinding
-    if (state?.level?.pathfinder) {
+    if ($?.level?.pathfinder) {
       const { isEnemyAThreat } = entity.detectEnemyThreat(entity, enemy)
       const isEntityChargeCritical: boolean = entity.detectCriticalCharge(entity)
 
@@ -64,6 +64,9 @@ const AIController = (config: {
       // }
 
       if (entity.currentSpell.charge === 0) {
+        /* safeguard against killing itself */
+        if (entity.hp < entity.maxHp * 0.3 && entity.mp < entity.currentSpell.cost * 0.6) return
+
         entity.chargeAttack(entity, enemy)
       }
 
@@ -116,11 +119,11 @@ const AIController = (config: {
   }
 
   entity.start = () => {
-    updateEventUuid = state.addEvent('renderer.update', update)
+    updateEventUuid = $.addEvent('renderer.update', update)
   }
 
-  state.entitiesMap.set(entity.uuid, entity)
-  state.enemy = entity
+  $.entitiesMap.set(entity.uuid, entity)
+  $.enemy = entity
 
   return entity
 }

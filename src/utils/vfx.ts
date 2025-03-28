@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import System, { GPURenderer } from 'three-nebula'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 import ShotVFX from '@/vfx/shot.json'
 import DeathStarVFX from '@/vfx/death-star.json'
@@ -29,8 +29,8 @@ export const destroyVfx = ({ nebulaSystem, vfxRenderer }: { vfxRenderer: GPURend
     nebulaSystem?.destroy?.()
     nebulaSystem = null
 
-    state.vfxList = state.vfxList.filter(({ name }: any) => name !== vfxRenderer.vfxName)
-    // console.log(JSON.stringify(state.vfxList, undefined, 2))
+    $.vfxList = $.vfxList.filter(({ name }: any) => name !== vfxRenderer.vfxName)
+    // console.log(JSON.stringify($.vfxList, undefined, 2))
   }
 }
 
@@ -59,27 +59,27 @@ export const createVFX = async ({
   }
 
   const system = await System.fromJSONAsync(vfx.particleSystemState, THREE)
-  // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
-  const vfxRenderer = new GPURenderer(state.scene, THREE)
+  // const nebulaRenderer = new SpriteRenderer($.scene, THREE)
+  const vfxRenderer = new GPURenderer($.scene, THREE)
   vfxRenderer.vfxName = `${vfxName}_${v4()}`
   const nebulaSystem = system.addRenderer(vfxRenderer)
   nebulaSystem.depthTest = options?.depthTest || false
 
-  state.vfxList.push({ name: vfxRenderer.vfxName, vfxRenderer: vfxRenderer, vfxSystem: nebulaSystem })
+  $.vfxList.push({ name: vfxRenderer.vfxName, vfxRenderer: vfxRenderer, vfxSystem: nebulaSystem })
 
   nebulaSystem.emitters.forEach((emitter: any) => {
     emitter.position.copy(position as Vector3)
   })
 
   let hasRemovedSystem = false
-  const eventUuid = state.addEvent(`renderer.update`, () => {
+  const eventUuid = $.addEvent(`renderer.update`, () => {
     nebulaSystem.update()
     /* if all emitters are dead remove the vfx */
     if (removeOnDeath && nebulaSystem.emitters.every((emitter: any) => emitter.dead)) {
       setTimeout(() => {
         if (hasRemovedSystem) return
         onFinished?.()
-        state.removeEvent(`renderer.update`, eventUuid)
+        $.removeEvent(`renderer.update`, eventUuid)
         destroyVfx({ nebulaSystem, vfxRenderer })
         hasRemovedSystem = true
       }, 1000)
@@ -87,11 +87,11 @@ export const createVFX = async ({
   })
 
   const cleanup = () => {
-    state.removeEvent(`renderer.update`, eventUuid)
+    $.removeEvent(`renderer.update`, eventUuid)
     destroyVfx({ nebulaSystem, vfxRenderer })
   }
   emitter.on('cleanup', cleanup)
-  state.addEvent('arena.cleanup', cleanup)
+  $.addEvent('arena.cleanup', cleanup)
 
   return Promise.resolve({ nebulaSystem, emitter })
 }
@@ -107,12 +107,12 @@ export const createShotVFX = async (
   adjustedPosition.y += 1
 
   const system = await System.fromJSONAsync(ShotVFX.particleSystemState, THREE)
-  // const nebulaRenderer = new SpriteRenderer(state.scene, THREE)
-  const vfxRenderer = new GPURenderer(state.scene, THREE)
+  // const nebulaRenderer = new SpriteRenderer($.scene, THREE)
+  const vfxRenderer = new GPURenderer($.scene, THREE)
   vfxRenderer.vfxName = `shot_${v4()}`
 
   const nebulaSystem = system.addRenderer(vfxRenderer)
-  state.vfxList.push({ name: vfxRenderer.vfxName, vfxRenderer: vfxRenderer, vfxSystem: nebulaSystem })
+  $.vfxList.push({ name: vfxRenderer.vfxName, vfxRenderer: vfxRenderer, vfxSystem: nebulaSystem })
 
   const forceMagnitude = 10000
   const forceDirection = directionN.clone().negate().normalize().multiplyScalar(forceMagnitude)
@@ -134,11 +134,11 @@ export const createShotVFX = async (
   let eventUuid: string = ''
   let hasAppliedCallbackOnce = false
 
-  state.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.5 * userSoundVolume.value * 0.25 })
+  $.sounds.addAndPlayPositionalSound(entity, 'spellShot', { volume: 0.5 * userSoundVolume.value * 0.25 })
 
   let wasSpellRemoved: boolean = false
 
-  eventUuid = state.addEvent(`renderer.update`, (deltaS: number) => {
+  eventUuid = $.addEvent(`renderer.update`, (deltaS: number) => {
     nebulaSystem.emitters.forEach((emitter: any) => {
       const isLevel = intersect.object?.entityType === 'level'
       let destinationPoint = new Vector3()
@@ -173,7 +173,7 @@ export const createShotVFX = async (
 
         setTimeout(() => {
           if (wasSpellRemoved) return
-          state.removeEvent('renderer.update', eventUuid)
+          $.removeEvent('renderer.update', eventUuid)
           destroyVfx({ nebulaSystem, vfxRenderer })
           wasSpellRemoved = true
         }, 2000)

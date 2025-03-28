@@ -1,10 +1,10 @@
 import CollidableItem from '@/entity/power-ups/CollidableItem.ts'
 import { createVFX } from '@/utils/vfx.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { Vector3 } from 'three'
 
 export default async (position: Vector3) => {
-  if (!state.canFlee) return
+  if (!$.canFlee) return
 
   const name = 'fleeOrb'
   const { emitter: fleeEmitter, nebulaSystem } = await createVFX({
@@ -20,9 +20,9 @@ export default async (position: Vector3) => {
     size: 3,
     onCollisionStart: (_colliderA, _colliderB, _uuid, entity) => {
       /* on collide buff logic */
-      if (entity && state.canFlee) {
-        state.isBattleOver = true
-        state.fledGame = true
+      if (entity && $.canFlee) {
+        $.isBattleOver = true
+        $.fledGame = true
       }
 
       /* this is a pickup item, so we remove it here, we might have other logic here later */
@@ -40,9 +40,9 @@ export default async (position: Vector3) => {
   const cleanup = () => {
     fleeEmitter.emit('cleanup')
     collidable.emitter.emit('cleanup')
-    state.removeEvent('battle.cleanup', cleanupUuid)
+    $.removeEvent('battle.cleanup', cleanupUuid)
   }
-  const cleanupUuid = state.addEvent('battle.cleanup', cleanup)
+  const cleanupUuid = $.addEvent('battle.cleanup', cleanup)
 
-  collidable.addToLevel(state.level)
+  collidable.addToLevel($.level)
 }

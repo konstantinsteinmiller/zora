@@ -2,7 +2,7 @@ import FairyDust from '@/entity/FairyDust.ts'
 import FleeOrb from '@/entity/levels/FleeOrb.ts'
 import AttackPowerUp from '@/entity/power-ups/AttackPowerUp'
 import DefensePowerUp from '@/entity/power-ups/DefensePowerUp'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import {
   portalConnectionsList,
   orientationPosition,
@@ -22,7 +22,7 @@ export default async (onFinishedCallback: () => void) => {
   const { loadMesh } = AssetLoader()
   await loadMesh('worlds/arenas/water-arena.comp.glb', waterArena, 1)
 
-  if (state.enableWater) {
+  if ($.enableWater) {
     const waterResolution = { size: 256 }
     const water = Water({
       options: {
@@ -39,13 +39,13 @@ export default async (onFinishedCallback: () => void) => {
         ],
       },
       resolution: waterResolution.size,
-      environmentMap: state.scene.environment,
+      environmentMap: $.scene.environment,
     })
     water.position.set(0, -2.8, 0)
     // const sandTexture: any = new TextureLoader().load('/images/sand/ocean_floor.png')
     // const ground = Ground({ texture: sandTexture })
     // setupUI({ waterResolution, water, ground })
-    // state.player.position.set(2500, 1000, 2000)
+    // $.player.position.set(2500, 1000, 2000)
   }
 
   const pathfinder: any = new Pathfinding()
@@ -60,7 +60,7 @@ export default async (onFinishedCallback: () => void) => {
     const geo = navMesh.clone().geometry.clone()
     geo.rotateX(-Math.PI / 2)
 
-    // state.scene.add(navMesh)
+    // $.scene.add(navMesh)
     waterArena.zone = 'water-arena'
     pathfinder.setZoneData(waterArena.zone, Pathfinding.createZone(geo))
     waterArena.children.forEach((child: any) => {
@@ -69,9 +69,9 @@ export default async (onFinishedCallback: () => void) => {
     })
     waterArena.isBattleProtected = true
 
-    if (state.enableDebug) {
+    if ($.enableDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
-      state.scene.add(wiredNavMesh)
+      $.scene.add(wiredNavMesh)
       const wiredFillMesh = new Mesh(
         geo,
         new MeshBasicMaterial({
@@ -80,9 +80,9 @@ export default async (onFinishedCallback: () => void) => {
           transparent: true,
         })
       )
-      state.scene.add(wiredFillMesh)
+      $.scene.add(wiredFillMesh)
     }
-    state.scene.add(pathfinder.pathfindingHelper)
+    $.scene.add(pathfinder.pathfindingHelper)
   })
 
   /* add flee point */
@@ -103,7 +103,7 @@ export default async (onFinishedCallback: () => void) => {
     coverBox.position.copy(coverPos)
     coverBox.name = 'cover'
     waterArena.add(coverBox)
-    state.scene.updateMatrixWorld(true)
+    $.scene.updateMatrixWorld(true)
   })*/
 
   createCollidersForGraph(waterArena, 'fixed', undefined, Math.PI / 2)
@@ -123,8 +123,8 @@ export default async (onFinishedCallback: () => void) => {
     powerUp.addToLevel(waterArena)
   })
 
-  state.scene.add(waterArena)
-  state.level = waterArena
+  $.scene.add(waterArena)
+  $.level = waterArena
 
   FairyDust({ position: new Vector3(9.5, -2.1, 7) })
   FairyDust({ position: new Vector3(8, 5, 2.4) })

@@ -95,6 +95,7 @@
   - [x] every spell shot uses mana
   - [x] mana regenerates slowly over time
   - [x] if not enough mana for the spell, health is used instead of missing mana amount
+  - [x] if enemy has not enough mana for the spell, health is used instead of missing mana amount
   - [x] if a fairy falls to the void, it dies at y < -10
   - [x] wild fairies and the player can fly in a wild fairy fight
 - [ ] World

@@ -1,5 +1,5 @@
 import { ZORA_TOTAL_LOAD_SIZE_NAME } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { convertToReadableSize } from '@/utils/function.ts'
 import { ref, type Ref } from 'vue'
 
@@ -50,8 +50,8 @@ const FileLoader = () => {
   }
 
   singleton.loadData = (onFinished: () => void) => {
-    state.loadingManager.onLoad = () => {
-      const total = convertToReadableSize(state.fileLoader.backUpTotal)
+    $.loadingManager.onLoad = () => {
+      const total = convertToReadableSize($.fileLoader.backUpTotal)
       console.log('%c All assets loaded', 'color: lightgrey', total)
 
       /* FIX REMOVE THIS and do proper loading */
@@ -59,20 +59,20 @@ const FileLoader = () => {
         return
       }
       const interval = setInterval(() => {
-        if (state.player) {
+        if ($.player) {
           isLoading.value = false
           clearInterval(interval)
         }
       }, 100)
       // setTimeout(() => (isLoading.value = false), 1000)
 
-      localStorage.setItem(ZORA_TOTAL_LOAD_SIZE_NAME, state.fileLoader.backUpTotal.toString())
+      localStorage.setItem(ZORA_TOTAL_LOAD_SIZE_NAME, $.fileLoader.backUpTotal.toString())
       isLoading.value = false
       onFinished()
     }
   }
 
-  state.fileLoader = singleton
+  $.fileLoader = singleton
 
   return singleton
 }

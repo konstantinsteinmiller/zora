@@ -15,14 +15,14 @@ import { TUTORIALS } from '@/utils/enums.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils.js'
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import SpellFire from '@/entity/SpellFire'
 
 const Crosshair = () => {
   const createCrosshair = () => {
     const textureLoader = new TextureLoader()
     const crosshair = textureLoader.load('images/crosshair/crosshair-transparent.png')
-    crosshair.anisotropy = state.renderer.capabilities.getMaxAnisotropy()
+    crosshair.anisotropy = $.renderer.capabilities.getMaxAnisotropy()
 
     const crosshairSprite = new Sprite(
       new SpriteMaterial({
@@ -34,13 +34,13 @@ const Crosshair = () => {
       })
     )
 
-    state.addEvent('renderer.resize', () => {
+    $.addEvent('renderer.resize', () => {
       const aspect = innerWidth / innerHeight
-      state.uiCamera.left = -aspect
-      state.uiCamera.right = aspect
-      state.uiCamera.top = 1
-      state.uiCamera.bottom = -1
-      state.uiCamera.updateProjectionMatrix()
+      $.uiCamera.left = -aspect
+      $.uiCamera.right = aspect
+      $.uiCamera.top = 1
+      $.uiCamera.bottom = -1
+      $.uiCamera.updateProjectionMatrix()
 
       // Scale crosshair based on screen size
       const scaleFactor = Math.min(innerWidth, innerHeight) * 0.0015 * 0.15
@@ -85,7 +85,7 @@ const Crosshair = () => {
     crosshairRotatingGroup.add(crosshairDots)
     crosshairGroup.add(crosshairRotatingGroup)
 
-    state.uiScene.add(crosshairGroup)
+    $.uiScene.add(crosshairGroup)
     crosshairDots.visible = false
     crosshairStar.visible = false
 
@@ -94,7 +94,7 @@ const Crosshair = () => {
 
   const { crosshairRotatingGroup, crosshairStar, crosshairDots } = createCrosshair()
 
-  const entityChargeDuration = getChargeDuration(state.player)
+  const entityChargeDuration = getChargeDuration($.player)
   let rotationSpeed: number = INITIAL_ROTATION_SPEED
   let chargeStartTime: number = 0
 
@@ -104,25 +104,17 @@ const Crosshair = () => {
   let forcedSpellRelease = false
   let chargeEmitter: any = null
 
-  const calcAttackMpDamage = (entity: any, rotationSpeed: number) => {
-    const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.cost, rotationSpeed).toFixed(2)
-
-    if (mpCost > entity.mp) {
-      const mpDiff = mpCost - entity.mp
-      entity.dealDamage(entity, mpDiff)
-    }
-    entity.dealMpDamage(entity, mpCost)
-  }
   /* release shot if attack button is released */
-  state.addEvent('controls.attack1.up', () => {
-    canFire && fireRaycaster(rotationSpeed, state.player, state.enemy)
+  $.addEvent('controls.attack1.up', () => {
+    const entity = $.player
+    canFire && fireRaycaster(rotationSpeed, entity, $.enemy)
     forcedSpellRelease = false
     canFire = false
     crosshairDots.visible = false
     crosshairStar.visible = false
-    state.player.currentSpell.charge = 0
+    entity.currentSpell.charge = 0
 
-    calcAttackMpDamage(state.player, rotationSpeed)
+    entity.calcAttackMpDamage(entity, rotationSpeed)
 
     chargeEmitter.emit('cleanup')
     chargeIndicatorNebulaSystem = null
@@ -130,32 +122,34 @@ const Crosshair = () => {
   })
 
   const { userSoundVolume, tutorialPhase, userTutorialsDoneMap } = useUser()
+  let wasMissingManaTutorialShown = false
   /* start charging spell on mouse down and hold */
-  state.addEvent('controls.attack1.down', () => {
+  $.addEvent('controls.attack1.down', () => {
     canFire = false
     forcedSpellRelease = false
     crosshairDots.visible = false
     crosshairStar.visible = false
-    state.player.currentSpell.charge = 0
+    $.player.currentSpell.charge = 0
     chargeStartTime = Date.now()
     /* warn player with sound that he might harm himself because of missing mana */
-    if (state.player.mp < state.player.currentSpell.cost * 0.5) {
-      state.sounds.addAndPlayPositionalSound(state.player, 'missingMana', { volume: 0.5 * userSoundVolume.value })
+    if ($.player.mp < $.player.currentSpell.cost * 0.5) {
+      $.sounds.addAndPlayPositionalSound($.player, 'missingMana', { volume: 0.5 * userSoundVolume.value })
 
-      if (userTutorialsDoneMap.value[TUTORIALS.MISSING_MANA]) return
+      if (userTutorialsDoneMap.value[TUTORIALS.MISSING_MANA] || wasMissingManaTutorialShown) return
       tutorialPhase.value = TUTORIALS.MISSING_MANA
+      wasMissingManaTutorialShown = true
     }
   })
 
   let chargeIndicatorNebulaSystem: any = null
   let firstCharge = true
 
-  state.addEvent('renderer.update', async (deltaInS: number) => {
-    const entity = state?.player
-    if (!entity.currentSpell || !entity || entity.isDead() || state.isBattleOver) return
+  $.addEvent('renderer.update', async (deltaInS: number) => {
+    const entity = $?.player
+    if (!entity.currentSpell || !entity || entity.isDead() || $.isBattleOver) return
 
     /* while attack button pressed => rotate crosshair */
-    if (!state.controls.attack || forcedSpellRelease || !document.pointerLockElement) return
+    if (!$.controls.attack || forcedSpellRelease || !document.pointerLockElement) return
 
     if (!chargeIndicatorNebulaSystem) {
       chargeIndicatorNebulaSystem = true
@@ -176,7 +170,7 @@ const Crosshair = () => {
     const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
     const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
     rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
-    state.player.currentSpell.charge = rotationN
+    $.player.currentSpell.charge = rotationN
     crosshairRotatingGroup.rotation.z -= rotationSpeed * deltaInS
 
     if (rotationSpeed > MIN_CHARGE_SPEED) {
@@ -205,17 +199,17 @@ const Crosshair = () => {
     } else {
       /* spell overload -> forced release of the charged shot and receive damage */
       // console.log('rotationSpeed: ', rotationSpeed)
-      fireRaycaster(rotationSpeed, state.player, state.enemy)
+      fireRaycaster(rotationSpeed, $.player, $.enemy)
       canFire = false
       forcedSpellRelease = true
-      state.player.currentSpell.charge = 0
-      state.controls.previous.attack = false
-      state.controls.attack = false
+      $.player.currentSpell.charge = 0
+      $.controls.previous.attack = false
+      $.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
       chargeEmitter.emit('cleanup')
       chargeIndicatorNebulaSystem = null
-      calcAttackMpDamage(state.player, rotationSpeed)
+      calcAttackMpDamage($.player, rotationSpeed)
     }
   })
 }

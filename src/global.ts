@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const loadingManager = new LoadingManager()
 
-export interface GlobalState {
+export interface Global {
   triggerEvent: (eventName: string, uuid?: string) => void
   addEvent: (
     eventName: string,
@@ -13,7 +13,9 @@ export interface GlobalState {
   ) => string
   removeEvent: (eventName: string, uuid: string) => void
   clearAllEvents: () => void
-  [key: string]: any /* global objects */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /* global objects */
+  [key: string]: any
   eventsMap: {
     [key: string]: {
       uuid: string
@@ -41,42 +43,42 @@ export interface GlobalState {
   physics: any
 }
 
-let state: GlobalState = null
+let global: Global = null
 
 const globalState = () => {
   /* state is a Singleton */
-  if (state !== null) {
-    return state
+  if (global !== null) {
+    return global
   }
 
   /* needed for e.g. triggerEvent... */
-  state = {
+  global = {
     eventsMap: {},
   }
-  state = {
+  global = {
     triggerEvent: (eventName: string, uuid?: string) => {
-      state.eventsMap[eventName]?.forEach((event: any) => {
+      global.eventsMap[eventName]?.forEach((event: any) => {
         event.callback?.(uuid)
         // console.log('XXEvent triggered:', eventName)
       })
     },
     addOneTimeEvent: (eventName: string, callback: () => string) => {
       const uuid = uuidv4()
-      state.oneTimeEventsList?.push({
+      global.oneTimeEventsList?.push({
         eventName,
         uuid,
         cleanup: () => {
-          state.oneTimeEventsList = state.oneTimeEventsList.filter((e: any) => e.uuid !== uuid)
+          global.oneTimeEventsList = global.oneTimeEventsList.filter((e: any) => e.uuid !== uuid)
         },
         callback,
       })
     },
     addEvent: (eventName: string, callback: () => string, cleanup?: () => any, sourceName?: string): string => {
       const uuid = uuidv4()
-      if (!state?.eventsMap?.[eventName]) {
-        state.eventsMap[eventName] = []
+      if (!global?.eventsMap?.[eventName]) {
+        global.eventsMap[eventName] = []
       }
-      state?.eventsMap[eventName]?.push({
+      global?.eventsMap[eventName]?.push({
         uuid,
         callback,
         cleanup,
@@ -86,14 +88,14 @@ const globalState = () => {
       return uuid
     },
     removeEvent: (eventName: string, uuid: string) => {
-      // const event = state.eventsMap[eventName]
+      // const event = $.eventsMap[eventName]
       // event.cleanup?.()
-      state.eventsMap[eventName] = state.eventsMap?.[eventName]?.filter((e: any) => e.uuid !== uuid)
+      global.eventsMap[eventName] = global.eventsMap?.[eventName]?.filter((e: any) => e.uuid !== uuid)
       // console.log('XXEvent removed:', eventName, 'with ', uuid)
     },
     clearAllEvents: () => {
-      state.eventsMap = {}
-      state.oneTimeEventsList = []
+      global.eventsMap = {}
+      global.oneTimeEventsList = []
     },
     eventsMap: {},
     oneTimeEventsList: [],
@@ -105,25 +107,25 @@ const globalState = () => {
   // console.log('XXstate: ', state)
 
   /* init this game state with defaults */
-  state.enableWater = true
-  state.enableDebug = false
-  // state.debugPhysics = true
-  state.showCursor = true
-  state.showCrosshair = true
-  state.isThirdPerson = true
-  state.isPaused = false
-  state.canFlee = true
-  state.fledGame = false
-  state.isBattleOver = false
-  state.isEngineInitialized = false
-  state.isBattleInitialized = false
-  state.vfxList = []
+  global.enableWater = true
+  global.enableDebug = false
+  // global.debugPhysics = true
+  global.showCursor = true
+  global.showCrosshair = true
+  global.isThirdPerson = true
+  global.isPaused = false
+  global.canFlee = true
+  global.fledGame = false
+  global.isBattleOver = false
+  global.isEngineInitialized = false
+  global.isBattleInitialized = false
+  global.vfxList = []
 
-  return state
+  return global
 }
 const currentState = globalState()
 export default currentState
 
 export const getEntity = (uuid: string) => {
-  return state.entitiesMap.get(uuid)
+  return global.entitiesMap.get(uuid)
 }

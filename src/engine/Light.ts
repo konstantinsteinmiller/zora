@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { AmbientLight, DirectionalLight, Group, PointLight, Vector2 } from 'three'
 
 export default () => {
@@ -36,16 +36,16 @@ export default () => {
   lightsGroup.add(ambient)
   lightsGroup.add(point)
 
-  state.scene.add(lightsGroup)
+  $.scene.add(lightsGroup)
 
   const update = () => {
     lightsGroup.position.set(0, 10, 0)
-    if (state.player?.position) {
-      lightsGroup.position.copy(state.player.position)
+    if ($.player?.position) {
+      lightsGroup.position.copy($.player.position)
     }
   }
 
-  state.addEvent('renderer.update', () => {
+  $.addEvent('renderer.update', () => {
     update()
   })
 

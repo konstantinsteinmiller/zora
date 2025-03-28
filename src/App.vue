@@ -18,13 +18,13 @@
 <script setup lang="ts">
 import Tutorial from '@/components/Tutorial.vue'
 import { computed } from 'vue'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 /* reactivity transform example */
 // let count = $ref(0)
 // count++
 // console.log(count)
-const cssProps = computed(() => ({ 'cursor--hidden': !state.showCursor }))
+const cssProps = computed(() => ({ 'cursor--hidden': !$.showCursor }))
 </script>
 
 <style scoped lang="sass">

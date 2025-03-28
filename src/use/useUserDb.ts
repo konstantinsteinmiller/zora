@@ -1,5 +1,7 @@
+import { clone } from 'three/examples/jsm/utils/SkeletonUtils'
 import type { Ref } from 'vue'
 import useMatch from '@/use/useMatch'
+import clonedeep from 'lodash.clonedeep'
 
 const { isSplashScreenVisible, isDbInitialized } = useMatch()
 
@@ -82,6 +84,15 @@ const useUserDb = ({
   // Define the storeUser() function
   function storeUser(params: any) {
     const store = db.transaction(['user_os'], 'readwrite').objectStore('user_os')
+
+    if (Object.keys(params.userTutorialsDoneMap)?.length) {
+      const clone = clonedeep(params.userTutorialsDoneMap)
+      params.userTutorialsDoneMap = JSON.stringify(clone)
+    }
+    if (params.userTutorialsDoneMap?.value && Object.keys(params.userTutorialsDoneMap?.value)?.length) {
+      const clone = clonedeep(params.userTutorialsDoneMap?.value)
+      params.userTutorialsDoneMap = JSON.stringify(clone)
+    }
 
     const record = {
       name: 'user',

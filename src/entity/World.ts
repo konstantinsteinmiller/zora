@@ -1,13 +1,13 @@
 import WaterArena from '@/entity/levels/water-arena/WaterArena.ts'
 import { CubeTextureLoader } from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import * as THREE from 'three'
 
 export default (onFinishedCallback: () => void) => {
   const createSkybox = () => {
-    const loader = new CubeTextureLoader(state.loadingManager)
+    const loader = new CubeTextureLoader($.loadingManager)
     const src = 'skybox'
-    state.loadingManager.itemStart(src)
+    $.loadingManager.itemStart(src)
     const environmentMap = loader.load(
       [
         'images/skybox/px.png',
@@ -17,13 +17,13 @@ export default (onFinishedCallback: () => void) => {
         'images/skybox/pz.png',
         'images/skybox/nz.png',
       ],
-      () => state.loadingManager.itemEnd(src),
-      (fileProgressEvent: any) => state.fileLoader.onFileProgress(src, fileProgressEvent),
-      () => state.loadingManager.itemError(src)
+      () => $.loadingManager.itemEnd(src),
+      (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
+      () => $.loadingManager.itemError(src)
     )
     environmentMap.encoding = (THREE as any).sRGBEncoding
-    state.scene.background = environmentMap
-    state.scene.environment = environmentMap
+    $.scene.background = environmentMap
+    $.scene.environment = environmentMap
   }
 
   createSkybox()

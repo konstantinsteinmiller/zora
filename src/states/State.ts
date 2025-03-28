@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 
 export default class State {
   parent: any
@@ -37,9 +37,9 @@ export const transitionTo = (stateName: string, parent: any) => {
   const condition = keyNamesMatrix.some((keyNamesList: string[]) => {
     return keyNamesList?.every((keyName: string) => {
       if (keyName.startsWith('!')) {
-        return !state.controls[keyName.slice(1)]
+        return !$.controls[keyName.slice(1)]
       }
-      return state.controls[keyName]
+      return $.controls[keyName]
     })
   })
 
@@ -47,7 +47,7 @@ export const transitionTo = (stateName: string, parent: any) => {
     parent.setState(stateName)
     return true
   }
-  if (state.controls[keyNamesMatrix[0][0]]) {
+  if ($.controls[keyNamesMatrix[0][0]]) {
     return true
   }
   return false

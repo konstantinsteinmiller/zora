@@ -1,5 +1,5 @@
-import type { PortalConnection } from '@/types/state.physics.ts'
-import { generateTransitionMap } from '@/utils/pathfinder.ts'
+import type { PortalConnection } from '@/types/world'
+import { generateTransitionMap } from '@/utils/pathfinder'
 import { Vector3 } from 'three'
 
 export const orientationPosition = {

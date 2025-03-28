@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { AdditiveBlending, Mesh, ShaderMaterial, SphereGeometry, Vector3 } from 'three'
 import { EventEmitter } from 'events'
 
@@ -60,20 +60,20 @@ init()
 // Function to start the effect
 export const startShimmeringSphere = (position: Vector3) => {
   const emitter = new EventEmitter()
-  state.scene.add(sphereMesh)
+  $.scene.add(sphereMesh)
 
   // Position the sphere at the specified location
   sphereMesh.position.copy(position)
 
   // Add the update event
-  const eventUuid = state.addEvent('renderer.update', deltaS => {
+  const eventUuid = $.addEvent('renderer.update', deltaS => {
     // Update the time uniform for animation
     shaderMaterial.uniforms.time.value += deltaS
   })
 
   const cleanup = () => {
     // Remove the sphere from the scene
-    state.scene.remove(sphereMesh)
+    $.scene.remove(sphereMesh)
 
     // Dispose of the geometry and material
     sphereGeometry.dispose()
@@ -81,7 +81,7 @@ export const startShimmeringSphere = (position: Vector3) => {
     glowTexture.dispose()
 
     // Remove the update event
-    state.removeEvent('renderer.update', eventUuid)
+    $.removeEvent('renderer.update', eventUuid)
   }
 
   emitter.on('cleanup', () => {

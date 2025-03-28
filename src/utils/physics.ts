@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import Rapier, { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
 
@@ -23,7 +23,7 @@ export const createCollidersForGraph = (object: any, rigidType: string = 'fixed'
 }
 export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: number, rotate?: number) => {
   const desc = descMap[rigidType]
-  const rigidBody = state.physics.createRigidBody(desc)
+  const rigidBody = $.physics.createRigidBody(desc)
 
   let geo = mesh.geometry
   if (rotate !== null && rotate !== undefined) {
@@ -43,13 +43,13 @@ export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: 
   const indices = new Uint32Array(geo.index.array)
   const colliderDesc = ColliderDesc.trimesh(vertices, indices)
   colliderDesc.setCollisionGroups(0xffffffff) /* part of all groups and interacts with all groups */
-  const collider = state.physics.createCollider(colliderDesc, rigidBody)
+  const collider = $.physics.createCollider(colliderDesc, rigidBody)
   return { collider }
 }
 
 export const createColliderBall = (radius: number, rigidBody: any) => {
   const colliderDesc = ColliderDesc.ball(radius)
-  return state.physics.createCollider(colliderDesc, rigidBody)
+  return $.physics.createCollider(colliderDesc, rigidBody)
 }
 export const createBoxCollider = ({
   size,
@@ -60,7 +60,7 @@ export const createBoxCollider = ({
   position: Vector3
   isSensor: boolean
 }) => {
-  const rigidBody = state.physics.createRigidBody(RigidBodyDesc.fixed())
+  const rigidBody = $.physics.createRigidBody(RigidBodyDesc.fixed())
   rigidBody.setTranslation(new Rapier.Vector3(position.x, position.y, position.z), false)
 
   const collDesc = ColliderDesc.cuboid(size, size, size)
@@ -74,7 +74,7 @@ export const createBoxCollider = ({
   )
 
   // Create the collider
-  const collider = state.physics.createCollider(colliderDesc, rigidBody)
+  const collider = $.physics.createCollider(colliderDesc, rigidBody)
   collider.userData = { type: 'fixed', uuid: 'collidable' }
   return { collider, rigidBody }
 }
@@ -83,7 +83,7 @@ export const createRigidBodyEntity = ({ position, entity }: { position: Vector3;
   const desc: any = RigidBodyDesc.kinematicPositionBased()
   const offsetPosition = position.clone()
   desc.setTranslation(...offsetPosition)
-  const rigidBody = state.physics.createRigidBody(desc)
+  const rigidBody = $.physics.createRigidBody(desc)
 
   const colliderDesc = ColliderDesc.capsule(entity.halfHeight, entity.colliderRadius)
 
@@ -94,7 +94,7 @@ export const createRigidBodyEntity = ({ position, entity }: { position: Vector3;
     Rapier.ActiveCollisionTypes.DEFAULT | Rapier.ActiveCollisionTypes.KINEMATIC_FIXED
   )
 
-  const collider = state.physics.createCollider(colliderDesc, rigidBody)
+  const collider = $.physics.createCollider(colliderDesc, rigidBody)
   collider.userData = { type: 'kinematic', uuid: entity.uuid, name: entity.name }
 
   return {

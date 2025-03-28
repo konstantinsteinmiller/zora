@@ -1,7 +1,7 @@
 import { MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import State, { isMovingEntity } from '@/states/State'
 import { LoopOnce } from 'three'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 
 export default class JumpState extends State {
   counter: number = 0
@@ -53,16 +53,16 @@ export default class JumpState extends State {
 
     if (isMovingEntity(this.parent)) return
 
-    if (state.controls.forward) {
-      if (!state.controls.sprint) {
+    if ($.controls.forward) {
+      if (!$.controls.sprint) {
         this.parent.setState('walk')
         return
       }
       this.parent.setState('run')
       return
     }
-    if (state.controls.backward) {
-      if (!state.controls.sprint) {
+    if ($.controls.backward) {
+      if (!$.controls.sprint) {
         this.parent.setState('walk-back')
         return
       }

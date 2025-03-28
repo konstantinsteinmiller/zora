@@ -1,6 +1,6 @@
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
-import type { ClosestPortal, PortalConnection } from '@/types/state.physics.ts'
+import $ from '@/global'
+import type { ClosestPortal, PortalConnection } from '@/types/world'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
@@ -16,34 +16,34 @@ export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void
     loader = new FBXLoader()
   }
   try {
-    state.loadingManager.itemStart(src)
+    $.loadingManager.itemStart(src)
     const model: any = await loader.loadAsync(src, (fileProgressEvent: any) =>
-      state.fileLoader.onFileProgress(src, fileProgressEvent)
+      $.fileLoader.onFileProgress(src, fileProgressEvent)
     )
-    state.loadingManager.itemEnd(src)
+    $.loadingManager.itemEnd(src)
     // model.children[0].scale.set(1, 1, 1)
     callback(model?.children[0])
   } catch (e: any) {
-    state.loadingManager.itemError(src)
+    $.loadingManager.itemError(src)
   }
 }
 
 const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => {
-  if (path?.length && state.enableDebug) {
-    const pathfindingHelper = state.level.pathfinder.pathfindingHelper
+  if (path?.length && $.enableDebug) {
+    const pathfindingHelper = $.level.pathfinder.pathfindingHelper
     pathfindingHelper.reset()
     pathfindingHelper.setPlayerPosition(startPos)
     pathfindingHelper.setTargetPosition(targetPos)
     pathfindingHelper.setPath(path)
-  } else if (!path?.length && state.enableDebug) {
+  } else if (!path?.length && $.enableDebug) {
     console.warn('Failed to find path found')
   }
 }
 
 export const removePath = () => {
-  const isDebug = true /* && state.enableDebug*/
+  const isDebug = true /* && $.enableDebug*/
   if (isDebug) {
-    const pathfindingHelper = state.level.pathfinder.pathfindingHelper
+    const pathfindingHelper = $.level.pathfinder.pathfindingHelper
     pathfindingHelper.reset()
   }
 }
@@ -52,7 +52,7 @@ export const removePath = () => {
  * around agent position */
 const findClosestPointInCircle = (meshPosition: Vector3) => {
   let closest = null
-  const pathfinder = state.level.pathfinder
+  const pathfinder = $.level.pathfinder
   let radius = 0.2
   let angle = 0
   while (closest === null && radius < 1.5) {
@@ -60,8 +60,8 @@ const findClosestPointInCircle = (meshPosition: Vector3) => {
 
     pos.x += radius * Math.cos(angle)
     pos.z += radius * Math.sin(angle)
-    const groupId = pathfinder.getGroup(state.level.zone, pos)
-    closest = pathfinder.getClosestNode(pos, state.level.zone, groupId, true)
+    const groupId = pathfinder.getGroup($.level.zone, pos)
+    closest = pathfinder.getClosestNode(pos, $.level.zone, groupId, true)
     angle += Math.PI / 3
     if (angle >= Math.PI * 2 - 0.2) {
       angle = 0
@@ -78,8 +78,8 @@ const findPathBetweenNavIslands = (
   startGroupId: number
 ): Vector3[] => {
   /* handle islands */
-  const pathfinder = state.level.pathfinder
-  const zone = state.level.zone
+  const pathfinder = $.level.pathfinder
+  const zone = $.level.zone
   const targetGroupId: number = pathfinder.getGroup(zone, targetPos)
   const portalTransitionMap = pathfinder.portalTransitionMap
   const transitionPath = JSON.parse(JSON.stringify(portalTransitionMap[startGroupId][targetGroupId]))
@@ -137,8 +137,8 @@ const findPathBetweenNavIslands = (
 }
 
 const getRandomIslandGroupId = (): number => {
-  const pathfinder = state.level.pathfinder
-  const zone = state.level.zone
+  const pathfinder = $.level.pathfinder
+  const zone = $.level.zone
   const islandsMap: { totalWeights: number; totalNodes: number } = {
     totalWeights: 0,
     totalNodes: 0,
@@ -156,9 +156,9 @@ const getRandomIslandGroupId = (): number => {
     islandWeightsList.push(islandsMap.totalWeights)
   })
 
-  // console.log('state.level.pathfinder: ', state.level.pathfinder)
+  // console.log('$.level.pathfinder: ', $.level.pathfinder)
   // const random = Math.random()
-  const totalGroups = state.level.pathfinder.zones[zone].groups.length
+  const totalGroups = $.level.pathfinder.zones[zone].groups.length
   let random = Math.floor(Math.random() * totalGroups)
   random = clamp(0, totalGroups - 1, random)
   // console.log('random: ', random)
@@ -170,7 +170,7 @@ const getRandomIslandGroupId = (): number => {
 }
 
 const findRandomTargetPosition = (entity: any) => {
-  const { pathfinder, zone } = state.level
+  const { pathfinder, zone } = $.level
   const entityPos = entity.position.clone()
   const radius = 25
   let randomTargetPosition = null
@@ -194,12 +194,12 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
   let uuid: string | null = null
   let isTargetingLastWaypoint: boolean = false
 
-  state.level.movingEntitiesList.push(entity.name)
+  $.level.movingEntitiesList.push(entity.name)
 
   // numEvents++
   // console.log('%c create new event: ', 'color: teal', numEvents)
   let isPortal = false
-  uuid = state.addEvent('renderer.update', (deltaS: number) => {
+  uuid = $.addEvent('renderer.update', (deltaS: number) => {
     const targetPosition: Vector3 | undefined = new Vector3()
     if (nextPosition === null && path.length) {
       nextPosition = path.shift()
@@ -307,9 +307,9 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
     if (uuid && !path.length) {
       /* reached destination remove event and moving entity */
       entity.stateMachine.setState('idle')
-      state.removeEvent('renderer.update', uuid)
+      $.removeEvent('renderer.update', uuid)
       // numEvents--
-      state.level.movingEntitiesList = state.level.movingEntitiesList.filter((name: string) => name !== entity.name)
+      $.level.movingEntitiesList = $.level.movingEntitiesList.filter((name: string) => name !== entity.name)
       entity.path = null
       // console.log('%c reached destination: ', 'color: purple', numEvents)
       entity.lastCoverPosition = null
@@ -344,7 +344,7 @@ export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75
   if (entity.path?.length) return
 
   const meshPosition = entity.mesh.position.clone()
-  const { zone, pathfinder } = state.level
+  const { zone, pathfinder } = $.level
 
   const startGroupId = pathfinder.getGroup(zone, meshPosition)
   let closest = pathfinder.getClosestNode(meshPosition, zone, startGroupId, true)

@@ -4,7 +4,7 @@ import useUser from '@/use/useUser.ts'
 import { createBoxCollider } from '@/utils/physics.ts'
 import { EventEmitter } from 'events'
 import { Group, Mesh, Vector3 } from 'three'
-import state, { getEntity } from '@/states/GlobalState.ts'
+import $, { getEntity } from '@/global'
 import { v4 } from 'uuid'
 
 interface CollidableProps {
@@ -68,7 +68,7 @@ export default ({
   })
   collider.userData = { type: colliderType, uuid, name: name }
 
-  const updateUuid = state.addEvent('renderer.update', () => {
+  const updateUuid = $.addEvent('renderer.update', () => {
     mesh.rotation.set(mesh.rotation.x, mesh.rotation.y + 0.03, mesh.rotation.z)
 
     if (!object?.rigidBody || !rigidBody || !object.rigidBody.isValid()) return
@@ -76,7 +76,7 @@ export default ({
     rigidBody.setTranslation(object.rigidBody.translation())
   })
 
-  const collisionUuid = state.addEvent('physics.collision', (colliderA: any, colliderB: any, started: boolean) => {
+  const collisionUuid = $.addEvent('physics.collision', (colliderA: any, colliderB: any, started: boolean) => {
     if (colliderA.userData.uuid === uuid || colliderB.userData.uuid === uuid) {
       if (started) {
         let entity = null
@@ -88,7 +88,7 @@ export default ({
         if (entity && onlyInteractableByGuild !== undefined && entity.guild !== onlyInteractableByGuild) return
 
         if (entity && collisionSound?.name && entity.guild === 'guild-0') {
-          state.sounds.addAndPlayPositionalSound(entity, collisionSound.name, {
+          $.sounds.addAndPlayPositionalSound(entity, collisionSound.name, {
             volume: userSoundVolume.value * (collisionSound.options?.volume || 1),
           })
         }
@@ -96,7 +96,7 @@ export default ({
         onCollisionStart?.(colliderA, colliderB, uuid, entity)
 
         if (once) {
-          state.removeEvent('physics.collision', collisionUuid)
+          $.removeEvent('physics.collision', collisionUuid)
         }
       } else {
         onCollisionEnd?.(colliderA, colliderB, uuid)
@@ -113,7 +113,7 @@ export default ({
     const cleanup = () => {
       // console.log('--collidable cleanup--')
       if (rigidBody) {
-        state.physics.removeRigidBody(rigidBody)
+        $.physics.removeRigidBody(rigidBody)
       }
 
       level.remove(object)
@@ -121,7 +121,7 @@ export default ({
       mesh.geometry.dispose()
       mesh.material.dispose()
 
-      state.removeEvent('renderer.update', updateUuid)
+      $.removeEvent('renderer.update', updateUuid)
       emitter.off('cleanup', cleanup)
     }
     emitter.on('cleanup', cleanup)

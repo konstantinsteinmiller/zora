@@ -1,5 +1,5 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { Quaternion, Vector3 } from 'three'
 import { clamp } from 'three/src/math/MathUtils.js'
 
@@ -20,22 +20,22 @@ export default () => {
   thirdPersonCamera.getCameraRotation = () => ({ phi, theta })
 
   const updateCamera = () => {
-    state.camera.quaternion.copy(rotation)
-    state.camera.position.copy(translation)
+    $.camera.quaternion.copy(rotation)
+    $.camera.position.copy(translation)
 
-    const playerModelQuaternion = state.player.getRotation()
-    const playerModelPosition = state.player.getPosition()
+    const playerModelQuaternion = $.player.getRotation()
+    const playerModelPosition = $.player.getPosition()
 
-    state.player.setRotation(getXRotation())
-    if (state.controls.lookBack) {
-      state.camera.quaternion.slerp(playerModelQuaternion, 0.3)
+    $.player.setRotation(getXRotation())
+    if ($.controls.lookBack) {
+      $.camera.quaternion.slerp(playerModelQuaternion, 0.3)
       /* define distance to playerModel position 1 up and 2 away */
       const idealCameraPosition: Vector3 = new Vector3(0, 1, 2)
       idealCameraPosition.applyQuaternion(playerModelQuaternion)
       idealCameraPosition.add(playerModelPosition)
-      state.camera.position.copy(idealCameraPosition)
+      $.camera.position.copy(idealCameraPosition)
     } else {
-      state.camera.quaternion.multiply(
+      $.camera.quaternion.multiply(
         new Quaternion().setFromAxisAngle(
           new Vector3(0, 1, 0),
           -Math.PI /*
@@ -45,16 +45,16 @@ export default () => {
       const idealCameraOffset = new Vector3(-0.5, 2, -3.5)
       idealCameraOffset.applyQuaternion(playerModelQuaternion)
       idealCameraOffset.add(playerModelPosition)
-      state.camera.position.copy(idealCameraOffset)
+      $.camera.position.copy(idealCameraOffset)
     }
   }
 
   const getXRotation = () => {
     let xh: number
-    if (state.controls.left || state.controls.right) {
-      xh = state.controls.left ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
+    if ($.controls.left || $.controls.right) {
+      xh = $.controls.left ? -STRAFE_ROT_VELOCITY / innerWidth : STRAFE_ROT_VELOCITY / innerWidth
     } else {
-      xh = state.controls.mouse.mouseX / innerWidth
+      xh = $.controls.mouse.mouseX / innerWidth
     }
 
     phi += -xh * phiSpeed
@@ -64,8 +64,8 @@ export default () => {
   }
 
   const updateTranslation = (timeElapsedInS: number) => {
-    const forwardVelocity = (state.controls.forward ? 1 : 0) + (state.controls.backward ? -1 : 0)
-    const strafeVelocity = (state.controls.left ? 1 : 0) + (state.controls.right ? -1 : 0)
+    const forwardVelocity = ($.controls.forward ? 1 : 0) + ($.controls.backward ? -1 : 0)
+    const strafeVelocity = ($.controls.left ? 1 : 0) + ($.controls.right ? -1 : 0)
 
     const qx = new Quaternion()
     qx.setFromAxisAngle(new Vector3(0, 1, 0), phi)
@@ -84,11 +84,11 @@ export default () => {
   }
 
   const updateRotation = () => {
-    const xh = state.controls.mouse.mouseX / innerWidth
-    const yh = state.controls.mouse.mouseY / innerHeight
+    const xh = $.controls.mouse.mouseX / innerWidth
+    const yh = $.controls.mouse.mouseY / innerHeight
 
     phi += -xh * phiSpeed
-    theta = clamp(theta + (state.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
+    theta = clamp(theta + ($.controls.lookBack ? -1 : 1) * yh * thetaSpeed, -Math.PI / 3, Math.PI / 3)
 
     const qx = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), phi)
     const qz = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), theta)
@@ -103,17 +103,17 @@ export default () => {
     updateCamera()
   }
 
-  state.addEvent('renderer.update', (deltaInS: number) => {
-    if (!state.controls || !state.isThirdPerson) return
+  $.addEvent('renderer.update', (deltaInS: number) => {
+    if (!$.controls || !$.isThirdPerson) return
 
     update(deltaInS)
   })
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     thirdPersonCamera = null
-    state.thirdPersonCamera = null
+    $.thirdPersonCamera = null
   })
 
-  state.thirdPersonCamera = thirdPersonCamera
+  $.thirdPersonCamera = thirdPersonCamera
   return thirdPersonCamera
 }

@@ -1,4 +1,4 @@
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Points, PointsMaterial } from 'three'
 
 const particleCount = 10000 // Number of particles
@@ -52,11 +52,11 @@ export const startPoisonCloudVFX = () => {
 
   // Create the particle system
   const particleSystem = new Points(particles, particleMaterial)
-  state.scene.add(particleSystem)
+  $.scene.add(particleSystem)
 
   const cleanup = () => {
     // Remove the particle system from the scene
-    state.scene.remove(particleSystem)
+    $.scene.remove(particleSystem)
 
     // Dispose of the geometry and material
     particles.dispose()
@@ -64,7 +64,7 @@ export const startPoisonCloudVFX = () => {
   }
 
   // Add the particle group to the scene
-  const eventUuid = state.addEvent(`renderer.update`, () => {
+  const eventUuid = $.addEvent(`renderer.update`, () => {
     // Update particle positions for a drifting effect
     updateParticles(particles)
 
@@ -73,7 +73,7 @@ export const startPoisonCloudVFX = () => {
 
     setTimeout(() => {
       cleanup()
-      state.removeEvent(`renderer.update`, eventUuid)
+      $.removeEvent(`renderer.update`, eventUuid)
     }, 10000)
   })
 }

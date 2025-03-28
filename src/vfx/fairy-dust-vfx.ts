@@ -1,5 +1,5 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { EventEmitter } from 'events'
 import { AdditiveBlending, Group, NormalBlending, Sprite, SpriteMaterial, Vector3 } from 'three'
@@ -38,7 +38,7 @@ export const startFairyDustVFX = (position: Vector3) => {
   particleGroup.name = 'vfx-fairy-dust-particles'
 
   const emitter: any = new EventEmitter()
-  state.scene.add(particleGroup)
+  $.scene.add(particleGroup)
 
   // Position the particle group at the specified location
   particleGroup.position.copy(position)
@@ -114,7 +114,7 @@ export const startFairyDustVFX = (position: Vector3) => {
   const blinkStartTime = Date.now() + (lifeTime - 5000) // Start blinking 5 seconds before end
   let isBlinking = false
 
-  const eventUuid = state.addEvent('renderer.update', () => {
+  const eventUuid = $.addEvent('renderer.update', () => {
     const currentTime = Date.now()
 
     // Check if we should start blinking
@@ -127,7 +127,7 @@ export const startFairyDustVFX = (position: Vector3) => {
   })
 
   const updateParticles = (particles: Sprite[], blinkTime?: number) => {
-    const playerPosition = state.player.position
+    const playerPosition = $.player.position
     const particleSystemPosition = particleGroup.position
     const distance = playerPosition.distanceTo(particleSystemPosition)
 
@@ -193,11 +193,11 @@ export const startFairyDustVFX = (position: Vector3) => {
 
     particles.length = 0
     particleData.length = 0
-    state.removeEvent('renderer.update', eventUuid)
+    $.removeEvent('renderer.update', eventUuid)
     emitter.off('cleanup', cleanup)
   }
   emitter.on('cleanup', cleanup)
-  state.addEvent('arena.cleanup', cleanup)
+  $.addEvent('arena.cleanup', cleanup)
 
   setTimeout(() => {
     emitter.emit('cleanup')

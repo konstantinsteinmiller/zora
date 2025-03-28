@@ -40,37 +40,42 @@ import BuffsList from '@/components/BuffsList.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import GameOverScreen from '@/components/GameOverScreen.vue'
 import StatBar from '@/components/StatBar.vue'
-import state from '@/states/GlobalState'
+import $ from '@/global'
 import Game from '@/Game'
 import useMatch from '@/use/useMatch.ts'
 import { onMounted, type Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import addPerformanceStats from '@/utils/stats'
 
 useMatch()
 const route = useRoute()
 
-const isBattleOver: Ref<boolean> = ref(!!state?.isBattleOver)
+const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)
 const hasOneTeamLost: Ref<boolean> = ref(false)
 const fledGame: Ref<boolean> = ref(false)
-state.isDebug = route.query.debug === 'true'
+$.isDebug = route.query.debug === 'true'
+
+if ($.isDebug) {
+  addPerformanceStats()
+}
 
 const onLoadingFinished = () => {}
 
 onMounted(async () => {
   await Game()
 
-  const updateUuid = state.addEvent('renderer.update', () => {
-    if (state?.isBattleOver) {
+  const updateUuid = $.addEvent('renderer.update', () => {
+    if ($?.isBattleOver) {
       isBattleOver.value = true
-      ;[state.player, state.enemy].some(team => {
+      ;[$.player, $.enemy].some(team => {
         if (team.isDead(team)) {
           hasOneTeamLost.value = true
           return true
         }
       })
 
-      fledGame.value = state.fledGame
-      state.removeEvent('renderer.update', updateUuid)
+      fledGame.value = $.fledGame
+      $.removeEvent('renderer.update', updateUuid)
     }
   })
 })

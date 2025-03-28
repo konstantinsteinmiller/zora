@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import { lerp, clamp } from 'three/src/math/MathUtils.js'
 import { computed, ref } from 'vue'
 import LifeImg from '/images/stat/stat-life.png'
@@ -103,28 +103,28 @@ let totalDist = -1
 const ANIMATION_SPEED = 8
 let condition = false
 let typeSelectionList: any[] = []
-let entity: any = state?.[props.ownerId]
+let entity: any = $?.[props.ownerId]
 const uuid = ref('')
 
 const updateCallback = (deltaS: number) => {
   counter++
-  entity = state?.[props.ownerId]
+  entity = $?.[props.ownerId]
   uuid.value = entity?.uuid
 
   if (!entity) return
 
   if (props.type === 'life') {
-    const { hp, previousHp, maxHp } = state?.[props.ownerId]
+    const { hp, previousHp, maxHp } = $?.[props.ownerId]
     typeSelectionList = [hp, previousHp, maxHp, 'hp', 'previousHp', 'maxHp']
     condition = target !== hp
   }
   if (props.type === 'mana') {
-    const { mp, previousMp, maxMp } = state?.[props.ownerId]
+    const { mp, previousMp, maxMp } = $?.[props.ownerId]
     typeSelectionList = [mp, previousMp, maxMp, 'mp', 'previousMp', 'maxMp']
     condition = target !== mp
   }
   if (props.type === 'endurance') {
-    const { endurance, previousEndurance, maxEndurance } = state?.[props.ownerId]
+    const { endurance, previousEndurance, maxEndurance } = $?.[props.ownerId]
     typeSelectionList = [endurance, previousEndurance, maxEndurance, 'endurance', 'previousEndurance', 'maxEndurance']
     condition = target !== endurance
   }
@@ -167,10 +167,10 @@ const updateCallback = (deltaS: number) => {
     owner.value[typeSelectionList[3]] = current
   }
 }
-state.addEvent('renderer.update', updateCallback)
+$.addEvent('renderer.update', updateCallback)
 
 let maxSize = ref(innerWidth < 500 ? '30vw' : innerWidth < 1000 ? '24vw' : '300px')
-state.addEvent('renderer.resize', () => {
+$.addEvent('renderer.resize', () => {
   maxSize.value = innerWidth < 500 ? '30vw' : innerWidth < 1000 ? '28vw' : '300px'
 })
 

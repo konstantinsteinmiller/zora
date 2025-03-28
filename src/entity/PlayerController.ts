@@ -1,10 +1,10 @@
 import type { Guild } from '@/types/entity.ts'
-import { chargeUtils } from '@/utils/controller.ts'
+import { aiChargeUtils, chargeUtils, controllerAwarenessUtils } from '@/utils/controller.ts'
 import { Quaternion, Vector3 } from 'three'
 import Controller from '@/entity/Controller.ts'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 
 interface PlayerControllerProps {
   modelPath: string
@@ -16,11 +16,11 @@ interface PlayerControllerProps {
 }
 
 const PlayerController = (config: PlayerControllerProps) => {
-  const chargeUtilsObj = chargeUtils()
-
   let entity = Controller(config)
-  entity.updateChargeIndicator = chargeUtilsObj.updateChargeIndicator
-  entity.createChargeIndicator = chargeUtilsObj.createChargeIndicator
+  const utils: any = { ...chargeUtils() }
+  for (const key in utils) {
+    entity[key] = utils[key]
+  }
 
   entity.getPosition = () => {
     if (!entity.mesh) {
@@ -50,27 +50,27 @@ const PlayerController = (config: PlayerControllerProps) => {
     const isFinished = entity.update(deltaS, elapsedTimeInS)
     if (!isFinished) return
 
-    entity.stateMachine.update(deltaS, state.controls)
+    entity.stateMachine.update(deltaS, $.controls)
 
     entity.checkBattleOver(updateEventUuid)
 
-    entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, state.controls)
+    entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
 
     entity.regenEndurance(entity, deltaS)
     // entity.updateLife(entity, elapsedTimeInS)
   }
 
   entity.start = () => {
-    updateEventUuid = state.addEvent('renderer.update', update)
+    updateEventUuid = $.addEvent('renderer.update', update)
   }
 
-  state.addEvent('arena.cleanup', () => {
+  $.addEvent('arena.cleanup', () => {
     entity = null
-    state.player = null
+    $.player = null
   })
 
-  state.entitiesMap.set(entity.uuid, entity)
-  state.player = entity
+  $.entitiesMap.set(entity.uuid, entity)
+  $.player = entity
 
   return entity
 }

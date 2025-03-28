@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 let loader: any = null
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 
 const createGeoIndex = (mesh: Mesh) => {
   // Check if the geometry has an index
@@ -63,8 +63,8 @@ export default () => {
     callback?: (scene: Object3D) => void /*
      */
   ) => {
-    state.loadingManager.itemStart(src)
-    const loaderGlb = new GLTFLoader(state.loadingManager)
+    $.loadingManager.itemStart(src)
+    const loaderGlb = new GLTFLoader($.loadingManager)
 
     if (src.endsWith('.comp.glb')) {
       const dracoLoader = new DRACOLoader()
@@ -76,11 +76,11 @@ export default () => {
     let glb: any
     try {
       glb = await loaderGlb.loadAsync(src, (fileProgressEvent: any) =>
-        state.fileLoader.onFileProgress(src, fileProgressEvent)
+        $.fileLoader.onFileProgress(src, fileProgressEvent)
       )
-      state.loadingManager.itemEnd(src)
+      $.loadingManager.itemEnd(src)
     } catch (error: any) {
-      state.loadingManager.itemError(src)
+      $.loadingManager.itemError(src)
     }
 
     // console.log('glb: ', glb)
@@ -114,16 +114,16 @@ export default () => {
     callback?: (scene: Object3D) => void /*
      */
   ) => {
-    state.loadingManager.itemStart(src)
-    const loaderFbx = new FBXLoader(state.loadingManager)
+    $.loadingManager.itemStart(src)
+    const loaderFbx = new FBXLoader($.loadingManager)
     let fbx: any
     try {
       fbx = await loaderFbx.loadAsync(src, (fileProgressEvent: any) =>
-        state.fileLoader.onFileProgress(src, fileProgressEvent)
+        $.fileLoader.onFileProgress(src, fileProgressEvent)
       )
-      state.loadingManager.itemEnd(src)
+      $.loadingManager.itemEnd(src)
     } catch (error: any) {
-      state.loadingManager.itemError(src)
+      $.loadingManager.itemError(src)
     }
 
     if (shadows) {
@@ -169,16 +169,16 @@ export default () => {
     callback?: (scene: Object3D) => void /*
      */
   }) => {
-    const loader = new FBXLoader(state.loadingManager)
+    const loader = new FBXLoader($.loadingManager)
     const pathPartsList = src.split('/')
     pathPartsList.pop()
     const animationsPath = `${pathPartsList.join('/')}/`
 
-    state.loadingManager.itemStart(src)
+    $.loadingManager.itemStart(src)
     loader.load(
       src,
       (model: any) => {
-        state.loadingManager.itemEnd(src)
+        $.loadingManager.itemEnd(src)
 
         if (scale >= 0) model.scale.setScalar(scale)
         // const socket = model.getObjectByName('right_hand_socket')
@@ -228,7 +228,7 @@ export default () => {
             clip: clip,
             action: action,
           }
-          state.loadingManager.itemEnd(animName)
+          $.loadingManager.itemEnd(animName)
         }
 
         /* load all animations from same folder as the models
@@ -236,35 +236,35 @@ export default () => {
         const animLoader = new FBXLoader(loadingManager)
         animLoader.setPath(animationsPath)
         animationNamesList.forEach((name: string) => {
-          state.loadingManager.itemStart(name)
+          $.loadingManager.itemStart(name)
           animLoader.load(
             `${name}.fbx`,
             (anim: any) => onLoad(name, anim),
-            (fileProgressEvent: any) => state.fileLoader.onFileProgress(name, fileProgressEvent),
-            () => state.loadingManager.itemError(name) /*
+            (fileProgressEvent: any) => $.fileLoader.onFileProgress(name, fileProgressEvent),
+            () => $.loadingManager.itemError(name) /*
              */
           )
         })
       },
-      (fileProgressEvent: any) => state.fileLoader.onFileProgress(src, fileProgressEvent),
-      () => state.loadingManager.itemError(src)
+      (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
+      () => $.loadingManager.itemError(src)
     )
   }
 
   loader.loadTexture = async (src: string) => {
-    const textureLoader = new TextureLoader(state.loadingManager)
-    state.loadingManager.itemStart(src)
+    const textureLoader = new TextureLoader($.loadingManager)
+    $.loadingManager.itemStart(src)
     try {
       const texture: any = await textureLoader.loadAsync(src, (fileProgressEvent: any) =>
-        state.fileLoader.onFileProgress(src, fileProgressEvent)
+        $.fileLoader.onFileProgress(src, fileProgressEvent)
       )
-      state.loadingManager.itemEnd(src)
+      $.loadingManager.itemEnd(src)
       return texture
     } catch (error: any) {
-      state.loadingManager.itemError(src)
+      $.loadingManager.itemError(src)
       console.error('Failed to load texture:', error)
     } finally {
-      state.loadingManager.itemEnd(src)
+      $.loadingManager.itemEnd(src)
     }
     return Promise.resolve(new Texture())
   }

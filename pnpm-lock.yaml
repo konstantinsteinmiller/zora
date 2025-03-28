@@ -129,6 +129,9 @@ importers:
       sass:
         specifier: ^1.86.0
         version: 1.86.0
+      stats-gl:
+        specifier: ^3.6.0
+        version: 3.6.0(three@0.172.0)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -2094,6 +2097,14 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+
+  stats-gl@3.6.0:
+    resolution: {integrity: sha512-Bpi5nwvC2pls9lcI5sGqAcUqB/2kMYfsR4KoAglXFtY3YUdm7lJFg8FqS7eKKNgg3ruDMNCuwU+uRwPOwJiGnw==}
+    peerDependencies:
+      three: '*'
+    peerDependenciesMeta:
+      three:
+        optional: true
 
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
@@ -4344,6 +4355,10 @@ snapshots:
 
   source-map@0.6.1:
     optional: true
+
+  stats-gl@3.6.0(three@0.172.0):
+    optionalDependencies:
+      three: 0.172.0
 
   string-width@4.2.3:
     dependencies:

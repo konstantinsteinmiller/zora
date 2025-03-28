@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 import AttackBuffImg from '@/assets/images/buff/swords-128x128.png'
 import DefenseBuffImg from '@/assets/images/buff/breast-plate-128x128.png'
 import { type Ref, ref } from 'vue'
@@ -41,7 +41,7 @@ const fairyDustCollected = ref(0)
 
 const updateBuffs = (deltaS: number) => {
   buffProgressList.value = []
-  const entity = state.player
+  const entity = $.player
   if (!entity?.defense) return
   fairyDustCollected.value = entity.currency.fairyDustCollected
 
@@ -71,7 +71,7 @@ const updateBuffs = (deltaS: number) => {
 }
 
 // Add the update event
-state.addEvent('renderer.update', updateBuffs)
+$.addEvent('renderer.update', updateBuffs)
 </script>
 
 <style scoped lang="sass">

@@ -1,6 +1,6 @@
 import State, { isMovingEntity } from '@/states/State'
 import { LoopOnce } from 'three'
-import state from '@/states/GlobalState.ts'
+import $ from '@/global'
 
 export default class JumpState extends State {
   constructor(parent: any) {
@@ -39,7 +39,7 @@ export default class JumpState extends State {
       currentAction.play()
     }
 
-    state.sounds.addAndPlayPositionalSound(this.parent.owner, 'hit', { volume: 0.7 })
+    $.sounds.addAndPlayPositionalSound(this.parent.owner, 'hit', { volume: 0.7 })
   }
 
   onFinished(previousState: any) {
