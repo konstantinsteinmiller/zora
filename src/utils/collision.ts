@@ -11,9 +11,7 @@ const calcUpVector = (entity: any, deltaS: number) => {
   }
 
   const decayFactor = Math.exp(-1 * deltaS) // Exponential decay
-  // console.log('flyImpulse: ', flyImpulse)
   flyImpulse *= decayFactor
-  // flyImpulse = Math.max(0, flyImpulse - flyImpulse * 4 * deltaS)
   entity.appliedFlyImpulse = flyImpulse
   return flyImpulse
 }
@@ -142,14 +140,38 @@ export const calcRapierMovementVector = (entity: any, velocity: Vector3, deltaS:
     const point = groundHit.witness1
     const d = +(rigidPos.y - point.y).toFixed(3)
     if (d < entity.halfHeight - 0.05) {
-      movementVector.y += entity.halfHeight - d
+      const correction = entity.halfHeight - d
+      const lerpFactor = 0.3
+      movementVector.y += correction * lerpFactor
     }
   } else {
-    // 🟣 Apply Gravity and Prevent Sticking in Geometry#
+    // 🟣 Apply Gravity and Prevent Sticking in Geometry
     if (entity.utils.takeOffFrames > 0) {
       entity.utils.takeOffFrames--
     } else {
-      movementVector.y += -4 * deltaS
+      // Reduced gravity when close to ground to prevent trembling when falling on slopes and hills
+      const closeToGroundHit = $.physics.castShape(
+        rigidPos,
+        shapeRot,
+        new Rapier.Vector3(0, -1, 0), // Adjust cast distance
+        new Capsule(0.1, 0.1),
+        0,
+        entity.halfHeight + 0.75, // Adjust maxToi
+        stopAtPenetration,
+        filterFlags,
+        filterGroups,
+        filterExcludeCollider,
+        filterExcludeRigidBody
+      )
+
+      if (closeToGroundHit) {
+        const point = closeToGroundHit?.witness1
+        const d = +(rigidPos.y - entity.halfHeight - point.y).toFixed(2)
+        const gravityFactor = Math.max(0, Math.min(1, d / 0.5)) // Interpolate gravity for smooth falling
+        movementVector.y += -4 * deltaS * gravityFactor
+      } else {
+        movementVector.y += -4 * deltaS
+      }
     }
     entity.isGrounded = false
     if (entity.stateMachine.currentState.name === 'fly') {

@@ -30,7 +30,7 @@ import $ from '@/global'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
-import { startPoisonCloudVFX } from '@/vfx/poison-cloud-sprite.ts'
+import { startPoisonCloudVFX } from '@/vfx/poison-cloud.ts'
 import { type ComputedRef, onMounted } from 'vue'
 
 const emit = defineEmits(['loading-finished'])
@@ -63,7 +63,9 @@ onMounted(() => {
       $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
 
       if (levelType.value === LEVELS.ARENA) {
-        tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
+        setTimeout(() => {
+          tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
+        }, 3000)
       }
     }
   }

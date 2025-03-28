@@ -1,16 +1,8 @@
-import AssetLoader from '@/engine/AssetLoader.ts'
+import { assetManager } from '@/engine/AssetLoader.ts'
 import $ from '@/global'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { EventEmitter } from 'events'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial, Vector3 } from 'three'
-
-// Load the custom particle texture
-let particleTexture: any
-const loadTexture = async () => {
-  const { loadTexture: load } = AssetLoader()
-  particleTexture = await load(prependBaseUrl('/images/glow.png'))
-}
-loadTexture()
 
 // Define three gold tones
 const goldColors = [
@@ -24,6 +16,7 @@ const sphereRadius = 0.65 // Radius of the sphere
 const shimmerSpeed = 0.025 // Speed of the shimmering effect
 
 export const startShimmeringSphere = (position: Vector3) => {
+  const particleTexture = assetManager.getTexture('/images/glow.png')
   // Store initial positions, offsets, and scales for particles
   const particleData: {
     initialPosition: { x: number; y: number; z: number }
@@ -155,7 +148,7 @@ export const startShimmeringSphere = (position: Vector3) => {
 
     particles.length = 0
     particleData.length = 0
-    particleTexture.dispose()
+    particleTexture?.dispose()
     $.removeEvent('renderer.update', eventUuid)
   }
 

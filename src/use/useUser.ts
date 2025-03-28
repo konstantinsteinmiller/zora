@@ -15,7 +15,7 @@ watch(
   userTutorialsDoneMap,
   (newValue: any) => {
     if (newValue) {
-      allowTutorial.value = !Object.keys(userTutorialsDoneMap.value)?.length
+      allowTutorial.value = !Object.keys(userTutorialsDoneMap.value)?.some(key => key !== 'none')
     }
   },
   { deep: true, once: true }
@@ -30,8 +30,6 @@ const { storeUser } = useUserDb({
 
 const useUser = () => {
   const setSettingValue = (name: string, value: any) => {
-    // const storageKey = USER_SETTINGS_MAP[name]
-    // storageKey && sessionStorage.setItem(storageKey, value)
     if (name === 'language') {
       value = `'${value}'`
     }
@@ -39,15 +37,6 @@ const useUser = () => {
       value = JSON.stringify(value)
     }
     eval(`user${name[0].toUpperCase()}${name.slice(1)}.value = ${value}`)
-    // switch (name) {
-    //   case 'soundVolume':
-    //     userSoundVolume.value = value
-    //     break
-    //   case 'language':
-    //     userLanguage.value = value
-    //     break
-    //   default:
-    // }
 
     storeUser({
       userSoundVolume: +userSoundVolume.value,

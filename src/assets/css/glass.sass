@@ -7,6 +7,9 @@
   --glass-gradient-1: gold
   // --glass-gradient-2: blueviolet
   --glass-gradient-2: #AF47FA
+  --vue-gradient-1: #299867
+  --vue-gradient-2: #48c4a5
+  --vue-gradient-3: #26399a
   // --glass-gradient-3: blueviolet
   --low-heading-color-1: #18C1B0
   --low-heading-color-2: #5DFDFD
@@ -129,6 +132,12 @@ button.glass
     box-shadow: 1px 1px 1px 2px darkturquoise
   &.danger
     color: #ff3255
+  &.disabled, &:disabled, &.disabled:hover, &:disabled:hover
+    background-color: rgba(255, 255, 255, 0.1)
+    color: rgba(255, 255, 255, 0.5)
+    cursor: not-allowed
+    pointer-events: none
+
 
 button.danger:not(.glass)
   background-color: #ff3255

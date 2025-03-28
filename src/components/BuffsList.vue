@@ -32,14 +32,14 @@
 
 <script setup lang="ts">
 import $ from '@/global'
-import AttackBuffImg from '@/assets/images/buff/swords-128x128.png'
-import DefenseBuffImg from '@/assets/images/buff/breast-plate-128x128.png'
+import AttackBuffImg from '@/assets/images/buff/swords-128x128.avif'
+import DefenseBuffImg from '@/assets/images/buff/breast-plate-128x128.avif'
 import { type Ref, ref } from 'vue'
 
 const buffProgressList: Ref<{ progress: number; name: string; finished: boolean; img: any }[]> = ref([])
 const fairyDustCollected = ref(0)
 
-const updateBuffs = (deltaS: number) => {
+const updateBuffs = () => {
   buffProgressList.value = []
   const entity = $.player
   if (!entity?.defense) return

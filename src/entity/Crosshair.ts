@@ -1,3 +1,4 @@
+import { assetManager } from '@/engine/AssetLoader.ts'
 import useUser from '@/use/useUser.ts'
 import {
   CRITICAL_CHARGE_END_COLOR,
@@ -14,14 +15,13 @@ import { getChargeDuration } from '@/utils/chargeUtils.ts'
 import { TUTORIALS } from '@/utils/enums.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils.js'
-import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial, TextureLoader } from 'three'
+import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, Sprite, SpriteMaterial } from 'three'
 import $ from '@/global'
 import SpellFire from '@/entity/SpellFire'
 
 const Crosshair = () => {
   const createCrosshair = () => {
-    const textureLoader = new TextureLoader()
-    const crosshair = textureLoader.load('images/crosshair/crosshair-transparent.png')
+    const crosshair = assetManager.getTexture('/images/crosshair/crosshair-transparent.avif')
     crosshair.anisotropy = $.renderer.capabilities.getMaxAnisotropy()
 
     const crosshairSprite = new Sprite(
@@ -54,8 +54,8 @@ const Crosshair = () => {
     crosshairSprite.center.set(0.5, 0.5)
 
     // load crosshair stars Texture
-    const createPlaneFromTexture = (path: string) => {
-      const texture = new TextureLoader().load(path)
+    const createPlaneFromTexture = (src: string) => {
+      const texture = assetManager.getTexture(src)
       const material = new MeshBasicMaterial({
         map: texture,
         transparent: true,
@@ -69,8 +69,8 @@ const Crosshair = () => {
       mesh.position.set(0, 0, 0) // Center it in the HUD
       return mesh
     }
-    const crosshairStar = createPlaneFromTexture('images/crosshair/crosshair-stars.png')
-    const crosshairDots = createPlaneFromTexture('images/crosshair/crosshair-dots.png')
+    const crosshairStar = createPlaneFromTexture('/images/crosshair/crosshair-stars.png')
+    const crosshairDots = createPlaneFromTexture('/images/crosshair/crosshair-dots.avif')
     crosshairStar.name = 'crosshairStar'
     crosshairDots.name = 'crosshairDots'
 
@@ -170,7 +170,7 @@ const Crosshair = () => {
     const rotationDuration = remap(0, DEFAULT_CHARGE_DURATION, 0, entityChargeDuration, elapsedChargeS)
     const rotationN = Math.min(rotationDuration / entityChargeDuration, 1) // 0 - 1 -> value between [0,1]
     rotationSpeed = lerp(INITIAL_ROTATION_SPEED, MAX_ROTATION_SPEED, rotationN)
-    $.player.currentSpell.charge = rotationN
+    entity.currentSpell.charge = rotationN
     crosshairRotatingGroup.rotation.z -= rotationSpeed * deltaInS
 
     if (rotationSpeed > MIN_CHARGE_SPEED) {
@@ -202,14 +202,14 @@ const Crosshair = () => {
       fireRaycaster(rotationSpeed, $.player, $.enemy)
       canFire = false
       forcedSpellRelease = true
-      $.player.currentSpell.charge = 0
+      entity.currentSpell.charge = 0
       $.controls.previous.attack = false
       $.controls.attack = false
       crosshairDots.visible = false
       crosshairStar.visible = false
       chargeEmitter.emit('cleanup')
       chargeIndicatorNebulaSystem = null
-      calcAttackMpDamage($.player, rotationSpeed)
+      entity.calcAttackMpDamage(entity, rotationSpeed)
     }
   })
 }

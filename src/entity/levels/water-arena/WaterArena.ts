@@ -20,7 +20,7 @@ import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
 export default async (onFinishedCallback: () => void) => {
   const waterArena: any = new Object3D()
   const { loadMesh } = AssetLoader()
-  await loadMesh('worlds/arenas/water-arena.comp.glb', waterArena, 1)
+  await loadMesh('/worlds/arenas/water-arena.comp.glb', waterArena, 1)
 
   if ($.enableWater) {
     const waterResolution = { size: 256 }

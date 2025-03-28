@@ -68,7 +68,8 @@
     - [x] AssetLoadingManager to preload assets
       - [x] preload World, navmesh and character models and animations
       - [x] cleanup vfx sprite loading with manager
-      - [ ] move texture loading to texture atlas in LoadingManager
+      - [x] move texture loading to texture atlas in LoadingManager
+      - [x] refactor character skeletal mesh with animations loading to use AssetManager
   - [ ] Fairy loadout UI
   - [ ] Spell selection UI
   - [ ] Map UI

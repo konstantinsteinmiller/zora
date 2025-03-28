@@ -1,15 +1,7 @@
-import AssetLoader from '@/engine/AssetLoader.ts'
+import { assetManager } from '@/engine/AssetLoader.ts'
 import $ from '@/global'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial } from 'three'
-
-// Load the custom particle texture
-let particleTexture: any
-const loadTexture = async () => {
-  const { loadTexture: load } = AssetLoader()
-  particleTexture = await load(prependBaseUrl('/images/poison-cloud.png'))
-}
-loadTexture()
 
 const particles: Sprite[] = []
 let particleCount = 500 // Initial particle count
@@ -33,6 +25,7 @@ const particleData: {
 }[] = []
 
 const updateParticles = (particles: Sprite[], deltaS: number) => {
+  const particleTexture = assetManager.getTexture('/images/cursor-icon.png') // Get the texture from the asset manager
   const elapsedTime = Date.now() - startTime // Time elapsed since start
   const progress = Math.min(elapsedTime / totalDuration, 1) // Progress from 0 to 1
 
@@ -157,6 +150,7 @@ export const startPoisonCloudVFX = () => {
     }
   })
 
+  const particleTexture = assetManager.getTexture('/images/cursor-icon.png') // Get the texture from the asset manager
   const cleanup = () => {
     // Remove all particles from the group and dispose of their materials
     particles.forEach(particle => {

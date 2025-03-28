@@ -62,8 +62,7 @@ import XSelect from '@/components/atoms/XSelect.vue'
 
 const { t }: any = useI18n({ useScope: 'local' })
 const { locale }: any = useI18n({ useScope: 'global' })
-const { userSoundVolume, userMusicVolume, userLanguage, userTutorialsDoneMap, allowTutorial, setSettingValue } =
-  useUser()
+const { userSoundVolume, userMusicVolume, userLanguage, allowTutorial, setSettingValue } = useUser()
 
 defineProps({
   show: Boolean,
@@ -76,8 +75,7 @@ watch(userLanguage, (newValue: string) => {
 const onInput = (name: string, newValue: any) => {
   if (name === 'tutorial') {
     allowTutorial.value = newValue
-    userTutorialsDoneMap.value = newValue ? {} : userTutorialsDoneMap.value
-    newValue && setSettingValue('tutorialsDoneMap', JSON.stringify(userTutorialsDoneMap.value))
+    newValue && setSettingValue('tutorialsDoneMap', { none: true })
     return
   }
   setSettingValue(name, newValue)
@@ -130,6 +128,7 @@ en:
   title: "Options"
   soundVolume: "Game Sound"
   musicVolume: "Music"
+  tutorial: "Tutorial"
   allowTutorial: "Reset Tutorial"
   language: "Language"
   en: "English"
@@ -155,6 +154,7 @@ de:
   title: "Einstellungen"
   soundVolume: "Sound"
   musicVolume: "Musik"
+  tutorial: "Tutorial"
   allowTutorial: "Tutorial zurücksetzen"
   language: "Sprache"
   en: "Englisch"

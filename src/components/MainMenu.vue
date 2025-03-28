@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import LoadingBar from '@/components/LoadingBar.vue'
 import InputController, { spraySprincles } from '@/control/KeyboardController.ts'
 import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
 import router from '@/router'
 import $ from '@/global'
+import useAssets from '@/use/useAssets.ts'
 import useMatch from '@/use/useMatch.ts'
 import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
@@ -44,8 +46,11 @@ $.sounds.playBackgroundMusic()
 !$.fileLoader && FileLoader()
 !$.camera && Camera()
 
+const { preloadAssets, loadingProgress } = useAssets()
+
 const game$: any = document.querySelector('.game')
 onMounted(() => {
+  preloadAssets()
   game$.addEventListener('click', (e: MouseEvent) => spraySprincles(e), false)
   game$.addEventListener('mousemove', onUnlockedMouseMove, false)
 })
@@ -76,6 +81,7 @@ onUnmounted(() => {
         <div class="flex justify-center">
           <XButton
             class="with-bg mt-3 leading-[1rem]"
+            :disabled="loadingProgress < 99.8"
             @click="startGame"
             @keydown.enter="startGame"
           >
@@ -108,6 +114,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+    <LoadingBar />
   </div>
 </template>
 

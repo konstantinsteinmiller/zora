@@ -4,8 +4,9 @@ import CharacterControl from '@/components/tutorials/CharacterControl.vue'
 import MissingMana from '@/components/tutorials/MissingMana.vue'
 import useUser from '@/use/useUser'
 import { TUTORIALS } from '@/utils/enums.ts'
-import { computed, type Ref, ref } from 'vue'
+import { computed, onMounted, type Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import $ from '@/global'
 
 const { t } = useI18n()
 const { tutorialPhase, userTutorialsDoneMap, setSettingValue } = useUser()
@@ -23,7 +24,7 @@ const onClose = () => {
     userTutorialsDoneMap.value = JSON.parse(userTutorialsDoneMap.value)
   }
   userTutorialsDoneMap.value[tutorialPhase.value] = true
-  setSettingValue('tutorialsDoneMap', JSON.stringify(userTutorialsDoneMap.value))
+  setSettingValue('tutorialsDoneMap', userTutorialsDoneMap.value)
   tutorialPhase.value = ''
 }
 
@@ -31,6 +32,13 @@ const onClose = () => {
 setTimeout(() => {
   enableTutorial.value = true
 }, 1000)
+
+onMounted(() => {
+  $.addEvent('battle.cleanup', () => {
+    console.log('cleaned up tutorial')
+    tutorialPhase.value = ''
+  })
+})
 </script>
 
 <template lang="pug">

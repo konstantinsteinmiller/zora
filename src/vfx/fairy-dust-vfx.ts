@@ -1,18 +1,7 @@
-import AssetLoader from '@/engine/AssetLoader.ts'
+import { assetManager } from '@/engine/AssetLoader.ts'
 import $ from '@/global'
-import { prependBaseUrl } from '@/utils/function.ts'
 import { EventEmitter } from 'events'
 import { AdditiveBlending, Group, NormalBlending, Sprite, SpriteMaterial, Vector3 } from 'three'
-
-// Load the custom particle texture
-let particleTexture: any
-let spriteTexture: any
-const loadTextures = async () => {
-  const { loadTexture } = AssetLoader()
-  particleTexture = await loadTexture(prependBaseUrl('/images/star/star-64x64.png'))
-  spriteTexture = await loadTexture(prependBaseUrl('/images/fairy-dust/fairy-dust-100x120.png'))
-}
-loadTextures()
 
 // Define three gold tones
 const goldColors = [
@@ -48,6 +37,7 @@ export const startFairyDustVFX = (position: Vector3) => {
     // Randomly assign one of the gold colors
     const goldColor = goldColors[Math.floor(Math.random() * goldColors.length)]
 
+    const particleTexture = assetManager.getTexture('/images/star/star-64x64.png')
     const particleMaterial = new SpriteMaterial({
       map: particleTexture,
       color: goldColor,
@@ -86,6 +76,7 @@ export const startFairyDustVFX = (position: Vector3) => {
 
   let sprite: any
   function addInnerSprite() {
+    const spriteTexture = assetManager.getTexture('/images/fairy-dust/fairy-dust-100x120.png')
     const spriteMaterial = new SpriteMaterial({
       map: spriteTexture,
       blending: NormalBlending,

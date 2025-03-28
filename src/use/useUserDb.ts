@@ -1,4 +1,3 @@
-import { clone } from 'three/examples/jsm/utils/SkeletonUtils'
 import type { Ref } from 'vue'
 import useMatch from '@/use/useMatch'
 import clonedeep from 'lodash.clonedeep'

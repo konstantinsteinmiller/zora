@@ -31,9 +31,6 @@ const fragmentShader = `
 
 let sphereGeometry: any, glowTexture: any, shaderMaterial: any, sphereMesh: any
 const init = async () => {
-  // const { loadTexture } = AssetLoader()
-  // const glowTexture: any = loadTexture(prependBaseUrl('/images/glow.png'))
-
   // Create a sphere geometry
   const sphereRadius = 0.65
   sphereGeometry = new SphereGeometry(sphereRadius, 32, 32)

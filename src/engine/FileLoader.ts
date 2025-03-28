@@ -3,7 +3,7 @@ import $ from '@/global'
 import { convertToReadableSize } from '@/utils/function.ts'
 import { ref, type Ref } from 'vue'
 
-const currentOverallSize = 28060383
+const currentOverallSize = 28889837
 let singleton: any = null
 const FileLoader = () => {
   if (singleton !== null) return singleton
@@ -54,20 +54,11 @@ const FileLoader = () => {
       const total = convertToReadableSize($.fileLoader.backUpTotal)
       console.log('%c All assets loaded', 'color: lightgrey', total)
 
-      /* FIX REMOVE THIS and do proper loading */
-      if (+total.split(' ')[0] < 10) {
-        return
-      }
-      const interval = setInterval(() => {
-        if ($.player) {
-          isLoading.value = false
-          clearInterval(interval)
-        }
-      }, 100)
-      // setTimeout(() => (isLoading.value = false), 1000)
+      setTimeout(() => {
+        isLoading.value = false
+      }, 300)
 
       localStorage.setItem(ZORA_TOTAL_LOAD_SIZE_NAME, $.fileLoader.backUpTotal.toString())
-      isLoading.value = false
       onFinished()
     }
   }

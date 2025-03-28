@@ -13,7 +13,7 @@ const Arena = async (level = 'water-arena') => {
     const startPos2 = $.level.pathfinder.startPositions[1]
 
     PlayerController({
-      modelPath: 'models/thunder-fairy/thunder_fairy_1.fbx',
+      modelPath: '/models/thunder-fairy-1/thunder_fairy_1.fbx',
       stats: {
         name: 'player',
         hp: 100,
@@ -28,7 +28,7 @@ const Arena = async (level = 'water-arena') => {
     })
 
     const enemy = AIController({
-      modelPath: 'models/fairy/nature_fairy_1.fbx',
+      modelPath: '/models/nature-fairy-1/nature_fairy_1.fbx',
       stats: { name: 'enemy' },
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
