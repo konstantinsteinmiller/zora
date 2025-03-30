@@ -21,6 +21,7 @@ export const createCollidersForGraph = (object: any, rigidType: string = 'fixed'
   })
   return colliders
 }
+
 export const createCollider = (mesh: Mesh, rigidType: string = 'fixed', scale?: number, rotate?: number) => {
   const desc = descMap[rigidType]
   const rigidBody = $.physics.createRigidBody(desc)

@@ -7,12 +7,12 @@ import Light from '@/engine/Light'
 import Renderer from '@/engine/Renderer'
 import Physics from '@/engine/Physics'
 
-export default async (level = 'water-arena') => {
+export default async (level: string) => {
   await Physics()
   $.scene = new Scene()
   $.uiScene = new Scene()
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     $.scene = null
     $.uiScene = null
   })
@@ -72,13 +72,13 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
   if (!excludeBattleProtected) {
     $.isEngineInitialized = false
     $.isBattleOver = false
-    $.isBattleInitialized = false
+    $.isWorldInitialized = false
     $.player.currency.fairyDustCollected = 0
     $.entitiesMap.clear()
 
     const fileLoader = FileLoader()
     fileLoader.clearData()
-    $.triggerEvent('arena.cleanup')
+    $.triggerEvent('level.cleanup')
     $.clearAllEvents()
 
     // $.renderer.dispose()

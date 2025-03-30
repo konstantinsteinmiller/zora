@@ -52,7 +52,7 @@
     - [x] fix previous endurance bug when regen overwriting previous damage
     - [x] fix bar scaling
   - [x] Fairy dust collected indicator
-  - [ ] Skill Box
+  - [ ] Selected spell box
   - [x] Battle Over screen
     - [x] stop background music
     - [x] fix Game over and button alignment
@@ -99,10 +99,12 @@
   - [x] if enemy has not enough mana for the spell, health is used instead of missing mana amount
   - [x] if a fairy falls to the void, it dies at y < -10
   - [x] wild fairies and the player can fly in a wild fairy fight
+  - [ ] spell switching
 - [ ] World
   - [x] Water Shader
   - [x] skybox
   - [x] Arenas
+    - [x] Multiplayer arena
     - [x] Water arena
     - [x] Mountain
       - [x] load Mesh
@@ -110,6 +112,7 @@
   - [ ] Locations
     - [ ] Fairy forest, big tree with huts hanging at it with leaf roofs and hanging bridges
     - [ ] town with houses and market
+    - [x] basic world map with start world
   - [ ] Biomes
     - [ ] Forest
     - [ ] Desert / Steppe
@@ -124,8 +127,7 @@
     - [ ] Outro
     - [ ] Quests
     - [ ] Dialogues
-    - [ ] Story and world concept
-  - [ ] (Not MVP) Day and night cycle
+    - [x] Story and world concept
 - [x] Refactor to function style programming
 - [x] Refactor to frame rate independent movement -> browser and machine independent physics
 - [x] Refactor model importing

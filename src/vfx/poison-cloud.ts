@@ -1,5 +1,7 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
 import $ from '@/global'
+import useMatch from '@/use/useMatch.ts'
+import { LEVELS } from '@/utils/enums.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { AdditiveBlending, Group, Sprite, SpriteMaterial } from 'three'
 
@@ -172,7 +174,7 @@ export const startPoisonCloudVFX = () => {
     particleTexture.dispose()
   }
 
-  $.addEvent('arena.cleanup', cleanup)
+  $.addEvent('level.cleanup', cleanup)
 }
 
 /**
@@ -181,6 +183,8 @@ export const startPoisonCloudVFX = () => {
  * @returns True if the player is inside the poison cloud, false otherwise.
  */
 export const isPlayerInPoisonCloud = (playerPosition: { x: number; y: number; z: number }): boolean => {
+  const { levelType } = useMatch()
+  if (levelType.value !== LEVELS.ARENA) return false
   const elapsedTime = Date.now() - startTime // Time elapsed since start
   const progress = Math.min(elapsedTime / totalDuration, 1) // Progress from 0 to 1
 

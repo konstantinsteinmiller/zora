@@ -6,6 +6,7 @@ export const TUTORIALS: ENUM = {
 }
 export const LEVELS: ENUM = {
   ARENA: 'arena',
+  WORLD: 'world',
 }
 
 export const LANGUAGES: Array<string> = [

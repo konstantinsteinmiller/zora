@@ -24,9 +24,14 @@ const isNative = import.meta.env.VITE_PLATTFORM === 'native'
 
 showCustomPointer()
 
-const startGame = () => {
+const startArena = () => {
   isStartingGame.value = true
-  router.push({ name: 'battle', query: route.query })
+  router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: route.query })
+}
+
+const startWorld = () => {
+  isStartingGame.value = true
+  router.push({ name: 'world', params: { worldId: 'city-1' }, query: route.query })
 }
 
 const onExit = () => {
@@ -46,7 +51,7 @@ $.sounds.playBackgroundMusic()
 !$.fileLoader && FileLoader()
 !$.camera && Camera()
 
-const { preloadAssets, loadingProgress } = useAssets()
+const { preloadAssets, loadingProgress, worldLoadingProgress } = useAssets()
 
 const game$: any = document.querySelector('.game')
 onMounted(() => {
@@ -82,10 +87,21 @@ onUnmounted(() => {
           <XButton
             class="with-bg mt-3 leading-[1rem]"
             :disabled="loadingProgress < 99.8"
-            @click="startGame"
-            @keydown.enter="startGame"
+            @click="startArena"
+            @keydown.enter="startArena"
           >
-            {{ t('startGame') }}
+            {{ t('startArena') }}
+          </XButton>
+        </div>
+
+        <div class="flex justify-center">
+          <XButton
+            class="with-bg mt-3 leading-[1rem]"
+            :disabled="worldLoadingProgress < 99.8"
+            @click="startWorld"
+            @keydown.enter="startWorld"
+          >
+            {{ t('startWorld') }}
           </XButton>
         </div>
 
@@ -121,10 +137,14 @@ onUnmounted(() => {
 <i18n>
 en:
   startGame: "Start Game"
+  startArena: "Start Arena"
+  startWorld: "Start World"
   options: "Options"
   quit: "Quit game"
 de:
   startGame: "Spiel Starten"
+  startArena: "Arena Starten"
+  startWorld: "Welt Starten"
   options: "Einstellungen"
   quit: "Spiel beenden"
 </i18n>

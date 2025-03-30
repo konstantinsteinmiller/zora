@@ -118,7 +118,7 @@ const globalState = () => {
   global.fledGame = false
   global.isBattleOver = false
   global.isEngineInitialized = false
-  global.isBattleInitialized = false
+  global.isWorldInitialized = false
   global.vfxList = []
 
   return global

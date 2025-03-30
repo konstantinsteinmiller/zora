@@ -91,7 +91,7 @@ export const createVFX = async ({
     destroyVfx({ nebulaSystem, vfxRenderer })
   }
   emitter.on('cleanup', cleanup)
-  $.addEvent('arena.cleanup', cleanup)
+  $.addEvent('level.cleanup', cleanup)
 
   return Promise.resolve({ nebulaSystem, emitter })
 }

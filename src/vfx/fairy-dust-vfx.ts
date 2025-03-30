@@ -188,7 +188,7 @@ export const startFairyDustVFX = (position: Vector3) => {
     emitter.off('cleanup', cleanup)
   }
   emitter.on('cleanup', cleanup)
-  $.addEvent('arena.cleanup', cleanup)
+  $.addEvent('level.cleanup', cleanup)
 
   setTimeout(() => {
     emitter.emit('cleanup')

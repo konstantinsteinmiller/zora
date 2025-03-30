@@ -109,7 +109,7 @@ export default () => {
     update(deltaInS)
   })
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     thirdPersonCamera = null
     $.thirdPersonCamera = null
   })

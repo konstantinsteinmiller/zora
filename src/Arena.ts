@@ -7,8 +7,8 @@ import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
 
-const Arena = async (level = 'water-arena') => {
-  World(() => {
+const Arena = async level => {
+  World('water-arena', () => {
     const startPos1 = $.level.pathfinder.startPositions[0]
     const startPos2 = $.level.pathfinder.startPositions[1]
 
@@ -57,7 +57,7 @@ const Arena = async (level = 'water-arena') => {
       }
     })
 
-    $.isBattleInitialized = true
+    $.isWorldInitialized = true
   })
 }
 export default Arena

@@ -64,7 +64,7 @@ const PlayerController = (config: PlayerControllerProps) => {
     updateEventUuid = $.addEvent('renderer.update', update)
   }
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     entity = null
     $.player = null
   })

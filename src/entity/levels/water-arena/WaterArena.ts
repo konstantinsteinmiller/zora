@@ -10,9 +10,8 @@ import {
   coverPositions,
   startPositions,
 } from '@/entity/levels/water-arena/config'
-import AssetLoader from '@/engine/AssetLoader'
+import AssetLoader, { loadNavMesh } from '@/engine/AssetLoader'
 import Water from '@/entity/water/Water'
-import { loadNavMesh } from '@/utils/navigation'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three'
 import { createCollidersForGraph } from '@/utils/physics'
 import { Pathfinding, PathfindingHelper } from 'three-pathfinding'
@@ -56,7 +55,7 @@ export default async (onFinishedCallback: () => void) => {
   pathfinder.startPositions = startPositions
   pathfinder.pathfindingHelper = new PathfindingHelper()
 
-  loadNavMesh('worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
+  loadNavMesh('/worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
     const geo = navMesh.clone().geometry.clone()
     geo.rotateX(-Math.PI / 2)
 

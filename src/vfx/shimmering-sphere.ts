@@ -153,7 +153,7 @@ export const startShimmeringSphere = (position: Vector3) => {
   }
 
   emitter.on('cleanup', cleanup)
-  $.addEvent('arena.cleanup', cleanup)
+  $.addEvent('level.cleanup', cleanup)
 
   return emitter
 }

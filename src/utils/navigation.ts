@@ -1,32 +1,11 @@
+import { assetManager } from '@/engine/AssetLoader.ts'
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import $ from '@/global'
 import type { ClosestPortal, PortalConnection } from '@/types/world'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
-import { Mesh, Vector3 } from 'three'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-
-export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void) => {
-  let loader: any
-  if (src.endsWith('.glb')) {
-    loader = new GLTFLoader()
-  } else if (src.endsWith('.fbx')) {
-    loader = new FBXLoader()
-  }
-  try {
-    $.loadingManager.itemStart(src)
-    const model: any = await loader.loadAsync(src, (fileProgressEvent: any) =>
-      $.fileLoader.onFileProgress(src, fileProgressEvent)
-    )
-    $.loadingManager.itemEnd(src)
-    // model.children[0].scale.set(1, 1, 1)
-    callback(model?.children[0])
-  } catch (e: any) {
-    $.loadingManager.itemError(src)
-  }
-}
+import { Vector3 } from 'three'
 
 const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => {
   if (path?.length && $.enableDebug) {

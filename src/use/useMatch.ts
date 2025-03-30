@@ -24,7 +24,8 @@ const controls: any = ref({
 const useMatch = () => {
   const resetMatch = () => {}
 
-  if (!isStartingGame.value && window.location.hash.includes('/battle')) {
+  const routes = ['/world', '/battle']
+  if (!isStartingGame.value && routes.some(route => window.location.hash.includes(route))) {
     let themeQuery = ''
     console.log('window.location.hash: ', window.location.hash)
     if (window.location.hash.includes('debug=')) {

@@ -77,7 +77,7 @@ export default () => {
 
   window.addEventListener('resize', onWindowResize, false)
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     window.removeEventListener('resize', onWindowResize, false)
     renderer = null
     $.renderer = null

@@ -27,12 +27,19 @@ import Arena from '@/Arena.ts'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FileLoader from '@/engine/FileLoader.ts'
 import $ from '@/global'
+import LevelStartup from '@/LevelStartup.ts'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { LEVELS, TUTORIALS } from '@/utils/enums.ts'
 import { startPoisonCloudVFX } from '@/vfx/poison-cloud.ts'
 import { type ComputedRef, onMounted } from 'vue'
 
+const props = defineProps({
+  level: {
+    type: String,
+    required: true,
+  },
+})
 const emit = defineEmits(['loading-finished'])
 
 const { userMusicVolume } = useUser()
@@ -42,43 +49,63 @@ let current: ComputedRef<number> | number = fileLoader.currentlyLoadedPercent
 
 const { levelType } = useMatch()
 const { tutorialPhase } = useUser()
+const isArena = props.level.includes('-arena')
+const isWorld = props.level.includes('city') || props.level.includes('world')
 
 onMounted(() => {
-  levelType.value = LEVELS.ARENA
+  if (isArena) {
+    levelType.value = LEVELS.ARENA
+  } else if (isWorld) {
+    levelType.value = LEVELS.WORLD
+  }
+
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
-  const startBattle = () => {
+  const initEnvironment = () => {
     const character = $.player
     character.start()
 
     // const enemy = $.enemy
     // enemy.start() // already started in the Arena loop
 
-    if ($.isBattleInitialized) {
+    if ($.isWorldInitialized) {
       emit('loading-finished')
 
       $.controls.setPointerLock()
 
-      $.sounds.stop('background')
-      $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
-
       if (levelType.value === LEVELS.ARENA) {
+        $.sounds.stop('background')
+        $.sounds.play('battle', { volume: 0.25 * userMusicVolume.value * 0.25, loop: true })
+
         setTimeout(() => {
           tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
         }, 3000)
       }
     }
   }
+
   $.addOneTimeEvent('renderer.update', () => {
     $.fileLoader.loadData(() => {
-      startBattle()
+      initEnvironment()
     })
 
     /* load other assets */
     $.sounds.loadSounds()
-    Arena()
 
-    startPoisonCloudVFX()
+    switch (props.level) {
+      case 'water-arena':
+        Arena('water-arena')
+        break
+      case 'city-1':
+        LevelStartup('city-1')
+        break
+      default:
+        break
+    }
+
+    if (isArena) {
+      startPoisonCloudVFX()
+    }
   })
 })
 </script>

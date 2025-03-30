@@ -1,6 +1,4 @@
 <template>
-  <!--  <h1 class="font-bold text-xl text-red-600 absolute top-0 left-1/2">Zora</h1>-->
-
   <canvas style="width: 100%; height: 100vh" />
   <template v-if="!isBattleOver">
     <img
@@ -31,7 +29,10 @@
     <GameOverScreen v-if="hasOneTeamLost || fledGame" />
   </template>
 
-  <LoadingScreen @loading-finished="onLoadingFinished" />
+  <LoadingScreen
+    :level="worldId"
+    @loading-finished="onLoadingFinished"
+  />
   <div class="find-pointer w-full h-full absolute top-0 left-0"></div>
 </template>
 
@@ -50,6 +51,8 @@ import addPerformanceStats from '@/utils/stats'
 useMatch()
 const route = useRoute()
 
+const worldId: Ref<string> = ref(route.params.worldId)
+
 const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)
 const hasOneTeamLost: Ref<boolean> = ref(false)
 const fledGame: Ref<boolean> = ref(false)
@@ -62,7 +65,7 @@ if ($.isDebug) {
 const onLoadingFinished = () => {}
 
 onMounted(async () => {
-  await Game()
+  await Game(worldId.value)
 
   const updateUuid = $.addEvent('renderer.update', () => {
     if ($?.isBattleOver) {

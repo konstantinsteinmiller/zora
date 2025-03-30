@@ -206,7 +206,7 @@ export default (entity?: any) => {
     document.removeEventListener('mousemove', onMouseMove, false)
   })
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     document.removeEventListener('click', onClick, false)
     document.removeEventListener('pointerlockchange', onPointerLockChange)
   })
@@ -263,7 +263,7 @@ export default (entity?: any) => {
   $.controls.toggleCursor = toggleCursor
   $.controls.onUnlockedMouseMove = onUnlockedMouseMove
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     input = null
     $.controls = null
   })

@@ -3,9 +3,11 @@ import {
   AnimationMixer,
   BoxGeometry,
   CubeTextureLoader,
+  type Group,
   LoadingManager,
   Mesh,
   Object3D,
+  type Scene,
   Texture,
   TextureLoader,
   Vector3,
@@ -211,7 +213,7 @@ const AssetManager = () => {
     return assets.textures[src]
   }
 
-  function getModel(src: string): Mesh | undefined {
+  function getModel(src: string): Mesh | Group | Scene | undefined {
     return assets.models[src]
   }
 
@@ -452,7 +454,11 @@ export default () => {
   return loader
 }
 
-function createGeoIndex(mesh: Mesh) {
+export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void) => {
+  callback(assetManager.getModel(prependBaseUrl(src))?.children[0])
+}
+
+export function createGeoIndex(mesh: Mesh) {
   // Check if the geometry has an index
   if (!mesh?.geometry?.index) {
     let geometry = mesh.geometry

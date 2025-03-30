@@ -31,7 +31,7 @@ export default () => {
   $.uiCamera.bottom = -1
   $.uiCamera?.updateProjectionMatrix()
 
-  $.addEvent('arena.cleanup', () => {
+  $.addEvent('level.cleanup', () => {
     camera = null
     $.camera = null
     $.uiCamera = null
