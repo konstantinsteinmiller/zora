@@ -109,6 +109,7 @@
     - [x] Mountain
       - [x] load Mesh
       - [x] Colliders
+  - [ ] Infinite grass
   - [ ] Locations
     - [ ] Fairy forest, big tree with huts hanging at it with leaf roofs and hanging bridges
     - [ ] town with houses and market
@@ -154,8 +155,9 @@
   - [x] show vfx as indicator for charge level of enemy and player
   - [x] add strafing
   - [x] fix vfx cleanup or GPURenderer reuse
-  - [x] refactor derive PlayerController and EnemyController from basic Controller for logic reuse and maintainability
+  - [x] refactor derive ArenaPlayerController and EnemyController from basic Controller for logic reuse and maintainability
   - [x] add guild for enemy detection
+  - [ ] add trainer model and PlayerController
 - [x] basic three game engine 
   - [x] Physics
   - [x] Renderer

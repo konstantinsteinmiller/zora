@@ -24,7 +24,7 @@ export default async (onFinishedCallback: () => void) => {
       }
     })
 
-    console.log('Compressed GLB loaded!')
+    // console.log('Compressed GLB loaded!')
     resolve(glb.scene)
   })
 

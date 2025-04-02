@@ -1,3 +1,4 @@
+import type { LEVELS } from '@/utils/enums.ts'
 import Rapier from '@dimforge/rapier3d-compat'
 import type { Mesh, Quaternion, Vector3 } from 'three'
 
@@ -73,3 +74,4 @@ export type Guild = (typeof guilds)[number]
 
 // Now you have a reusable array:
 export const guildList: Guild[] = [...guilds]
+export type LevelType = (typeof LEVELS)[string]

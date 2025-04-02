@@ -147,8 +147,13 @@ export default () => {
       volume: options.volume,
       loop: options.loop,
     })[0]
-    if (sound) sound.play()
+
+    if (sound) {
+      singleton.emitter.emit(`${name}:play`)
+      sound.play()
+    }
   }
+
   singleton.stop = (name: string) => {
     activeSoundsList.find((sound: any) => sound.name === name)?.stop()
   }
@@ -218,13 +223,72 @@ export default () => {
       singleton.load(name)
 
       const onLoadedBackgroundMusic = () => {
-        /*!$.isDebug && */ singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
+        const onBgPlay = () => {
+          // console.log(" 'background music started playing'")
+          singleton.emitter.off(`${name}:play`, onBgPlay)
+        }
+        singleton.emitter.on(`${name}:play`, onBgPlay)
+        /*!$.isDebug && */ const result = singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
+
+        // const tryToPlay = setInterval(() => {
+        //   const audio = new Audio(theAudioFile)
+        //
+        //   audio
+        //     .play()
+        //     .then(() => {
+        //       clearInterval(tryToPlay)
+        //     })
+        //     .catch(error => {
+        //       console.info('User has not interacted with document yet.')
+        //     })
+        // }, 5000)
+
         emitter.off(`loaded:${name}`, onLoadedBackgroundMusic)
       }
       emitter.on(`loaded:${name}`, onLoadedBackgroundMusic)
     } else {
       singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
     }
+  }
+
+  singleton.addInteractionDetection = () => {
+    let isPlaying = false
+    const eventsList = ['click', 'focus', 'touchstart', 'touchend', 'pointerdown', 'pointerup']
+    const $soundDetector = document.querySelector('#sound-detector')
+    const $mainApp = document.querySelector('#main-app')
+
+    const prevent = event => {
+      event.preventDefault()
+    }
+    document.addEventListener('contextmenu', prevent)
+    setTimeout(() => {
+      $.fileLoader.emitter.on('loaded-level', () => {
+        console.log('on loaded-level: ')
+        document.removeEventListener('contextmenu', prevent)
+      })
+    }, 500)
+
+    const detectInteraction = event => {
+      $mainApp?.removeChild($soundDetector as Node)
+      if (!isPlaying) {
+        try {
+          //play video here
+          $.sounds.playBackgroundMusic()
+          isPlaying = true
+          eventsList.forEach(eventName => {
+            $soundDetector?.removeEventListener(eventName, detectInteraction, { bubbles: true, capture: false })
+          })
+        } catch (e) {
+          console.warn(e.message)
+        }
+      }
+    }
+    eventsList.forEach(eventName => {
+      $soundDetector?.addEventListener(eventName, detectInteraction, {
+        bubbles: true,
+        capture: false,
+      })
+    })
   }
 
   $.sounds = singleton

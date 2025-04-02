@@ -1,14 +1,13 @@
 import { ZORA_TOTAL_LOAD_SIZE_NAME } from '@/utils/constants.ts'
 import $ from '@/global'
 import { convertToReadableSize } from '@/utils/function.ts'
+import { EventEmitter } from 'events'
 import { ref, type Ref } from 'vue'
 
 const currentOverallSize = 28889837
 let singleton: any = null
 const FileLoader = () => {
   if (singleton !== null) return singleton
-
-  singleton = {}
 
   // Map to store progress per file, keyed by URL.
   let fileProgressMap: Record<string, { loaded: number; total: number }> = {}
@@ -20,7 +19,7 @@ const FileLoader = () => {
 
   const currentlyLoadedPercent: Ref<number> = ref(0)
   const isLoading: Ref<boolean> = ref(true)
-  singleton = { backUpTotal: 0, currentlyLoadedPercent, isLoading }
+  singleton = { backUpTotal: 0, currentlyLoadedPercent, isLoading, emitter: new EventEmitter() }
 
   singleton.clearData = () => {
     fileProgressMap = {}
@@ -49,17 +48,26 @@ const FileLoader = () => {
     // console.log(`Progress: ${current.value.toFixed(0)}%`)
   }
 
+  const onFinishedLoading = (onFinished: () => void) => {
+    const total = convertToReadableSize($.fileLoader.backUpTotal)
+    console.log('%c All assets loaded', 'color: lightgrey', total)
+
+    setTimeout(() => {
+      isLoading.value = false
+    }, 300)
+
+    localStorage.setItem(ZORA_TOTAL_LOAD_SIZE_NAME, $.fileLoader.backUpTotal.toString())
+    onFinished?.()
+  }
+
+  singleton.emitter.on('loaded-level', (onFinished: () => void) => {
+    console.log('on loaded-level: ')
+    onFinishedLoading(onFinished)
+  })
+
   singleton.loadData = (onFinished: () => void) => {
     $.loadingManager.onLoad = () => {
-      const total = convertToReadableSize($.fileLoader.backUpTotal)
-      console.log('%c All assets loaded', 'color: lightgrey', total)
-
-      setTimeout(() => {
-        isLoading.value = false
-      }, 300)
-
-      localStorage.setItem(ZORA_TOTAL_LOAD_SIZE_NAME, $.fileLoader.backUpTotal.toString())
-      onFinished()
+      onFinishedLoading(onFinished)
     }
   }
 

@@ -1,5 +1,5 @@
 import AIController from '@/entity/AIController.ts'
-import PlayerController from '@/entity/PlayerController.ts'
+import ArenaPlayerController from '@/entity/ArenaPlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
@@ -12,7 +12,7 @@ const Arena = async level => {
     const startPos1 = $.level.pathfinder.startPositions[0]
     const startPos2 = $.level.pathfinder.startPositions[1]
 
-    PlayerController({
+    ArenaPlayerController({
       modelPath: '/models/thunder-fairy-1/thunder_fairy_1.fbx',
       stats: {
         name: 'player',
@@ -58,6 +58,7 @@ const Arena = async level => {
     })
 
     $.isWorldInitialized = true
+    $.loadingManager.itemEnd('loading-screen')
   })
 }
 export default Arena

@@ -29,10 +29,7 @@
     <GameOverScreen v-if="hasOneTeamLost || fledGame" />
   </template>
 
-  <LoadingScreen
-    :level="worldId"
-    @loading-finished="onLoadingFinished"
-  />
+  <LoadingScreen :level="worldId" />
   <div class="find-pointer w-full h-full absolute top-0 left-0"></div>
 </template>
 
@@ -59,10 +56,8 @@ const fledGame: Ref<boolean> = ref(false)
 $.isDebug = route.query.debug === 'true'
 
 if ($.isDebug) {
-  addPerformanceStats()
+  // addPerformanceStats()
 }
-
-const onLoadingFinished = () => {}
 
 onMounted(async () => {
   await Game(worldId.value)

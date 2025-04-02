@@ -1,5 +1,5 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList } from '@/utils/constants.ts'
+import { characterAnimationNamesList, worldCharacterAnimationNamesList } from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { ref } from 'vue'
 
@@ -31,14 +31,17 @@ export default () => {
   const characterAnimsList = [
     '/models/nature-fairy-1/nature_fairy_1.fbx',
     '/models/thunder-fairy-1/thunder_fairy_1.fbx',
+    // '/models/trainer/trainer.fbx',
+  ]
+  const worldCharacterAnimsList = [
+    '/models/fairy-trainer/fairy-trainer.fbx',
+    /*'/models/fairy-trainer/fairy-trainer.comp.glb'*/
   ]
 
+  let promisesLength = 1
   const updateProgress = () => {
-    loadingProgress.value += +(100 / assetManager.loadingPromises.length).toFixed(2)
+    loadingProgress.value += +(100 / promisesLength).toFixed(2)
     worldLoadingProgress.value = loadingProgress.value
-  }
-  const updateWorldProgress = () => {
-    worldLoadingProgress.value += +(100 / assetManager.loadingPromises.length).toFixed(2)
   }
 
   const mapMeshesAndTextures = (src: string) => {
@@ -69,25 +72,43 @@ export default () => {
         .concat(
           characterAnimsList.reduce((acc, src) => {
             if (src.endsWith('.fbx') || src.endsWith('.glb') || src.endsWith('.gltf')) {
-              acc.concat(
-                assetManager.loadCharacterAnims({ src, animsList: characterAnimationNamesList })
-                // .map(promise => promise?.then(updateProgress))
-              )
+              acc.concat(assetManager.loadCharacterAnims({ src, animsList: characterAnimationNamesList }))
+            }
+            return acc
+          }, [])
+        )
+        /* world specific */
+        .concat(
+          worldCharacterAnimsList.reduce((acc, src) => {
+            if (src.endsWith('.fbx') || src.endsWith('.glb') || src.endsWith('.gltf')) {
+              acc.concat(assetManager.loadCharacterAnims({ src, animsList: worldCharacterAnimationNamesList }))
             }
             return acc
           }, [])
         )
 
-      setTimeout(async () => {
-        await Promise.all(assetManager.loadingPromises.map(promise => promise?.then(updateProgress)))
+      let resolvedPromises = 0
+      promisesLength = assetManager.loadingPromises.length
+      await Promise.all(
+        assetManager.loadingPromises.map(promise => promise?.then(updateProgress).then(() => resolvedPromises++))
+      )
 
-        // outerWorldAssetsList.map(mapMeshesAndTextures)
-        // await Promise.all(assetManager.loadingPromises.map(promise => promise?.then(updateWorldProgress)))
+      // outerWorldAssetsList.map(mapMeshesAndTextures)
+      // await Promise.all(assetManager.loadingPromises.map(promise => promise?.then(updateWorldProgress)))
 
+      const interval = setInterval(async () => {
         areAllAssetsLoaded.value = true
         assetManager.loadingPromises = []
-      }, 300)
-      // console.log('All assets preloaded successfully', assetManager)
+        // console.log('All assets preloaded successfully', assetManager)
+
+        // console.log('resolvedPromises: ', resolvedPromises, promisesLength)
+        if (resolvedPromises === promisesLength) {
+          console.log('done - resolvedPromises: ', resolvedPromises, promisesLength)
+          loadingProgress.value = 100
+          worldLoadingProgress.value = loadingProgress.value
+        }
+        interval && clearInterval(interval)
+      }, 200)
     } catch (error) {
       console.error('Asset loading error:', error)
     }

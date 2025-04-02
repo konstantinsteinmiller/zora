@@ -56,7 +56,8 @@ export default async (onFinishedCallback: () => void) => {
   pathfinder.pathfindingHelper = new PathfindingHelper()
 
   loadNavMesh('/worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
-    const geo = navMesh.clone().geometry.clone()
+    console.log('navMesh: ', navMesh)
+    const geo = navMesh?.clone()?.geometry.clone()
     geo.rotateX(-Math.PI / 2)
 
     // $.scene.add(navMesh)

@@ -17,7 +17,7 @@ const FairyDust = ({ position, onlyInteractableByGuild }: { position: Vector3; o
     onCollisionStart: (_colliderA, _colliderB, _uuid, entity) => {
       /* on collide buff logic */
       if (entity) {
-        entity.currency.fairyDustCollected += 1
+        entity.currency.fairyDust += 1
         // console.log('entity.currentSpell.buff: ', entity.currentSpell.buff.value, entity.currentSpell.buff.duration)
       }
 

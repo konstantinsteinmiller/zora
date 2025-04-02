@@ -1,9 +1,11 @@
 import { createFairyDustObjects } from '@/entity/FairyDust.ts'
+import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import $ from '@/global'
+import { LEVELS } from '@/utils/enums.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 
 /* set all actions initially to false */
@@ -36,6 +38,7 @@ export const getActionEventsMap = (defaultControlsConfig: EnumStringToList) => {
 /* actions is a Singleton */
 const actions = null
 export default (defaultControlsConfig: EnumStringToList) => {
+  const { levelType } = useMatch()
   if (actions !== null) return actions
 
   // const map = getActionEventsMap(defaultControlsConfig)
@@ -112,7 +115,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         if (!document.pointerLockElement) return
 
         const { userSoundVolume } = useUser()
-        if (hasChanged) {
+        if (hasChanged && levelType.value === LEVELS.ARENA) {
           if (entity.endurance >= FLY_COST) {
             entity.utils.groundedTime.lastTimeNotGrounded = Date.now()
             entity.guild === 'guild-0' && entity.dealEnduranceDamage(entity, FLY_COST)

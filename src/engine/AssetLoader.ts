@@ -63,6 +63,7 @@ const AssetManager = () => {
         gltf => {
           assets.models[src] = gltf.scene
           $.loadingManager.itemEnd(src)
+          $.triggerEvent(`${src}.loaded`)
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
@@ -138,8 +139,14 @@ const AssetManager = () => {
     pathPartsList.pop()
     const animationsPath = prependBaseUrl(`${pathPartsList.join('/')}/`)
 
-    const meshPromise = loadFBXMesh(src)
+    const meshPromise =
+      src.endsWith('.glb') || src.endsWith('.gltf')
+        ? loadGLTFMesh(src)
+        : src.endsWith('.fbx')
+          ? loadFBXMesh(src)
+          : Promise.reject()
 
+    let animPromisesList: any[]
     const promise = new Promise<void>((resolve, reject) => {
       $.addEvent(`${src}.loaded`, () => {
         const mesh = getModel(src)?.clone() || new Mesh()
@@ -150,17 +157,17 @@ const AssetManager = () => {
          * path and add to animationsMap */
         const animLoader = new FBXLoader($.loadingManager)
         animLoader.setPath(animationsPath)
-        const animPromisesList = animsList.map((name: string) => {
+        animPromisesList = animsList.map((name: string) => {
           const fullPath = `${animationsPath}${name}`
           return loadAnim({ src, fullPath, mixer, name, animLoader })
         })
         loadingPromises.concat(animPromisesList)
-        resolve(...animPromisesList)
+        resolve()
       })
     })
 
     loadingPromises.push(meshPromise)
-    return [meshPromise, promise]
+    return [meshPromise].concat(animPromisesList)
   }
 
   function loadTexture(src: string): Promise<void> {
@@ -455,7 +462,20 @@ export default () => {
 }
 
 export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void) => {
-  callback(assetManager.getModel(prependBaseUrl(src))?.children[0])
+  let navMesh: any = assetManager.getModel(prependBaseUrl(src))?.clone()
+  console.log('navMesh: ', navMesh, src)
+  if (!navMesh) {
+    console.warn('NavMesh not found, loading...')
+    try {
+      await assetManager.loadMesh(src)
+      navMesh = assetManager.getModel(prependBaseUrl(src))?.clone()
+    } catch (error) {
+      console.error('Failed to load nav mesh:', error)
+      return
+    }
+  }
+  console.log('navMesh?.children[0]: ', navMesh?.children[0])
+  callback(navMesh?.children[0])
 }
 
 export function createGeoIndex(mesh: Mesh) {

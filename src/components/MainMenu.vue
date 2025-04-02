@@ -46,7 +46,7 @@ setPointer()
 
 // InputController()
 !$.sounds && Sound()
-$.sounds.playBackgroundMusic()
+$.sounds.addInteractionDetection()
 
 !$.fileLoader && FileLoader()
 !$.camera && Camera()

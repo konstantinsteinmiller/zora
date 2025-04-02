@@ -37,6 +37,7 @@ export interface Global {
     pathfinder: any
     movingEntitiesList: string[]
   }
+  trainer: any
   player: any
   enemy: any
   loadingManager: any
@@ -100,6 +101,7 @@ const globalState = () => {
     eventsMap: {},
     oneTimeEventsList: [],
     entitiesMap: new Map(),
+    trainer: {},
     player: {},
     enemy: {},
     loadingManager: loadingManager,
@@ -128,4 +130,8 @@ export default currentState
 
 export const getEntity = (uuid: string) => {
   return global.entitiesMap.get(uuid)
+}
+
+export const getWorldPlayer = () => {
+  return $.trainer
 }

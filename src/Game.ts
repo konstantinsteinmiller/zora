@@ -73,7 +73,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     $.isEngineInitialized = false
     $.isBattleOver = false
     $.isWorldInitialized = false
-    $.player.currency.fairyDustCollected = 0
+    $.player.currency.fairyDust = 0
     $.entitiesMap.clear()
 
     const fileLoader = FileLoader()

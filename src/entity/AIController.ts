@@ -1,4 +1,4 @@
-import Controller from '@/entity/Controller.ts'
+import ArenaController from '@/entity/ArenaController.ts'
 import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
@@ -14,7 +14,7 @@ const AIController = (config: {
   stats?: any
   guild: Guild
 }) => {
-  const entity = Controller(config)
+  const entity = ArenaController(config)
 
   const utils: any = { ...controllerAwarenessUtils(), ...chargeUtils(), ...aiChargeUtils() }
   for (const key in utils) {

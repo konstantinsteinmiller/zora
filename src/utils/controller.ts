@@ -56,7 +56,7 @@ export const getBaseStats: any = () => ({
     },
   },
   currency: {
-    fairyDustCollected: 0,
+    fairyDust: 0,
     fairyDust: 0,
     essences: {
       nature: 0,

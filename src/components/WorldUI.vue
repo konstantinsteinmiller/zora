@@ -24,7 +24,7 @@ const isBattlStarting: Ref<boolean> = ref(!!$?.isBattlStarting)
 $.isDebug = route.query.debug === 'true' || localStorage.getItem('debug') === 'true'
 
 if ($.isDebug) {
-  addPerformanceStats()
+  // addPerformanceStats()
 }
 
 const onLoadingFinished = () => {}

@@ -19,7 +19,7 @@
     </div>
     <div class="fixed right-2 bottom-16 w-10">
       <div class="relative flex flex-col gap-0 items-end justify-center">
-        <div class="text-white text-2xl self-center p-2 pb-0">{{ fairyDustCollected }}</div>
+        <div class="text-white text-2xl self-center p-2 pb-0">{{ fairyDust }}</div>
         <img
           src="/images/fairy-dust/fairy-dust-100x120.png"
           alt="fairy-dust-icon"
@@ -37,13 +37,13 @@ import DefenseBuffImg from '@/assets/images/buff/breast-plate-128x128.avif'
 import { type Ref, ref } from 'vue'
 
 const buffProgressList: Ref<{ progress: number; name: string; finished: boolean; img: any }[]> = ref([])
-const fairyDustCollected = ref(0)
+const fairyDust = ref(0)
 
 const updateBuffs = () => {
   buffProgressList.value = []
   const entity = $.player
   if (!entity?.defense) return
-  fairyDustCollected.value = entity.currency.fairyDustCollected
+  fairyDust.value = entity.currency.fairyDust
 
   const defenseBuff = entity.defense.buff
   const attackBuff = entity.currentSpell.buff

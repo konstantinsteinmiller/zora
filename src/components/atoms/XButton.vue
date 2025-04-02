@@ -4,6 +4,7 @@
       'glass select-none': true,
       '!cursor-none': IS_ZORA,
     }"
+    tabindex="0"
     @click="emits('click', $event)"
   >
     <slot name="default">

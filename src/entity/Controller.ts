@@ -1,15 +1,14 @@
-import arena from '@/Arena.ts'
 import AssetLoader from '@/engine/AssetLoader.ts'
-import type { Guild } from '@/types/entity.ts'
-import useUser from '@/use/useUser.ts'
+import CharacterFSM from '@/states/CharacterFSM.ts'
+import type { Guild, LevelType } from '@/types/entity.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { characterAnimationNamesList } from '@/utils/constants.ts'
+import { characterAnimationNamesList, worldCharacterAnimationNamesList } from '@/utils/constants.ts'
+import { LEVELS } from '@/utils/enums.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
-import { isPlayerInPoisonCloud } from '@/vfx/poison-cloud.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
 import $ from '@/global'
-import { statsUtils, controllerUtils, getBaseStats } from '@/utils/controller.ts'
-import CharacterFSM from '@/states/CharacterFSM.ts'
+import { getBaseStats } from '@/utils/controller.ts'
+import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
 
 interface ControllerProps {
   modelPath: string
@@ -18,9 +17,18 @@ interface ControllerProps {
   modelHeight: number
   stats?: any
   guild: Guild
+  levelType: LevelType
 }
 
-const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stats = {}, guild }: ControllerProps) => {
+const Controller = ({
+  modelPath,
+  startPosition,
+  startRotation,
+  modelHeight,
+  stats = {},
+  guild,
+  levelType,
+}: ControllerProps) => {
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
@@ -30,8 +38,6 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     position: startPosition.clone(),
     ...getBaseStats(),
     ...stats,
-    ...statsUtils(),
-    ...controllerUtils(),
     guild,
     mesh,
     halfHeight: modelHeight * 0.5,
@@ -39,7 +45,10 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
 
   let mixer: any = {}
   const animationsMap: any = {}
-  const stateMachine = new CharacterFSM(animationsMap, entity)
+  const stateMachine =
+    levelType === LEVELS.ARENA ? new ArenaCharacterFSM(animationsMap, entity) : new CharacterFSM(animationsMap, entity)
+
+  const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
   entity.stateMachine = stateMachine
   entity.currentVelocity = new Vector3(0, 0, 0)
 
@@ -52,7 +61,7 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
       scale: 0.01,
       stateMachine,
       animationsMap,
-      animationNamesList: characterAnimationNamesList,
+      animationNamesList,
       callback: (scope: any) => {
         mixer = scope.mixer
         mesh = scope.mesh
@@ -90,49 +99,14 @@ const Controller = ({ modelPath, startPosition, startRotation, modelHeight, stat
     entity.center = entity.calcHalfHeightPosition(entity)
   }
 
-  const checkIsCharacterDead = () => {
-    if (entity.isDead(entity)) {
-      entity.die(entity)
-      $.isBattleOver = true
-      return
-    }
-    if ($.level.name.toLowerCase().includes('arena') && entity.position.y < -15) {
-      entity.dealDamage(entity, entity.hp)
-    }
-  }
-
-  entity.checkBattleOver = (updateEventUuid: string) => {
-    if ($.isBattleOver) {
-      $.removeEvent('renderer.update', updateEventUuid)
-    }
-  }
-
-  const { userSoundVolume } = useUser()
-  let soundCounter = 1
-  const checkPoisonCloud = () => {
-    soundCounter++
-    const playerPosition = entity.position
-    if (isPlayerInPoisonCloud(playerPosition)) {
-      entity.dealDamage(entity, 0.1)
-      soundCounter % 160 === 0 &&
-        $.sounds.addAndPlayPositionalSound(entity, 'cough', { volume: 0.5 * userSoundVolume.value * 0.25 })
-    }
-  }
-
   entity.update = (deltaS: number) => {
     if (!mesh || stateMachine.currentState === null) {
       return false
     }
 
-    checkIsCharacterDead()
-
     updatePosition(deltaS)
 
     mixer?.update?.(deltaS)
-
-    checkPoisonCloud()
-
-    entity.regenMana(entity, deltaS)
 
     return true
   }

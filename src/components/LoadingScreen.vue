@@ -69,8 +69,6 @@ onMounted(() => {
     // enemy.start() // already started in the Arena loop
 
     if ($.isWorldInitialized) {
-      emit('loading-finished')
-
       $.controls.setPointerLock()
 
       if (levelType.value === LEVELS.ARENA) {

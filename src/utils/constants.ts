@@ -22,6 +22,9 @@ export const characterAnimationNamesList: string[] = [
   'hit' /*
    */,
 ]
+export const worldCharacterAnimationNamesList: string[] = characterAnimationNamesList.filter(
+  (anim: string) => !['fly', 'cast'].includes(anim)
+)
 
 /* spell charge constants */
 export const INITIAL_ROTATION_SPEED = Math.PI * 0.05 // 1 full rotation per 10 sec
