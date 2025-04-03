@@ -132,7 +132,10 @@ export function convertToReadableSize(bytes: number, decimals: number = 2): stri
 }
 
 export const isProduction = import.meta.env.VITE_NODE_ENV === 'production'
-export const prependBaseUrl = (url: string): string => (isProduction ? `/zora${url}` : url)
+let baseURL = import.meta.env.BASE_URL
+baseURL = baseURL.slice(0, baseURL.length - 1)
+// console.log('baseURL: ', baseURL, isProduction)
+export const prependBaseUrl = (url: string): string => (isProduction ? `${baseURL}${url}` : url)
 export const repeat = (n: number, callback: (_: any, i: number) => string): string[] => [...new Array(n)].map(callback)
 
 /*const onceMap: { [key: string]: boolean } = {}

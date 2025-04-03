@@ -462,8 +462,7 @@ export default () => {
 }
 
 export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void) => {
-  let navMesh: any = assetManager.getModel(prependBaseUrl(src))?.clone()
-  console.log('navMesh: ', navMesh, src)
+  let navMesh: any = assetManager.getModel(src)?.clone()
   if (!navMesh) {
     console.warn('NavMesh not found, loading...')
     try {
@@ -474,7 +473,6 @@ export const loadNavMesh = async (src: string, callback: (navMesh: Mesh) => void
       return
     }
   }
-  console.log('navMesh?.children[0]: ', navMesh?.children[0])
   callback(navMesh?.children[0])
 }
 

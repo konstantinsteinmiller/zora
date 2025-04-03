@@ -10,7 +10,7 @@ import { createI18n } from 'vue-i18n'
 const userLanguage = ref(sessionStorage.getItem(GAME_USER_LANGUAGE) || navigator.language?.split('-')[0])
 
 const i18n: any = createI18n({
-  locale: userLanguage.value || 'de', // set locale
+  locale: userLanguage.value || 'en', // set locale
   fallbackLocale: 'en', // set fallback locale
   messages: translations,
   missingWarn: false,

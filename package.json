@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build-github": "vite build --base=/zora/",
+    "build-github-master": "vite build --base=/zora/ --outDir=dist",
+    "build-github-develop": "vite build --base=/zora/develop/ --outDir=dist/develop",
     "validated-build": "vue-tsc -b && vite build",
     "deploy": "vite build && surge dist/ --domain zora.surge.sh",
     "preview": "vite preview"
@@ -62,5 +63,9 @@
     "vite-plugin-glsl": "^1.3.3",
     "vue-eslint-parser": "^9.4.3",
     "vue-tsc": "^2.2.8"
+  },
+  "engines": {
+    "node": ">=22.8.0",
+    "npm": ">=10.8.0"
   }
 }

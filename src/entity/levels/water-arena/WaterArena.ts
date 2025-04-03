@@ -56,7 +56,6 @@ export default async (onFinishedCallback: () => void) => {
   pathfinder.pathfindingHelper = new PathfindingHelper()
 
   loadNavMesh('/worlds/arenas/water-arena-navmesh.fbx', (navMesh: any) => {
-    console.log('navMesh: ', navMesh)
     const geo = navMesh?.clone()?.geometry.clone()
     geo.rotateX(-Math.PI / 2)
 
@@ -86,7 +85,7 @@ export default async (onFinishedCallback: () => void) => {
   })
 
   /* add flee point */
-  const fleePoint = new Vector3(-1.44, 8, -0.45)
+  const fleePoint = new Vector3(-1.44, 10, -0.45)
   FleeOrb(fleePoint)
 
   const coverBoxGeometry = new BoxGeometry(0.5, 0.5, 0.5)

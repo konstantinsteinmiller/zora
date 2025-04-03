@@ -1,49 +1,78 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy Static Content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches:
+      - master
+      - develop
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Setup Node
+        with:
+          ref: master
+          path: master
+
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          path: develop
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: '22.8.0'
+
       - name: Install Dependencies
         run: npm i --force
-      - name: Build Production
-        run: npm run build-github
+        working-directory: master
+
+      - name: Install Develop Dependencies
+        run: npm i --force
+        working-directory: develop
+
+      - name: Build Master Production
+        run: npm run build-github-master
+        working-directory: master
+
+      - name: Build Develop Production
+        run: npm run build-github-develop
+        working-directory: develop
+
+      - name: Create Dist Folder
+        run: mkdir dist
+
+      - name: Copy Master Build
+        run: cp -r master/dist/* dist/
+
+      - name: Copy Develop Build
+        run: cp -r develop/dist/* dist/develop/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: './dist'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

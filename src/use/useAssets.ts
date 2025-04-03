@@ -34,7 +34,7 @@ export default () => {
     // '/models/trainer/trainer.fbx',
   ]
   const worldCharacterAnimsList = [
-    '/models/fairy-trainer/fairy-trainer.fbx',
+    // '/models/fairy-trainer/fairy-trainer.fbx',
     /*'/models/fairy-trainer/fairy-trainer.comp.glb'*/
   ]
 
