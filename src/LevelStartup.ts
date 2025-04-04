@@ -22,7 +22,7 @@ const LevelStartup = async (level: string) => {
     const startPos1 = $.level.pathfinder.startPositions[0]
 
     PlayerController({
-      modelPath: '/models/nature-fairy-1/nature_fairy_1.fbx',
+      modelPath: '/models/fairy-trainer/fairy-trainer.fbx',
       stats: { name: 'trainer' },
       startPosition: new Vector3(startPos1.x, startPos1.y, startPos1.z),
       startRotation: startPos1.quaternion,

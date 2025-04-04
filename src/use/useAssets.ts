@@ -34,8 +34,8 @@ export default () => {
     // '/models/trainer/trainer.fbx',
   ]
   const worldCharacterAnimsList = [
-    // '/models/fairy-trainer/fairy-trainer.fbx',
-    /*'/models/fairy-trainer/fairy-trainer.comp.glb'*/
+    '/models/fairy-trainer/fairy-trainer.fbx',
+    // '/models/fairy-trainer/fairy-trainer.comp.glb',
   ]
 
   let promisesLength = 1
@@ -103,7 +103,7 @@ export default () => {
 
         // console.log('resolvedPromises: ', resolvedPromises, promisesLength)
         if (resolvedPromises === promisesLength) {
-          console.log('done - resolvedPromises: ', resolvedPromises, promisesLength)
+          // console.log('done - resolvedPromises: ', resolvedPromises, promisesLength)
           loadingProgress.value = 100
           worldLoadingProgress.value = loadingProgress.value
         }

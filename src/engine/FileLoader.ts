@@ -49,8 +49,8 @@ const FileLoader = () => {
   }
 
   const onFinishedLoading = (onFinished: () => void) => {
-    const total = convertToReadableSize($.fileLoader.backUpTotal)
-    console.log('%c All assets loaded', 'color: lightgrey', total)
+    // const total = convertToReadableSize($.fileLoader.backUpTotal)
+    // console.log('%c All assets loaded', 'color: lightgrey', total)
 
     setTimeout(() => {
       isLoading.value = false
