@@ -8,7 +8,7 @@
       class="fixed top-0 left-0 h-screen w-screen z-[1100]"
     />
     <main
-      class="game"
+      class="game relative"
       :class="cssProps"
     >
       <router-view />

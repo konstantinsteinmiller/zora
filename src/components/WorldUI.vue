@@ -1,6 +1,8 @@
 <template>
   <canvas style="width: 100%; height: 100vh" />
 
+  <DialogBox />
+
   <LoadingScreen
     :level="worldId"
     @loading-finished="onLoadingFinished"
@@ -10,6 +12,7 @@
 
 <script setup lang="ts">
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import DialogBox from '@/components/organisms/DialogBox.vue'
 import $ from '@/global'
 import Game from '@/Game'
 import useMatch from '@/use/useMatch.ts'

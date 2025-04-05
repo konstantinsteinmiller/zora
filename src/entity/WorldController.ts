@@ -6,6 +6,7 @@ import { LEVELS } from '@/utils/enums.ts'
 import { Quaternion, Vector3 } from 'three'
 
 interface WorldControllerProps {
+  id?: string
   modelPath: string
   startPosition: Vector3
   startRotation: Quaternion
@@ -16,6 +17,7 @@ interface WorldControllerProps {
 }
 
 const WorldController = ({
+  id,
   modelPath,
   startPosition,
   startRotation,
@@ -25,6 +27,7 @@ const WorldController = ({
   animationNamesList,
 }: WorldControllerProps) => {
   const entity: any = Controller({
+    id,
     modelPath,
     startPosition,
     startRotation,

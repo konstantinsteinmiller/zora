@@ -1,4 +1,5 @@
 import { Color } from 'three'
+import { ref } from 'vue'
 
 export const IS_ZORA = true
 export const BASE_NAVIGATION_MOVE_SPEED = 3
@@ -8,6 +9,8 @@ export const MIN_FLY_IMPULSE = MAX_FLY_IMPULSE * 0.1
 export const FLY_COST = 15
 export const ENDURANCE_REGEN_SPEED = 10
 export const MP_REGEN_SPEED = 0.5
+export const BASE_DIALOG_DURATION = 1500
+export const dialogTextSpeed = ref(60) // 60 ms per letter, adjustable in options
 
 export type ANIM = 'idle' | 'walk' | 'walk-back' | 'run' | 'run-back' | 'dance' | 'cast' | 'jump' | 'fly' | 'hit'
 export const characterAnimationNamesList: ANIM[] = [

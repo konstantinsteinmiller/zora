@@ -90,6 +90,8 @@ export default (entity?: any) => {
   }
 
   const onMouseDown = (event: MouseEvent) => {
+    if ($.isMenu.value) return
+
     event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = true
     activatedKeysMap.value[`Mouse${event.button}`] = true
@@ -98,7 +100,7 @@ export default (entity?: any) => {
 
     setAction(`Mouse${event.button}`)
     setTimeout(() => {
-      !document.pointerLockElement && setPointerLock()
+      !$.isMenu.value && !document.pointerLockElement && setPointerLock()
     })
     // case 0: // left mouse button
     // case 1: // cursor wheel button
@@ -107,6 +109,8 @@ export default (entity?: any) => {
     // case 4: // navigate back
   }
   const onMouseUp = (event: MouseEvent) => {
+    if ($.isMenu.value) return
+
     event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = false
     setAction(`Mouse${event.button}`)
@@ -115,6 +119,8 @@ export default (entity?: any) => {
   const preventedKeyDownEventsList = ['Space']
   const preventedControlCommandsList = ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyH']
   const onKeyDown = (event: KeyboardEvent) => {
+    if ($.isMenu.value) return
+
     // $.enableDebug && console.log('event.code: ', event.code, event.keyCode)
     if (preventedKeyDownEventsList.includes(event.code)) event.preventDefault()
     if (event.ctrlKey && preventedControlCommandsList.includes(event.code)) event.preventDefault()
@@ -125,6 +131,8 @@ export default (entity?: any) => {
   }
 
   const onKeyUp = (event: KeyboardEvent) => {
+    if ($.isMenu.value) return
+
     input.keysMap[event.code] = false
     setAction(event.code)
   }
