@@ -1,5 +1,4 @@
 <template>
-  <!--  <h1 class="font-bold text-xl text-red-600 absolute top-0 left-1/2">Zora</h1>-->
   <div
     v-if="isLoading"
     class="loading-screen fixed top-0 left-0 w-full h-full z-[101]"

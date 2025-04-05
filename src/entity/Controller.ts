@@ -11,6 +11,7 @@ import { getBaseStats } from '@/utils/controller.ts'
 import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
 
 interface ControllerProps {
+  id?: string
   modelPath: string
   startPosition: Vector3
   startRotation: Quaternion
@@ -22,6 +23,7 @@ interface ControllerProps {
 }
 
 const Controller = ({
+  id,
   modelPath,
   startPosition,
   modelHeight,
@@ -36,6 +38,7 @@ const Controller = ({
 
   entity = {
     ...new Object3D(),
+    id,
     position: startPosition.clone(),
     ...getBaseStats(),
     ...stats,

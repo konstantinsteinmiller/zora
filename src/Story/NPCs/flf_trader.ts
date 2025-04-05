@@ -10,6 +10,7 @@ export default (config: any = {}) => {
     guild: 'GLD_FLF' as Guild,
     ...config,
   })
+
   entity.routines = {
     start: {
       wp: 'WP_flf_trader',

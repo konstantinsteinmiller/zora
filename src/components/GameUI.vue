@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import BuffsList from '@/components/BuffsList.vue'
+import BuffsList from '@/components/molecules/BuffsList.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import GameOverScreen from '@/components/GameOverScreen.vue'
 import StatBar from '@/components/StatBar.vue'

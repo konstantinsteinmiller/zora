@@ -1,5 +1,6 @@
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
+import { computed, type Ref, ref } from 'vue'
 
 const loadingManager = new LoadingManager()
 
@@ -42,6 +43,9 @@ export interface Global {
   enemy: any
   loadingManager: any
   physics: any
+  isDialog: Ref<boolean>
+  isMenu: Ref<boolean>
+  dialogSelf: any
 }
 
 let global: Global = null
@@ -105,6 +109,9 @@ const globalState = () => {
     player: {},
     enemy: {},
     loadingManager: loadingManager,
+    isDialog: ref(false),
+    isMenu: computed(() => global.isDialog.value),
+    dialogSelf: null,
   }
   // console.log('XXstate: ', state)
 
@@ -132,6 +139,18 @@ export const getEntity = (uuid: string) => {
   return global.entitiesMap.get(uuid)
 }
 
+export const getNpc = (id: string): any | null => {
+  const entityIterator = global.entitiesMap[Symbol.iterator]()
+  for (const item of entityIterator) {
+    const value = item[1]
+
+    if (value?.id === id) {
+      return value
+    }
+  }
+  return null
+}
+
 export const getWorldPlayer = () => {
-  return $.trainer
+  return global.trainer
 }

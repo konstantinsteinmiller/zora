@@ -29,6 +29,7 @@ export default defineConfig({
     },
   },
   server: {
+    port: 505,
     headers: {
       'Permissions-Policy': '',
     },
