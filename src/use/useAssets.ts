@@ -1,5 +1,9 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
-import { characterAnimationNamesList, worldCharacterAnimationNamesList } from '@/utils/constants.ts'
+import {
+  characterAnimationNamesList,
+  worldCharacterAnimationNamesList,
+  worldNPCAnimationNamesList,
+} from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { ref } from 'vue'
 
@@ -33,11 +37,8 @@ export default () => {
     '/models/thunder-fairy-1/thunder-fairy-1.fbx',
     // '/models/trainer/trainer.fbx',
   ]
-  const worldCharacterAnimsList = [
-    '/models/fairy-trainer/fairy-trainer.fbx',
-    '/models/flf-trader/flf-trader.fbx',
-    // '/models/fairy-trainer/fairy-trainer.comp.glb',
-  ]
+  const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
+  const worldNPCAnimsList = ['/models/flf-trader/flf-trader.fbx', '/models/friend-trainer/friend-trainer.fbx']
 
   let promisesLength = 1
   const updateProgress = () => {
@@ -87,7 +88,15 @@ export default () => {
             return acc
           }, [])
         )
-
+        /* world specific NPC */
+        .concat(
+          worldNPCAnimsList.reduce((acc, src) => {
+            if (src.endsWith('.fbx') || src.endsWith('.glb') || src.endsWith('.gltf')) {
+              acc.concat(assetManager.loadCharacterAnims({ src, animsList: worldNPCAnimationNamesList }))
+            }
+            return acc
+          }, [])
+        )
       let resolvedPromises = 0
       promisesLength = assetManager.loadingPromises.length
       await Promise.all(

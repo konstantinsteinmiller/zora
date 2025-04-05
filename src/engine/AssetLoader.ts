@@ -22,6 +22,8 @@ import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 let loader: any = null
 import $ from '@/global'
 
+const isWPOrFP = (child: any) => child.name.startsWith('WP_') || child.name.startsWith('FP_')
+
 const AssetManager = () => {
   type AssetType = 'model' | 'anim' | 'texture'
   type AssetKey = string
@@ -37,7 +39,6 @@ const AssetManager = () => {
     name: string
     position: Vector3
     quaternion: Quaternion
-    rotation?: Quaternion
   }
 
   const assets: AssetContainer = {
@@ -49,39 +50,41 @@ const AssetManager = () => {
 
   const loadingPromises: Promise<void>[] = []
   function loadMesh(src: string) {
-    if (src.endsWith('.fbx')) {
-      return loadFBXMesh(src)
-    } else if (src.endsWith('.glb') || src.endsWith('.gltf')) {
-      return loadGLTFMesh(src)
+    const isGLTF = src.endsWith('.glb') || src.endsWith('.gltf')
+    const isFBX = src.endsWith('.fbx')
+
+    $.loadingManager.itemStart(src)
+    const loader: any = isFBX ? new FBXLoader($.loadingManager) : new GLTFLoader($.loadingManager)
+    if (!isGLTF && !isFBX) {
+      console.warn('Unsupported file type for model loading:', src)
+      return Promise.reject(new Error(`Unsupported file type: ${src}`))
     }
-  }
 
-  function loadGLTFMesh(src: string): Promise<void> {
     const promise = new Promise<void>((resolve, reject) => {
-      $.loadingManager.itemStart(src)
-      const loaderGLTF = new GLTFLoader($.loadingManager)
-
       if (src.endsWith('.comp.glb')) {
         const dracoLoader = new DRACOLoader()
         dracoLoader.setDecoderPath(prependBaseUrl('/draco/'))
         dracoLoader.setDecoderConfig({ type: 'js' })
-        loaderGLTF.setDRACOLoader(dracoLoader)
+        loader.setDRACOLoader(dracoLoader)
       }
 
-      loaderGLTF.load(
+      loader.load(
         prependBaseUrl(src),
-        gltf => {
-          assets.models[src] = gltf.scene
-          /* TODO: FIX refactor to also be used in fbx files */
-          if (src.endsWith('city-1.comp.glb')) {
-            // console.log('gltf.scene: ', gltf.scene)
-            gltf.scene.children.forEach(child => {
-              if ((child.name.startsWith('WP_') || child.name.startsWith('FP_')) && assets.WPsMap) {
+        (model: any) => {
+          if (isFBX) {
+            assets.models[src] = model
+          } else if (isGLTF) {
+            assets.models[src] = model.scene
+          }
+
+          /* add WPs from scene to WPsMap */
+          if (assets.models[src]?.children.some(child => isWPOrFP(child))) {
+            assets.models[src].children.forEach(child => {
+              if (isWPOrFP(child) && assets.WPsMap) {
                 assets.WPsMap.set(child.name, {
                   name: child.name,
                   position: child.position,
                   quaternion: child.quaternion,
-                  rotation: child.rotation,
                 })
               }
             })
@@ -92,29 +95,7 @@ const AssetManager = () => {
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
-        error => ($.loadingManager.itemError(src), reject(error))
-      )
-    })
-
-    loadingPromises.push(promise)
-    return promise
-  }
-
-  function loadFBXMesh(src: string) {
-    const promise = new Promise<void>((resolve, reject) => {
-      $.loadingManager.itemStart(src)
-      const loaderFbx = new FBXLoader($.loadingManager)
-
-      loaderFbx.load(
-        prependBaseUrl(src),
-        fbx => {
-          assets.models[src] = fbx
-          $.loadingManager.itemEnd(src)
-          $.triggerEvent(`${src}.loaded`)
-          resolve()
-        },
-        (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
-        error => ($.loadingManager.itemError(src), reject(error))
+        (error: any) => ($.loadingManager.itemError(src), reject(error))
       )
     })
 
@@ -164,12 +145,7 @@ const AssetManager = () => {
     pathPartsList.pop()
     const animationsPath = prependBaseUrl(`${pathPartsList.join('/')}/`)
 
-    const meshPromise =
-      src.endsWith('.glb') || src.endsWith('.gltf')
-        ? loadGLTFMesh(src)
-        : src.endsWith('.fbx')
-          ? loadFBXMesh(src)
-          : Promise.reject()
+    const meshPromise = loadMesh(src)
 
     let animPromisesList: any[]
     const promise = new Promise<void>((resolve, reject) => {

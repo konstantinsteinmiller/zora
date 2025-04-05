@@ -1,6 +1,7 @@
 import Controller from '@/entity/Controller.ts'
 import type { Guild } from '@/types/entity.ts'
 import useUser from '@/use/useUser.ts'
+import { characterAnimationNamesList } from '@/utils/constants.ts'
 import { LEVELS } from '@/utils/enums.ts'
 import { isPlayerInPoisonCloud } from '@/vfx/poison-cloud.ts'
 import { Quaternion, Vector3 } from 'three'
@@ -32,6 +33,7 @@ const ArenaController = ({
     stats,
     guild,
     levelType: LEVELS.ARENA,
+    animationNamesList: characterAnimationNamesList,
   })
   const utils: any = { ...statsUtils(), ...controllerUtils() }
   for (const key in utils) {

@@ -1,5 +1,6 @@
 import Controller from '@/entity/Controller.ts'
 import type { Guild } from '@/types/entity.ts'
+import { type ANIM, worldCharacterAnimationNamesList } from '@/utils/constants.ts'
 import { controllerUtils } from '@/utils/controller.ts'
 import { LEVELS } from '@/utils/enums.ts'
 import { Quaternion, Vector3 } from 'three'
@@ -11,6 +12,7 @@ interface WorldControllerProps {
   modelHeight: number
   stats?: any
   guild: Guild
+  animationNamesList?: ANIM[]
 }
 
 const WorldController = ({
@@ -20,6 +22,7 @@ const WorldController = ({
   modelHeight,
   stats = {},
   guild,
+  animationNamesList,
 }: WorldControllerProps) => {
   const entity: any = Controller({
     modelPath,
@@ -29,6 +32,7 @@ const WorldController = ({
     stats,
     guild,
     levelType: LEVELS.WORLD,
+    animationNamesList: animationNamesList || worldCharacterAnimationNamesList,
   })
   const utils: any = {
     /*...statsUtils(),*/ ...controllerUtils(),

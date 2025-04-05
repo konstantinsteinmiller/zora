@@ -2,7 +2,7 @@ import AssetLoader from '@/engine/AssetLoader.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
-import { characterAnimationNamesList, worldCharacterAnimationNamesList } from '@/utils/constants.ts'
+import { type ANIM } from '@/utils/constants.ts'
 import { LEVELS } from '@/utils/enums.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
 import { Object3D, Quaternion, Vector3 } from 'three'
@@ -18,9 +18,18 @@ interface ControllerProps {
   stats?: any
   guild: Guild
   levelType: LevelType
+  animationNamesList: ANIM[]
 }
 
-const Controller = ({ modelPath, startPosition, modelHeight, stats = {}, guild, levelType }: ControllerProps) => {
+const Controller = ({
+  modelPath,
+  startPosition,
+  modelHeight,
+  stats = {},
+  guild,
+  levelType,
+  animationNamesList,
+}: ControllerProps) => {
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
@@ -32,6 +41,7 @@ const Controller = ({ modelPath, startPosition, modelHeight, stats = {}, guild, 
     ...stats,
     guild,
     mesh,
+    animationNamesList,
     halfHeight: modelHeight * 0.5,
   }
 
@@ -40,7 +50,7 @@ const Controller = ({ modelPath, startPosition, modelHeight, stats = {}, guild, 
   const stateMachine =
     levelType === LEVELS.ARENA ? new ArenaCharacterFSM(animationsMap, entity) : new CharacterFSM(animationsMap, entity)
 
-  const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
+  // const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
   entity.stateMachine = stateMachine
   entity.currentVelocity = new Vector3(0, 0, 0)
 

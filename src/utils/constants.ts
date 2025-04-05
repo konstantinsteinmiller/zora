@@ -9,7 +9,8 @@ export const FLY_COST = 15
 export const ENDURANCE_REGEN_SPEED = 10
 export const MP_REGEN_SPEED = 0.5
 
-export const characterAnimationNamesList: string[] = [
+export type ANIM = 'idle' | 'walk' | 'walk-back' | 'run' | 'run-back' | 'dance' | 'cast' | 'jump' | 'fly' | 'hit'
+export const characterAnimationNamesList: ANIM[] = [
   'idle',
   'walk',
   'walk-back',
@@ -22,9 +23,10 @@ export const characterAnimationNamesList: string[] = [
   'hit' /*
    */,
 ]
-export const worldCharacterAnimationNamesList: string[] = characterAnimationNamesList.filter(
+export const worldCharacterAnimationNamesList: ANIM[] = characterAnimationNamesList.filter(
   (anim: string) => !['fly', 'cast'].includes(anim)
 )
+export const worldNPCAnimationNamesList: ANIM[] = ['idle', 'walk', 'run']
 
 /* spell charge constants */
 export const INITIAL_ROTATION_SPEED = Math.PI * 0.05 // 1 full rotation per 10 sec

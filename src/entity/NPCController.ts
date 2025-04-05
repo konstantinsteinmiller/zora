@@ -2,6 +2,7 @@ import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import WorldController from '@/entity/WorldController.ts'
 import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
+import { worldNPCAnimationNamesList } from '@/utils/constants.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 import { type Quaternion, Vector3 } from 'three'
 
@@ -15,7 +16,7 @@ interface NPCControllerProps {
 }
 
 const NPCController = (config: NPCControllerProps) => {
-  const entity = WorldController(config)
+  const entity = WorldController({ ...config, animationNamesList: worldNPCAnimationNamesList })
 
   const utils: any = {}
   for (const key in utils) {
