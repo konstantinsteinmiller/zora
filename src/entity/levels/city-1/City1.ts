@@ -1,6 +1,5 @@
 import $ from '@/global'
 import { assetManager, createGeoIndex, loadNavMesh } from '@/engine/AssetLoader'
-import Water from '@/entity/water/Water'
 import FairyDust from '@/entity/FairyDust.ts'
 import * as THREE from 'three'
 import { Mesh, MeshBasicMaterial, Object3D } from 'three'
@@ -10,6 +9,8 @@ import { startPositions } from '@/entity/levels/city-1/config'
 
 export default async (onFinishedCallback: () => void) => {
   const level: any = new Object3D()
+  level.WPsMap = assetManager.assets.WPsMap
+
   const promise = await new Promise(resolve => {
     const glb: any = { scene: assetManager.getModel('/worlds/city-1/city-1.comp.glb')?.clone() }
     const houses: any = { scene: assetManager.getModel('/worlds/city-1/city-1-houses.comp.glb')?.clone() }
@@ -28,32 +29,6 @@ export default async (onFinishedCallback: () => void) => {
     resolve(glb.scene)
   })
 
-  /*if ($.enableWater) {
-    const waterResolution = { size: 256 }
-    const water = Water({
-      options: {
-        amplitude: 0.2,
-        frequency: 2.9,
-        persistence: 1.89,
-        lacunarity: 4.76,
-        speed: 0.25,
-        customPlaneProps: [
-          {
-            key: 'isBattleProtected',
-            value: true,
-          },
-        ],
-      },
-      resolution: waterResolution.size,
-      environmentMap: $.scene.environment,
-    })
-    water.position.set(0, -2.8, 0)
-    // const sandTexture: any = new TextureLoader().load('/images/sand/ocean_floor.png')
-    // const ground = Ground({ texture: sandTexture })
-    // setupUI({ waterResolution, water, ground })
-    // $.player.position.set(2500, 1000, 2000)
-  }*/
-
   const pathfinder: any = new Pathfinding()
   pathfinder.startPositions = startPositions
   pathfinder.pathfindingHelper = new PathfindingHelper()
@@ -69,7 +44,7 @@ export default async (onFinishedCallback: () => void) => {
       child.entityType = 'level'
     })
 
-    if ($.enableDebug) {
+    if ($.isDebug) {
       const wiredNavMesh = new Mesh(geo, new MeshBasicMaterial({ color: 0x202020, wireframe: true }))
       $.scene.add(wiredNavMesh)
       const wiredFillMesh = new Mesh(

@@ -7,6 +7,7 @@ import {
   LoadingManager,
   Mesh,
   Object3D,
+  type Quaternion,
   type Scene,
   Texture,
   TextureLoader,
@@ -29,12 +30,21 @@ const AssetManager = () => {
     models: Record<AssetKey, THREE.Group | THREE.Scene>
     anims: { [key: string]: Record<AssetKey, { clip: any; action: any }> }
     textures: Record<AssetKey, THREE.Texture>
+    WPsMap: Map<string, WP>
+  }
+
+  interface WP {
+    name: string
+    position: Vector3
+    quaternion: Quaternion
+    rotation?: Quaternion
   }
 
   const assets: AssetContainer = {
     models: {},
     anims: {},
     textures: {},
+    WPsMap: new Map<string, WP>(),
   }
 
   const loadingPromises: Promise<void>[] = []
@@ -62,6 +72,21 @@ const AssetManager = () => {
         prependBaseUrl(src),
         gltf => {
           assets.models[src] = gltf.scene
+          /* TODO: FIX refactor to also be used in fbx files */
+          if (src.endsWith('city-1.comp.glb')) {
+            // console.log('gltf.scene: ', gltf.scene)
+            gltf.scene.children.forEach(child => {
+              if ((child.name.startsWith('WP_') || child.name.startsWith('FP_')) && assets.WPsMap) {
+                assets.WPsMap.set(child.name, {
+                  name: child.name,
+                  position: child.position,
+                  quaternion: child.quaternion,
+                  rotation: child.rotation,
+                })
+              }
+            })
+            // console.log('$.level.WPsMap: ', assets.WPsMap)
+          }
           $.loadingManager.itemEnd(src)
           $.triggerEvent(`${src}.loaded`)
           resolve()

@@ -20,15 +20,7 @@ interface ControllerProps {
   levelType: LevelType
 }
 
-const Controller = ({
-  modelPath,
-  startPosition,
-  startRotation,
-  modelHeight,
-  stats = {},
-  guild,
-  levelType,
-}: ControllerProps) => {
+const Controller = ({ modelPath, startPosition, modelHeight, stats = {}, guild, levelType }: ControllerProps) => {
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
@@ -51,6 +43,12 @@ const Controller = ({
   const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
   entity.stateMachine = stateMachine
   entity.currentVelocity = new Vector3(0, 0, 0)
+
+  entity.playAnimation = (name: string) => {
+    if (entity.stateMachine.currentState) {
+      entity.stateMachine.setState(name)
+    }
+  }
 
   const loadModels = async () => {
     const { loadCharacterModelWithAnimations } = AssetLoader()
@@ -80,7 +78,8 @@ const Controller = ({
     entity.collider = collider
 
     // only enemy has startRotation, player is rotated with camera phi and theta
-    startRotation && entity.rigidBody.setRotation(startRotation)
+    // startRotation && entity.rigidBody.setRotation(startRotation)
+    // startRotation && entity.rigidBody.setNextKinematicRotation(startRotation)
   }
 
   loadModels()

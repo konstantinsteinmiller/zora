@@ -29,12 +29,13 @@ export default () => {
     '/worlds/city-1/city-1-navmesh.fbx',
   ]
   const characterAnimsList = [
-    '/models/nature-fairy-1/nature_fairy_1.fbx',
-    '/models/thunder-fairy-1/thunder_fairy_1.fbx',
+    '/models/nature-fairy-1/nature-fairy-1.fbx',
+    '/models/thunder-fairy-1/thunder-fairy-1.fbx',
     // '/models/trainer/trainer.fbx',
   ]
   const worldCharacterAnimsList = [
     '/models/fairy-trainer/fairy-trainer.fbx',
+    '/models/flf-trader/flf-trader.fbx',
     // '/models/fairy-trainer/fairy-trainer.comp.glb',
   ]
 

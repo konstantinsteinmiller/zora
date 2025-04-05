@@ -1,8 +1,10 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
+import useMatch from '@/use/useMatch.ts'
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import $ from '@/global'
 import type { ClosestPortal, PortalConnection } from '@/types/world'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
+import { LEVELS } from '@/utils/enums.ts'
 import { clamp } from '@/utils/function.ts'
 import Rapier from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
@@ -311,6 +313,7 @@ export const moveToTargetPosition = (
   const destinationPosition = targetPosition || findRandomTargetPosition(entity)
   let path = findPathToTargetPosition(entity, destinationPosition)
 
+  console.log('path: ', path)
   if (isDirect && !path?.length) {
     path = [entity.mesh.position.clone(), targetPosition]
     displayPath(path, entity.position, targetPosition as Vector3)
@@ -340,7 +343,12 @@ export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75
   const startPos = closest.centroid
   let path = pathfinder.findPath(startPos, targetPos, zone, startGroupId)
 
-  path = findPathBetweenNavIslands(path, startPos, targetPos, startGroupId)
+  const { levelType } = useMatch()
+  if (!path?.length && levelType.value === LEVELS.ARENA) {
+    console.log('path: ', path)
+    console.warn('No path found')
+    path = findPathBetweenNavIslands(path, startPos, targetPos, startGroupId)
+  }
 
   displayPath(path, startPos, targetPos)
   return path

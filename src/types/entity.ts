@@ -69,7 +69,7 @@ export interface Waypoint {
   isPortal?: boolean
 }
 
-const guilds = ['guild-0', 'guild-1'] as const
+const guilds = ['guild-0', 'guild-1', 'GLD_NONE', 'GLD_FLF'] as const
 export type Guild = (typeof guilds)[number]
 
 // Now you have a reusable array:
