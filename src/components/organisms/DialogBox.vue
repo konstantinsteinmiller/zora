@@ -204,6 +204,11 @@ const onOption = (option: Option) => {
   option.onOption()
 }
 
+const selectFirstOption = () => {
+  if (displayedOptionsList.value.length > 0) {
+    selectedOption.value = displayedOptionsList.value[0]
+  }
+}
 const onFinishDialog = () => {
   /* execute on finished Dialog lines callback */
   if (selectedOption.value?.onFinished) {
@@ -213,9 +218,7 @@ const onFinishDialog = () => {
   if (currentDialog.value?.[0]?.type === 'end') {
     closeDialog()
   }
-  if (displayedOptionsList.value.length > 0) {
-    selectedOption.value = displayedOptionsList.value[0]
-  }
+  selectFirstOption()
   currentDialog.value = null
 }
 
@@ -236,12 +239,12 @@ const closeDialog = () => {
   emit('close')
   $.isDialog.value = false
 }
-$.isDialog.value = true
 
 watch($.isDialog, () => {
   if ($.isDialog.value) {
     // console.log('Dialog opened')
     $.controls.removePointerLock()
+    selectFirstOption()
   } else {
     // console.log('Dialog closed')
     $.controls.setPointerLock()

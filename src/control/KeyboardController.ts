@@ -24,6 +24,7 @@ const defaultControlsConfig: EnumStringToList = {
   hit: ['ControlLeft', 'KeyH'],
   hurt: ['ControlLeft', 'KeyH'],
   fly: ['Mouse2'],
+  talk: ['KeyF'],
   sprint: ['ShiftLeft'],
   pause: ['KeyP'],
   lookBack: ['KeyG'],

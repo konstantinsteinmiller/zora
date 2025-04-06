@@ -1,5 +1,8 @@
 import WorldController from '@/entity/WorldController.ts'
 import type { Guild } from '@/types/entity.ts'
+import useInteraction from '@/use/useInteraction.ts'
+import useOctree from '@/use/useOctree.ts'
+import { INTERACTIONS } from '@/utils/enums.ts'
 import { Quaternion, Vector3 } from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
@@ -46,12 +49,36 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   InputController(entity)
 
+  const interactWith = (closeEntities: any) => {
+    console.log('interactWith NPC: ', closeEntities[0])
+  }
+  const { showInteraction, hideInteraction } = useInteraction()
+  const { getClosestEntity } = useOctree()
+  let interactionThrottleCounter = 0
+  const interactionDistance = 4
+  const findNpcInteraction = () => {
+    interactionThrottleCounter++
+    if (interactionThrottleCounter % 30 !== 0) return
+    const closestEntity = getClosestEntity(entity, interactionDistance)
+
+    if (closestEntity && !$.isMenu.value && !$.isDialog.value) {
+      entity.closestInteractableEntity = closestEntity
+      showInteraction(entity, INTERACTIONS.TALK)
+    } else {
+      entity.closestInteractableEntity = null
+      hideInteraction()
+    }
+  }
+  entity.closestInteractable = null
+
   let updateEventUuid: string = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
     const isFinished = entity.update(deltaS, elapsedTimeInS)
     if (!isFinished) return
 
     entity.stateMachine.update(deltaS, $.controls)
+
+    findNpcInteraction()
 
     entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
   }

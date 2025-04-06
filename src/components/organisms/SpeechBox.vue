@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BASE_DIALOG_DURATION, dialogTextSpeed } from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
-import { computed, type ComputedRef, ref, onMounted, onUnmounted } from 'vue'
+import { computed, type ComputedRef, ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import $, { getNpc } from '@/global'
 
@@ -28,6 +28,9 @@ const currentLine = ref('')
 const currentSpeech = ref('')
 const dialogScale = ref(0.5) // Initial scale
 const audioFiles = ref<Map<string, HTMLAudioElement>>(new Map()) // Map to store audio files
+const displayedText = ref('')
+const textIndex = ref(0)
+const textInterval = ref<number | null>(null)
 
 const DialogDuration: ComputedRef<number> = computed(() => {
   const audio = audioFiles.value.get(currentSpeech.value)
@@ -37,7 +40,7 @@ const DialogDuration: ComputedRef<number> = computed(() => {
   return BASE_DIALOG_DURATION + currentLine.value.length * dialogTextSpeed.value
 })
 
-const isPlayerTalking: ref<boolean> = ref(false)
+const isPlayerTalking: Ref<boolean> = ref(false)
 
 let nextLineTimeout: any
 let appearTimeout: any
@@ -72,6 +75,29 @@ const nextLine = async () => {
       currentLine.value = line.startsWith('> ') ? line.substring(2) : line.startsWith('>') ? line.substring(1) : line
       currentSpeech.value = speech
       dialogScale.value = 1 // Scale back up
+      displayedText.value = ''
+      textIndex.value = 0
+
+      if (textInterval.value) {
+        clearInterval(textInterval.value)
+        textInterval.value = null
+      }
+
+      if (currentLine.value.length > 0) {
+        const firstWord = currentLine.value.split(' ')[0]
+        displayedText.value = `${firstWord} `
+        textIndex.value = firstWord.length + 1
+      }
+
+      textInterval.value = setInterval(() => {
+        if (textIndex.value < currentLine.value.length) {
+          displayedText.value += currentLine.value[textIndex.value]
+          textIndex.value++
+        } else {
+          clearInterval(textInterval.value)
+          textInterval.value = null
+        }
+      }, dialogTextSpeed.value - 25)
 
       if (speech) {
         if (currentAudio) {
@@ -136,6 +162,9 @@ onMounted(async () => {
 onUnmounted(() => {
   clearTimeout(appearTimeout)
   clearTimeout(nextLineTimeout)
+  if (textInterval.value) {
+    clearInterval(textInterval.value)
+  }
   window.removeEventListener('mousedown', onCancelCurrentLine)
   window.removeEventListener('keydown', onCancelCurrentLine)
   disposeAudioFiles()
@@ -149,7 +178,7 @@ onUnmounted(() => {
       class="max-w-4/5"
       :style="{ transform: `scale(${dialogScale})`, transition: 'transform 300ms ease-in-out' }"
     )
-      span.text-white.text-2xl.font-bold.text-center(:class="{ 'text-yellow-400': isPlayerTalking }" style="text-shadow: 0 0 5px black") {{ t(currentLine) }}
+      span.text-white.text-2xl.font-bold.text-center(:class="{ 'text-yellow-400': isPlayerTalking }" style="text-shadow: 0 0 5px black") {{ t(displayedText) }}
 </template>
 
 <style scoped lang="sass"></style>

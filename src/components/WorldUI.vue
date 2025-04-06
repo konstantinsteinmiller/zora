@@ -3,7 +3,7 @@
 
   <DialogBox />
 
-  <div>fairy-dust</div>
+  <TalkInteraction />
   <FairyDustCollected />
 
   <LoadingScreen
@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import TalkInteraction from '@/components/molecules/TalkInteraction.vue'
 import DialogBox from '@/components/organisms/DialogBox.vue'
 import $ from '@/global'
 import Game from '@/Game'

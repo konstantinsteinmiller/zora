@@ -278,6 +278,7 @@ export default () => {
       parent.add(emptyMesh)
       return Promise.resolve(emptyMesh)
     }
+
     if (!assetManager.getModel(src)) {
       console.log('missing model, why?: ', src)
       try {
@@ -286,23 +287,10 @@ export default () => {
         return Promise.reject(error)
       }
     }
-    if (src.endsWith('.fbx')) {
-      return loader.configFBXMesh(src, parent, scale, shadows, callback)
-    }
-    return loader.configGLBMesh(src, parent, scale, shadows, callback)
-  }
 
-  loader.configGLBMesh = async (
-    src: string,
-    parent: Object3D,
-    scale: number,
-    shadows: boolean = true,
-    callback?: (scene: Object3D) => void /*
-     */
-  ) => {
-    const glb: any = { scene: assetManager.getModel(src)?.clone() }
-    // console.log('glb: ', glb)
-    glb.scene.traverse((child: any) => {
+    const model: any = assetManager.getModel(src)?.clone()
+    // console.log('model: ', model)
+    model.traverse((child: any) => {
       if (child instanceof Mesh) {
         // console.log('child: ', child)
         if (scale >= 0) child.scale.setScalar(scale)
@@ -311,47 +299,15 @@ export default () => {
           child.castShadow = true
           child.receiveShadow = true
         }
-
         child = createGeoIndex(child)
-
         parent.add(child)
       }
     })
 
     // src.endsWith('.comp.glb') && console.log('Compressed GLB loaded!')
 
-    callback?.(glb.scene)
-    return glb.scene
-  }
-
-  loader.configFBXMesh = async (
-    src: string,
-    parent: Object3D,
-    scale: number,
-    shadows: boolean = true,
-    callback?: (scene: Object3D) => void /*
-     */
-  ) => {
-    const fbx: any = assetManager.getModel(src)?.clone()
-    // console.log('fbx: ', fbx)
-    fbx.traverse((child: any) => {
-      if (child instanceof Mesh) {
-        // console.log('child: ', child)
-        if (scale >= 0) child.scale.setScalar(scale)
-        child.material.map.encoding = (THREE as any).sRGBEncoding
-        if (shadows) {
-          child.castShadow = true
-          child.receiveShadow = true
-        }
-
-        child = createGeoIndex(child)
-
-        parent.add(child)
-      }
-    })
-
-    callback?.(fbx)
-    return fbx
+    callback?.(model)
+    return model
   }
 
   interface CharacterWithAnimationsProps {

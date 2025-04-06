@@ -8,6 +8,10 @@ export const LEVELS: ENUM = {
   ARENA: 'arena',
   WORLD: 'world',
 }
+export const INTERACTIONS: ENUM = {
+  TALK: 'talk-interaction',
+  READ: 'read-interaction',
+}
 
 export const LANGUAGES: Array<string> = [
   // 'ar',

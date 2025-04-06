@@ -1,6 +1,7 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
+import useOctree from '@/use/useOctree.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { type ANIM } from '@/utils/constants.ts'
 import { LEVELS } from '@/utils/enums.ts'
@@ -35,6 +36,7 @@ const Controller = ({
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
+  const { addEntity } = useOctree()
 
   entity = {
     ...new Object3D(),
@@ -78,9 +80,12 @@ const Controller = ({
         mesh = scope.mesh
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
+        entity.mesh.updateMatrixWorld(true)
 
         entity.center = entity.calcHalfHeightPosition(entity)
         createEntityColliderBox(entity)
+
+        $.triggerEvent('model.loaded', entity)
       },
     })
   }

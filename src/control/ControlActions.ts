@@ -1,11 +1,12 @@
 import { createFairyDustObjects } from '@/entity/FairyDust.ts'
+import useInteraction from '@/use/useInteraction.ts'
 import useMatch from '@/use/useMatch.ts'
 import useUser from '@/use/useUser.ts'
 import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import $ from '@/global'
-import { LEVELS } from '@/utils/enums.ts'
+import { INTERACTIONS, LEVELS } from '@/utils/enums.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 
 /* set all actions initially to false */
@@ -41,6 +42,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
   const { levelType } = useMatch()
   if (actions !== null) return actions
 
+  const { interactionId, hideInteraction } = useInteraction()
   // const map = getActionEventsMap(defaultControlsConfig)
   const map: ActionFunctionMap = {
     activate: {
@@ -123,6 +125,14 @@ export default (defaultControlsConfig: EnumStringToList) => {
             entity.utils.takeOffFrames = 3
             $.sounds.addAndPlayPositionalSound(entity, 'flap', { volume: 0.25 * userSoundVolume.value * 0.25 })
           }
+        }
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    talk: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        if (hasChanged && interactionId.value === INTERACTIONS.TALK) {
+          $.isDialog.value = true
         }
       },
       onDeactivate: (entity: any) => {},

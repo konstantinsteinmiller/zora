@@ -1,6 +1,7 @@
+import { useKeyboard } from '@/use/useKeyboard.ts'
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, type Ref, ref } from 'vue'
+import { computed, type Ref, ref, watch } from 'vue'
 
 const loadingManager = new LoadingManager()
 
@@ -130,6 +131,13 @@ const globalState = () => {
   global.isWorldInitialized = false
   global.vfxList = []
 
+  const { clearKeysMap } = useKeyboard()
+  watch(global.isMenu, (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      global.controls.keysMap = {}
+      clearKeysMap()
+    }
+  })
   return global
 }
 const currentState = globalState()

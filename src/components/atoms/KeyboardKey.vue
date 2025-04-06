@@ -14,6 +14,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  allowActivation: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const displayedKey: string = KeyboardKeysMap[props.k]
