@@ -46,7 +46,6 @@ setPointer()
 
 // InputController()
 !$.sounds && Sound()
-$.sounds.addInteractionDetection()
 
 !$.fileLoader && FileLoader()
 !$.camera && Camera()
@@ -54,13 +53,23 @@ $.sounds.addInteractionDetection()
 const { preloadAssets, loadingProgress, worldLoadingProgress } = useAssets()
 
 const game$: any = document.querySelector('.game')
+
+let onceBackgroundMusic = false
+const onClick = (e: MouseEvent) => {
+  if ($.sounds && !onceBackgroundMusic) {
+    $.sounds.playBackgroundMusic()
+    onceBackgroundMusic = true
+  }
+  spraySprincles(e)
+}
+
 onMounted(() => {
   preloadAssets()
-  game$.addEventListener('click', (e: MouseEvent) => spraySprincles(e), false)
+  game$.addEventListener('click', onClick, false)
   game$.addEventListener('mousemove', onUnlockedMouseMove, false)
 })
 onUnmounted(() => {
-  game$.removeEventListener('click', (e: MouseEvent) => spraySprincles(e), false)
+  game$.removeEventListener('click', onClick, false)
   game$.removeEventListener('mousemove', onUnlockedMouseMove, false)
 })
 </script>

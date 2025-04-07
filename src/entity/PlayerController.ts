@@ -58,7 +58,7 @@ const PlayerController = (config: PlayerControllerProps) => {
   const interactionDistance = 4
   const findNpcInteraction = () => {
     interactionThrottleCounter++
-    if (interactionThrottleCounter % 30 !== 0) return
+    if (interactionThrottleCounter % 10 !== 0) return
     const closestEntity = getClosestEntity(entity, interactionDistance)
 
     if (closestEntity && !$.isMenu.value && !$.isDialog.value) {

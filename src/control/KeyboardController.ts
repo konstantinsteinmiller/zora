@@ -110,7 +110,7 @@ export default (entity?: any) => {
     // case 4: // navigate back
   }
   const onMouseUp = (event: MouseEvent) => {
-    if ($.isMenu.value) return
+    // if ($.isMenu.value) return
 
     event.preventDefault()
     input.keysMap[`Mouse${event.button}`] = false
@@ -132,7 +132,7 @@ export default (entity?: any) => {
   }
 
   const onKeyUp = (event: KeyboardEvent) => {
-    if ($.isMenu.value) return
+    // if ($.isMenu.value) return
 
     input.keysMap[event.code] = false
     setAction(event.code)

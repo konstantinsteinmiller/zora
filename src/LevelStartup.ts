@@ -2,11 +2,9 @@ import PlayerController from '@/entity/PlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
-import useOctree from '@/use/useOctree.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import City1Startup from '@/entity/levels/city-1/city-1-startup.ts'
-import { Octree } from 'three/examples/jsm/math/Octree'
 
 const LevelStartup = async (level: string) => {
   World(level, async () => {
@@ -36,9 +34,6 @@ const LevelStartup = async (level: string) => {
       cleanupLevel(true, true)
       $.showCursor = true
       $.controls.removePointerLock()
-
-      const { clearOctree } = useOctree()
-      clearOctree()
     })
 
     // const levelEndEventUuid = $.addEvent('renderer.update', () => {

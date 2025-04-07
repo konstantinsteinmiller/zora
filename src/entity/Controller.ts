@@ -1,7 +1,6 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
-import useOctree from '@/use/useOctree.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { type ANIM } from '@/utils/constants.ts'
 import { LEVELS } from '@/utils/enums.ts'
@@ -36,7 +35,6 @@ const Controller = ({
   let entity: any | Object3D = null
   let mesh: any = new Object3D()
   mesh.position.copy(startPosition)
-  const { addEntity } = useOctree()
 
   entity = {
     ...new Object3D(),

@@ -9,7 +9,7 @@ const currentBillboardEntity = ref<Entity | null>(null)
 
 const showInteraction = (entity: Entity, domId: string) => {
   interactionId.value = domId
-  $.dialogSelf = entity.closestInteractableEntity
+  $.dialogSelf.value = entity.closestInteractableEntity
   if (entity.closestInteractableEntity && entity.closestInteractableEntity.mesh) {
     currentBillboardEntity.value = entity
     isInteractionVisible.value = true

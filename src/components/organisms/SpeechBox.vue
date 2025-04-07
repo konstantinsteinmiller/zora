@@ -18,8 +18,7 @@ const props = defineProps({
   },
 })
 
-$.dialogSelf = getNpc('flf_trader') /* FIX ME make it dynamic */
-const self: any = $.dialogSelf
+const self: any = $.dialogSelf.value
 
 const { t } = useI18n()
 const emit = defineEmits(['finish'])

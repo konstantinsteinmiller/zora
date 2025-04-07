@@ -3,10 +3,6 @@
     id="main-app"
     class="flex flex-col h-screen sm:h-full w-screen"
   >
-    <div
-      id="sound-detector"
-      class="fixed top-0 left-0 h-screen w-screen z-[1100]"
-    />
     <main
       class="game relative"
       :class="cssProps"

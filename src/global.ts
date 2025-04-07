@@ -46,7 +46,7 @@ export interface Global {
   physics: any
   isDialog: Ref<boolean>
   isMenu: Ref<boolean>
-  dialogSelf: any
+  dialogSelf: Ref<any>
 }
 
 let global: Global = null
@@ -112,7 +112,7 @@ const globalState = () => {
     loadingManager: loadingManager,
     isDialog: ref(false),
     isMenu: computed(() => global.isDialog.value),
-    dialogSelf: null,
+    dialogSelf: ref(null),
   }
   // console.log('XXstate: ', state)
 

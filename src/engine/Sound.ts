@@ -3,7 +3,7 @@ import useUser from '@/use/useUser.ts'
 import { prependBaseUrl, randomInt, repeat } from '@/utils/function.ts'
 import { Audio, AudioListener, AudioLoader, Group, PositionalAudio } from 'three'
 import { EventEmitter } from 'events'
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 
 export const soundToTrackSrcMap: { [key: string]: string[] } = {
   hit: repeat(5, (_, i) => prependBaseUrl(`/sounds/hit/auahhhh-hurt-female-${i + 1}.ogg`)),
@@ -48,6 +48,7 @@ export default () => {
     trackBuffersMap: new Map(),
     soundToTrackSrcMap,
     emitter,
+    bgMusic: ref(null),
   }
 
   const activeSoundsList: any[] = []
@@ -149,7 +150,7 @@ export default () => {
     })[0]
 
     if (sound) {
-      singleton.emitter.emit(`${name}:play`)
+      singleton.emitter.emit(`${name}:play`, sound)
       sound.play()
     }
   }
@@ -223,25 +224,12 @@ export default () => {
       singleton.load(name)
 
       const onLoadedBackgroundMusic = () => {
-        const onBgPlay = () => {
-          // console.log(" 'background music started playing'")
+        const onBgPlay = (sound: Audio) => {
           singleton.emitter.off(`${name}:play`, onBgPlay)
+          singleton.bgMusic.value = sound
         }
         singleton.emitter.on(`${name}:play`, onBgPlay)
-        /*!$.isDebug && */ const result = singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
-
-        // const tryToPlay = setInterval(() => {
-        //   const audio = new Audio(theAudioFile)
-        //
-        //   audio
-        //     .play()
-        //     .then(() => {
-        //       clearInterval(tryToPlay)
-        //     })
-        //     .catch(error => {
-        //       console.info('User has not interacted with document yet.')
-        //     })
-        // }, 5000)
+        singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
 
         emitter.off(`loaded:${name}`, onLoadedBackgroundMusic)
       }
@@ -249,46 +237,6 @@ export default () => {
     } else {
       singleton.play(name, { volume: userMusicVolume.value * 0.25, loop: true })
     }
-  }
-
-  singleton.addInteractionDetection = () => {
-    let isPlaying = false
-    const eventsList = ['click', 'focus', 'touchstart', 'touchend', 'pointerdown', 'pointerup']
-    const $soundDetector = document.querySelector('#sound-detector')
-    const $mainApp = document.querySelector('#main-app')
-
-    const prevent = event => {
-      event.preventDefault()
-    }
-    document.addEventListener('contextmenu', prevent)
-    setTimeout(() => {
-      $.fileLoader.emitter.on('loaded-level', () => {
-        console.log('on loaded-level: ')
-        document.removeEventListener('contextmenu', prevent)
-      })
-    }, 500)
-
-    const detectInteraction = event => {
-      $mainApp?.removeChild($soundDetector as Node)
-      if (!isPlaying) {
-        try {
-          //play video here
-          $.sounds.playBackgroundMusic()
-          isPlaying = true
-          eventsList.forEach(eventName => {
-            $soundDetector?.removeEventListener(eventName, detectInteraction, { bubbles: true, capture: false })
-          })
-        } catch (e) {
-          console.warn(e.message)
-        }
-      }
-    }
-    eventsList.forEach(eventName => {
-      $soundDetector?.addEventListener(eventName, detectInteraction, {
-        bubbles: true,
-        capture: false,
-      })
-    })
   }
 
   $.sounds = singleton
