@@ -53,7 +53,12 @@ const preloadAudioFiles = async () => {
           const speechFolder = '/speech'
           const gameLocale = 'en'
           const npcId = self?.id
-          const audio = new Audio(prependBaseUrl(`${speechFolder}/${gameLocale}/${npcId}/${line.speech}.ogg`))
+          let audio = null
+          if (line.speech === 'DIA_END_GOT_TO_GO' || line.speech === 'DIA_END') {
+            audio = new Audio(prependBaseUrl(`${speechFolder}/${gameLocale}/${line.speech}.ogg`))
+          } else {
+            audio = new Audio(prependBaseUrl(`${speechFolder}/${gameLocale}/${npcId}/${line.speech}.ogg`))
+          }
           await audio.load()
           audioFiles.value.set(line.speech, audio)
         } catch (error) {

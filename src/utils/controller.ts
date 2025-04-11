@@ -1,4 +1,5 @@
 import SpellFire from '@/entity/SpellFire.ts'
+import type { Fairy } from '@/types/fairy.ts'
 import useUser from '@/use/useUser.ts'
 import {
   DEFAULT_CHARGE_DURATION,
@@ -20,6 +21,7 @@ import { createVFX } from '@/utils/vfx.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import { Color, Object3D, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
+import { ref } from 'vue'
 
 export const getBaseStats: any = () => ({
   uuid: uuidv4(),
@@ -46,7 +48,7 @@ export const getBaseStats: any = () => ({
     name: 'shot',
     speed: 1,
     damage: 25,
-    cost: 25,
+    mana: 25,
     charge: 0 /* [0,1] */,
     buff: {
       name: 'attack',
@@ -70,6 +72,9 @@ export const getBaseStats: any = () => ({
       light: 0,
       psi: 0,
     },
+  },
+  fairies: {
+    fairiesList: ref<Fairy[]>([]),
   },
   isGrounded: false,
   appliedFlyImpulse: 0,
@@ -334,7 +339,7 @@ export const chargeUtils = () => ({
     return { nebulaSystem, chargeEmitter }
   },
   calcAttackMpDamage(entity: any, rotationSpeed: number) {
-    const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.cost, rotationSpeed).toFixed(2)
+    const mpCost = +remap(MIN_CHARGE_SPEED, MAX_ROTATION_SPEED, 0, entity.currentSpell.mana, rotationSpeed).toFixed(2)
 
     if (mpCost > entity.mp) {
       const mpDiff = mpCost - entity.mp

@@ -1,7 +1,3 @@
-import useDialog from '@/use/useDialog.ts'
-import $ from '@/global'
-
-const { knows, currentDialog, choicesList } = useDialog()
 export default [
   {
     id: 'DIA_CEL_TRAINER_HI',
@@ -11,78 +7,47 @@ export default [
     permanent: false,
     important: false,
     on: () => {
-      currentDialog.value = [
-        {
-          text: '> Hi, who are you?',
-          speech: 'DIA_CEL_TRAINER_HI',
-        },
-        {
-          text: "I ain't got time for this.",
-          speech: 'DIA_CEL_TRAINER_HI_NO_TIME',
-        },
-        {
-          text: '> Why so reserved? Do you need any help?',
-          speech: 'DIA_CEL_TRAINER_HI_HELP',
-        },
-        {
-          text: 'Actually, I do need help. I trained my energy fairy to well. It got too strong for me to handle and flew away.',
-          speech: 'DIA_CEL_TRAINER_HI_NEED_HELP',
-        },
-        {
-          text: '> So you want me to catch it for you? Where did it go?',
-          speech: 'DIA_CEL_TRAINER_HI_WHERE',
-        },
-        {
-          text: "That's the thing, I think it fled to a fairy sanctuary, there must be one beyond the unexplored wilderness.",
-          speech: 'DIA_CEL_TRAINER_HI_WILDERNESS',
-        },
-      ]
+      addDia(
+        'DIA_CEL_TRAINER_HI // > Hi, who are you?',
+        "DIA_CEL_TRAINER_HI_NO_TIME // I ain't got time for this.",
+        'DIA_CEL_TRAINER_HI_HELP // > Why so reserved? Do you need any help?',
+        'DIA_CEL_TRAINER_HI_NEED_HELP // Actually, I do need help. I trained my energy fairy to well. It got too strong for me to handle and flew away.',
+        'DIA_CEL_TRAINER_HI_WHERE // > So you want me to catch it for you? Where did it go?',
+        "DIA_CEL_TRAINER_HI_WILDERNESS // That's the thing, I think it fled to a fairy sanctuary, there must be one beyond the unexplored wilderness."
+      )
     },
     onFinished: () => {
-      choicesList.value = [
-        {
-          id: 'DIA_CEL_TRAINER_HELP_CATCH_YES',
-          order: 6,
-          text: 'Sure, I will catch it for you.',
-          condition: () => knows('DIA_CEL_TRAINER_HI'),
-          permanent: false,
-          important: false,
-          on: () => {
-            currentDialog.value = [
-              {
-                text: "> Don't worry, I will catch it for you if I find it.",
-                speech: 'DIA_CEL_TRAINER_HELP_CATCH_YES',
-              },
-              {
-                text: 'That would be fantastic, I can pay you with energy essences.',
-                speech: 'DIA_CEL_TRAINER_HELP_CATCH_YES_PAY_INFO',
-              },
-            ]
-          },
-          onFinished: () => {},
-        },
-        {
-          id: 'DIA_CEL_TRAINER_HELP_CATCH_NO',
-          order: 6,
-          text: "No, I can't help you.",
-          condition: () => knows('DIA_CEL_TRAINER_HI'),
-          permanent: false,
-          important: false,
-          on: () => {
-            currentDialog.value = [
-              {
-                text: '> Sorry, I am busy right now.',
-                speech: 'DIA_CEL_TRAINER_HELP_CATCH_NO',
-              },
-              {
-                text: 'Well. Then I got to find someone else.',
-                speech: 'DIA_CEL_TRAINER_HELP_CATCH_NO_ANOTHER',
-              },
-            ]
-          },
-          onFinished: () => {},
-        },
-      ]
+      addChoices('DIA_CEL_TRAINER_HELP_CATCH_YES', 'DIA_CEL_TRAINER_HELP_CATCH_NO')
     },
+  },
+
+  {
+    id: 'DIA_CEL_TRAINER_HELP_CATCH_YES',
+    order: 5,
+    text: 'Sure, I will catch it for you',
+    permanent: false,
+    important: false,
+    on: () => {
+      addDia(
+        "DIA_CEL_TRAINER_HELP_CATCH_YES // > Don't worry, I will catch it for you if I find it.",
+        'DIA_CEL_TRAINER_HELP_CATCH_YES_PAY_INFO // That would be fantastic, I can pay you with energy essences.'
+      )
+    },
+    onFinished: () => {},
+  },
+
+  {
+    id: 'DIA_CEL_TRAINER_HELP_CATCH_NO',
+    order: 6,
+    text: "No, I can't help you",
+    permanent: false,
+    important: false,
+    on: () => {
+      addDia(
+        'DIA_CEL_TRAINER_HELP_CATCH_NO // > Sorry, I am busy right now.',
+        'DIA_CEL_TRAINER_HELP_CATCH_NO_ANOTHER // Well. Then I got to find someone else.'
+      )
+    },
+    onFinished: () => {},
   },
 ]

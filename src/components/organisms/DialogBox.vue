@@ -8,14 +8,15 @@ import useUser from '@/use/useUser.ts'
 import { type ComputedRef, ref, watch, onMounted, onUnmounted } from 'vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import $, { getNpc } from '@/global'
+import $ from '@/global'
 
 const { t } = useI18n()
 const emit = defineEmits(['close'])
 
-const { currentDialog, choicesList, knows, setKnown } = useDialog()
+const { currentDialog, choicesList, knows, setKnown, clearDiaTracking } = useDialog()
 
 const dialogOptionsList = ref<Option[]>([]) // Initialize as empty array
+const executedOption = ref<Option | null>(null)
 
 watch(
   () => $.dialogSelf.value,
@@ -25,28 +26,20 @@ watch(
       if ($.dialogSelf.value) {
         const dialogModule = await import(`@/Story/dialogs/DIA_${$.dialogSelf.value.id.toUpperCase()}.ts`)
         /* fill in an end option if writers forget to add one */
-        if (dialogModule.default.every(option => option.order !== 999)) {
+        if (dialogModule.default.every((option: Option) => option.order !== 999)) {
           dialogModule.default.push({
             id: 'DIA_END',
             order: 999,
-            text: 'I got to go (END)',
+            text: t('end'),
             condition: () => true,
             permanent: true,
             important: false,
-            on: () => {
-              currentDialog.value = [
-                {
-                  text: `> I got to go`,
-                  speech: 'DIA_END_GOT_TO_GO',
-                  type: 'end',
-                },
-              ]
-            },
+            on: () => addDia({ text: `> I got to go`, speech: 'DIA_END_GOT_TO_GO', type: 'end' }),
           })
-          console.log('dialogModule.default: ', dialogModule.default)
         }
 
         dialogOptionsList.value = dialogModule.default
+        $.importantDialog.value = dialogOptionsList.value.filter(option => option.important && option?.condition?.())
       }
     } catch (error) {
       console.error('Failed to load dialogs:', error)
@@ -59,9 +52,9 @@ watch(
 const onOption = (option: Option) => {
   option?.id && setKnown(option.id)
 
-  if (choicesList.value.some(choice => choice.id === option.id)) {
-    choicesList.value = []
-  }
+  executedOption.value = option
+
+  choicesList.value = []
 
   if (!option.on) console.error('Please add on function to ', option?.id)
   option.on()
@@ -75,7 +68,7 @@ const selectFirstOption = () => {
 
 const onFinishDialog = () => {
   /* execute on finished Dialog lines callback */
-  if (selectedOption.value?.onFinished) {
+  if (selectedOption.value?.onFinished && executedOption.value === selectedOption.value) {
     selectedOption.value?.onFinished?.()
   }
 
@@ -92,21 +85,28 @@ const displayedOptionsList: ComputedRef<Option[]> = computed(() => {
 
   return choicesList.value.length === 0
     ? dialogOptionsList.value
-        .filter(option => isOptionNotPlayedAndOrPermanent(option) && option.condition())
+        .filter(
+          option =>
+            isOptionNotPlayedAndOrPermanent(option) && typeof option.condition === 'function' && option.condition()
+        )
         .sort((a, b) => a.order - b.order)
-    : choicesList.value.filter(() => true).sort((a, b) => a.order - b.order)
+    : choicesList.value.every((c: any) => typeof c === 'string')
+      ? dialogOptionsList.value.filter(dia => choicesList.value.includes(dia.id)).sort((a, b) => a.order - b.order)
+      : choicesList.value.filter(() => true).sort((a: any, b: any) => a.order - b.order)
 })
 
 const { interactionId } = useInteraction()
 const closeDialog = () => {
   choicesList.value = []
   dialogOptionsList.value = []
+  clearDiaTracking()
   emit('close')
 
   /* reset background music to normal volume */
-  $.sounds.bgMusic.value.setVolume(originalVolume)
+  $.sounds.bgMusic.value?.setVolume?.(originalVolume)
 
   $.dialogSelf.value = null
+  $.importantDialog.value = []
   $.isDialog.value = false
 
   // console.log('Dialog closed')

@@ -35,10 +35,13 @@ export default () => {
   const characterAnimsList = [
     '/models/nature-fairy-1/nature-fairy-1.fbx',
     '/models/thunder-fairy-1/thunder-fairy-1.fbx',
-    // '/models/trainer/trainer.fbx',
   ]
   const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
-  const worldNPCAnimsList = ['/models/flf-trader/flf-trader.fbx', '/models/friend-trainer/friend-trainer.fbx']
+  const worldNPCAnimsList = [
+    '/models/flf-trader/flf-trader.fbx',
+    '/models/friend-trainer/friend-trainer.fbx',
+    '/models/none-kid/none-kid.fbx',
+  ]
 
   let promisesLength = 1
   const updateProgress = () => {

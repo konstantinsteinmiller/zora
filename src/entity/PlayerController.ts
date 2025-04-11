@@ -1,6 +1,7 @@
 import WorldController from '@/entity/WorldController.ts'
 import type { Guild } from '@/types/entity.ts'
 import useInteraction from '@/use/useInteraction.ts'
+import useInventory from '@/use/useInventory.ts'
 import useOctree from '@/use/useOctree.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
 import { Quaternion, Vector3 } from 'three'
@@ -49,13 +50,17 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   InputController(entity)
 
-  const interactWith = (closeEntities: any) => {
-    console.log('interactWith NPC: ', closeEntities[0])
-  }
+  // const interactWith = (closeEntities: any) => {
+  //   console.log('interactWith NPC: ', closeEntities[0])
+  // }
+  const { inventoryMap } = useInventory()
+  entity.inventory = { inventoryMap }
+
   const { showInteraction, hideInteraction } = useInteraction()
   const { getClosestEntity } = useOctree()
   let interactionThrottleCounter = 0
-  const interactionDistance = 4
+  const interactionDistance = 5
+
   const findNpcInteraction = () => {
     interactionThrottleCounter++
     if (interactionThrottleCounter % 10 !== 0) return
@@ -63,7 +68,13 @@ const PlayerController = (config: PlayerControllerProps) => {
 
     if (closestEntity && !$.isMenu.value && !$.isDialog.value) {
       entity.closestInteractableEntity = closestEntity
+
       showInteraction(entity, INTERACTIONS.TALK)
+
+      if (closestEntity?.id === $.dialogSelf.value?.id && !$.isDialog.value && $.importantDialog.value?.length) {
+        $.isDialog.value = true
+        $.importantDialog.value?.[0]?.on?.()
+      }
     } else {
       entity.closestInteractableEntity = null
       hideInteraction()

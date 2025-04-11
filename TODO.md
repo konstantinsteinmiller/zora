@@ -81,6 +81,13 @@
       - [x] Fairy Dust
       - [ ] Consumables
       - [ ] Quest Items
+- [x] Dialog System
+  - [x] Dialog Box
+  - [x] Speech Box
+  - [x] important Dialogs
+  - [x] permanent Dialogs
+  - [x] adding dialog lines and options and choices
+  - [x] dynamic voice-over loading for each dialog line
 - [x] Main Menu
   - [x] Start Game
   - [ ] Load Game / Continue

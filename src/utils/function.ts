@@ -165,3 +165,18 @@ export const mergeObjectsRecursive = (obj1: any, obj2: any) => {
 
   return obj1
 }
+
+export function removeDoubleSlashComments(inputString) {
+  // Regular expression to find and remove double-slash comments
+  // It looks for:
+  // - Optional whitespace at the beginning of the line (^)
+  // - Optional whitespace before the '//'
+  // - The '//' characters
+  // - Optional whitespace after the '//'
+  // - Optional '>' character with optional surrounding whitespace
+  // - Any characters until the end of the line ($)
+  const regex = /^\s*\/\/\s*>?\s*.*$/gm
+
+  // Replace all matches with an empty string
+  return inputString.replace(regex, '')
+}

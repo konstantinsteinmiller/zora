@@ -65,7 +65,7 @@ const AIController = (config: {
 
       if (entity.currentSpell.charge === 0) {
         /* safeguard against killing itself */
-        if (entity.hp < entity.maxHp * 0.3 && entity.mp < entity.currentSpell.cost * 0.6) return
+        if (entity.hp < entity.maxHp * 0.3 && entity.mp < entity.currentSpell.mana * 0.6) return
 
         entity.chargeAttack(entity, enemy)
       }

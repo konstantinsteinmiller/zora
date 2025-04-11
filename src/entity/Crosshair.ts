@@ -132,7 +132,7 @@ const Crosshair = () => {
     $.player.currentSpell.charge = 0
     chargeStartTime = Date.now()
     /* warn player with sound that he might harm himself because of missing mana */
-    if ($.player.mp < $.player.currentSpell.cost * 0.5) {
+    if ($.player.mp < $.player.currentSpell.mana * 0.5) {
       $.sounds.addAndPlayPositionalSound($.player, 'missingMana', { volume: 0.5 * userSoundVolume.value })
 
       if (userTutorialsDoneMap.value[TUTORIALS.MISSING_MANA] || wasMissingManaTutorialShown) return

@@ -5,6 +5,7 @@
 
   <TalkInteraction />
   <FairyDustCollected />
+  <MessageManager />
 
   <LoadingScreen
     :level="worldId"
@@ -16,6 +17,7 @@
 <script setup lang="ts">
 import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import MessageManager from '@/components/molecules/MessageManager.vue'
 import TalkInteraction from '@/components/molecules/TalkInteraction.vue'
 import DialogBox from '@/components/organisms/DialogBox.vue'
 import $ from '@/global'

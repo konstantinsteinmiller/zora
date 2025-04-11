@@ -1,7 +1,9 @@
+import DialogOption from '@/components/atoms/DialogOption.vue'
 import { useKeyboard } from '@/use/useKeyboard.ts'
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, type Ref, ref, watch } from 'vue'
+import type { Option } from '@/types/dialog.ts'
 
 const loadingManager = new LoadingManager()
 
@@ -47,6 +49,7 @@ export interface Global {
   isDialog: Ref<boolean>
   isMenu: Ref<boolean>
   dialogSelf: Ref<any>
+  importantDialog: Ref<Option[]>
 }
 
 let global: Global = null
@@ -113,6 +116,7 @@ const globalState = () => {
     isDialog: ref(false),
     isMenu: computed(() => global.isDialog.value),
     dialogSelf: ref(null),
+    importantDialog: ref([]),
   }
   // console.log('XXstate: ', state)
 

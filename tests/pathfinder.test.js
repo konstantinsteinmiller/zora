@@ -1,6 +1,6 @@
-import { portalConnectionsList } from '@//entity/levels/water-arena/config.js'
+import { portalConnectionsList } from '@/entity/levels/water-arena/config.js'
 import { createTestSuite, assertArrayEqual, assertNull } from './testEngine.js'
-import { findShortestPath } from '../../src/engine/pathfinder.js'
+import { findShortestPath } from '@/engine/pathfinder.js'
 
 const suite = createTestSuite('Pathfinder Algorithm')
 
