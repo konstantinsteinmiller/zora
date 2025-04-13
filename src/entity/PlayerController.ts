@@ -1,5 +1,6 @@
 import WorldController from '@/entity/WorldController.ts'
 import type { Guild } from '@/types/entity.ts'
+import useDialog from '@/use/useDialog.ts'
 import useInteraction from '@/use/useInteraction.ts'
 import useInventory from '@/use/useInventory.ts'
 import useOctree from '@/use/useOctree.ts'
@@ -57,6 +58,7 @@ const PlayerController = (config: PlayerControllerProps) => {
   entity.inventory = { inventoryMap }
 
   const { showInteraction, hideInteraction } = useInteraction()
+  const { setKnown, knows } = useDialog()
   const { getClosestEntity } = useOctree()
   let interactionThrottleCounter = 0
   const interactionDistance = 5
@@ -73,7 +75,11 @@ const PlayerController = (config: PlayerControllerProps) => {
 
       if (closestEntity?.id === $.dialogSelf.value?.id && !$.isDialog.value && $.importantDialog.value?.length) {
         $.isDialog.value = true
-        $.importantDialog.value?.[0]?.on?.()
+        const dialog = $.importantDialog.value?.[0]
+        if (!knows(dialog?.id)) {
+          dialog?.on?.()
+          setKnown(dialog?.id)
+        }
       }
     } else {
       entity.closestInteractableEntity = null

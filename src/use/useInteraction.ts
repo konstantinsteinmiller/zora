@@ -1,3 +1,4 @@
+import { INTERACTIONS } from '@/utils/enums.ts'
 import { ref } from 'vue'
 import type { Entity } from '@/types/entity'
 import { Vector3 } from 'three'
@@ -25,6 +26,54 @@ const hideInteraction = () => {
   const billboard = document.getElementById(interactionId.value)
   if (billboard) {
     interactionId.value = ''
+    billboard.style.display = 'none'
+  }
+
+  const nameBillboard = document.getElementById(INTERACTIONS.NAME)
+  if (nameBillboard) {
+    interactionId.value = ''
+    nameBillboard.style.display = 'none'
+  }
+}
+
+const updateNameBillboardPosition = (entity: Entity) => {
+  const billboard = document.getElementById(INTERACTIONS.NAME)
+  if (billboard && entity?.mesh) {
+    const entityPosition = entity.mesh.position
+    const billboardOffsetWorld = new Vector3(0, entity.halfHeight * 2 + 0.2, 0) // Offset to the top
+
+    // Get the camera's right vector in world space
+    const cameraRightWorld = new Vector3()
+    $.camera?.getWorldDirection(cameraRightWorld)
+    cameraRightWorld.cross($.camera?.up || new Vector3(0, 1, 0)).normalize()
+
+    // Calculate the billboard's world position based on the entity's position and the camera's right vector
+    const billboardWorldPosition = new Vector3()
+      .copy(entityPosition)
+      .add(cameraRightWorld.multiplyScalar(billboardOffsetWorld.x))
+      .add(new Vector3(0, billboardOffsetWorld.y, 0))
+      .add(new Vector3(0, 0, billboardOffsetWorld.z))
+
+    const camera = $.camera
+    if (camera) {
+      const screenPosition = billboardWorldPosition.clone()
+      screenPosition.project(camera)
+
+      const canvas = $.renderer.domElement
+      const canvasWidth = canvas.clientWidth
+      const canvasHeight = canvas.clientHeight
+
+      const elementX = ((screenPosition.x + 1) * canvasWidth) / 2
+      const elementY = ((1 - screenPosition.y) * canvasHeight) / 2
+
+      billboard.style.left = `${elementX}px`
+      billboard.style.top = `${elementY}px`
+      billboard.style.display = 'block'
+    } else {
+      console.warn('Camera not available to position billboard.')
+      billboard.style.display = 'none'
+    }
+  } else if (billboard) {
     billboard.style.display = 'none'
   }
 }
@@ -74,6 +123,7 @@ const updateBillboardPosition = (entity: Entity) => {
 const updateUuid = $.addEvent('renderer.update', () => {
   if (isInteractionVisible.value && currentBillboardEntity.value?.closestInteractableEntity) {
     updateBillboardPosition(currentBillboardEntity.value.closestInteractableEntity)
+    updateNameBillboardPosition(currentBillboardEntity.value.closestInteractableEntity)
   }
 })
 

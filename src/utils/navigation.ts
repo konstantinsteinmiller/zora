@@ -1,4 +1,3 @@
-import { assetManager } from '@/engine/AssetLoader.ts'
 import useMatch from '@/use/useMatch.ts'
 import { BASE_NAVIGATION_MOVE_SPEED, MAX_FLY_IMPULSE, MIN_FLY_IMPULSE } from '@/utils/constants.ts'
 import $ from '@/global'
@@ -10,7 +9,7 @@ import Rapier from '@dimforge/rapier3d-compat'
 import { Vector3 } from 'three'
 
 const displayPath = (path: any, startPos: Vector3, targetPos: Vector3): void => {
-  if (path?.length && $.enableDebug) {
+  if (path?.length && $.isDebug) {
     const pathfindingHelper = $.level.pathfinder.pathfindingHelper
     pathfindingHelper.reset()
     pathfindingHelper.setPlayerPosition(startPos)
@@ -247,17 +246,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
         entity.mesh.lookAt(targetToFace.position.x, entity.position.y, targetToFace.position.z)
 
         /* set animation based on if agent is looking in the running direction or not */
-        // if (entity.utils.takeOffFrames > 0) {
-        //   console.log('isPortal: ', isPortal, nextPosition.isPortal)
-        //   console.log('fly: ', entity.isAnimState('fly'))
-        //   console.log('entity.isGrounded: ', entity.isGrounded)
-        //   console.log('entity.utils.takeOffFrames: ', entity.utils.takeOffFrames)
-        // }
-        if (
-          !isPortal /* ||
-         (entity.stateMachine.currentState.name === 'fly' && entity.isGrounded && entity.utils.takeOffFrames > 0)*/ /*
-           */
-        ) {
+        if (!isPortal) {
           const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
           const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
           const facingFactor = entityForwardN.dot(directionN)
@@ -271,8 +260,8 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
         }
       } else {
         // look at next waypoint
-        const flatTargetPos: Vector3 = new Vector3(targetPosition.x, agentPos.y, targetPosition.z)
-        entity.setRotation(entity.mesh.lookAt(flatTargetPos)?.quaternion)
+        entity.mesh.lookAt(targetPosition.x, entity.mesh.position.y, targetPosition.z)
+        !entity.isAnimState('walk') && entity.stateMachine.setState('walk')
       }
 
       const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)
@@ -313,9 +302,9 @@ export const moveToTargetPosition = (
   const destinationPosition = targetPosition || findRandomTargetPosition(entity)
   let path = findPathToTargetPosition(entity, destinationPosition)
 
-  console.log('path: ', path)
   if (isDirect && !path?.length) {
-    path = [entity.mesh.position.clone(), targetPosition]
+    const startPos = entity.mesh.position.clone().add(new Vector3(0, entity.halfHeight, 0))
+    path = [startPos, targetPosition]
     displayPath(path, entity.position, targetPosition as Vector3)
   }
 
@@ -345,8 +334,6 @@ export const findPathToTargetPosition = (entity: any, targetPos: any = { x: 2.75
 
   const { levelType } = useMatch()
   if (!path?.length && levelType.value === LEVELS.ARENA) {
-    console.log('path: ', path)
-    console.warn('No path found')
     path = findPathBetweenNavIslands(path, startPos, targetPos, startGroupId)
   }
 

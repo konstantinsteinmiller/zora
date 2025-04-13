@@ -31,6 +31,7 @@ export default async (onFinishedCallback: () => void) => {
 
   const pathfinder: any = new Pathfinding()
   pathfinder.startPositions = startPositions
+  pathfinder.orientationPosition = { x: 0, y: 0, z: 0 }
   pathfinder.pathfindingHelper = new PathfindingHelper()
 
   loadNavMesh('/worlds/city-1/city-1-navmesh.fbx', (navMesh: any) => {

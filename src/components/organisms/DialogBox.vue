@@ -39,7 +39,9 @@ watch(
         }
 
         dialogOptionsList.value = dialogModule.default
-        $.importantDialog.value = dialogOptionsList.value.filter(option => option.important && option?.condition?.())
+        $.importantDialog.value = dialogOptionsList.value.filter(
+          option => option.important && option?.condition?.() && !knows(option.id)
+        )
       }
     } catch (error) {
       console.error('Failed to load dialogs:', error)

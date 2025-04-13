@@ -62,8 +62,14 @@ const NPCController = (config: NPCControllerProps) => {
       console.error(`Waypoint for ${this.routines[this.routine]} not found`)
       return
     }
+    /* DELETE ME: */
+    if (routineName === 'trade') {
+      WP.position = new Vector3(8.21, 0.1, 4.17)
+    }
 
     entity.targetPosition.copy(WP.position.clone())
+    /* reset current path to trigger new pathfinding */
+    entity.path = []
     updateCallback = this.routines[this.routine].callback
   }
 
@@ -77,7 +83,8 @@ const NPCController = (config: NPCControllerProps) => {
       //   entity.position.distanceTo(entity.targetPosition)
       // )
       if (entity.position.distanceTo(entity.targetPosition) > 0.5) {
-        moveToTargetPosition(entity, entity.targetPosition, enemy, true)
+        ;(($.isDebug && entity.name === 'flf trader') || !$.isDebug) &&
+          moveToTargetPosition(entity, entity.targetPosition, enemy, true)
       } else {
         updateCallback(entity)
       }

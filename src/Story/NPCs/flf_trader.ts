@@ -23,9 +23,9 @@ export default (config: any = {}) => {
     trade: {
       wp: 'WP_flf_trade',
       callback: (entity: any) => {
-        !window.onceDebug &&
+        !window.onceDebugTrade &&
           console.log('trade - ', entity.targetPosition.x, entity.targetPosition.y, entity.targetPosition.z)
-        window.onceDebug = true
+        window.onceDebugTrade = true
         // entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
         // entity.playAnimation('idle')
       },

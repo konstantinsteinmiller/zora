@@ -11,6 +11,7 @@ export const LEVELS: ENUM = {
 export const INTERACTIONS: ENUM = {
   TALK: 'talk-interaction',
   READ: 'read-interaction',
+  NAME: 'name-interaction',
 }
 
 export const LANGUAGES: Array<string> = [
