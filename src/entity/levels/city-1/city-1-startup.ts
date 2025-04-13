@@ -16,7 +16,7 @@ export default () => {
   const loadedUuid = $.addEvent('model.loaded', (entity: any) => {
     modelCounter++
     /* + 1 is currently the player loaded in LevelStartup */
-    if (modelCounter >= npcsList.length + 1) {
+    if (modelCounter >= (npcsList.length + 1) * 2) {
       $.removeEvent('model.loaded', loadedUuid)
     }
   })

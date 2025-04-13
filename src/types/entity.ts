@@ -13,7 +13,6 @@ export interface ControllerUtils {
   getRotation: () => Quaternion
   setRotation: (rotation: Quaternion) => Quaternion
   isAnimState: (stateName: string) => boolean
-  calcHalfHeightPosition: (entity: any) => Vector3
 }
 
 export interface EntityProps {
@@ -69,7 +68,7 @@ export interface Waypoint {
   isPortal?: boolean
 }
 
-const guilds = ['guild-0', 'guild-1', 'GLD_NONE', 'GLD_FLF', 'GLD_CEL'] as const
+const guilds = ['guild-0', 'guild-1', 'guild-wild-fairy', 'GLD_NONE', 'GLD_FLF', 'GLD_CEL'] as const
 export type Guild = (typeof guilds)[number]
 
 // Now you have a reusable array:

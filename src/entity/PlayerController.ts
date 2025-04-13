@@ -1,3 +1,4 @@
+import FairyController from '@/entity/FairyController.ts'
 import WorldController from '@/entity/WorldController.ts'
 import type { Guild } from '@/types/entity.ts'
 import useDialog from '@/use/useDialog.ts'
@@ -68,7 +69,7 @@ const PlayerController = (config: PlayerControllerProps) => {
     if (interactionThrottleCounter % 10 !== 0) return
     const closestEntity = getClosestEntity(entity, interactionDistance)
 
-    if (closestEntity && !$.isMenu.value && !$.isDialog.value) {
+    if (closestEntity && !$.isMenu.value && !$.isDialog.value && closestEntity?.guild !== 'guild-wild-fairy') {
       entity.closestInteractableEntity = closestEntity
 
       showInteraction(entity, INTERACTIONS.TALK)
@@ -100,8 +101,18 @@ const PlayerController = (config: PlayerControllerProps) => {
     entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
   }
 
+  entity.companion = FairyController({
+    modelPath: '/models/yeti-young/yeti-young.fbx',
+    stats: { name: 'yeti young 1' },
+    parent: entity,
+    startPosition: new Vector3(0, 0, 0),
+    guild: 'guild-wild-fairy' as Guild,
+    id: 'yeti_young',
+  })
+
   entity.start = () => {
     updateEventUuid = $.addEvent('renderer.update', update)
+    entity.companion.start()
   }
 
   $.addEvent('level.cleanup', () => {

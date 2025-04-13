@@ -111,9 +111,6 @@ export const controllerUtils = (): ControllerUtils => ({
   isAnimState(stateName: string): boolean {
     return this.stateMachine.currentState.name === stateName
   },
-  calcHalfHeightPosition(entity: any): Vector3 {
-    return entity.mesh.position.clone().add(new Vector3(0, entity.halfHeight, 0))
-  },
 })
 
 export const statsUtils = () => {

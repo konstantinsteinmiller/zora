@@ -103,7 +103,7 @@ export const createShotVFX = async (
   hitCallback: () => void = () => {}
 ) => {
   const { userSoundVolume } = useUser()
-  const adjustedPosition = entity.getPosition().clone()
+  const adjustedPosition = entity.mesh?.position?.clone?.() || new Vector3(0, 0, 0)
   adjustedPosition.y += 1
 
   const system = await System.fromJSONAsync(ShotVFX.particleSystemState, THREE)

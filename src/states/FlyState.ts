@@ -11,7 +11,9 @@ export default class FlyState extends State {
   }
 
   enter(previousState: any) {
-    const currentAction = this.parent.animationsMap[this.name].action
+    const currentAction = this.parent.animationsMap[this.name]?.action
+    if (!currentAction) return
+
     if (previousState) {
       const previousAction = this.parent.animationsMap[previousState.name].action
 

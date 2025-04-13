@@ -23,7 +23,7 @@ watch(
   async newValue => {
     if (!newValue) return
     try {
-      if ($.dialogSelf.value) {
+      if ($.dialogSelf.value?.id) {
         const dialogModule = await import(`@/Story/dialogs/DIA_${$.dialogSelf.value.id.toUpperCase()}.ts`)
         /* fill in an end option if writers forget to add one */
         if (dialogModule.default.every((option: Option) => option.order !== 999)) {

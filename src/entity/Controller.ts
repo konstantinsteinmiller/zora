@@ -1,5 +1,7 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
+import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
+import FairyCharacterFSM from '@/states/FairyCharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { type ANIM } from '@/utils/constants.ts'
@@ -8,7 +10,6 @@ import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.
 import { Object3D, Quaternion, Vector3 } from 'three'
 import $ from '@/global'
 import { getBaseStats } from '@/utils/controller.ts'
-import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
 
 interface ControllerProps {
   id?: string
@@ -47,11 +48,18 @@ const Controller = ({
     animationNamesList,
     halfHeight: modelHeight * 0.5,
   }
+  entity.calcHalfHeightPosition = (entity: any): Vector3 => {
+    return entity.mesh.position.clone().add(new Vector3(0, entity.halfHeight, 0))
+  }
 
   let mixer: any = {}
   const animationsMap: any = {}
   const stateMachine =
-    levelType === LEVELS.ARENA ? new ArenaCharacterFSM(animationsMap, entity) : new CharacterFSM(animationsMap, entity)
+    levelType === LEVELS.ARENA
+      ? new ArenaCharacterFSM(animationsMap, entity)
+      : levelType === LEVELS.FAIRY
+        ? new FairyCharacterFSM(animationsMap, entity)
+        : new CharacterFSM(animationsMap, entity)
 
   // const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
   entity.stateMachine = stateMachine
@@ -92,10 +100,6 @@ const Controller = ({
     const { rigidBody, collider } = createRigidBodyEntity({ position: startPosition, entity })
     entity.rigidBody = rigidBody
     entity.collider = collider
-
-    // only enemy has startRotation, player is rotated with camera phi and theta
-    // startRotation && entity.rigidBody.setRotation(startRotation)
-    // startRotation && entity.rigidBody.setNextKinematicRotation(startRotation)
   }
 
   loadModels()

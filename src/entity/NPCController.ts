@@ -1,3 +1,4 @@
+import FairyController from '@/entity/FairyController.ts'
 import { createEnemyMovementStrategy } from '@/entity/MovementStrategy.ts'
 import WorldController from '@/entity/WorldController.ts'
 import $ from '@/global'
@@ -23,12 +24,6 @@ const NPCController = (config: NPCControllerProps) => {
     entity[key] = utils[key]
   }
 
-  entity.getPosition = () => {
-    if (!entity.mesh) {
-      return new Vector3(0, 0, 0)
-    }
-    return entity.mesh?.position
-  }
   entity.getRotation = () => {
     return entity.mesh.quaternion
   }
@@ -104,11 +99,21 @@ const NPCController = (config: NPCControllerProps) => {
     entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
   }
 
+  // entity.companion = FairyController({
+  //   modelPath: '/models/yeti-young/yeti-young.fbx',
+  //   stats: { name: `yeti young ${entity.name}` },
+  //   startPosition: new Vector3(0, 0, 0),
+  //   parent: entity,
+  //   guild: 'guild-wild-fairy' as Guild,
+  //   id: `yeti_young_${entity.uuid}`,
+  // })
+
   entity.start = () => {
     updateEventUuid = $.addEvent('renderer.update', update)
     entity.setRoutine('start')
     // entity.mesh.lookAt(entity.targetPosition.x, entity.position.y, entity.targetPosition.z)
     entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
+    // entity.companion.start()
   }
 
   $.entitiesMap.set(entity.uuid, entity)

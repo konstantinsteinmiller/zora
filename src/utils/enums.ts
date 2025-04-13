@@ -7,6 +7,7 @@ export const TUTORIALS: ENUM = {
 export const LEVELS: ENUM = {
   ARENA: 'arena',
   WORLD: 'world',
+  FAIRY: 'fairy',
 }
 export const INTERACTIONS: ENUM = {
   TALK: 'talk-interaction',
