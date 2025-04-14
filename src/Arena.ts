@@ -27,19 +27,13 @@ const Arena = async level => {
       guild: 'guild-0' as Guild,
     })
 
-    const enemy = AIController({
+    AIController({
       modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
       stats: { name: 'enemy' },
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
       modelHeight: 1.8,
       guild: 'guild-1' as Guild,
-    })
-    const enemyUpdateEventUuid = $.addEvent('renderer.update', () => {
-      if (!$.loadingManager.isLoading) {
-        $.removeEvent('renderer.update', enemyUpdateEventUuid)
-        enemy.start()
-      }
     })
 
     Crosshair()

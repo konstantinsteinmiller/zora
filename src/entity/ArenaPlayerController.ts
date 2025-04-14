@@ -58,10 +58,7 @@ const ArenaPlayerController = (config: ArenaPlayerControllerProps) => {
 
     entity.regenEndurance(entity, deltaS)
   }
-
-  entity.start = () => {
-    updateEventUuid = $.addEvent('renderer.update', update)
-  }
+  updateEventUuid = $.addEvent('renderer.update', update)
 
   $.addEvent('level.cleanup', () => {
     $.removeEvent('renderer.update', updateEventUuid)

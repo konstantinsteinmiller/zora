@@ -61,12 +61,6 @@ onMounted(() => {
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
   const initEnvironment = () => {
-    const character = $.player
-    character.start()
-
-    // const enemy = $.enemy
-    // enemy.start() // already started in the Arena loop
-
     if ($.isWorldInitialized) {
       $.controls.setPointerLock()
 

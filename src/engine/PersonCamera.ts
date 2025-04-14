@@ -1,7 +1,7 @@
 import { STRAFE_ROT_VELOCITY } from '@/utils/constants.ts'
 import $ from '@/global'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { Quaternion, Vector3 } from 'three'
+import { Euler, MathUtils, Matrix4, Quaternion, Vector3 } from 'three'
 
 export default () => {
   const rotation = new Quaternion()
@@ -20,7 +20,47 @@ export default () => {
   }
   personCamera.getCameraRotation = () => ({ phi, theta })
 
+  const updateDialogCamera = () => {
+    if (!$.player || !$.dialogSelf.value || !$.camera) return
+
+    const playerPosition = $.player.getPosition()
+    const npcPosition = new Vector3(
+      $.dialogSelf.value.position.x,
+      $.player.getPosition().y + $.player.halfHeight - 0.3, // Adjust NPC target height
+      $.dialogSelf.value.position.z
+    )
+
+    // Calculate the target rotation so the player faces the NPC (around Y-axis only)
+    const directionToNPC = new Vector3().subVectors(npcPosition, playerPosition).normalize()
+    const targetPlayerYRotation = Math.atan2(directionToNPC.x, directionToNPC.z)
+    const currentYQuaternion = $.player.getRotation()
+    const targetYQuaternion = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), targetPlayerYRotation)
+    currentYQuaternion.slerp(targetYQuaternion, 0.1)
+    $.player.setRotation(currentYQuaternion)
+
+    // Calculate the ideal camera position behind the player's shoulder
+    const playerWorldQuaternion = $.player.getRotation()
+    const playerWorldPosition = $.player.getPosition()
+    const shoulderOffset = new Vector3(-2.25, 2.5, -2.25) // Adjust for better shoulder view
+    shoulderOffset.applyQuaternion(playerWorldQuaternion)
+    const targetCameraPosition = new Vector3().addVectors(playerWorldPosition, shoulderOffset)
+
+    $.camera.position.lerp(targetCameraPosition, 0.1)
+
+    // Calculate the target camera rotation to look at the NPC
+    const cameraLookAtPosition = new Vector3(npcPosition.x, npcPosition.y + 1.5, npcPosition.z) // Adjust NPC look at height
+    const targetCameraRotation = new Quaternion().setFromRotationMatrix(
+      new Matrix4().lookAt($.camera.position, cameraLookAtPosition, new Vector3(0, 1, 0))
+    )
+    $.camera.quaternion.slerp(targetCameraRotation, 0.1)
+  }
+
   const updateCamera = () => {
+    if ($.isDialog?.value) {
+      updateDialogCamera()
+      return
+    }
+
     $.camera.quaternion.copy(rotation)
     $.camera.position.copy(translation)
 

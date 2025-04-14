@@ -18,6 +18,7 @@ interface PlayerControllerProps {
   startRotation: Quaternion
   modelHeight: number
   guild: Guild
+  id: string
 }
 
 const PlayerController = (config: PlayerControllerProps) => {
@@ -66,10 +67,11 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   const findNpcInteraction = () => {
     interactionThrottleCounter++
-    if (interactionThrottleCounter % 10 !== 0) return
-    const closestEntity = getClosestEntity(entity, interactionDistance)
-
-    if (closestEntity && !$.isMenu.value && !$.isDialog.value && closestEntity?.guild !== 'guild-wild-fairy') {
+    if (interactionThrottleCounter % 5 !== 0) return
+    const closestEntity = getClosestEntity(entity, interactionDistance, ['companion-fairy'])
+    // closestEntity = closestEntity?.guild === 'guild-wild-fairy' ? closestEntity?.parentController : closestEntity
+    // guild-player-fairy
+    if (closestEntity && !$.isMenu.value && !$.isDialog.value) {
       entity.closestInteractableEntity = closestEntity
 
       showInteraction(entity, INTERACTIONS.TALK)
@@ -92,7 +94,7 @@ const PlayerController = (config: PlayerControllerProps) => {
   let updateEventUuid: string = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
     const isFinished = entity.update(deltaS, elapsedTimeInS)
-    if (!isFinished) return
+    if (!isFinished || !entity.mesh) return
 
     entity.stateMachine.update(deltaS, $.controls)
 
@@ -100,20 +102,16 @@ const PlayerController = (config: PlayerControllerProps) => {
 
     entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
   }
+  updateEventUuid = $.addEvent('renderer.update', update)
 
   entity.companion = FairyController({
-    modelPath: '/models/yeti-young/yeti-young.fbx',
-    stats: { name: 'yeti young 1' },
+    modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
+    stats: { name: 'nature fairy' },
     parent: entity,
     startPosition: new Vector3(0, 0, 0),
-    guild: 'guild-wild-fairy' as Guild,
-    id: 'yeti_young',
+    guild: 'guild-companion-fairy' as Guild,
+    id: 'nature_fairy',
   })
-
-  entity.start = () => {
-    updateEventUuid = $.addEvent('renderer.update', update)
-    entity.companion.start()
-  }
 
   $.addEvent('level.cleanup', () => {
     $.removeEvent('renderer.update', updateEventUuid)

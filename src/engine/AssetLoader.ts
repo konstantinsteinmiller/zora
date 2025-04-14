@@ -18,9 +18,11 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
+import clonedeep from 'lodash.clonedeep'
 
 let loader: any = null
 import $ from '@/global'
+import { v4 } from 'uuid'
 
 const isWPOrFP = (child: any) => child.name.startsWith('WP_') || child.name.startsWith('FP_')
 
@@ -72,8 +74,10 @@ const AssetManager = () => {
         prependBaseUrl(src),
         (model: any) => {
           if (isFBX) {
+            model._aSrc = src
             assets.models[src] = model
           } else if (isGLTF) {
+            model.scene._aSrc = src
             assets.models[src] = model.scene
           }
 
@@ -314,25 +318,37 @@ export default () => {
     return model
   }
 
-  interface CharacterWithAnimationsProps {
-    modelPath: string
-    parent?: Object3D
-    position?: Vector3
-    scale: number
-    animationNamesList: string[]
-    stateMachine: any
-    animationsMap: any
-    shadows?: boolean
-    callback?: (scene: Object3D) => void /*
-     */
-  }
-
-  const loadCharacterAnims = ({ mesh, stateMachine, callback, animationsMap, animationsPath, animationNamesList }) => {
+  const loadCharacterAnims = ({ mesh, callback, animationsMap, animationsPath, animationNamesList }) => {
     const mixer: AnimationMixer = new AnimationMixer(mesh)
 
-    /* as soon as all animations where loaded, set stateMachine to idle state */
-    const loadingManager = new LoadingManager()
-    loadingManager.onLoad = () => {
+    /* load all animations from same folder as the models
+     * path and add to animationsMap */
+    const animLoader = new FBXLoader()
+    animLoader.setPath(animationsPath)
+    Promise.all(
+      animationNamesList.map((name: string) => {
+        $.loadingManager.itemStart(name)
+        return new Promise((resolve, reject) => {
+          animLoader.load(
+            `${name}.fbx`,
+            (anim: any) => {
+              const clip = anim.animations[0]
+              const action: any = mixer.clipAction(clip)
+              action.name = name
+
+              animationsMap[name] = {
+                clip: clip,
+                action: action,
+              }
+              $.loadingManager.itemEnd(name)
+              resolve(null)
+            },
+            (fileProgressEvent: any) => $.fileLoader.onFileProgress(name, fileProgressEvent),
+            () => ($.loadingManager.itemError(name), reject())
+          )
+        })
+      })
+    ).then(() => {
       if (callback) {
         const scope: any = {
           mixer,
@@ -341,45 +357,26 @@ export default () => {
         }
         callback?.(scope)
       }
-      stateMachine.setState('idle')
-    }
-
-    /* When the animation was loaded, add to animationsMap */
-    const onLoad = (animName: string, anim: any) => {
-      const clip = anim.animations[0]
-      const action: any = mixer.clipAction(clip)
-      action.name = animName
-
-      animationsMap[animName] = {
-        clip: clip,
-        action: action,
-      }
-      $.loadingManager.itemEnd(animName)
-    }
-
-    /* load all animations from same folder as the models
-     * path and add to animationsMap */
-    const animLoader = new FBXLoader(loadingManager)
-    animLoader.setPath(animationsPath)
-    animationNamesList.forEach((name: string) => {
-      $.loadingManager.itemStart(name)
-      animLoader.load(
-        `${name}.fbx`,
-        (anim: any) => onLoad(name, anim),
-        (fileProgressEvent: any) => $.fileLoader.onFileProgress(name, fileProgressEvent),
-        () => $.loadingManager.itemError(name) /*
-         */
-      )
     })
   }
 
+  interface CharacterWithAnimationsProps {
+    modelPath: string
+    parent?: Object3D
+    position?: Vector3
+    scale: number
+    animationNamesList: string[]
+    animationsMap: any
+    shadows?: boolean
+    callback?: (scene: Object3D) => void /*
+     */
+  }
   loader.loadCharacterModelWithAnimations = async ({
     modelPath: src,
     parent,
     position,
     scale,
     animationNamesList,
-    stateMachine,
     animationsMap,
     shadows = true,
     callback,
@@ -415,7 +412,7 @@ export default () => {
         const mesh = model
         parent?.add(mesh)
 
-        loadCharacterAnims({ mesh, stateMachine, callback, animationsMap, animationsPath, animationNamesList })
+        loadCharacterAnims({ mesh, callback, animationsMap, animationsPath, animationNamesList })
       },
       (fileProgressEvent: any) => $.fileLoader.onFileProgress(src, fileProgressEvent),
       () => $.loadingManager.itemError(src)

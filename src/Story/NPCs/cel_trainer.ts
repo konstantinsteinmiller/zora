@@ -19,8 +19,5 @@ export default (config: any = {}) => {
       },
     },
   }
-  setTimeout(() => {
-    entity.start()
-  }, 100)
   return entity
 }

@@ -31,11 +31,9 @@ export default (config: any = {}) => {
       },
     },
   }
+
   setTimeout(() => {
-    entity.start()
-    setTimeout(() => {
-      entity.setRoutine('trade')
-    }, 2000)
-  }, 100)
+    entity.setRoutine('trade')
+  }, 4000)
   return entity
 }

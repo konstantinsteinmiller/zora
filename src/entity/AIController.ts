@@ -117,10 +117,7 @@ const AIController = (config: {
     // Update movement based on AI decisions
     entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
   }
-
-  entity.start = () => {
-    updateEventUuid = $.addEvent('renderer.update', update)
-  }
+  updateEventUuid = $.addEvent('renderer.update', update)
 
   $.entitiesMap.set(entity.uuid, entity)
   $.enemy = entity

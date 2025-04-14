@@ -24,9 +24,7 @@ const NPCController = (config: NPCControllerProps) => {
     entity[key] = utils[key]
   }
 
-  entity.getRotation = () => {
-    return entity.mesh.quaternion
-  }
+  entity.getRotation = () => entity.mesh.quaternion
   entity.setRotation = (rotation: Quaternion) => {
     if (!entity.mesh) {
       return
@@ -36,12 +34,12 @@ const NPCController = (config: NPCControllerProps) => {
     entity.rigidBody.setRotation(prevQuat)
     return entity.mesh.quaternion.copy(prevQuat)
   }
+
   entity.targetPosition = new Vector3(0, 0, 0)
 
   entity.routines = {}
   const movementStrategy = createEnemyMovementStrategy()
 
-  // createOverHeadNameLabel(entity) // only on character focus
   let updateCallback: (entity: any) => void = () => {}
   entity.setRoutine = function (routineName: string) {
     if (routineName === this.routine) return
@@ -72,20 +70,13 @@ const NPCController = (config: NPCControllerProps) => {
   entity.targetPosition = config.startPosition
   const performNPCLogic = () => {
     if ($?.level?.pathfinder) {
-      // console.log(
-      //   'entity.position.distanceTo(entity.targetPosition): ',
-      //   entity.targetPosition,
-      //   entity.position.distanceTo(entity.targetPosition)
-      // )
       if (entity.position.distanceTo(entity.targetPosition) > 0.5) {
-        ;(($.isDebug && entity.name === 'flf trader') || !$.isDebug) &&
-          moveToTargetPosition(entity, entity.targetPosition, enemy, true)
+        /*;(($.isDebug && entity.name === 'flf trader') || !$.isDebug) &&
+         */ moveToTargetPosition(entity, entity.targetPosition, enemy, true)
       } else {
         updateCallback(entity)
       }
     }
-    // console.log('entity.routine: ', entity.routine)
-    // console.log('targetPosition: ', targetPosition)
   }
 
   let updateEventUuid = ''
@@ -93,28 +84,38 @@ const NPCController = (config: NPCControllerProps) => {
     const isFinished = entity.update(deltaS, elapsedTimeInS)
     if (!isFinished) return
 
+    if ($.isDialog.value) {
+      entity.currentVelocity = new Vector3(0, 0, 0)
+      entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
+      return
+    }
+
     performNPCLogic(deltaS)
 
     // Update movement based on AI decisions
     entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
   }
 
-  // entity.companion = FairyController({
-  //   modelPath: '/models/yeti-young/yeti-young.fbx',
-  //   stats: { name: `yeti young ${entity.name}` },
-  //   startPosition: new Vector3(0, 0, 0),
-  //   parent: entity,
-  //   guild: 'guild-wild-fairy' as Guild,
-  //   id: `yeti_young_${entity.uuid}`,
-  // })
+  entity.companion = FairyController({
+    modelPath: '/models/yeti-young/yeti-young.fbx',
+    stats: { name: `yeti young ${entity.name}` },
+    startPosition: new Vector3(0, 0, 0),
+    parent: entity,
+    guild: 'guild-companion-fairy' as Guild,
+    id: `yeti_young_${entity.uuid}`,
+  })
 
-  entity.start = () => {
+  const loadedUuid = $.addEvent(`${entity.id}-loaded`, () => {
     updateEventUuid = $.addEvent('renderer.update', update)
     entity.setRoutine('start')
     // entity.mesh.lookAt(entity.targetPosition.x, entity.position.y, entity.targetPosition.z)
-    entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
-    // entity.companion.start()
-  }
+    entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
+    $.removeEvent(`${entity.id}-loaded`, loadedUuid)
+  })
+
+  $.addEvent('level.cleanup', () => {
+    $.removeEvent('renderer.update', loadedUuid)
+  })
 
   $.entitiesMap.set(entity.uuid, entity)
 

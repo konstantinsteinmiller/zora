@@ -28,6 +28,7 @@ const LevelStartup = async (level: string) => {
       startRotation: startPos1.quaternion,
       modelHeight: 1.8,
       guild: 'guild-0' as Guild,
+      id: 'player',
     })
 
     $.addEvent('level.cleanup', () => {

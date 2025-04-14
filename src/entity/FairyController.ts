@@ -39,6 +39,7 @@ const FairyController = ({
     mesh,
     animationNamesList: fairyAnimsList,
     halfHeight: modelHeight * 0.5,
+    parentController: parent,
   }
 
   entity.getPosition = () => {
@@ -64,7 +65,6 @@ const FairyController = ({
       position: startPosition,
       parent: $.scene,
       scale: 0.002,
-      stateMachine,
       animationsMap,
       animationNamesList: fairyAnimsList,
       callback: (scope: any) => {
@@ -109,7 +109,8 @@ const FairyController = ({
   }
 
   entity.update = (deltaS: number) => {
-    if (!mesh || stateMachine.currentState === null) return false
+    if (!entity.mesh || stateMachine.currentState === null || $.loadingManager.isLoading || !$.isWorldInitialized)
+      return false
 
     entity.updatePosition()
 
@@ -120,10 +121,8 @@ const FairyController = ({
 
   let updateEventUuid = ''
 
-  entity.start = () => {
-    updateEventUuid = $.addEvent('renderer.update', entity.update)
-    entity.stateMachine.setState('fly')
-  }
+  updateEventUuid = $.addEvent('renderer.update', entity.update)
+
   let cleanupUuid = $.addEvent('level.cleanup', () => {
     $.removeEvent('renderer.update', updateEventUuid)
     $.removeEvent('level.cleanup', cleanupUuid)

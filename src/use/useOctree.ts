@@ -8,7 +8,7 @@ interface Entity {
 }
 
 const useOctree = (): {
-  getClosestEntity: (targetEntity: Entity, radius: number) => Entity | null
+  getClosestEntity: (targetEntity: Entity, radius: number, guildFilter: string[]) => Entity | null
   getNearbyEntities: (targetEntity: Entity, radius: number) => Entity[]
 } => {
   const getNearbyEntities = (targetEntity: Entity, radius: number): Entity[] => {
@@ -30,7 +30,7 @@ const useOctree = (): {
     return nearby
   }
 
-  const getClosestEntity = (targetEntity: Entity, radius: number): Entity | null => {
+  const getClosestEntity = (targetEntity: Entity, radius: number, guildFilter: string[]): Entity | null => {
     let closestEntity: Entity | null = null
     let closestDistanceSq = Infinity
 
@@ -38,7 +38,7 @@ const useOctree = (): {
     for (const item of entityIterator) {
       const entity = item[1]
 
-      if (entity?.uuid !== targetEntity.uuid) {
+      if (entity?.uuid !== targetEntity.uuid && !guildFilter.some(guild => entity.guild.includes(guild))) {
         const entityPosition = entity.mesh.position
         const distanceSq = targetEntity.mesh.position.distanceToSquared(entityPosition)
 

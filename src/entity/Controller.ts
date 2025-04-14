@@ -1,13 +1,13 @@
 import AssetLoader from '@/engine/AssetLoader.ts'
 import CharacterFSM from '@/states/CharacterFSM.ts'
 import ArenaCharacterFSM from '@/states/ArenaCharacterFSM.ts'
-import FairyCharacterFSM from '@/states/FairyCharacterFSM.ts'
 import type { Guild, LevelType } from '@/types/entity.ts'
 import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { type ANIM } from '@/utils/constants.ts'
 import { LEVELS } from '@/utils/enums.ts'
 import { createEntityColliderBox, createRigidBodyEntity } from '@/utils/physics.ts'
-import { Object3D, Quaternion, Vector3 } from 'three'
+import Rapier from '@dimforge/rapier3d-compat'
+import { MathUtils, Matrix4, Object3D, Quaternion, Vector3 } from 'three'
 import $ from '@/global'
 import { getBaseStats } from '@/utils/controller.ts'
 
@@ -55,11 +55,7 @@ const Controller = ({
   let mixer: any = {}
   const animationsMap: any = {}
   const stateMachine =
-    levelType === LEVELS.ARENA
-      ? new ArenaCharacterFSM(animationsMap, entity)
-      : levelType === LEVELS.FAIRY
-        ? new FairyCharacterFSM(animationsMap, entity)
-        : new CharacterFSM(animationsMap, entity)
+    levelType === LEVELS.ARENA ? new ArenaCharacterFSM(animationsMap, entity) : new CharacterFSM(animationsMap, entity)
 
   // const animationNamesList = levelType === LEVELS.ARENA ? characterAnimationNamesList : worldCharacterAnimationNamesList
   entity.stateMachine = stateMachine
@@ -78,7 +74,6 @@ const Controller = ({
       parent: $.scene,
       position: startPosition,
       scale: 0.01,
-      stateMachine,
       animationsMap,
       animationNamesList,
       callback: (scope: any) => {
@@ -91,7 +86,10 @@ const Controller = ({
         entity.center = entity.calcHalfHeightPosition(entity)
         createEntityColliderBox(entity)
 
+        stateMachine.setState('idle')
+
         $.triggerEvent('model.loaded', entity)
+        $.triggerEvent(`${entity.id}-loaded`, entity)
       },
     })
   }
@@ -119,7 +117,7 @@ const Controller = ({
   }
 
   entity.update = (deltaS: number) => {
-    if (!mesh || stateMachine.currentState === null) {
+    if (!entity.mesh || stateMachine.currentState === null || $.loadingManager.isLoading || !$.isWorldInitialized) {
       return false
     }
 
