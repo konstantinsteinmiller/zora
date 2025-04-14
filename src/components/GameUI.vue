@@ -30,7 +30,6 @@
   </template>
 
   <LoadingScreen :level="worldId" />
-  <div class="find-pointer w-full h-full absolute top-0 left-0"></div>
 </template>
 
 <script setup lang="ts">

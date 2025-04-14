@@ -5,6 +5,7 @@
 
   <NameInteraction />
   <TalkInteraction />
+  <DispelInteraction />
 
   <FairyDustCollected />
   <MessageManager />
@@ -13,12 +14,12 @@
     :level="worldId"
     @loading-finished="onLoadingFinished"
   />
-  <div class="find-pointer w-full h-full absolute top-0 left-0"></div>
 </template>
 
 <script setup lang="ts">
 import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import DispelInteraction from '@/components/molecules/DispelInteraction.vue'
 import MessageManager from '@/components/molecules/MessageManager.vue'
 import NameInteraction from '@/components/molecules/NameInteraction.vue'
 import TalkInteraction from '@/components/molecules/TalkInteraction.vue'
@@ -46,7 +47,7 @@ onMounted(async () => {
   await Game(worldId.value)
 
   // const updateUuid = $.addEvent('renderer.update', () => {
-  //   if ($?.isBattleStarting) {
+  //   if ($.isBattleStarting.value) {
   //     $.isBattleStarting.value = true
   //     $.removeEvent('renderer.update', updateUuid)
   //   }

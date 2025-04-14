@@ -12,7 +12,7 @@ export default (config: any = {}) => {
   })
   entity.routines = {
     start: {
-      wp: 'WP_flf_trade',
+      wp: 'WP_CEL_TRAINER',
       callback: (entity: any) => {
         // console.log('entity: ', entity)
         entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)

@@ -13,6 +13,21 @@ export const INTERACTIONS: ENUM = {
   TALK: 'talk-interaction',
   READ: 'read-interaction',
   NAME: 'name-interaction',
+  DISPEL: 'dispel-interaction',
+}
+export const ELEMENTS: ENUM = {
+  NATURE: 'nature',
+  AIR: 'air',
+  WATER: 'water',
+  LIGHT: 'light',
+  ENERGY: 'energy',
+  PSI: 'psi',
+  EARTH: 'earth',
+  ICE: 'ice',
+  FIRE: 'fire',
+  DARK: 'dark',
+  METAL: 'metal',
+  NEUTRAL: 'neutral',
 }
 
 export const LANGUAGES: Array<string> = [

@@ -13,7 +13,7 @@ export default (config: any = {}) => {
 
   entity.routines = {
     start: {
-      wp: 'WP_flf_trader',
+      wp: 'WP_FLF_TRADER',
       callback: entity => {
         entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
         // console.log('start animation idle: ')
@@ -21,7 +21,7 @@ export default (config: any = {}) => {
       },
     },
     trade: {
-      wp: 'WP_flf_trade',
+      wp: 'WP_CEL_TRAINER',
       callback: (entity: any) => {
         // !window.onceDebugTrade &&
         //   console.log('trade - ', entity.targetPosition.x, entity.targetPosition.y, entity.targetPosition.z)
@@ -34,6 +34,6 @@ export default (config: any = {}) => {
 
   setTimeout(() => {
     entity.setRoutine('trade')
-  }, 4000)
+  }, 3000)
   return entity
 }

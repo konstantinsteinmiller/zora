@@ -227,6 +227,7 @@ export default (entity?: any) => {
   }
   function setPointerLock() {
     if ($.isBattleOver) return
+
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
     })
@@ -240,6 +241,24 @@ export default (entity?: any) => {
   function removePointerLock() {
     if (document.pointerLockElement) {
       document.exitPointerLock()
+
+      if (document.pointerLockElement) {
+        // If for some reason pointer lock wasn't released, simulate the Escape keydown event
+        const escapeEvent = new KeyboardEvent('keydown', {
+          key: 'Escape',
+          keyCode: 27,
+          code: 'Escape',
+          which: 27,
+          bubbles: true,
+        })
+
+        // Dispatch the Escape event on the document to force release
+        document.dispatchEvent(escapeEvent)
+
+        // Optionally log this for debugging purposes
+        console.log('%c Pointer lock released or Escape triggered.', 'color: grey')
+      }
+
       // console.log('%c Pointer lock released.', 'color: grey')
     } else {
       // console.log('%c Pointer is not locked.', 'color: grey')

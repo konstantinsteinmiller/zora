@@ -106,13 +106,10 @@ const closeDialog = () => {
 
   /* reset background music to normal volume */
   $.sounds.bgMusic.value?.setVolume?.(originalVolume)
-
-  $.dialogSelf.value = null
   $.importantDialog.value = []
   $.isDialog.value = false
 
   // console.log('Dialog closed')
-  $.controls.setPointerLock()
   interactionId.value = ''
 }
 
@@ -124,7 +121,6 @@ const onOpenDialog = () => {
   $.sounds.bgMusic.value.setVolume(reducedDialogVolume)
 
   // console.log('Dialog opened')
-  $.controls.removePointerLock()
   selectFirstOption()
 }
 

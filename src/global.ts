@@ -1,8 +1,7 @@
-import DialogOption from '@/components/atoms/DialogOption.vue'
 import { useKeyboard } from '@/use/useKeyboard.ts'
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, type Ref, ref, watch } from 'vue'
+import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import type { Option } from '@/types/dialog.ts'
 
 const loadingManager = new LoadingManager()
@@ -47,8 +46,10 @@ export interface Global {
   loadingManager: any
   physics: any
   isDialog: Ref<boolean>
-  isMenu: Ref<boolean>
+  isDispel: Ref<boolean>
+  isMenu: ComputedRef<boolean>
   dialogSelf: Ref<any>
+  targetToFocus: Ref<any>
   importantDialog: Ref<Option[]>
 }
 
@@ -114,9 +115,12 @@ const globalState = () => {
     enemy: {},
     loadingManager: loadingManager,
     isDialog: ref(false),
-    isMenu: computed(() => global.isDialog.value),
+    isDispel: ref(false),
+    isMenu: computed(() => global.isDialog.value || global.isDispel.value),
     dialogSelf: ref(null),
+    targetToFocus: ref(null),
     importantDialog: ref([]),
+    isBattleStarting: ref(false),
   }
   // console.log('XXstate: ', state)
 
@@ -140,6 +144,15 @@ const globalState = () => {
     if (newValue !== oldValue) {
       global.controls.keysMap = {}
       clearKeysMap()
+    }
+
+    /* toggle pointer on menu change */
+    if (newValue) {
+      global.controls.removePointerLock()
+    } else {
+      global.dialogSelf.value = null
+      global.targetToFocus.value = null
+      !document.pointerLockElement && global.controls.setPointerLock()
     }
   })
   return global

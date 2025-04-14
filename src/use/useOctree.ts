@@ -8,8 +8,9 @@ interface Entity {
 }
 
 const useOctree = (): {
-  getClosestEntity: (targetEntity: Entity, radius: number, guildFilter: string[]) => Entity | null
   getNearbyEntities: (targetEntity: Entity, radius: number) => Entity[]
+  getClosestEntity: (targetEntity: Entity, radius: number, guildFilter: string[]) => Entity | null
+  getClosestFairySpawn: (targetEntity: Entity, radius: number) => string | null
 } => {
   const getNearbyEntities = (targetEntity: Entity, radius: number): Entity[] => {
     const nearby: Entity[] = []
@@ -38,7 +39,11 @@ const useOctree = (): {
     for (const item of entityIterator) {
       const entity = item[1]
 
-      if (entity?.uuid !== targetEntity.uuid && !guildFilter.some(guild => entity.guild.includes(guild))) {
+      if (
+        entity?.mesh &&
+        entity?.uuid !== targetEntity.uuid &&
+        !guildFilter.some(guild => entity.guild?.includes(guild))
+      ) {
         const entityPosition = entity.mesh.position
         const distanceSq = targetEntity.mesh.position.distanceToSquared(entityPosition)
 
@@ -52,9 +57,31 @@ const useOctree = (): {
     return closestEntity
   }
 
+  const getClosestFairySpawn = (targetEntity: Entity, radius: number): string | null => {
+    let closestFP: string | null = null
+    let closestDistanceSq = Infinity
+
+    const wpIterator = $.level?.WPsMap[Symbol.iterator]()
+    for (const item of wpIterator) {
+      const WP = item[1]
+
+      if (WP?.name.startsWith('FP_SPAWN_')) {
+        const distanceSq = targetEntity.mesh.position.distanceToSquared(WP.position)
+
+        if (distanceSq <= radius * radius && distanceSq < closestDistanceSq) {
+          closestDistanceSq = distanceSq
+          closestFP = WP.name
+        }
+      }
+    }
+
+    return closestFP
+  }
+
   return {
     getNearbyEntities,
     getClosestEntity,
+    getClosestFairySpawn,
   }
 }
 export default useOctree

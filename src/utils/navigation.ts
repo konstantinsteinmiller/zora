@@ -210,7 +210,7 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
     if (!distance) return
     let velocity: Vector3 = targetPosition?.clone().sub(agentPos)
 
-    /* make NPC face player on talk interaction */
+    /* make NPC face player on talk interaction and slow down */
     if ($.isDialog.value) {
       if (entity.stateMachine.currentState.name !== 'idle') entity.stateMachine.setState('idle')
       entity.currentVelocity = new Vector3(0, 0, 0)

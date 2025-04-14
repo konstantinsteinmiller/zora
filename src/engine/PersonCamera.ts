@@ -20,14 +20,14 @@ export default () => {
   }
   personCamera.getCameraRotation = () => ({ phi, theta })
 
-  const updateDialogCamera = () => {
-    if (!$.player || !$.dialogSelf.value || !$.camera) return
+  const updateMenuCamera = () => {
+    if (!$.player || !$.targetToFocus.value || !$.camera) return
 
     const playerPosition = $.player.getPosition()
     const npcPosition = new Vector3(
-      $.dialogSelf.value.position.x,
+      $.targetToFocus.value.position.x,
       $.player.getPosition().y + $.player.halfHeight - 0.3, // Adjust NPC target height
-      $.dialogSelf.value.position.z
+      $.targetToFocus.value.position.z
     )
 
     // Calculate the target rotation so the player faces the NPC (around Y-axis only)
@@ -56,8 +56,8 @@ export default () => {
   }
 
   const updateCamera = () => {
-    if ($.isDialog?.value) {
-      updateDialogCamera()
+    if ($.isMenu?.value) {
+      updateMenuCamera()
       return
     }
 

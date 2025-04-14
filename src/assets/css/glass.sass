@@ -106,6 +106,7 @@ button.glass
   box-sizing: border-box
   background: rgba(255,255,255, 0.05)
   backdrop-filter: blur(10px)
+  text-shadow: 0 0 2px #656565
   border-radius: 2rem
   padding: 0.5rem 1rem
   line-height: normal
@@ -124,12 +125,13 @@ button.glass
       border-top-left-radius: 0
   &:hover
     backdrop-filter: blur(10px)
-    background: linear-gradient(to right, var(--glass-gradient-1), var(--glass-gradient-2))
+    background: linear-gradient(to right, var(--vue-gradient-1), var(--vue-gradient-2), var(--vue-gradient-3))
     background-clip: text
+    text-shadow: none
     opacity: 1
     color: transparent !important
     transition: 0.4s
-    box-shadow: 1px 1px 1px 2px darkturquoise
+    box-shadow: 1px 1px 6px 1px darkturquoise
   &.danger
     color: #ff3255
   &.disabled, &:disabled, &.disabled:hover, &:disabled:hover
@@ -178,6 +180,7 @@ div:has(.modal.glass) .toast.glass
   border-radius: 12px
   border: 1px solid var(--glass-color)
   color: var(--glass-color)
+  //text-shadow: 0 0 1px lightgray
 
 p.glass.card
   color: var(--glass-color)

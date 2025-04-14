@@ -18,13 +18,11 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
-import clonedeep from 'lodash.clonedeep'
+import $ from '@/global'
 
 let loader: any = null
-import $ from '@/global'
-import { v4 } from 'uuid'
 
-const isWPOrFP = (child: any) => child.name.startsWith('WP_') || child.name.startsWith('FP_')
+export const isWPOrFP = (child: any) => child.name.startsWith('WP_') || child.name.startsWith('FP_')
 
 const AssetManager = () => {
   type AssetType = 'model' | 'anim' | 'texture'

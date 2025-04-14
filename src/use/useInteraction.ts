@@ -1,5 +1,5 @@
 import { INTERACTIONS } from '@/utils/enums.ts'
-import { ref } from 'vue'
+import { type Ref, ref } from 'vue'
 import type { Entity } from '@/types/entity'
 import { Vector3 } from 'three'
 import $ from '@/global'
@@ -7,9 +7,23 @@ import $ from '@/global'
 const isInteractionVisible = ref(false)
 const interactionId = ref('')
 const currentBillboardEntity = ref<Entity | null>(null)
+const spawnPointActivatedMap: Ref<Map<string, boolean>> = ref<Map<string, boolean>>(new Map())
+
+$.addEvent('level.cleanup', () => {
+  spawnPointActivatedMap.value.clear()
+  interactionId.value = ''
+  isInteractionVisible.value = false
+  currentBillboardEntity.value = null
+  $.targetToFocus.value = null
+  $.dialogSelf.value = null
+  $.isDispel.value = false
+  $.isDispel.value = false
+  $.isDialog.value = false
+})
 
 const showInteraction = (entity: Entity, domId: string) => {
   interactionId.value = domId
+  $.targetToFocus.value = entity.closestInteractableEntity
   $.dialogSelf.value = entity.closestInteractableEntity
   if (entity.closestInteractableEntity && entity.closestInteractableEntity.mesh) {
     currentBillboardEntity.value = entity
@@ -133,11 +147,38 @@ const cleanupUuid = $.addEvent('level.cleanup', () => {
   hideInteraction()
 })
 
+const showDispel = (entity: Entity, closestFairySpawnPoint: string) => {
+  if (entity?.position) {
+    spawnPointActivatedMap.value.set(closestFairySpawnPoint, true)
+    $.targetToFocus.value = entity
+    $.isDispel.value = true
+    isInteractionVisible.value = true
+
+    // setTimeout(() => {
+    //   hideDispel()
+    // }, 8000)
+  } else {
+    hideDispel()
+  }
+}
+
+const hideDispel = () => {
+  if ($.isDispel.value) {
+    isInteractionVisible.value = false
+    $.targetToFocus.value = null
+    $.isDispel.value = false
+    $.controls.setPointerLock()
+  }
+}
+
 export default function useInteraction() {
   return {
     isInteractionVisible,
     interactionId,
     showInteraction,
     hideInteraction,
+    showDispel,
+    hideDispel,
+    spawnPointActivatedMap,
   }
 }

@@ -58,10 +58,11 @@ onMounted(() => {
     levelType.value = LEVELS.WORLD
   }
 
+  let hasExecutedInit = false
   /* add a one time event, that will execute as soon as the Renderer is initialized
    * and the event will clean up after itself, so it just runs once */
   const initEnvironment = () => {
-    if ($.isWorldInitialized) {
+    if ($.isWorldInitialized && !hasExecutedInit) {
       $.controls.setPointerLock()
 
       if (levelType.value === LEVELS.ARENA) {
@@ -72,6 +73,7 @@ onMounted(() => {
           tutorialPhase.value = TUTORIALS.CHARACTER_CONTROLS
         }, 3000)
       }
+      hasExecutedInit = true
     }
   }
 

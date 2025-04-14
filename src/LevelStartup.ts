@@ -38,9 +38,9 @@ const LevelStartup = async (level: string) => {
     })
 
     // const levelEndEventUuid = $.addEvent('renderer.update', () => {
-    //   if ($.isBattleStarting) {
+    //   if ($.isBattleStarting.value) {
     //     $.removeEvent('renderer.update', levelEndEventUuid)
-    //     console.log('isBattleStarting: ', $.isBattleStarting)
+    //     console.log('isBattleStarting: ', $.isBattleStarting.value)
     //     // $.triggerEvent('level.cleanup')
     //   }
     // })

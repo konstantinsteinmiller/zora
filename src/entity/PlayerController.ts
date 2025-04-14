@@ -6,6 +6,7 @@ import useInteraction from '@/use/useInteraction.ts'
 import useInventory from '@/use/useInventory.ts'
 import useOctree from '@/use/useOctree.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
+import { spawnWildFairy } from '@/utils/world.ts'
 import { Quaternion, Vector3 } from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
@@ -59,18 +60,18 @@ const PlayerController = (config: PlayerControllerProps) => {
   const { inventoryMap } = useInventory()
   entity.inventory = { inventoryMap }
 
-  const { showInteraction, hideInteraction } = useInteraction()
+  const { showInteraction, hideInteraction, showDispel, spawnPointActivatedMap } = useInteraction()
   const { setKnown, knows } = useDialog()
-  const { getClosestEntity } = useOctree()
+  const { getClosestEntity, getClosestFairySpawn } = useOctree()
   let interactionThrottleCounter = 0
+  let dispelThrottleCounter = 0
   const interactionDistance = 5
 
   const findNpcInteraction = () => {
     interactionThrottleCounter++
     if (interactionThrottleCounter % 5 !== 0) return
-    const closestEntity = getClosestEntity(entity, interactionDistance, ['companion-fairy'])
-    // closestEntity = closestEntity?.guild === 'guild-wild-fairy' ? closestEntity?.parentController : closestEntity
-    // guild-player-fairy
+    const closestEntity = getClosestEntity(entity, interactionDistance, ['companion-fairy', 'wild-fairy'])
+
     if (closestEntity && !$.isMenu.value && !$.isDialog.value) {
       entity.closestInteractableEntity = closestEntity
 
@@ -91,6 +92,24 @@ const PlayerController = (config: PlayerControllerProps) => {
   }
   entity.closestInteractable = null
 
+  const findWildFairyInteraction = () => {
+    dispelThrottleCounter++
+    if (dispelThrottleCounter % 2 !== 0) return
+
+    const closestFairySpawnPoint: string | null = getClosestFairySpawn(entity, 7)
+
+    if (
+      !$.isBattleStarting?.value &&
+      closestFairySpawnPoint &&
+      !$.isMenu.value &&
+      !spawnPointActivatedMap.value.get(closestFairySpawnPoint)
+    ) {
+      const wildFairy = spawnWildFairy('ice_yeti_young', closestFairySpawnPoint)
+      showDispel(wildFairy, closestFairySpawnPoint)
+      $.isBattleStarting.value = true
+    }
+  }
+
   let updateEventUuid: string = ''
   const update = (deltaS: number, elapsedTimeInS: number) => {
     const isFinished = entity.update(deltaS, elapsedTimeInS)
@@ -99,6 +118,8 @@ const PlayerController = (config: PlayerControllerProps) => {
     entity.stateMachine.update(deltaS, $.controls)
 
     findNpcInteraction()
+
+    !$.isMenu.value && findWildFairyInteraction()
 
     entity.currentVelocity = movementStrategy.calculateVelocity(entity, deltaS, $.controls)
   }
