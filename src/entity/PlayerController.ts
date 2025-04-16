@@ -6,11 +6,11 @@ import useInteraction from '@/use/useInteraction.ts'
 import useInventory from '@/use/useInventory.ts'
 import useOctree from '@/use/useOctree.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
-import { spawnWildFairy } from '@/utils/world.ts'
 import { Quaternion, Vector3 } from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
 import $ from '@/global'
+import { useRoute } from 'vue-router'
 
 interface PlayerControllerProps {
   modelPath: string
@@ -104,9 +104,7 @@ const PlayerController = (config: PlayerControllerProps) => {
       !$.isMenu.value &&
       !spawnPointActivatedMap.value.get(closestFairySpawnPoint)
     ) {
-      const wildFairy = spawnWildFairy('ice_yeti_young', closestFairySpawnPoint)
-      showDispel(wildFairy, closestFairySpawnPoint)
-      $.isBattleStarting.value = true
+      showDispel(closestFairySpawnPoint)
     }
   }
 

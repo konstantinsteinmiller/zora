@@ -35,17 +35,26 @@ jobs:
           ref: develop
           path: develop
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.6.2
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.8.0'
 
-      - name: Install Dependencies
-        run: npm i --force
+      - name: Clean install dependencies (Master)
+        run: |
+          rm -rf master/node_modules
+          pnpm install --no-frozen-lockfile
         working-directory: master
 
-      - name: Install Develop Dependencies
-        run: npm i --force
+      - name: Clean install dependencies (Develop)
+        run: |
+          rm -rf develop/node_modules
+          pnpm install --no-frozen-lockfile
         working-directory: develop
 
       - name: Build Master Production

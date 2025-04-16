@@ -1,4 +1,9 @@
+import { cleanupLevel } from '@/Game.ts'
+import router from '@/router'
+import { savePlayer } from '@/use/usePlayer.ts'
+import { animateArc } from '@/utils/animation.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
+import { spawnWildFairy } from '@/utils/world.ts'
 import { type Ref, ref } from 'vue'
 import type { Entity } from '@/types/entity'
 import { Vector3 } from 'three'
@@ -147,16 +152,42 @@ const cleanupUuid = $.addEvent('level.cleanup', () => {
   hideInteraction()
 })
 
-const showDispel = (entity: Entity, closestFairySpawnPoint: string) => {
-  if (entity?.position) {
+let startTime = 0
+const wildFairy: Ref<any> = ref(null)
+const showDispel = (closestFairySpawnPoint: string) => {
+  wildFairy.value = spawnWildFairy('ice_yeti_young', closestFairySpawnPoint)
+  if (wildFairy.value?.position) {
+    $.isBattleStarting.value = true
+
     spawnPointActivatedMap.value.set(closestFairySpawnPoint, true)
-    $.targetToFocus.value = entity
+    $.targetToFocus.value = wildFairy.value
     $.isDispel.value = true
     isInteractionVisible.value = true
 
-    // setTimeout(() => {
-    //   hideDispel()
-    // }, 8000)
+    startTime = performance.now()
+    const animationDuration = 2.5 // seconds
+    const updateUuid = $.addEvent('renderer.update', () => {
+      const currentTime = performance.now()
+      const elapsedTime = (currentTime - startTime) / 1000
+      const progress = Math.min(1, elapsedTime / animationDuration)
+      if (progress < 1) {
+        animateArc(progress, wildFairy)
+      } else {
+        setTimeout(() => {
+          $.targetToFocus.value?.dispel?.()
+          hideDispel()
+          $.isBattleStarting.value = false
+          savePlayer()
+
+          cleanupLevel(false, true)
+          setTimeout(() => {
+            router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: $.route.value.query })
+          }, 300)
+        }, 1000) // Keep visible for a bit after animation
+
+        $.removeEvent('renderer.update', updateUuid)
+      }
+    })
   } else {
     hideDispel()
   }

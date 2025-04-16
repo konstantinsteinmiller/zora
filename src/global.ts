@@ -51,6 +51,7 @@ export interface Global {
   dialogSelf: Ref<any>
   targetToFocus: Ref<any>
   importantDialog: Ref<Option[]>
+  route: Ref<any>
 }
 
 let global: Global = null
@@ -121,6 +122,7 @@ const globalState = () => {
     targetToFocus: ref(null),
     importantDialog: ref([]),
     isBattleStarting: ref(false),
+    route: ref(null),
   }
   // console.log('XXstate: ', state)
 
@@ -142,14 +144,16 @@ const globalState = () => {
   const { clearKeysMap } = useKeyboard()
   watch(global.isMenu, (newValue, oldValue) => {
     if (newValue !== oldValue) {
-      global.controls.keysMap = {}
-      clearKeysMap()
+      if (global?.controls) {
+        global.controls.keysMap = {}
+        clearKeysMap()
+      }
     }
 
     /* toggle pointer on menu change */
     if (newValue) {
       global.controls.removePointerLock()
-    } else {
+    } else if (global?.controls) {
       global.dialogSelf.value = null
       global.targetToFocus.value = null
       !document.pointerLockElement && global.controls.setPointerLock()

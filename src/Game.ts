@@ -1,4 +1,6 @@
+import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
+import Sound from '@/engine/Sound.ts'
 import $ from '@/global'
 import useUser from '@/use/useUser.ts'
 import { destroyVfx } from '@/utils/vfx.ts'
@@ -9,6 +11,11 @@ import Physics from '@/engine/Physics'
 
 export default async (level: string) => {
   await Physics()
+  // InputController()
+  !$.sounds && Sound()
+  !$.fileLoader && FileLoader()
+  !$.camera && Camera()
+
   $.scene = new Scene()
   $.uiScene = new Scene()
 
@@ -38,7 +45,7 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
     $.sounds.stop('battleEnd')
   }
 
-  $.uiScene.traverse((child: any) => {
+  $.uiScene?.traverse((child: any) => {
     // console.log('child: ', child)
     if (child) {
       $.uiScene.remove(child)
@@ -47,14 +54,14 @@ export const cleanupLevel = (excludeBattleProtected = false, removeVfx = false) 
       child = null
     }
   })
-  const childeren: any = []
+  const children: any = []
   $?.scene?.traverse?.((child: any) => {
     if (child) {
       if (excludeBattleProtected && child.isBattleProtected) return
-      childeren.push(child)
+      children.push(child)
     }
   })
-  childeren.reverse().forEach((child: any) => {
+  children.reverse().forEach((child: any) => {
     child.geometry?.dispose?.()
     child.material?.dispose?.()
     $.scene.remove(child)

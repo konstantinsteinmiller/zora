@@ -18,6 +18,8 @@ import { useRoute } from 'vue-router'
 
 const { isStartingGame } = useMatch()
 const route = useRoute()
+$.route.value = route
+
 const { t } = useI18n()
 const isOptionsModalOpen = ref(false)
 const isNative = import.meta.env.VITE_PLATTFORM === 'native'

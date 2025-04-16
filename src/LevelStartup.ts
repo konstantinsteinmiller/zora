@@ -34,7 +34,7 @@ const LevelStartup = async (level: string) => {
     $.addEvent('level.cleanup', () => {
       cleanupLevel(true, true)
       $.showCursor = true
-      $.controls.removePointerLock()
+      $?.controls?.removePointerLock?.()
     })
 
     // const levelEndEventUuid = $.addEvent('renderer.update', () => {

@@ -35,7 +35,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.26.10",
     "@eslint/js": "^9.22.0",
-    "@intlify/unplugin-vue-i18n": "^6.0.5",
+    "@intlify/unplugin-vue-i18n": "6.0.5",
     "@typescript-eslint/parser": "^8.27.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue-macros/reactivity-transform": "^1.1.6",
