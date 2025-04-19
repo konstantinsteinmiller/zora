@@ -36,11 +36,8 @@ export const getActionEventsMap = (defaultControlsConfig: EnumStringToList) => {
   }, ... */
 }
 
-/* actions is a Singleton */
-const actions = null
 export default (defaultControlsConfig: EnumStringToList) => {
   const { levelType } = useMatch()
-  if (actions !== null) return actions
 
   const { interactionId, hideInteraction } = useInteraction()
   // const map = getActionEventsMap(defaultControlsConfig)
@@ -154,6 +151,7 @@ export default (defaultControlsConfig: EnumStringToList) => {
         /* do once */
         if (hasChanged) {
           $.isPaused = !$.isPaused
+          addFairyDust(5)
           $.controls.removePointerLock()
           /* print the current position of the player mesh and save it as Vector3 to clipboard */
           const pos = $.player.mesh.position

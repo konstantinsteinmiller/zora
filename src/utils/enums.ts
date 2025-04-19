@@ -3,6 +3,7 @@ import type { ENUM } from '@/types'
 export const TUTORIALS: ENUM = {
   CHARACTER_CONTROLS: 'characterControl',
   MISSING_MANA: 'missingMana',
+  OVERCHARGED: 'overcharged',
 }
 export const LEVELS: ENUM = {
   ARENA: 'arena',

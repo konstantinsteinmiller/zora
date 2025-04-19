@@ -3,6 +3,7 @@ import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import type { Option } from '@/types/dialog.ts'
+import '@/use/useWorldState'
 
 const loadingManager = new LoadingManager()
 
@@ -52,6 +53,7 @@ export interface Global {
   targetToFocus: Ref<any>
   importantDialog: Ref<Option[]>
   route: Ref<any>
+  world: any
 }
 
 let global: Global = null
@@ -123,6 +125,7 @@ const globalState = () => {
     importantDialog: ref([]),
     isBattleStarting: ref(false),
     route: ref(null),
+    world: {},
   }
   // console.log('XXstate: ', state)
 

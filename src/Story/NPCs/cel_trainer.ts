@@ -14,8 +14,7 @@ export default (config: any = {}) => {
     start: {
       wp: 'WP_CEL_TRAINER',
       callback: (entity: any) => {
-        // console.log('entity: ', entity)
-        entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
+        entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
       },
     },
   }

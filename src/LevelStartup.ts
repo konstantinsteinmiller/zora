@@ -20,7 +20,6 @@ const LevelStartup = async (level: string) => {
     }
 
     const startPos1 = $.level.pathfinder.startPositions[0]
-
     PlayerController({
       modelPath: '/models/fairy-trainer/fairy-trainer.fbx',
       stats: { name: 'trainer' },

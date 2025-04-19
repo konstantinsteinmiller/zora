@@ -1,3 +1,36 @@
+<script setup lang="ts">
+import XButton from '@/components/atoms/XButton.vue'
+import { cleanupLevel } from '@/Game'
+import router from '@/router'
+import $ from '@/global'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
+const route = useRoute()
+
+/* if someone fled the game, $.fledGame = true */
+
+const backToMainMenu = () => {
+  cleanupLevel(false, true)
+  setTimeout(() => {
+    router.push({ name: 'main-menu', query: route.query })
+  }, 100)
+}
+const backToWorld = () => {
+  cleanupLevel(false, true)
+  setTimeout(() => {
+    router.push({
+      name: 'world',
+      params: {
+        worldId: $.world?.level.value?.zone,
+      },
+      query: route.query,
+    })
+  }, 100)
+}
+</script>
+
 <template>
   <div class="battle-over-screen fixed top-0 left-0 w-full h-full z-[101]">
     <img
@@ -16,11 +49,21 @@
         <div class="mx-auto">
           <div class="flex justify-center">
             <XButton
+              v-if="!$?.world?.playerRef"
               class="with-bg leading-[1rem]"
               @click="backToMainMenu"
               @keydown.enter="backToMainMenu"
             >
               {{ t('backToMainMenu') }}
+            </XButton>
+            <XButton
+              v-else
+              class="with-bg leading-[1rem]"
+              @click="backToWorld"
+              @keydown.enter="backToWorld"
+              @keydown.esc="backToWorld"
+            >
+              {{ t('continue') }}
             </XButton>
           </div>
         </div>
@@ -29,31 +72,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import XButton from '@/components/atoms/XButton.vue'
-import { cleanupLevel } from '@/Game.ts'
-import router from '@/router'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-
-const route = useRoute()
-
-/* if someone fled the game, $.fledGame = true */
-
-const backToMainMenu = () => {
-  cleanupLevel(false, true)
-  setTimeout(() => {
-    router.push({ name: 'main-menu', query: route.query })
-  }, 100)
-}
-</script>
-
 <style scoped lang="sass"></style>
 
 <i18n>
 en:
   backToMainMenu: "Back to Main Menu"
+  continue: "Continue"
 de:
   backToMainMenu: "Zurück zum Hauptmenü"
+  continue: "Weiter"
 </i18n>

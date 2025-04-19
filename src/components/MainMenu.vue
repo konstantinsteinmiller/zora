@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LoadingBar from '@/components/LoadingBar.vue'
-import InputController, { spraySprincles } from '@/control/KeyboardController.ts'
+import { spraySprincles } from '@/control/KeyboardController.ts'
 import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
 import Sound from '@/engine/Sound.ts'
@@ -46,7 +46,6 @@ const setPointer = async () => {
 }
 setPointer()
 
-// InputController()
 !$.sounds && Sound()
 
 !$.fileLoader && FileLoader()

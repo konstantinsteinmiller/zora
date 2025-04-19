@@ -5,8 +5,9 @@ import $ from '@/global'
 import type { Enum, EnumStringToList } from '@/types/general.ts'
 import { onUnlockedMouseMove } from '@/utils/find-pointer.ts'
 import Confetti from 'canvas-confetti'
+import { Vector3 } from 'three'
 
-let input: any = {}
+export let input: any = {}
 
 // Default key bindings
 const defaultControlsConfig: EnumStringToList = {
@@ -36,7 +37,7 @@ const defaultControlsConfig: EnumStringToList = {
 let controlsConfig = JSON.parse(JSON.stringify(defaultControlsConfig))
 
 export default (entity?: any) => {
-  if (input?.mouse) return input
+  if (input?.mouse) return input // singleton makes problems when switching to arena, it keeps using the world player ref in entity
   const { activatedKeysMap } = useKeyboard()
 
   const prefilledActionsMap = getPrefilledActionsMap(defaultControlsConfig)
@@ -82,6 +83,7 @@ export default (entity?: any) => {
         input.actionsMap[action] = list.every((key: string) => input.keysMap[key])
 
         const hasChanged = input.actionsMap[action] !== input.actionsMap.previous[action]
+
         input.actionsMap[action] /*
          */
           ? input.actions[action]?.onActivate?.(entity, hasChanged)
@@ -204,8 +206,6 @@ export default (entity?: any) => {
   document.addEventListener('pointerlockchange', onPointerLockChange)
 
   $.addEvent('battle.cleanup', () => {
-    // document.removeEventListener('click', e => onClick(e), false)
-    // document.removeEventListener('pointerlockchange', onPointerLockChange)
     document.removeEventListener('keydown', onKeyDown, false)
     document.removeEventListener('keyup', onKeyUp, false)
     document.removeEventListener('contextmenu', onContextMenu, false)
@@ -218,6 +218,14 @@ export default (entity?: any) => {
   $.addEvent('level.cleanup', () => {
     document.removeEventListener('click', onClick, false)
     document.removeEventListener('pointerlockchange', onPointerLockChange)
+
+    document.removeEventListener('keydown', onKeyDown, false)
+    document.removeEventListener('keyup', onKeyUp, false)
+    document.removeEventListener('contextmenu', onContextMenu, false)
+    document.removeEventListener('mousedown', onMouseDown, false)
+    document.removeEventListener('mouseup', onMouseUp, false)
+    document.removeEventListener('mousemove', onUnlockedMouseMove, false)
+    document.removeEventListener('mousemove', onMouseMove, false)
   })
 
   function onClick(event: MouseEvent) {
@@ -294,6 +302,7 @@ export default (entity?: any) => {
   $.addEvent('level.cleanup', () => {
     input = null
     $.controls = null
+    console.log('level.cleanup: ', input)
   })
 
   return input
@@ -315,6 +324,45 @@ export function spraySprincles(event: MouseEvent) {
     spread: 70,
     origin: { x: clientX / innerWidth, y: clientY / innerHeight },
   })
+}
+
+import { startFairySprinklesVFX } from '@/vfx/spricles-vfx.ts'
+
+let sprinclesCount = 0
+export function spraySprinclesAtWorldPosition(entity: any) {
+  if (entity.guild !== 'guild-companion-fairy' || !entity.id.includes('nature_fairy')) return
+  sprinclesCount++
+  if (sprinclesCount % 10 !== 0) return
+
+  const worldPosition = new Vector3(
+    entity.mesh.position.x,
+    entity.mesh.position.y - entity.halfHeight * 1.5,
+    entity.mesh.position.z
+  )
+  startFairySprinklesVFX(worldPosition)
+
+  // Project the world position to screen space
+  // worldPosition.project($.camera)
+
+  // Convert the normalized screen coordinates (-1 to 1) to pixel coordinates
+  // const screenX = ((worldPosition.x + 1) / 2) * innerWidth
+  // const screenY = ((1 - worldPosition.y) / 2) * innerHeight
+  // console.log(entity.id, ': ', screenX, screenY)
+
+  // Confetti({
+  //   particleCount: 25,
+  //   shapes: ['star'],
+  //   angle: 155,
+  //   startVelocity: 3.5,
+  //   gravity: 0.2,
+  //   scalar: 0.25,
+  //   drift: 0.15,
+  //   decay: 0.9,
+  //   zIndex: 199,
+  //   colors: ['#f3eaea', '#fddc5c', '#ffc627', '#cca994', '#fcd975', '#ffdf00'],
+  //   spread: 70,
+  //   origin: { x: screenX, y: screenY },
+  // })
 }
 
 export const KeyboardKeysMap = {

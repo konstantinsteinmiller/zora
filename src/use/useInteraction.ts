@@ -1,6 +1,6 @@
 import { cleanupLevel } from '@/Game.ts'
 import router from '@/router'
-import { savePlayer } from '@/use/usePlayer.ts'
+import { savePlayer } from '@/use/useWorldState.ts'
 import { animateArc } from '@/utils/animation.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
 import { spawnWildFairy } from '@/utils/world.ts'
@@ -174,6 +174,9 @@ const showDispel = (closestFairySpawnPoint: string) => {
         animateArc(progress, wildFairy)
       } else {
         setTimeout(() => {
+          /* is fairy already dispelled? */
+          if (!wildFairy.value.mesh) return
+
           $.targetToFocus.value?.dispel?.()
           hideDispel()
           $.isBattleStarting.value = false

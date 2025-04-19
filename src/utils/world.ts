@@ -67,7 +67,7 @@ export const spawnWildFairy = (id: string, wp: string) => {
     return
   }
 
-  console.log('fairiesMap: ', fairiesMap)
+  // console.log('fairiesMap: ', fairiesMap)
   const fairy = fairiesMap.get(id)
   if (!fairy) {
     console.error(`Fairy ${id} not found`)

@@ -117,24 +117,6 @@ const FairyController = ({
 
   const attackPlayer = () => {
     /* do attack logic here, fly to player in an arc, show dispel item ui */
-    // console.log('attacking player: ', entity)
-    // const parentWorldPosition = new Vector3()
-    // parent.mesh.getWorldPosition(parentWorldPosition)
-    //
-    // const parentWorldQuaternion = new Quaternion()
-    // parent.mesh.getWorldQuaternion(parentWorldQuaternion)
-    //
-    // const desiredLocalOffset = shoulderOffset.clone()
-    // // Rotate the local offset by the parent's world rotation to get the world offset
-    // desiredLocalOffset.applyQuaternion(parentWorldQuaternion)
-    // const targetWorldPosition = new Vector3().addVectors(parentWorldPosition, desiredLocalOffset)
-    // entity.mesh.position.lerp(targetWorldPosition, 0.05)
-    //
-    // parent.mesh.getWorldDirection(cameraWorldDirection)
-    // pointCameraIsLookingAt.copy(parent.mesh.position).add(cameraWorldDirection.multiplyScalar(10))
-    // entity.mesh.lookAt(pointCameraIsLookingAt)
-    //
-    // entity.mesh.updateMatrixWorld(true)
   }
 
   entity.updatePosition = () => {
@@ -149,6 +131,8 @@ const FairyController = ({
       return false
 
     entity.updatePosition()
+
+    // spraySprinclesAtWorldPosition(entity)
 
     mixer?.update?.(deltaS)
 

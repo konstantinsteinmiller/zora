@@ -1,5 +1,6 @@
 import SpellFire from '@/entity/SpellFire.ts'
 import type { Fairy } from '@/types/fairy.ts'
+import type { Spell } from '@/types/spells.ts'
 import useUser from '@/use/useUser.ts'
 import {
   DEFAULT_CHARGE_DURATION,
@@ -75,6 +76,9 @@ export const getBaseStats: any = () => ({
   },
   fairies: {
     fairiesList: ref<Fairy[]>([]),
+  },
+  spells: {
+    spellsList: ref<Spell[]>([]),
   },
   isGrounded: false,
   appliedFlyImpulse: 0,

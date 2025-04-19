@@ -44,7 +44,7 @@ const useInventory = () => {
 
   const addFairyDust = (quantity: number, entity: any = $.player) => {
     entity.currency.fairyDust += quantity
-
+    console.log('entity: ', entity)
     addMessage(`${quantity} fairy dust`, 4000)
   }
   const removeFairyDust = (quantity: number, entity: any = $.player) => {
@@ -67,7 +67,7 @@ const useInventory = () => {
     // }
     /* remove flying fairy mesh and replace with new fairy for more sophisticated demonstration */
     addMessage(`traded ${giveAwayName}, received ${receiveFairy.name}`, 5000)
-    console.log('entity.fairies.fairiesList.value[0]: ', entity.fairies.fairiesList.value[0])
+    // console.log('entity.fairies.fairiesList.value[0]: ', entity.fairies.fairiesList.value[0])
     return
   }
 

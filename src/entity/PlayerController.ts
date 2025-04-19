@@ -10,7 +10,7 @@ import { Quaternion, Vector3 } from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
 import $ from '@/global'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 
 interface PlayerControllerProps {
   modelPath: string
@@ -26,7 +26,18 @@ const PlayerController = (config: PlayerControllerProps) => {
   let entity = WorldController(config)
   const utils: any = {
     /*...chargeUtils()*/
+    ...($?.world?.playerRef.value
+      ? {
+          currency: $.world.playerRef.value.currency,
+          inventory: $.world.playerRef.value.inventory,
+          fairies: {
+            fairiesList: ref($.world.playerRef.value.fairies.fairiesList),
+          },
+          spells: { spellsList: ref($.world.playerRef.value.spells.spellsList) },
+        }
+      : {}),
   }
+  console.log('entity: ', entity, $?.world?.playerRef.value?.currency)
   for (const key in utils) {
     entity[key] = utils[key]
   }
@@ -54,9 +65,6 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   InputController(entity)
 
-  // const interactWith = (closeEntities: any) => {
-  //   console.log('interactWith NPC: ', closeEntities[0])
-  // }
   const { inventoryMap } = useInventory()
   entity.inventory = { inventoryMap }
 
@@ -136,12 +144,12 @@ const PlayerController = (config: PlayerControllerProps) => {
     $.removeEvent('renderer.update', updateEventUuid)
     entity = null
     $.player = null
+    console.log('clean player ', $.player)
     $.entitiesMap.clear()
   })
 
   $.entitiesMap.set(entity.uuid, entity)
   $.player = entity
-  $.trainer = entity
 
   return entity
 }

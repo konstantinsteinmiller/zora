@@ -116,7 +116,7 @@ const Crosshair = () => {
 
     entity.calcAttackMpDamage(entity, rotationSpeed)
 
-    chargeEmitter.emit('cleanup')
+    chargeEmitter?.emit('cleanup')
     chargeIndicatorNebulaSystem = null
     chargeStartTime = Date.now()
   })

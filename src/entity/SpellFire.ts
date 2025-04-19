@@ -1,6 +1,8 @@
 import { createFairyDustObjects } from '@/entity/FairyDust.ts'
+import useUser from '@/use/useUser.ts'
 import { MAX_ROTATION_SPEED, MIN_CHARGE_SPEED } from '@/utils/constants.ts'
 import $ from '@/global'
+import { TUTORIALS } from '@/utils/enums.ts'
 import { createRayTrace, remap } from '@/utils/function.ts'
 import { createShotVFX } from '@/utils/vfx.ts'
 import { Object3D, Vector3 } from 'three'
@@ -14,9 +16,16 @@ export default () => {
 
   const raycaster = new THREE.Raycaster()
   const pointer = new THREE.Vector2($.controls.mouse.crosshairX, $.controls.mouse.crosshairY)
+  const { tutorialPhase, userTutorialsDoneMap } = useUser()
+  let wasOverchargedTutorialShown = false
 
   const damageSelf = (entity: any) => {
     entity.dealDamage(entity, entity.currentSpell.damage * entity.currentSpell.buff.value * 0.5)
+
+    if (userTutorialsDoneMap.value[TUTORIALS.OVERCHARGED] || wasOverchargedTutorialShown || entity.guild !== 'guild-0')
+      return
+    tutorialPhase.value = TUTORIALS.OVERCHARGED
+    wasOverchargedTutorialShown = true
   }
 
   singleton.assessDamage = (entity: any, intersect: any, rotationSpeed: number) => {

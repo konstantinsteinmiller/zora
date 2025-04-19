@@ -15,7 +15,7 @@ export default (config: any = {}) => {
     start: {
       wp: 'WP_FLF_TRADER',
       callback: entity => {
-        entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
+        entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
         // console.log('start animation idle: ')
         // entity.playAnimation('idle')
       },
@@ -26,7 +26,7 @@ export default (config: any = {}) => {
         // !window.onceDebugTrade &&
         //   console.log('trade - ', entity.targetPosition.x, entity.targetPosition.y, entity.targetPosition.z)
         // window.onceDebugTrade = true
-        // entity.mesh.lookAt($.trainer.mesh.position.x, entity.position.y, $.trainer.mesh.position.z)
+        // entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
         // entity.playAnimation('idle')
       },
     },
