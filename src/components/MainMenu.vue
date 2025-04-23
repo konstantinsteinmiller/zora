@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LoadingBar from '@/components/LoadingBar.vue'
+import MessageManager from '@/components/molecules/MessageManager.vue'
 import { spraySprincles } from '@/control/KeyboardController.ts'
 import Camera from '@/engine/Camera.ts'
 import FileLoader from '@/engine/FileLoader.ts'
@@ -14,6 +15,7 @@ import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
 import TutorialPopover from '@/components/TutorialPopover.vue'
 import XButton from '@/components/atoms/XButton.vue'
+import FairyCollection from '@/components/organisms/FairyCollection.vue'
 import { useRoute } from 'vue-router'
 
 const { isStartingGame } = useMatch()
@@ -141,6 +143,8 @@ onUnmounted(() => {
       </div>
     </div>
     <LoadingBar />
+
+    <FairyCollection v-if="$.isDebug" />
   </div>
 </template>
 

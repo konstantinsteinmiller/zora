@@ -30,6 +30,7 @@ export const ELEMENTS: ENUM = {
   METAL: 'metal',
   NEUTRAL: 'neutral',
 }
+export type Element = (typeof ELEMENTS)[keyof typeof ELEMENTS]
 
 export const LANGUAGES: Array<string> = [
   // 'ar',

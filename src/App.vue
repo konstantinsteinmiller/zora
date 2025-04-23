@@ -22,12 +22,16 @@
 import Tutorial from '@/components/Tutorial.vue'
 import { computed } from 'vue'
 import $ from '@/global'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 /* reactivity transform example */
 // let count = $ref(0)
 // count++
 // console.log(count)
 const cssProps = computed(() => ({ 'cursor--hidden': !$.showCursor }))
+$.isDebug = route.query.debug === 'true' || localStorage.getItem('debug') === 'true'
 </script>
 
 <style scoped lang="sass">

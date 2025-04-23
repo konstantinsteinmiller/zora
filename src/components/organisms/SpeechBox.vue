@@ -3,7 +3,7 @@ import { BASE_DIALOG_DURATION, dialogTextSpeed } from '@/utils/constants.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { computed, type ComputedRef, ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import $, { getNpc } from '@/global'
+import $ from '@/global'
 
 interface SpeechOption {
   id?: string

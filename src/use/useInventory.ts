@@ -44,7 +44,6 @@ const useInventory = () => {
 
   const addFairyDust = (quantity: number, entity: any = $.player) => {
     entity.currency.fairyDust += quantity
-    console.log('entity: ', entity)
     addMessage(`${quantity} fairy dust`, 4000)
   }
   const removeFairyDust = (quantity: number, entity: any = $.player) => {

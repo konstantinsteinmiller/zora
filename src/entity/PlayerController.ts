@@ -37,7 +37,7 @@ const PlayerController = (config: PlayerControllerProps) => {
         }
       : {}),
   }
-  console.log('entity: ', entity, $?.world?.playerRef.value?.currency)
+
   for (const key in utils) {
     entity[key] = utils[key]
   }

@@ -13,7 +13,7 @@ export default defineConfig({
     glsl(),
     ReactivityTransform(),
     vueI18n({
-      compositionOnly: true, // Enable SFC `<i18n>` block suppor
+      compositionOnly: true, // Enable SFC `<i18n>` block support
       runtimeOnly: false,
       include: fileURLToPath(new URL('./src/i18n/locales/**', import.meta.url)),
       defaultSFCLang: 'yaml',

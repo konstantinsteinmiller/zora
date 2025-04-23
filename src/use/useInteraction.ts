@@ -177,15 +177,15 @@ const showDispel = (closestFairySpawnPoint: string) => {
           /* is fairy already dispelled? */
           if (!wildFairy.value.mesh) return
 
-          $.targetToFocus.value?.dispel?.()
-          hideDispel()
-          $.isBattleStarting.value = false
-          savePlayer()
+          // $.targetToFocus.value?.dispel?.()
+          // hideDispel()
+          // $.isBattleStarting.value = false
+          // savePlayer()
 
-          cleanupLevel(false, true)
-          setTimeout(() => {
-            router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: $.route.value.query })
-          }, 300)
+          // cleanupLevel(false, true)
+          // setTimeout(() => {
+          //   router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: $.route.value.query })
+          // }, 300)
         }, 1000) // Keep visible for a bit after animation
 
         $.removeEvent('renderer.update', updateUuid)

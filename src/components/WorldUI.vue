@@ -28,14 +28,11 @@ import $ from '@/global'
 import Game from '@/Game'
 import useMatch from '@/use/useMatch.ts'
 import { onMounted, type Ref, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import addPerformanceStats from '@/utils/stats'
 
 useMatch()
-const route = useRoute()
 const worldId: Ref<string> = ref(route.params.worldId)
 const isBattlStarting: Ref<boolean> = ref(!!$?.isBattlStarting)
-$.isDebug = route.query.debug === 'true' || localStorage.getItem('debug') === 'true'
 
 if ($.isDebug) {
   // addPerformanceStats()

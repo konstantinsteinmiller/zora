@@ -52,7 +52,6 @@ const worldId: Ref<string> = ref(route.params.worldId)
 const isBattleOver: Ref<boolean> = ref(!!$?.isBattleOver)
 const hasOneTeamLost: Ref<boolean> = ref(false)
 const fledGame: Ref<boolean> = ref(false)
-$.isDebug = route.query.debug === 'true'
 
 if ($.isDebug) {
   // addPerformanceStats()

@@ -23,7 +23,7 @@ const onClose = () => {
 </script>
 
 <template lang="pug">
-  div#talk-interaction.glass.card.p-0.origin-top-center.flex(v-if="isVisible" class="!rounded-[0px] w-[101vw] -translate-x-[2px] h-32 top-[15%] left-0 !fixed !z-[10]")
+  div#talk-interaction.glass.card.p-0.origin-top-center.flex(v-if="isVisible" style="border-radius: 6px" class="!border-x-0 w-[99.5vw] translate-x-[0.25vw] h-32 top-[15%] left-0 !fixed !z-[10]")
     div.flex.items-end.justify-center.p-0.w-full.relative(style="text-shadow: 0 0 5px black")
       XButton(v-if="hasDispelItem" class="mt-3 leading-[1rem] !fixed !z-[20] mb-[0.5rem]" @click="onClose") {{ t('dispel') }}
 </template>
