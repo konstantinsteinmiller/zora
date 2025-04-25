@@ -46,4 +46,5 @@ expected features:
 
 Meshes generated with [meshy.ai](https://www.meshy.ai/workspace) - 
 Music generated with [Tem.Polor](https://www.tempolor.com/) -
-Sounds generated with [elevenLabs](https://elevenlabs.io/app/sound-effects/generate)
+Sounds generated with [elevenLabs](https://elevenlabs.io/app/sound-effects/generate) -
+Some Icons from [Freepik.com](https://www.freepik.com/)

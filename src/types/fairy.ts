@@ -1,29 +1,30 @@
 export interface Fairy {
   name: string
-  level: number
+  id: string
+  modelPath: string
+  description: string
   element: string
-  primaryAttackSpell?: {
-    name: string
-    damage: number
+  level: number
+  xp: number
+  nextLevelXp: number
+  statsProgressionList: any[]
+  statsGrowthVisual: {
+    hp: number
+    defense: number
     speed: number
-    element: string
+    special: number
   }
-  primaryDefenseSpell?: {
+  stats: {
     name: string
+    hp: number
+    previousHp: number
+    maxHp: number
     damage: number
+    defense: number
     speed: number
-    element: string
+    special: number
   }
-  secondaryAttackSpell?: {
-    name: string
-    damage: number
-    speed: number
-    element: string
-  }
-  secondaryDefenseSpell?: {
-    name: string
-    damage: number
-    speed: number
-    element: string
-  }
+  currentSpell?: any
+  spells?: any[]
+  passiveSpells?: any[]
 }

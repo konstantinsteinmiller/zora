@@ -33,6 +33,7 @@ export const ELEMENTS: ENUM = {
 export type Element = (typeof ELEMENTS)[keyof typeof ELEMENTS]
 
 export const MENU: ENUM = {
+  MAP: 'map',
   COLLECTION: 'collection',
   ITEMS: 'items',
   FAIRY: 'fairy',

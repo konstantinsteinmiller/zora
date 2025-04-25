@@ -3,10 +3,13 @@ import FairyCollection from '@/components/organisms/FairyCollection.vue'
 import FairySelection from '@/components/organisms/FairySelection.vue'
 import SpellSelection from '@/components/organisms/SpellSelection.vue'
 import { MENU, type MenuItem } from '@/utils/enums.ts'
-import { computed, type ComputedRef, type Ref, ref } from 'vue'
+import { type Ref, ref } from 'vue'
 import $ from '@/global'
 
-$.menuItem.value = MENU.COLLECTION
+const debugMenuItem = localStorage.getItem('autoMenu')
+if (debugMenuItem) {
+  $.menuItem.value = debugMenuItem
+}
 
 interface MenuItemEntry {
   name: string
@@ -15,6 +18,7 @@ interface MenuItemEntry {
 }
 
 const menuItemsList: Ref<MenuItemEntry[]> = ref([
+  { name: 'World Map', id: MENU.MAP, icon: '/images/icons/map_128x128.png' },
   { name: 'Fairy Collection', id: MENU.COLLECTION, icon: '/images/icons/book_128x128.png' },
   { name: 'Menu Items', id: MENU.ITEMS, icon: '/images/icons/potion_128x128.png' },
   { name: 'Menu Fairy', id: MENU.FAIRY, icon: '/images/icons/fairy.png' },
@@ -22,29 +26,34 @@ const menuItemsList: Ref<MenuItemEntry[]> = ref([
   { name: 'Menu passive Spells', id: MENU.PASSIVE_SPELLS, icon: '/images/icons/scroll_128x128.png' },
 ])
 
-const onMenuClick = (menuItem: MenuItemEntry) => {
-  $.menuItem.value = menuItem.id
-}
+const onMenuClick = (menuItem: MenuItemEntry) => ($.menuItem.value = menuItem.id)
 </script>
 
 <template lang="pug">
-  div.menu-container.top-0.left-0.card.glass.dark.relative(
+  div.menu-container.top-0.left-0.card.glass.dark.relative.z-100(
     v-if="$.menuItem.value && !$.menuItem.value.startsWith('util-')"
     class="!fixed z-[10] w-[99.5vw] h-[99.5vh] translate-x-[0.25vw] translate-y-[0.25vh] !rounded-[6px] !border-x-0"
   )
     div.collection.container.w-full.h-full.flex.flex-col.items-start.justify-start.absolute.top-0(
       class="left-1/2 -translate-x-1/2"
     )
+      img.absolute.left-0(src="/images/logo/Zora_logo_300x246.png" alt="logo"
+        class="w-[100px] top-[2px]"
+      )
       div.h-16.flex.self-center.relative.items-center.mt-1
         img.object-fit(src="/images/frames/fancy-frame-wide_512x361.png" alt="navigation item"
           class="!scale-[114%] z-10 absolute top-0 left-0 !w-[320px] h-[52px] mt-[1%]")
-        div.spotlight.w-12.h-12.relative.flex.items-center.gap-2(v-for="(menuItem, itemIndex) in menuItemsList" :key="`menu-item-${itemIndex}`"
+        div.spotlight.w-12.h-12.relative.flex.items-center.gap-2(
+          v-for="(menuItem, itemIndex) in menuItemsList" :key="`menu-item-${itemIndex}`"
           class="z-20"
           :style="`${menuItem.id !== $.menuItem.value ? 'filter: grayscale(100%)': ''}`"
           @click="onMenuClick(menuItem)"
         )
           img.icon.absolute.top-0.left-0.w-8.h-8.mt-2.ml-2(:src="menuItem.icon" :alt="`${menuItem.name} icon`" class="")
           img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
+      div.justify-self-end.absolute.top-0.right-0.flex.justify-center.items-center
+        div.w-12.h-12.text-4xl.text-center.text-red-700.z-20(@click="$.menuItem.value = null") x
+        img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
       div.menu-content.relative.h-full.w-full.flex-grow-1
         FairyCollection
         FairySelection

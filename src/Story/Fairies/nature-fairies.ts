@@ -8,6 +8,8 @@ export const NATURE_BUTTERFLY_MIDDLE = {
   description: 'A nature fairy, known for playing around flowers.',
   element: ELEMENTS.NATURE,
   level: 5,
+  xp: 0,
+  nextLevelXp: 10,
   statsProgressionList: [],
   statsGrowthVisual: {
     hp: 5,

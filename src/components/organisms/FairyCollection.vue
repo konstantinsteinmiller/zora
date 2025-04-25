@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
-import { computed, type ComputedRef, type Ref, ref, onMounted, watch } from 'vue'
+import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
 import { useI18n } from 'vue-i18n'
-
-// $.menuItem.value =
 
 interface Fairy {
   name: string
@@ -60,7 +58,6 @@ const selectedFairyNumber = computed(() => {
 watch(
   fairiesList,
   newValue => {
-    console.log('newValue: ', newValue.length)
     if (newValue.length >= 1) {
       selectedFairy.value = newValue[0]
     }
@@ -117,9 +114,6 @@ watch(
         img.frame.absolute(v-else src="/images/frames/frame-normal_128x128.png" :alt="`${fairy.name} frame`" class="h-16 scale-110")
         div.flex.justify-center.items-center.h-full.w-full
           img(:src="fairy.avatar" :alt="`${fairy.name} image`" class="h-[60px] w-[60px]")
-    img.absolute.right-6(src="/images/logo/Zora_logo_300x246.png" alt="logo"
-      class="w-[100px] bottom-[12px]"
-    )
 </template>
 
 <style scoped lang="sass">

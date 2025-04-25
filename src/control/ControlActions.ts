@@ -6,7 +6,7 @@ import { FLY_COST, MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import type { ActionFunctionMap } from '@/types/controller-types.ts'
 import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import $ from '@/global'
-import { INTERACTIONS, LEVELS } from '@/utils/enums.ts'
+import { INTERACTIONS, LEVELS, MENU } from '@/utils/enums.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
 
 /* set all actions initially to false */
@@ -36,6 +36,14 @@ export const getActionEventsMap = (defaultControlsConfig: EnumStringToList) => {
   }, ... */
 }
 
+const toggleMenu = (hasChanged, menuId) => {
+  if ($.menuItem.value === menuId) {
+    $.menuItem.value = null
+  } else if (hasChanged) {
+    $.menuItem.value = menuId
+  }
+}
+
 export default (defaultControlsConfig: EnumStringToList) => {
   const { levelType } = useMatch()
 
@@ -63,9 +71,33 @@ export default (defaultControlsConfig: EnumStringToList) => {
     inventory: {
       onActivate: (entity: any, hasChanged: boolean) => {
         if (hasChanged) {
-          createFairyDustObjects(3.8 * Math.PI, $.enemy.position)
-          // entity.toggleInventory()
+          levelType.value === LEVELS.ARENA && createFairyDustObjects(3.8 * Math.PI, $.enemy.position)
         }
+        toggleMenu(hasChanged, MENU.ITEMS)
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    fairyMenu: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        toggleMenu(hasChanged, MENU.FAIRY)
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    collectionMenu: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        toggleMenu(hasChanged, MENU.COLLECTION)
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    spellsMenu: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        toggleMenu(hasChanged, MENU.ATTACK_SPELLS)
+      },
+      onDeactivate: (entity: any) => {},
+    },
+    mapMenu: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        toggleMenu(hasChanged, MENU.MAP)
       },
       onDeactivate: (entity: any) => {},
     },

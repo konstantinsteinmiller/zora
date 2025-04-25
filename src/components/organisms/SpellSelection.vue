@@ -21,7 +21,7 @@ const { t } = useI18n()
     class=""
   )
     div.flex.gap-2.h-full.mt-16.relative
-      div.glass.card.frame.w-full.mr-8.p-4.px-6(class="min-w-[298px]")
+      div.glass.card.frame.w-full.p-4.px-6(class="min-w-[298px]")
 
 </template>
 

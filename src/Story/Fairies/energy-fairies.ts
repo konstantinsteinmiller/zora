@@ -8,6 +8,8 @@ export const ENERGY_FEMALE_OLD = {
   description: 'An energy fairy.',
   element: ELEMENTS.ENERGY,
   level: 5,
+  xp: 0,
+  nextLevelXp: 10,
   statsProgressionList: [],
   statsGrowthVisual: {
     hp: 2,

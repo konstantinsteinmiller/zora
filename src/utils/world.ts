@@ -1,6 +1,7 @@
 import FairyController from '@/entity/FairyController.ts'
 import $ from '@/global.ts'
 import type { Guild } from '@/types/entity.ts'
+import type { Fairy } from '@/types/fairy.ts'
 
 export async function importNPCs(): Promise<Map<string, any>> {
   const npcMap = new Map<string, any>()
@@ -59,6 +60,32 @@ export const loadFairies = async () => {
   })
 }
 loadFairies()
+
+export const createFairy = (
+  id: string = 'ice_yeti_young',
+  level: number = 10,
+  guild: Guild = 'guild-companion-fairy' as Guild
+): Fairy => {
+  const templateFairy = fairiesMap.get(id)
+
+  const modelPath = templateFairy.modelPath.split('/')
+  modelPath.pop()
+  const imagePath = modelPath.join('/')
+
+  const fairy = {
+    ...templateFairy,
+    guild,
+    level,
+    stats: {
+      ...templateFairy.stats,
+      mp: 100,
+      maxMp: 100,
+    },
+    avatar: `${imagePath}/avatar_128x128.jpg`,
+    preview: `${imagePath}/preview_400x463.jpg`,
+  }
+  return fairy
+}
 
 export const spawnWildFairy = (id: string, wp: string) => {
   const WP = $.level?.WPsMap?.get(wp)

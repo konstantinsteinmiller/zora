@@ -1,13 +1,15 @@
 import { ARCTIC_BARRIER, FROST_NEEDLE, FROST_SHIELD, SNOWBALL_TOSS } from '@/Story/Spells/ice.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
 
-export const ICE_YETI_YOUNG = {
+export const ICE_YETI_YOUNG: FairyClass = {
   name: 'Yethog',
   id: 'ice_yeti_young',
   modelPath: '/models/yeti-young/yeti-young.fbx',
   description: 'A young ice yeti fairy, known for its playful nature and snowy fur.',
   element: ELEMENTS.ICE,
   level: 5,
+  xp: 0,
+  nextLevelXp: 10,
   statsProgressionList: [],
   statsGrowthVisual: {
     hp: 5,
@@ -37,6 +39,8 @@ export const ICE_YETI_MIDDLE = {
   description: 'An old ice yeti fairy, only encounterable in the highest mountain tops.',
   element: ELEMENTS.ICE,
   level: 5,
+  xp: 0,
+  nextLevelXp: 10,
   statsProgressionList: [],
   statsGrowthVisual: {
     hp: 5,
