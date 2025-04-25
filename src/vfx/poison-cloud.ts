@@ -27,7 +27,7 @@ const particleData: {
 }[] = []
 
 const updateParticles = (particles: Sprite[], deltaS: number) => {
-  const particleTexture = assetManager.getTexture('/images/cursor-icon.png') // Get the texture from the asset manager
+  const particleTexture = assetManager.getTexture('/images/icons/fairy.png') // Get the texture from the asset manager
   const elapsedTime = Date.now() - startTime // Time elapsed since start
   const progress = Math.min(elapsedTime / totalDuration, 1) // Progress from 0 to 1
 
@@ -152,7 +152,7 @@ export const startPoisonCloudVFX = () => {
     }
   })
 
-  const particleTexture = assetManager.getTexture('/images/cursor-icon.png') // Get the texture from the asset manager
+  const particleTexture = assetManager.getTexture('/images/icons/fairy.png') // Get the texture from the asset manager
   const cleanup = () => {
     // Remove all particles from the group and dispose of their materials
     particles.forEach(particle => {

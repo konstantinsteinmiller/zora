@@ -32,6 +32,15 @@ export const ELEMENTS: ENUM = {
 }
 export type Element = (typeof ELEMENTS)[keyof typeof ELEMENTS]
 
+export const MENU: ENUM = {
+  COLLECTION: 'collection',
+  ITEMS: 'items',
+  FAIRY: 'fairy',
+  ATTACK_SPELLS: 'attackSpells',
+  PASSIVE_SPELLS: 'passiveSpells',
+}
+export type MenuItem = (typeof MENU)[keyof typeof MENU]
+
 export const LANGUAGES: Array<string> = [
   // 'ar',
   // 'cs',

@@ -10,7 +10,7 @@
       <router-view />
     </main>
     <img
-      src="/images/cursor-icon.png"
+      src="/images/icons/fairy.png"
       class="absolute cursor z-[999] pointer-events-none"
       alt="cursor"
     />

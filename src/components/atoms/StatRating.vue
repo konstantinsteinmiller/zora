@@ -16,6 +16,11 @@ const missingList = [...Array(5 - props.amount)]
       v-for="(dot, dotIndex) in amountsList" :key="`dot-${dotIndex}`"
       style="background: radial-gradient(90deg, #E1DA1ACF 0%, E1DA1ACF 100%);"
     )
+    //img.pointer-events-none.w-4.h-4(
+    //  src="/images/icons/fairy.png"
+    //  v-for="(dot, dotIndex) in amountsList" :key="`dot-${dotIndex}`"
+    //  alt="cursor"
+    //)
     div.rounded-full.w-3.h-3.border.border-gray-400.border-solid(
       v-for="(dot, dotIndex) in missingList" :key="`cleardot-${dotIndex}`"
       class="bg-gray-100"

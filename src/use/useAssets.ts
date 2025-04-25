@@ -23,7 +23,7 @@ export default () => {
     '/images/glow.png',
     '/images/star/star-64x64.png',
     '/images/fairy-dust/fairy-dust-100x120.png',
-    '/images/cursor-icon.png',
+    '/images/icons/fairy.png',
     '/images/crosshair/crosshair-transparent.avif',
     '/images/crosshair/crosshair-stars.png',
     '/images/crosshair/crosshair-dots.avif',

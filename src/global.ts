@@ -1,4 +1,5 @@
 import { useKeyboard } from '@/use/useKeyboard.ts'
+import { MENU, type MenuItem } from '@/utils/enums.ts'
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
@@ -47,6 +48,7 @@ export interface Global {
   loadingManager: any
   physics: any
   isDialog: Ref<boolean>
+  menuItem: Ref<MenuItem | null>
   isDispel: Ref<boolean>
   isMenu: ComputedRef<boolean>
   dialogSelf: Ref<any>
@@ -118,6 +120,7 @@ const globalState = () => {
     enemy: {},
     loadingManager: loadingManager,
     isDialog: ref(false),
+    menuItem: ref(null),
     isDispel: ref(false),
     isMenu: computed(() => global.isDialog.value || global.isDispel.value),
     dialogSelf: ref(null),

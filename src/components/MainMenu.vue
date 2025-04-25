@@ -15,7 +15,7 @@ import { useI18n } from 'vue-i18n'
 import OptionsModal from '@/components/OptionsModal.vue'
 import TutorialPopover from '@/components/TutorialPopover.vue'
 import XButton from '@/components/atoms/XButton.vue'
-import FairyCollection from '@/components/organisms/FairyCollection.vue'
+import Menu from '@/components/organisms/Menu.vue'
 import { useRoute } from 'vue-router'
 
 const { isStartingGame } = useMatch()
@@ -144,7 +144,7 @@ onUnmounted(() => {
     </div>
     <LoadingBar />
 
-    <FairyCollection v-if="$.isDebug" />
+    <Menu v-if="$.isDebug" />
   </div>
 </template>
 
