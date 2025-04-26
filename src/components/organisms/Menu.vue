@@ -3,6 +3,7 @@ import FairyCollection from '@/components/organisms/FairyCollection.vue'
 import FairySelection from '@/components/organisms/FairySelection.vue'
 import SpellSelection from '@/components/organisms/SpellSelection.vue'
 import { MENU, type MenuItem } from '@/utils/enums.ts'
+import { prependBaseUrl } from '@/utils/function.ts'
 import { type Ref, ref } from 'vue'
 import $ from '@/global'
 
@@ -25,6 +26,10 @@ const menuItemsList: Ref<MenuItemEntry[]> = ref([
   { name: 'Menu Attack Spells', id: MENU.ATTACK_SPELLS, icon: '/images/icons/scroll_128x128.png' },
   { name: 'Menu passive Spells', id: MENU.PASSIVE_SPELLS, icon: '/images/icons/scroll_128x128.png' },
 ])
+menuItemsList.value = menuItemsList.value.map(item => {
+  item.icon = prependBaseUrl(item.icon)
+  return item
+})
 
 const onMenuClick = (menuItem: MenuItemEntry) => ($.menuItem.value = menuItem.id)
 </script>
@@ -40,19 +45,25 @@ const onMenuClick = (menuItem: MenuItemEntry) => ($.menuItem.value = menuItem.id
       img.absolute.left-0(src="/images/logo/Zora_logo_300x246.png" alt="logo"
         class="w-[100px] top-[2px]"
       )
-      div.h-16.flex.self-center.relative.items-center.mt-1
-        img.object-fit(src="/images/frames/fancy-frame-wide_512x361.png" alt="navigation item"
-          class="!scale-[114%] z-10 absolute top-0 left-0 !w-[320px] h-[52px] mt-[1%]")
-        div.spotlight.w-12.h-12.relative.flex.items-center.gap-2(
-          v-for="(menuItem, itemIndex) in menuItemsList" :key="`menu-item-${itemIndex}`"
-          class="z-20"
-          :style="`${menuItem.id !== $.menuItem.value ? 'filter: grayscale(100%)': ''}`"
-          @click="onMenuClick(menuItem)"
-        )
-          img.icon.absolute.top-0.left-0.w-8.h-8.mt-2.ml-2(:src="menuItem.icon" :alt="`${menuItem.name} icon`" class="")
-          img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
+      div.h-16.flex.self-center.relative.items-center.gap-1(class="mt-[2px]")
+        img.object-fit(src="/images/frames/fancy-frame-wide_1024x256.png" alt="navigation item"
+          class="z-10 absolute top-0 -left-[1px] !w-[352px] h-[60px]")
+        div.gap-1.flex.items-center.justify-center(class="py-[6px] px-2")
+          div.spotlight.w-12.h-12.relative.flex.items-center.gap-2(
+            v-for="(menuItem, itemIndex) in menuItemsList" :key="`menu-item-${itemIndex}`"
+            class="z-20"
+            :style="`${menuItem.id !== $.menuItem.value ? 'filter: grayscale(100%)': ''}`"
+            @click="onMenuClick(menuItem)"
+          )
+            img.icon.absolute.top-0.left-0.w-8.h-8.mt-2.ml-2(:src="menuItem.icon" :alt="`${menuItem.name} icon`" class="")
+            img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
       div.justify-self-end.absolute.top-0.right-0.flex.justify-center.items-center
-        div.w-12.h-12.text-4xl.text-center.text-red-700.z-20(@click="$.menuItem.value = null") x
+        //div.w-12.h-12.text-4xl.text-center.text-red-700.z-20(@click="$.menuItem.value = null") x
+        img.w-8.h-8(
+          src="/images/icons/x_128x128.png" alt="close icon"
+          class="scale-[65%] z-20"
+          @click="$.menuItem.value = null"
+        )
         img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
       div.menu-content.relative.h-full.w-full.flex-grow-1
         FairyCollection

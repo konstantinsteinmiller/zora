@@ -4,10 +4,12 @@ export interface Fairy {
   modelPath: string
   description: string
   element: string
+  tier: number
   level: number
   xp: number
   nextLevelXp: number
-  statsProgressionList: any[]
+  statGrowthPerLevel: object
+  evolutionsList: any[]
   statsGrowthVisual: {
     hp: number
     defense: number

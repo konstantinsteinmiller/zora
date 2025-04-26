@@ -132,12 +132,14 @@ const PlayerController = (config: PlayerControllerProps) => {
   updateEventUuid = $.addEvent('renderer.update', update)
 
   entity.companion = FairyController({
-    modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
-    stats: { name: 'nature fairy' },
+    modelPath: '/models/fire-harpy/fire-harpy.fbx',
+    // stats: { name: 'nature fairy' },
+    stats: { name: 'Harpire' },
     parent: entity,
     startPosition: new Vector3(0, 0, 0),
     guild: 'guild-companion-fairy' as Guild,
-    id: 'nature_fairy',
+    // id: 'nature_fairy',
+    id: 'fire_harpy',
   })
 
   $.addEvent('level.cleanup', () => {

@@ -2,6 +2,7 @@ import FairyController from '@/entity/FairyController.ts'
 import $ from '@/global.ts'
 import type { Guild } from '@/types/entity.ts'
 import type { Fairy } from '@/types/fairy.ts'
+import { prependBaseUrl } from '@/utils/function.ts'
 
 export async function importNPCs(): Promise<Map<string, any>> {
   const npcMap = new Map<string, any>()
@@ -72,7 +73,7 @@ export const createFairy = (
   modelPath.pop()
   const imagePath = modelPath.join('/')
 
-  const fairy = {
+  const fairyInstance = {
     ...templateFairy,
     guild,
     level,
@@ -81,10 +82,10 @@ export const createFairy = (
       mp: 100,
       maxMp: 100,
     },
-    avatar: `${imagePath}/avatar_128x128.jpg`,
-    preview: `${imagePath}/preview_400x463.jpg`,
+    avatar: prependBaseUrl(`${imagePath}/avatar_128x128.jpg`),
+    preview: prependBaseUrl(`${imagePath}/preview_400x463.jpg`),
   }
-  return fairy
+  return fairyInstance
 }
 
 export const spawnWildFairy = (id: string, wp: string) => {

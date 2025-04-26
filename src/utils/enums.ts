@@ -42,6 +42,12 @@ export const MENU: ENUM = {
 }
 export type MenuItem = (typeof MENU)[keyof typeof MENU]
 
+export const tierScaleMap: Record<number, number> = {
+  0: 1,
+  1: 1.2,
+  2: 1.4,
+}
+
 export const LANGUAGES: Array<string> = [
   // 'ar',
   // 'cs',

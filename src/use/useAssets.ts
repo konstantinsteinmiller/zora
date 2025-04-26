@@ -36,6 +36,9 @@ export default () => {
     '/models/nature-fairy-1/nature-fairy-1.fbx',
     '/models/thunder-fairy-1/thunder-fairy-1.fbx',
     '/models/yeti-young/yeti-young.fbx',
+    '/models/fire-harpy/fire-harpy.fbx',
+    '/models/dragon-old/dragon-old.fbx',
+    '/models/psi-nightmare/psi-nightmare.fbx',
   ]
   const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
   const worldNPCAnimsList = [

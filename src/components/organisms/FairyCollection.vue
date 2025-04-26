@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
+import { prependBaseUrl } from '@/utils/function.ts'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
@@ -25,7 +26,11 @@ const loadFairies = async () => {
         let modelPath = fairy.modelPath.split('/')
         modelPath.pop()
         const imagePath = modelPath.join('/')
-        return { ...fairy, avatar: `${imagePath}/avatar_128x128.jpg`, preview: `${imagePath}/preview_400x463.jpg` }
+        return {
+          ...fairy,
+          avatar: prependBaseUrl(`${imagePath}/avatar_128x128.jpg`),
+          preview: prependBaseUrl(`${imagePath}/preview_400x463.jpg`),
+        }
       }),
     ]
     return acc
@@ -36,6 +41,7 @@ loadFairies()
 
 const { t } = useI18n()
 const selectedFairy: Ref<Fairy | null> = ref(null)
+
 const statsVisualsList: ComputedRef<Fairy | null> = computed(() => {
   if (selectedFairy.value === null) return []
   const stats = Object.entries(selectedFairy.value?.statsGrowthVisual).map(([key, value]) => {
@@ -43,6 +49,11 @@ const statsVisualsList: ComputedRef<Fairy | null> = computed(() => {
   })
   // console.log('selectedFairy.value.element: ', selectedFairy.value)
   return [{ key: 'type', value: selectedFairy.value?.element }, ...stats]
+})
+const evolves: ComputedRef<string | null> = computed(() => {
+  if (!selectedFairy?.value?.evolutionsList) return { from: null, to: null }
+  const [from, to] = selectedFairy?.value?.evolutionsList
+  return { from: from?.value ?? from, to: to?.value ?? to }
 })
 
 const selectedFairyNumber = computed(() => {
@@ -54,6 +65,10 @@ const selectedFairyNumber = computed(() => {
       ? `0${selectedFairyIndex}`
       : selectedFairyIndex
 })
+
+const onEvolveClick = (evolution: Fairy) => {
+  selectedFairy.value = fairiesList.value.find(fairy => fairy.id === evolution.id)
+}
 
 watch(
   fairiesList,
@@ -71,14 +86,14 @@ watch(
     v-if="$?.menuItem?.value === MENU.COLLECTION"
     class="w-full h-full"
   )
-    div.preview.mr-8.p-4.px-6(class="min-w-[298px]")
+    div.preview.mr-8.p-4.pt-0.px-6(class="min-w-[298px]")
       div.relative.overflow-visible(style="background: rgba(0, 0, 0, 0.0);"
         class="h-[300px] max-w-[250px] z-10"
       )
-        div.name.relative.p-1.h-8.flex.items-center.justify-center.overflow-visible(class="!border-0 bg-[#151515]")
+        div.name.relative.p-1.h-8.flex.items-center.justify-center(class="!border-0 bg-[#151515]")
           div.rib(class="text-[17px] -mb-[2px]") {{ selectedFairy?.name ? t(selectedFairy.name) : '' }}
-          img.frame.absolute.bottom-0.left-0(src="/images/frames/hr.png" :alt="`horizontal-line`"
-            class="!scale-[98%] h-[9px] -mb-[8px] z-10"
+          img.frame.absolute.bottom-0.left-0.overflow-visible(src="/images/frames/hr.png" :alt="`horizontal-line`"
+            class="!scale-[98%] h-[9px] -mb-[8px] z-20"
           )
         div.preview-img.relative(class="z-10")
           img.fancy-frame.absolute.top-0.left-0(
@@ -97,6 +112,11 @@ watch(
           v-if="selectedFairy && selectedFairy?.statsGrowthVisual" class=""
         )
           div.rib.px-2.rounded-t-lg(class="bg-[#454545] mb-[2px] py-[2px]") {{ selectedFairy.name }}
+          div(class="mb-[2px]")
+            div.px-2.text-sm(v-if="evolves.from" class="bg-[#454545] py-[2px]") {{ t('evolvesFrom') }}
+              a.underline.text-blue-500(@click="onEvolveClick(evolves.from)") {{ evolves.from.name }}
+            div.px-2.text-sm(v-if="evolves.to" class="bg-[#454545] py-[2px]") {{ t('evolvesTo') }}
+              a.underline.text-blue-500(@click="onEvolveClick(evolves.to)") {{ evolves.to.name }}
           div(class="bg-[#acacac] mb-[2px]")
             div.grid.grid-cols-2(v-for="stat in statsVisualsList" :key="selectedFairy.id + stat.key" class="mb-[2px]")
               div.px-2(class="bg-[#454545] py-[1px]") {{ t(stat.key) }}
@@ -129,14 +149,20 @@ en:
   fairyCollection: "Fairy Collection"
   type: "Type"
   hp: "Hp"
+  power: "Power"
   defense: "Defense"
   speed: "Speed"
   special: "Special Ability"
+  evolvesFrom: "evolves from "
+  evolvesTo: "evolves to "
 de:
   fairyCollection: "Feen Sammlung"
   type: "Typ"
   hp: "Hp"
+  power: "Angriff"
   defense: "Verteidigung"
   speed: "Geschwindigkeit"
   special: "Spezialfähigkeit"
+  evolvesFrom: "Entwicklung aus "
+  evolvesTo: "Entwicklung zu "
 </i18n>

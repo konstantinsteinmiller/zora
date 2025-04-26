@@ -19,6 +19,7 @@
     "events": "^3.3.0",
     "gsap": "^3.12.7",
     "i18n": "^0.15.1",
+    "lodash": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
     "pixi-viewport": "^6.0.3",
     "pixi.js": "^8.9.0",

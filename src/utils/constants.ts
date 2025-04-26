@@ -20,7 +20,7 @@ export const characterAnimationNamesList: ANIM[] = [
   'run',
   'run-back',
   // 'dance',
-  'cast',
+  // 'cast',
   'jump',
   'fly',
   'hit' /*

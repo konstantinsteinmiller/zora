@@ -47,6 +47,7 @@ export interface Global {
   enemy: any
   loadingManager: any
   physics: any
+  options: any
   isDialog: Ref<boolean>
   menuItem: Ref<MenuItem | null>
   isDispel: Ref<boolean>
@@ -119,6 +120,11 @@ const globalState = () => {
     player: {},
     enemy: {},
     loadingManager: loadingManager,
+    options: {
+      coloredUI: false,
+      keyboardBindings: {},
+      showAdvancedTutorials: false,
+    },
     isDialog: ref(false),
     menuItem: ref(null),
     isDispel: ref(false),

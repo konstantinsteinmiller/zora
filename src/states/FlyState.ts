@@ -1,5 +1,5 @@
-import { MAX_FLY_IMPULSE } from '@/utils/constants.ts'
 import State, { isMovingEntity } from '@/states/State'
+import { LoopOnce, LoopRepeat } from 'three'
 
 export default class FlyState extends State {
   constructor(parent: any) {
@@ -35,6 +35,8 @@ export default class FlyState extends State {
         return
       }
       currentAction.crossFadeFrom(previousAction, 0.5, true)
+      currentAction.setLoop(LoopRepeat)
+      // currentAction.clampWhenFinished = true
       currentAction.play()
     } else {
       currentAction.play()
