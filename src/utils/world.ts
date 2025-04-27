@@ -2,6 +2,7 @@ import FairyController from '@/entity/FairyController.ts'
 import $ from '@/global.ts'
 import type { Guild } from '@/types/entity.ts'
 import type { Fairy } from '@/types/fairy.ts'
+import { levelUpFairy } from '@/utils/fairy.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 
 export async function importNPCs(): Promise<Map<string, any>> {
@@ -85,6 +86,7 @@ export const createFairy = (
     avatar: prependBaseUrl(`${imagePath}/avatar_128x128.jpg`),
     preview: prependBaseUrl(`${imagePath}/preview_400x463.jpg`),
   }
+  levelUpFairy(fairyInstance, level)
   return fairyInstance
 }
 

@@ -11,7 +11,7 @@ import {
   MIN_CHARGE_SPEED,
   MIN_CHARGE_START_COLOR,
 } from '@/utils/constants.ts'
-import { getChargeDuration } from '@/utils/chargeUtils.ts'
+import { getChargeDuration } from '@/utils/function.ts'
 import { TUTORIALS } from '@/utils/enums.ts'
 import { remap } from '@/utils/function.ts'
 import { lerp } from 'three/src/math/MathUtils.js'

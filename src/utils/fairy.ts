@@ -1,5 +1,5 @@
 import type { Fairy } from '@/types/fairy.ts'
-import { tierScaleMap } from '@/utils/enums.ts'
+import { levelXpMap, tierScaleMap } from '@/utils/enums.ts'
 import { pick } from 'lodash'
 
 const BASE_ITERATIONS = 10
@@ -10,8 +10,14 @@ export const calcStatGrowth = (maxStat: number, tier: number, maxLevel: number =
   return baseGrowthPerLevel
 }
 
-const getFairyRequiredExp = (level: number) => {
-  const requiredExp: number = level * BASE_ITERATIONS
+// const levelMap: any = { 1: 0 }
+const getFairyRequiredExp = (level: number): number => {
+  if (level === 1) {
+    return 0
+  }
+  const xpNeeded: number = levelXpMap[`${level}`] /*level * 3 - 3 + getFairyRequiredExp(level - 1)*/
+  // levelMap[level] = xpNeeded
+  return xpNeeded
 }
 
 let clone = null
@@ -30,6 +36,10 @@ export const levelUpFairy = (fairy: Fairy, targetLevel: number) => {
   clone.stats['hp'] = Math.round(clone.stats['hp'])
   clone.stats['maxHp'] = clone.stats['hp']
   clone.stats['previousHp'] = clone.stats['hp']
+  const [xp, nextLevelXp] = [getFairyRequiredExp(targetLevel), getFairyRequiredExp(targetLevel + 1)]
+
+  fairy.xp = xp
+  fairy.nextLevelXp = nextLevelXp
   fairy.level = targetLevel
   fairy.stats = { ...fairy.stats, ...clone.stats }
 }

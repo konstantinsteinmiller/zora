@@ -1,4 +1,5 @@
-import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier3d-compat'
+import { DEFAULT_CHARGE_DURATION } from '@/utils/constants.ts'
+import { ColliderDesc } from '@dimforge/rapier3d-compat'
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import * as THREE from 'three'
 import $ from '@/global'
@@ -179,4 +180,8 @@ export function removeDoubleSlashComments(inputString) {
 
   // Replace all matches with an empty string
   return inputString.replace(regex, '')
+}
+
+export const getChargeDuration = (entity: any) => {
+  return DEFAULT_CHARGE_DURATION / entity.currentSpell.speed
 }

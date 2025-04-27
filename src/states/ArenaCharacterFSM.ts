@@ -21,7 +21,7 @@ for (const path in modules) {
   states[moduleName] = (modules[path] as any).default
 }
 
-export default class CharacterFSM extends FSM {
+export default class ArenaCharacterFSM extends FSM {
   animationsMap: { [key: string]: any }
 
   constructor(animationsMap: { [key: string]: any }, owner: any) {

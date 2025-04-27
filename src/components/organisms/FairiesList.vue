@@ -20,10 +20,12 @@ $.player = {
   fairies: {
     fairiesList: ref([
       createFairy('energy_female_old', 8),
-      createFairy('ice_yeti_young', 18),
+      // createFairy('ice_yeti_young', 18),
+      createFairy('fire_dragon_old', 11),
       createFairy('ice_yeti_middle', 15),
       createFairy('nature_butterfly_middle', 32),
-      createFairy('fire_harpy', 48),
+      createFairy('fire_harpy', 49),
+      createFairy('psi_nightmare', 22),
     ]),
   },
 }
@@ -38,8 +40,8 @@ $.player.fairies.fairiesList.value = $.player?.fairies?.fairiesList.value.map(fa
   const nextLevelXp = xp + Math.ceil(Math.random() * 200)
   return {
     ...fairy,
-    xp: xp,
-    nextLevelXp: nextLevelXp,
+    // xp: xp,
+    // nextLevelXp: nextLevelXp,
     stats: {
       ...fairy.stats,
       // hp:< hp,

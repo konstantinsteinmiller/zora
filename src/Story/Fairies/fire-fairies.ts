@@ -14,11 +14,11 @@ export const FIRE_HARPY = {
   xp: 0,
   nextLevelXp: 10,
   statGrowthPerLevel: {
-    hp: calcStatGrowth(180, 0),
-    power: calcStatGrowth(0.35, 0),
-    defense: calcStatGrowth(8, 0),
-    speed: calcStatGrowth(1, 0),
-    special: calcStatGrowth(0.75, 0),
+    hp: calcStatGrowth(200, 1),
+    power: calcStatGrowth(0.35, 1),
+    defense: calcStatGrowth(8, 1),
+    speed: calcStatGrowth(1, 1),
+    special: calcStatGrowth(0.75, 1),
   },
   statsGrowthVisual: {
     hp: 4,
