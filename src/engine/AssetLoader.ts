@@ -134,7 +134,7 @@ const AssetManager = () => {
           resolve()
         },
         (fileProgressEvent: any) => $.fileLoader.onFileProgress(fullPath, fileProgressEvent),
-        () => ($.loadingManager.itemError(fullPath), reject())
+        () => ($.loadingManager.itemError(fullPath), reject({ message: `Failed to load animation ${name}` }))
       )
     })
 

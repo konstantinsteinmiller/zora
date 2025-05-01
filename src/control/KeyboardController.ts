@@ -334,7 +334,7 @@ import { startFairySprinklesVFX } from '@/vfx/spricles-vfx.ts'
 
 let sprinclesCount = 0
 export function spraySprinclesAtWorldPosition(entity: any) {
-  if (entity.guild !== 'guild-companion-fairy' || !entity.id.includes('nature_fairy')) return
+  if (entity.guild !== 'guild-companion-fairy' || !entity.id.includes('nature_butterfly')) return
   sprinclesCount++
   if (sprinclesCount % 10 !== 0) return
 

@@ -1,32 +1,29 @@
 import { FLOWER_POWER, NATURES_SHIELD } from '@/Story/Spells/nature.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
-import { calcStatGrowth } from '@/utils/fairy.ts'
+import { getStatGrowth } from '@/utils/fairy.ts'
 import { ref, type Ref } from 'vue'
 
-export const NATURE_BUTTERFLY_MIDDLE = {
+const BUTTERFLY_MIDDLE_GROWTH_STEPS = {
+  hp: 0,
+  power: 0,
+  defense: -2,
+  speed: 3,
+  special: 1,
+}
+export const NATURE_BUTTERFLY_MIDDLE: Fairy = {
   name: 'Dandalina',
   id: 'nature_butterfly_middle',
-  modelPath: '/models/nature-fairy-1/nature-fairy-1.fbx',
+  modelPath: '/models/nature-butterfly-middle/nature-butterfly-middle.fbx',
   description: 'A nature fairy, known for playing around flowers.',
   element: ELEMENTS.NATURE,
   tier: 1,
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(230, 1),
-    power: calcStatGrowth(0.45, 1),
-    defense: calcStatGrowth(10, 1),
-    speed: calcStatGrowth(0.5, 1),
-    special: calcStatGrowth(0.4, 1),
-  },
-  statsGrowthVisual: {
-    hp: 5,
-    defense: 3,
-    speed: 2,
-    special: 4,
-  },
+  evolutionsList: [null, null],
+  statGrowthPerLevel: getStatGrowth(BUTTERFLY_MIDDLE_GROWTH_STEPS, 1),
+  statsGrowthSteps: BUTTERFLY_MIDDLE_GROWTH_STEPS,
   stats: {
     name: 'Dandalina',
     hp: 25,
@@ -41,8 +38,15 @@ export const NATURE_BUTTERFLY_MIDDLE = {
   passiveSpells: [NATURES_SHIELD],
 }
 
+const MUSHROOM_YOUNG_GROWTH_STEPS = {
+  hp: 0,
+  power: -1,
+  defense: 0,
+  speed: -1,
+  special: 3,
+}
 const Mushiddle: Ref<Fairy | null> = ref(null)
-export const NATURE_MUSHROOM_YOUNG = {
+export const NATURE_MUSHROOM_YOUNG: Fairy = {
   name: 'Mushyu',
   id: 'nature_mushroom_young',
   modelPath: '/models/mushroom-young/mushroom-young.fbx',
@@ -52,20 +56,9 @@ export const NATURE_MUSHROOM_YOUNG = {
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(150, 0),
-    power: calcStatGrowth(0.65, 0),
-    defense: calcStatGrowth(10, 0),
-    speed: calcStatGrowth(0.5, 0),
-    special: calcStatGrowth(1.2, 0),
-  },
   evolutionsList: [null, Mushiddle],
-  statsGrowthVisual: {
-    hp: 5,
-    defense: 3,
-    speed: 2,
-    special: 4,
-  },
+  statGrowthPerLevel: getStatGrowth(MUSHROOM_YOUNG_GROWTH_STEPS, 1),
+  statsGrowthSteps: MUSHROOM_YOUNG_GROWTH_STEPS,
   stats: {
     name: 'Mushyu',
     hp: 25,
@@ -80,7 +73,14 @@ export const NATURE_MUSHROOM_YOUNG = {
   passiveSpells: [NATURES_SHIELD],
 }
 
-export const NATURE_MUSHROOM_MIDDLE = {
+const MUSHROOM_MIDDLE_GROWTH_STEPS = {
+  hp: 2,
+  power: -1,
+  defense: 1,
+  speed: -1,
+  special: 1,
+}
+export const NATURE_MUSHROOM_MIDDLE: Fairy = {
   name: 'Mushiddle',
   id: 'nature_mushroom_middle',
   modelPath: '/models/mushroom-middle/mushroom-middle.fbx',
@@ -90,20 +90,9 @@ export const NATURE_MUSHROOM_MIDDLE = {
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(230, 1),
-    power: calcStatGrowth(0.65, 1),
-    defense: calcStatGrowth(13, 1),
-    speed: calcStatGrowth(0.3, 1),
-    special: calcStatGrowth(0.8, 1),
-  },
   evolutionsList: [NATURE_MUSHROOM_YOUNG, null],
-  statsGrowthVisual: {
-    hp: 5,
-    defense: 3,
-    speed: 2,
-    special: 4,
-  },
+  statGrowthPerLevel: getStatGrowth(MUSHROOM_MIDDLE_GROWTH_STEPS, 1),
+  statsGrowthSteps: MUSHROOM_MIDDLE_GROWTH_STEPS,
   stats: {
     name: 'Mushiddle',
     hp: 25,

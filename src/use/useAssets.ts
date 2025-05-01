@@ -33,12 +33,12 @@ export default () => {
     '/worlds/city-1/city-1-navmesh.fbx',
   ]
   const characterAnimsList = [
-    '/models/nature-fairy-1/nature-fairy-1.fbx',
-    '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+    '/models/nature-butterfly-middle/nature-butterfly-middle.fbx',
+    '/models/energy-female-old/energy-female-old.fbx',
     '/models/yeti-young/yeti-young.fbx',
     '/models/fire-harpy/fire-harpy.fbx',
-    '/models/dragon-old/dragon-old.fbx',
-    '/models/psi-nightmare/psi-nightmare.fbx',
+    // '/models/dragon-old/dragon-old.fbx',
+    // '/models/psi-nightmare/psi-nightmare.fbx',
   ]
   const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
   const worldNPCAnimsList = [

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
-import { prependBaseUrl } from '@/utils/function.ts'
+import { clamp, prependBaseUrl } from '@/utils/function.ts'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
@@ -44,10 +44,13 @@ const selectedFairy: Ref<Fairy | null> = ref(null)
 
 const statsVisualsList: ComputedRef<Fairy | null> = computed(() => {
   if (selectedFairy.value === null) return []
-  const stats = Object.entries(selectedFairy.value?.statsGrowthVisual).map(([key, value]) => {
+  const stats = Object.entries(selectedFairy.value?.statsGrowthSteps).map(([key, value]) => {
     return { key, value }
   })
-  // console.log('selectedFairy.value.element: ', selectedFairy.value)
+  // console.log('stats: ', stats)
+  // const stat = stats[0]
+  // console.log("stats['hp']: ", stat.value, clamp(3 + stat.value, 0, 5))
+  // console.log('selectedFairy.value: ', selectedFairy.value)
   return [{ key: 'type', value: selectedFairy.value?.element }, ...stats]
 })
 const evolves: ComputedRef<string | null> = computed(() => {
@@ -104,12 +107,12 @@ watch(
           //img.absolute.bottom-0.right-0(v-if="selectedFairy !== null" :src="selectedFairy.avatar" :alt="`${selectedFairy.name} image`" class="max-h-16 mb-1 mr-1 !absolute")
           //img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-selected_128x128.png" :alt="`frame`" class="h-16 scale-110 mb-1 mr-1")
         div.number.mt-4.text-lg.mb-1.flex.justify-center.items-center(
-          v-if="selectedFairy?.statsGrowthVisual"
+          v-if="selectedFairy?.statsGrowthSteps"
           class=""
         )
           div.rounded-full.w-24.p-2.flex.justify-center.items-center(class="bg-[#454545] py-[2px]") {{ selectedFairyNumber }}
         div.stats.mt-4.text-lg.rounded-xl.mb-1(
-          v-if="selectedFairy && selectedFairy?.statsGrowthVisual" class=""
+          v-if="selectedFairy && selectedFairy?.statsGrowthSteps" class=""
         )
           div.rib.px-2.rounded-t-lg(class="bg-[#454545] mb-[2px] py-[2px]") {{ selectedFairy.name }}
           div(class="mb-[2px]")
@@ -124,7 +127,7 @@ watch(
                 div.rounded-full.flex.items-center(v-if="stat.key === 'type'" class="bg-[#454545] p-[2px] px-3")
                   ElementImg(:type="stat.value")
                   div.text-white.text-sm.px-1 {{ t(stat.value) }}
-                StatRating(v-else :amount="stat.value")
+                StatRating(v-else :amount="clamp(3 + Math.round(stat.value), 0, 5)")
           div.px-2.rounded-b-lg.text-sm(class="bg-[#454545] py-[3px]") {{ selectedFairy.description }}
     div.list.card.glass.frame.gap-4.flex.items-start.justify-start.p-4.mr-4.mb-24.w-full(
       class="flex-basis-[10%]" style="background: rgba(0, 0, 0, 0.0); backdrop-filter: blur(0px);"

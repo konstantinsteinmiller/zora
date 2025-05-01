@@ -39,11 +39,21 @@ export const BLINDING_FIRE: Spell = {
     enemy.dealDamage(enemy, entity, 5)
   },
 }
+
 export const FIERY_EVADE: Spell = {
   name: 'Fiery Evade',
   element: ELEMENTS.FIRE,
   mana: 15,
   onHit: (entity, enemy) => {
     /* dodge spell */
+  },
+}
+
+export const FLASH: Spell = {
+  name: 'Fiery Evade',
+  element: ELEMENTS.FIRE,
+  mana: 1,
+  onHit: (entity, enemy) => {
+    /* TODO make up skill */
   },
 }

@@ -1,10 +1,18 @@
 import { ARCTIC_BARRIER, FROST_NEEDLE, FROST_SHIELD, SNOWBALL_TOSS } from '@/Story/Spells/ice.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
-import { calcStatGrowth } from '@/utils/fairy.ts'
+import { calcStatGrowth, getStatGrowth } from '@/utils/fairy.ts'
 import { type Ref, ref } from 'vue'
 
 const Yetopa: Ref<Fairy | null> = ref(null)
+
+const YETI_YOUNG_GROWTH_STEPS = {
+  hp: 2,
+  power: -1,
+  defense: 1,
+  speed: -1,
+  special: 0,
+}
 export const ICE_YETI_YOUNG: Fairy = {
   name: 'Yethog',
   id: 'ice_yeti_young',
@@ -15,20 +23,9 @@ export const ICE_YETI_YOUNG: Fairy = {
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(180, 0),
-    power: calcStatGrowth(0.35, 0),
-    defense: calcStatGrowth(8, 0),
-    speed: calcStatGrowth(1, 0),
-    special: calcStatGrowth(0.75, 0),
-  },
   evolutionsList: [null, Yetopa],
-  statsGrowthVisual: {
-    hp: 5,
-    defense: 4,
-    speed: 1,
-    special: 3,
-  },
+  statGrowthPerLevel: getStatGrowth(YETI_YOUNG_GROWTH_STEPS, 0),
+  statsGrowthSteps: YETI_YOUNG_GROWTH_STEPS,
   stats: {
     name: 'Yethog',
     hp: 25,
@@ -43,7 +40,14 @@ export const ICE_YETI_YOUNG: Fairy = {
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 
-export const ICE_YETI_MIDDLE = {
+const YETI_MIDDLE_GROWTH_STEPS = {
+  hp: 3,
+  power: 0,
+  defense: 3,
+  speed: -3,
+  special: -1,
+}
+export const ICE_YETI_MIDDLE: Fairy = {
   name: 'Yetopa',
   id: 'ice_yeti_middle',
   modelPath: '/models/yeti-middle/yeti-middle.fbx',
@@ -53,20 +57,9 @@ export const ICE_YETI_MIDDLE = {
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(280, 1),
-    power: calcStatGrowth(0.5, 1),
-    defense: calcStatGrowth(20, 1),
-    speed: calcStatGrowth(0.25, 1),
-    special: calcStatGrowth(0.5, 1),
-  },
   evolutionsList: [ICE_YETI_YOUNG, null],
-  statsGrowthVisual: {
-    hp: 5,
-    defense: 5,
-    speed: 3,
-    special: 5,
-  },
+  statGrowthPerLevel: getStatGrowth(YETI_MIDDLE_GROWTH_STEPS, 1),
+  statsGrowthSteps: YETI_MIDDLE_GROWTH_STEPS,
   stats: {
     name: 'Yethog',
     hp: 25,

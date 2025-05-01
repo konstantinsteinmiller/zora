@@ -1,7 +1,15 @@
+import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
-import { calcStatGrowth } from '@/utils/fairy.ts'
+import { getStatGrowth } from '@/utils/fairy.ts'
 
-export const FIRE_HARPY = {
+const PSI_NIGHTMARE_GROWTH_STEPS = {
+  hp: 0,
+  power: 2,
+  defense: -2,
+  speed: 2,
+  special: 1,
+}
+export const PSI_NIGHTMARE: Fairy = {
   name: 'Nightsing',
   id: 'psi_nightmare',
   modelPath: '/models/psi-nightmare/psi-nightmare.fbx',
@@ -13,19 +21,9 @@ export const FIRE_HARPY = {
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(220, 2),
-    power: calcStatGrowth(0.85, 2),
-    defense: calcStatGrowth(2, 2),
-    speed: calcStatGrowth(1, 2),
-    special: calcStatGrowth(1.25, 2),
-  },
-  statsGrowthVisual: {
-    hp: 2,
-    defense: 1,
-    speed: 3,
-    special: 5,
-  },
+  evolutionsList: [null, null],
+  statGrowthPerLevel: getStatGrowth(PSI_NIGHTMARE_GROWTH_STEPS, 2),
+  statsGrowthSteps: PSI_NIGHTMARE_GROWTH_STEPS,
   stats: {
     name: 'Nightsing',
     hp: 25,
@@ -40,4 +38,4 @@ export const FIRE_HARPY = {
   passiveSpells: [],
 }
 
-export default [FIRE_HARPY]
+export default [PSI_NIGHTMARE]

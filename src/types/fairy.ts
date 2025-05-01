@@ -10,8 +10,9 @@ export interface Fairy {
   nextLevelXp: number
   statGrowthPerLevel: object
   evolutionsList: any[]
-  statsGrowthVisual: {
+  statsGrowthSteps: {
     hp: number
+    power: number
     defense: number
     speed: number
     special: number

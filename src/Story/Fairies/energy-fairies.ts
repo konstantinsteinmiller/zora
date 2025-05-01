@@ -1,31 +1,28 @@
 import { ENERGY_BALL, OVERCHARGED } from '@/Story/Spells/energy.ts'
+import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
-import { calcStatGrowth } from '@/utils/fairy.ts'
+import { getStatGrowth } from '@/utils/fairy.ts'
 
-export const ENERGY_FEMALE_OLD = {
+const FEMALE_OLD_GROWTH_STEPS = {
+  hp: 1,
+  power: 2,
+  defense: -1,
+  speed: -1,
+  special: 1,
+}
+export const ENERGY_FEMALE_OLD: Fairy = {
   name: 'Thunlady',
   id: 'energy_female_old',
-  modelPath: '/models/thunder-fairy-1/thunder-fairy-1.fbx',
+  modelPath: '/models/energy-female-old/energy-female-old.fbx',
   description: 'An energy fairy.',
   element: ELEMENTS.ENERGY,
   tier: 2,
   level: 5,
   xp: 0,
   nextLevelXp: 10,
-  statGrowthPerLevel: {
-    hp: calcStatGrowth(300, 2),
-    power: calcStatGrowth(0.65, 2),
-    defense: calcStatGrowth(12, 2),
-    speed: calcStatGrowth(0.75, 2),
-    special: calcStatGrowth(0.6, 2),
-  },
-  statsGrowthVisual: {
-    power: 4,
-    hp: 2,
-    defense: 1,
-    speed: 1,
-    special: 2,
-  },
+  evolutionsList: [null, null],
+  statGrowthPerLevel: getStatGrowth(FEMALE_OLD_GROWTH_STEPS, 2),
+  statsGrowthSteps: FEMALE_OLD_GROWTH_STEPS,
   stats: {
     name: 'Thunlady',
     hp: 25,

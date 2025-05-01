@@ -29,76 +29,214 @@ class FairyLeveler {
   }
 }
 
+// const tiersScale = {
+//   0: 1,
+//   1: 1.2,
+//   2: 1.4,
+// }
 const tiersScale = {
   0: 1,
-  1: 1.2,
-  2: 1.4,
+  1: 1.1,
+  2: 1.2,
 }
 
 const BASE_ITERATIONS = 10
+
+const BASE_INCREASE_STEP = 0.15
+const BASE_INCREASE_HP_STEP = 40
+const BASE_INCREASE_DEF_STEP = 3
+
+const getStatGrowth = ({ hp, power, defense, speed, special }, tier, maxLevel = 50) => {
+  const maxHp = 150 + hp * BASE_INCREASE_HP_STEP
+  const maxPower = 0.6 + power * BASE_INCREASE_STEP
+  const maxDef = 10 + defense * BASE_INCREASE_DEF_STEP
+  const maxSpeed = 0.6 + speed * BASE_INCREASE_STEP
+  const maxSpecial = 0.6 + special * BASE_INCREASE_STEP
+  return {
+    hp: calcStatGrowth(maxHp, tier, maxLevel),
+    power: calcStatGrowth(maxPower, tier, maxLevel),
+    defense: calcStatGrowth(maxDef, tier, maxLevel),
+    speed: calcStatGrowth(maxSpeed, tier, maxLevel),
+    special: calcStatGrowth(maxSpecial, tier, maxLevel),
+  }
+}
+
 const calcStatGrowth = (maxStat, tier, maxLevel = 50) => {
-  const tierScaler = tiersScale[tier]
+  // const tierScaler = tiersScale[tier]
   const iterations = BASE_ITERATIONS + maxLevel
-  const baseGrowthPerLevel = +(maxStat / tierScaler / iterations).toFixed(3)
+  const baseGrowthPerLevel = +(maxStat / iterations).toFixed(3)
   return baseGrowthPerLevel
 }
-calcStatGrowth(200, 2)
+// calcStatGrowth(200, 2)
 
 const fairiesList = [
   {
     name: 'yethog',
     tier: 0,
-    baseStatsIncrease: {
-      hp: calcStatGrowth(200, 0),
-      power: calcStatGrowth(0.25, 0),
-      defense: calcStatGrowth(8, 0),
-      speed: calcStatGrowth(7, 0),
-      special: calcStatGrowth(0.85, 0),
-    },
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 2,
+        power: -1,
+        defense: 1,
+        speed: -1,
+        special: 0,
+      },
+      0
+    ),
   },
   {
     name: 'yetopa',
     tier: 1,
-    baseStatsIncrease: {
-      hp: calcStatGrowth(280, 1),
-      power: calcStatGrowth(0.5, 1),
-      defense: calcStatGrowth(20, 1),
-      speed: calcStatGrowth(0.25, 1),
-      special: calcStatGrowth(0.5, 1),
-    },
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 3,
+        power: 0,
+        defense: 3,
+        speed: -3,
+        special: -1,
+      },
+      1
+    ),
   },
   {
     name: 'Harpire',
     tier: 0,
-    baseStatsIncrease: {
-      hp: calcStatGrowth(180, 0),
-      power: calcStatGrowth(0.35, 0),
-      defense: calcStatGrowth(8, 0),
-      speed: calcStatGrowth(1, 0),
-      special: calcStatGrowth(0.75, 0),
-    },
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 1,
+        defense: -1,
+        speed: 1,
+        special: 0,
+      },
+      0
+    ),
+  },
+  {
+    name: 'Dragir',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: -1,
+        power: 2,
+        defense: 0,
+        speed: -1,
+        special: 1,
+      },
+      0
+    ),
+  },
+  {
+    name: 'Dragorin',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 2,
+        power: 2,
+        defense: 2,
+        speed: -3,
+        special: -1,
+      },
+      1
+    ),
   },
   {
     name: 'Dragoire',
     tier: 2,
-    baseStatsIncrease: {
-      hp: calcStatGrowth(340, 2),
-      power: calcStatGrowth(1, 2),
-      defense: calcStatGrowth(24, 2),
-      speed: calcStatGrowth(0.25, 2),
-      special: calcStatGrowth(0.5, 2),
-    },
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 4,
+        power: 2,
+        defense: 2,
+        speed: -3,
+        special: -2,
+      },
+      2
+    ),
   },
   {
     name: 'Nightsing',
     tier: 2,
-    baseStatsIncrease: {
-      hp: calcStatGrowth(220, 2),
-      power: calcStatGrowth(0.85, 2),
-      defense: calcStatGrowth(2, 2),
-      speed: calcStatGrowth(1, 2),
-      special: calcStatGrowth(1.25, 2),
-    },
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 2,
+        defense: -2,
+        speed: 2,
+        special: 1,
+      },
+      2
+    ),
+  },
+  {
+    name: 'Dandalina',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 0,
+        defense: -2,
+        speed: 3,
+        special: 1,
+      },
+      1
+    ),
+  },
+  {
+    name: 'Thunlady',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 1,
+        power: 2,
+        defense: -1,
+        speed: -1,
+        special: 1,
+      },
+      2
+    ),
+  },
+  {
+    name: 'Mushyu',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: -1,
+        defense: 0,
+        speed: -1,
+        special: 3,
+      },
+      0
+    ),
+  },
+  {
+    name: 'Mushiddle',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 2,
+        power: -1,
+        defense: 1,
+        speed: -1,
+        special: 1,
+      },
+      1
+    ),
+  },
+  {
+    name: 'Household',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 1,
+        power: 0,
+        defense: 0,
+        speed: 0,
+        special: 0,
+      },
+      0
+    ),
   },
   // { name: 'homemaker', tier: 0, baseStatsIncrease: { hp: 1, power: 0.01, defense: 0.1, speed: 0.01, special: 0.01 } },
   // { name: 'eclipse', tier: 2, baseStatsIncrease: { hp: 1.5, power: 0.035, defense: 0.1, speed: 0.03, special: 0.02 } },
