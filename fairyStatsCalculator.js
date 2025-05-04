@@ -225,6 +225,20 @@ const fairiesList = [
     ),
   },
   {
+    name: 'Wildfire',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: -2,
+        power: 0,
+        defense: -3,
+        speed: 4,
+        special: 3,
+      },
+      1
+    ),
+  },
+  {
     name: 'Household',
     tier: 0,
     baseStatsIncrease: getStatGrowth(

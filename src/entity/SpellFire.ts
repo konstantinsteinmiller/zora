@@ -40,10 +40,14 @@ export default () => {
       })
       if (hitTarget) {
         hitTarget.stateMachine.setState('hit')
-        const dmg = hitTarget.defense.buff.value * damage
-        hitTarget.dealDamage(hitTarget, dmg)
+        const totalDamage = hitTarget.defense.buff.value * damage
+        hitTarget.dealDamage(hitTarget, totalDamage)
         hitTarget.guild === 'guild-1' && createFairyDustObjects(rotationSpeed, hitTarget.position)
-        console.log('%c unit hit: ', 'color: red', dmg)
+
+        $.hitTarget.value = {
+          position: hitTarget.position?.clone(),
+          damage: Math.round(totalDamage),
+        }
       }
     }
   }

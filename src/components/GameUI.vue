@@ -29,10 +29,12 @@
     <GameOverScreen v-if="hasOneTeamLost || fledGame" />
   </template>
 
+  <DamageNumber />
   <LoadingScreen :level="worldId" />
 </template>
 
 <script setup lang="ts">
+import DamageNumber from '@/components/atoms/DamageNumber.vue'
 import BuffsList from '@/components/molecules/BuffsList.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import GameOverScreen from '@/components/GameOverScreen.vue'

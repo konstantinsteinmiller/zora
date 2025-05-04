@@ -28,6 +28,7 @@ const updateBuffs = () => {
     if (timeRemaining <= 0) {
       buff.endTime = 0
       buff.duration = 0
+      buff.value = 1
       return
     }
 

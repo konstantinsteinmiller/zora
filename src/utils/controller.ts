@@ -425,7 +425,7 @@ export const controllerAwarenessUtils = () => ({
     const isEntityDangerous = entity.currentSpell.charge > AGENT_SAFE_CHARGE_LEVEL
 
     if (Date.now() - lastRaycastTime < RAYCAST_FRAME_INTERVAL)
-      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
+      return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: !!entity.lastCanSeeEnemy }
 
     // Set start position at entity's height
     const entityPosition = entity.mesh.position.clone()
@@ -444,12 +444,28 @@ export const controllerAwarenessUtils = () => ({
     const intersects = threatRaycaster.intersectObjects(objectsToIntersect, true)
 
     if (intersects.length > 0) {
-      // intersects[0].object.name === 'ThunderFairyMesh' && console.log('Enemy sees me' /*, intersects[0].object*/)
-      const hasLineOfSight = intersects[0].object === enemy.mesh
+      const filteredMeshesList = intersects.filter((intersect: any) => {
+        return (
+          (intersect.object.type === 'SkinnedMesh' && intersect.object.entityId === enemy.mesh.entityId) ||
+          intersect.object.name === 'cover' ||
+          intersect.object.type === 'Mesh' ||
+          intersect.object.entityType === 'level'
+        )
+      })
+
+      let hasEncounteredLevel = false
+      const hasLineOfSight = filteredMeshesList.some(({ object }) => {
+        const isEnemyMesh = object?.entityId === enemy.mesh.entityId
+        // if (isEnemyMesh && !hasEncounteredLevel) return true
+        hasEncounteredLevel = hasEncounteredLevel || object.entityType === 'level'
+        return isEnemyMesh && !hasEncounteredLevel
+      })
+      entity.lastCanSeeEnemy = hasLineOfSight
       return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: hasLineOfSight }
     }
+    entity.lastCanSeeEnemy = false
 
-    return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: false }
+    return { isEnemyAThreat: isEnemyDangerous && !isEntityDangerous, canSeeEnemy: entity.lastCanSeeEnemy }
   },
   findCoverPosition: (entity: any, enemy: any): Promise<Vector3> => {
     return new Promise((resolve, reject) => {
