@@ -38,6 +38,10 @@ const NPCController = (config: NPCControllerProps) => {
   entity.targetPosition = new Vector3(0, 0, 0)
 
   entity.routines = {}
+  if (!config?.fairiesList.length) {
+    console.warn(`NPC ${entity.id} has no fairiesList defined`)
+  }
+  entity.fairiesList = config.fairiesList || []
   const movementStrategy = createEnemyMovementStrategy()
 
   let updateCallback: (entity: any) => void = () => {}
@@ -96,13 +100,14 @@ const NPCController = (config: NPCControllerProps) => {
     entity.currentVelocity = movementStrategy.calculateVelocity(entity.currentVelocity, deltaS)
   }
 
+  const companionFairy = entity.fairiesList?.[0]
   entity.companion = FairyController({
-    modelPath: '/models/yeti-young/yeti-young.fbx',
-    stats: { name: `yeti young ${entity.name}` },
+    modelPath: companionFairy.modelPath,
+    stats: { name: companionFairy.name },
     startPosition: new Vector3(0, 0, 0),
     parent: entity,
     guild: 'guild-companion-fairy' as Guild,
-    id: `yeti_young_${entity.uuid}`,
+    id: companionFairy.id,
   })
 
   const loadedUuid = $.addEvent(`${entity.id}-loaded`, () => {

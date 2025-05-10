@@ -2,7 +2,12 @@ import AIController from '@/entity/AIController.ts'
 import ArenaPlayerController from '@/entity/ArenaPlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
+import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
+import { ICE_SNOWMAN_MIDDLE, ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
+import { METAL_SCORPION_MIDDLE, METAL_SCORPION_OLD, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
+import { WATER_MERMAID_MIDDLE, WATER_MERMAID_OLD, WATER_MERMAID_YOUNG } from '@/Story/Fairies/water-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
+import stats from '@/utils/stats.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
@@ -13,9 +18,9 @@ const Arena = async level => {
     const startPos2 = $.level.pathfinder.startPositions[1]
 
     ArenaPlayerController({
-      modelPath: '/models/energy-female-old/energy-female-old.fbx',
+      ...WATER_MERMAID_OLD,
       stats: {
-        name: 'player',
+        name: WATER_MERMAID_OLD.name,
         hp: 100,
         previousHp: 100,
         mp: 50,

@@ -1,5 +1,11 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
+import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
+import { FIRE_DRAGON_OLD, FIRE_HARPY } from '@/Story/Fairies/fire-fairies.ts'
+import { ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE, ICE_YETI_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
+import { NATURE_BUTTERFLY_MIDDLE, NATURE_MOSS } from '@/Story/Fairies/nature-fairies.ts'
+import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import {
+  arenaCharacterAnimationNamesList,
   characterAnimationNamesList,
   worldCharacterAnimationNamesList,
   worldNPCAnimationNamesList,
@@ -32,13 +38,16 @@ export default () => {
     '/worlds/city-1/city-1-houses.comp.glb',
     '/worlds/city-1/city-1-navmesh.fbx',
   ]
-  const characterAnimsList = [
-    '/models/nature-butterfly-middle/nature-butterfly-middle.fbx',
-    '/models/energy-female-old/energy-female-old.fbx',
-    '/models/yeti-young/yeti-young.fbx',
-    '/models/fire-harpy/fire-harpy.fbx',
-    // '/models/dragon-old/dragon-old.fbx',
-    // '/models/psi-nightmare/psi-nightmare.fbx',
+  const arenaCharacterAnimsList = [
+    NATURE_BUTTERFLY_MIDDLE.modelPath,
+    ENERGY_FEMALE_OLD.modelPath,
+    ICE_SNOWMAN_YOUNG.modelPath,
+    ICE_YETI_YOUNG.modelPath,
+    ICE_YETI_MIDDLE.modelPath,
+    FIRE_HARPY.modelPath,
+    FIRE_DRAGON_OLD.modelPath,
+    PSI_NIGHTMARE.modelPath,
+    NATURE_MOSS.modelPath,
   ]
   const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
   const worldNPCAnimsList = [
@@ -79,9 +88,9 @@ export default () => {
           // .then(updateProgress),
         ])
         .concat(
-          characterAnimsList.reduce((acc, src) => {
+          arenaCharacterAnimsList.reduce((acc, src) => {
             if (src.endsWith('.fbx') || src.endsWith('.glb') || src.endsWith('.gltf')) {
-              acc.concat(assetManager.loadCharacterAnims({ src, animsList: characterAnimationNamesList }))
+              acc.concat(assetManager.loadCharacterAnims({ src, animsList: arenaCharacterAnimationNamesList }))
             }
             return acc
           }, [])

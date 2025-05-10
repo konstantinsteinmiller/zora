@@ -252,6 +252,119 @@ const fairiesList = [
       0
     ),
   },
+  {
+    name: 'Metlor',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 1,
+        defense: 2,
+        speed: 1,
+        special: -3,
+      },
+      0
+    ),
+  },
+  {
+    name: 'Metalord',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 3,
+        defense: 2,
+        speed: 0,
+        special: -3,
+      },
+      1
+    ),
+  },
+  {
+    name: 'Scorgon',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 2,
+        power: 1,
+        defense: 4,
+        speed: -2,
+        special: -2,
+      },
+      2
+    ),
+  },
+  {
+    name: 'Snowy',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 2,
+        defense: -1,
+        speed: 1,
+        special: -1,
+      },
+      0
+    ),
+  },
+  {
+    name: 'Snogrin',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 2,
+        defense: 0,
+        speed: -1,
+        special: 1,
+      },
+      1
+    ),
+  },
+  {
+    name: 'Snokong',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 1,
+        power: 2,
+        defense: 1,
+        speed: -2,
+        special: 1,
+      },
+      2
+    ),
+  },
+  {
+    name: 'Merry',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth({ hp: -2, power: -1, defense: -1, speed: 3, special: 2 }, 0),
+  },
+  {
+    name: 'Meriddle',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth({ hp: -1, power: 0, defense: -1, speed: 2, special: 2 }, 1),
+  },
+  {
+    name: 'Merquen',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth({ hp: 0, power: 1, defense: 0, speed: 1, special: 1 }, 2),
+  },
+  {
+    name: 'Bogy',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: -1,
+        power: 1,
+        defense: 0,
+        speed: 2,
+        special: 0,
+      },
+      1
+    ),
+  },
   // { name: 'homemaker', tier: 0, baseStatsIncrease: { hp: 1, power: 0.01, defense: 0.1, speed: 0.01, special: 0.01 } },
   // { name: 'eclipse', tier: 2, baseStatsIncrease: { hp: 1.5, power: 0.035, defense: 0.1, speed: 0.03, special: 0.02 } },
   // {

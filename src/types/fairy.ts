@@ -5,10 +5,9 @@ export interface Fairy {
   description: string
   element: string
   tier: number
-  level: number
-  xp: number
-  nextLevelXp: number
-  statGrowthPerLevel: object
+  level?: number
+  xp?: number
+  nextLevelXp?: number
   evolutionsList: any[]
   statsGrowthSteps: {
     hp: number
@@ -17,12 +16,12 @@ export interface Fairy {
     speed: number
     special: number
   }
-  stats: {
+  stats?: {
     name: string
     hp: number
     previousHp: number
     maxHp: number
-    damage: number
+    power: number
     defense: number
     speed: number
     special: number

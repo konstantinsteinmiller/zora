@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
-import type { Fairy } from '@/types/fairy.ts'
+import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
+import { FIRE_DRAGON_OLD } from '@/Story/Fairies/fire-fairies.ts'
+import { ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE } from '@/Story/Fairies/ice-fairies.ts'
+import { METAL_SCORPION_OLD } from '@/Story/Fairies/metal-fairies.ts'
+import { NATURE_BUTTERFLY_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
+import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import { levelUpFairy } from '@/utils/fairy.ts'
 import { createFairy } from '@/utils/world.ts'
-import { computed, type Ref, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
 import { useI18n } from 'vue-i18n'
@@ -16,30 +21,36 @@ const showFairyList = computed(() => {
   return fairyViewList.includes($?.menuItem?.value)
 })
 
-$.player = {
-  fairies: {
-    fairiesList: ref([
-      createFairy('energy_female_old', 8),
-      // createFairy('ice_yeti_young', 18),
-      createFairy('fire_dragon_old', 11),
-      createFairy('ice_yeti_middle', 15),
-      createFairy('nature_butterfly_middle', 32),
-      createFairy('fire_harpy', 49),
-      createFairy('psi_nightmare', 22),
-    ]),
-  },
+const fairies = [
+  createFairy(ENERGY_FEMALE_OLD.id, 8),
+  // createFairy('ice_yeti_young', 18),
+  createFairy(FIRE_DRAGON_OLD.id, 11),
+  createFairy(ICE_SNOWMAN_YOUNG.id, 11),
+  createFairy(ICE_YETI_MIDDLE.id, 15),
+  createFairy(NATURE_BUTTERFLY_MIDDLE.id, 32),
+  // createFairy(FIRE_HARPY.id, 49),
+  createFairy(METAL_SCORPION_OLD.id, 49),
+  createFairy(PSI_NIGHTMARE.id, 22),
+]
+if (!$.player) {
+  $.player = {
+    fairiesList: ref(fairies),
+  }
+} else {
+  $.player.fairiesList.value = fairies
 }
 
-const thunlady = $.player.fairies.fairiesList.value[0]
+const thunlady = $.player.fairiesList.value[0]
 levelUpFairy(thunlady, 33)
-$.player.fairies.fairiesList.value[0] = thunlady
+$.player.fairiesList.value[0] = thunlady
 
-$.player.fairies.fairiesList.value = $.player?.fairies?.fairiesList.value.map(fairy => {
+$.player.fairiesList.value = $.player?.fairiesList.value.map(fairy => {
   const hp = Math.ceil(Math.random() * 100)
   const xp = Math.ceil(Math.random() * 1000)
   const nextLevelXp = xp + Math.ceil(Math.random() * 200)
   return {
     ...fairy,
+    // level: 10,
     // xp: xp,
     // nextLevelXp: nextLevelXp,
     stats: {
@@ -52,13 +63,13 @@ $.player.fairies.fairiesList.value = $.player?.fairies?.fairiesList.value.map(fa
     },
   }
 })
-// console.log('$.player.fairies.fairiesList.value: ', $.player.fairies.fairiesList.value)
+// console.log('$.player.fairiesList.value: ', $.player.fairiesList.value)
 </script>
 
 <template lang="pug">
   div.h-full.relative(v-if="showFairyList" class="w-full h-full")
     div.w-full.flex.flex-col.gap-8(class="w-[270px]")
-      div.flex.flex-col.relative(v-for="(fairy, index) in $.player?.fairies?.fairiesList.value" :key="`fairy-${index}`"
+      div.flex.flex-col.relative(v-for="(fairy, index) in $.player?.fairiesList.value" :key="`fairy-${index}`"
         class="w-full h-full flex items-center justify-center"
       )
         img.fancy-frame.absolute.top-0.left-0(

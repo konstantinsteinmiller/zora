@@ -74,9 +74,8 @@ export const getBaseStats: any = () => ({
       psi: 0,
     },
   },
-  fairies: {
-    fairiesList: ref<Fairy[]>([]),
-  },
+  fairiesList: ref<Fairy[]>([]),
+
   spells: {
     spellsList: ref<Spell[]>([]),
   },
@@ -149,7 +148,7 @@ export const statsUtils = () => {
     },
     regenMana(target: any, deltaS: number) {
       if (
-        target.stateMachine.currentState.name !== 'fly' &&
+        // target.stateMachine.currentState.name !== 'fly' &&
         target.utils.groundedTime.value > 0.5 &&
         $.player.currentSpell.charge === 0
       ) {
@@ -157,7 +156,7 @@ export const statsUtils = () => {
       }
     },
     regenEndurance(target: any, deltaS: number) {
-      if (target.stateMachine.currentState.name !== 'fly' && target.utils.groundedTime.value > 0.5) {
+      if (/*target.stateMachine.currentState.name !== 'fly' && */ target.utils.groundedTime.value > 0.5) {
         this.dealEnduranceDamage(target, -ENDURANCE_REGEN_SPEED * target.enduranceRegen * deltaS)
       }
     },

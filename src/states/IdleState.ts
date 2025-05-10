@@ -1,8 +1,13 @@
 import State, { isMovingEntity, transitionTo } from '@/states/State'
+import useMatch from '@/use/useMatch.ts'
+import { LEVELS } from '@/utils/enums.ts'
+import { LoopRepeat } from 'three'
 
 export default class IdleState extends State {
+  private levelType
   constructor(parent: any) {
     super(parent)
+    this.levelType = useMatch().levelType.value
   }
 
   get name() {
@@ -18,6 +23,7 @@ export default class IdleState extends State {
       idleAction.setEffectiveTimeScale(1.0)
       idleAction.setEffectiveWeight(1.0)
       idleAction.crossFadeFrom(prevAction, 0.5, true)
+      idleAction.setLoop(LoopRepeat)
       idleAction.play()
     } else {
       idleAction.play()
@@ -25,7 +31,7 @@ export default class IdleState extends State {
   }
   exit() {}
   update(_: any, input: any) {
-    if (isMovingEntity(this.parent)) return
+    if (isMovingEntity(this.parent) || this.levelType === LEVELS.ARENA) return
 
     // if (transitionTo('cast', this.parent)) return
     if (transitionTo('jump', this.parent)) return

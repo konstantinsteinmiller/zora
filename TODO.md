@@ -97,6 +97,7 @@
 - [ ] Arena Gameplay
   - [x] Poison cloud growing towards the middle of the arena
   - [x] Power ups that increase damage and defense
+    - [x] fix power up buff
   - [x] create fairy dust item
   - [x] enemies dropping fairy dust on hit
   - [x] fairy dust blinking before disappearing
@@ -168,6 +169,7 @@
 - [x] basic three game engine 
   - [x] Physics
   - [x] Renderer
+    - [x] fix accumulated time bug that leads to freezes
   - [x] Light
   - [x] Camera
     - [x] refactor Third- and FirstPerson Camera into PersonCamera

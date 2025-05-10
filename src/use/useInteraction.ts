@@ -1,5 +1,6 @@
 import { cleanupLevel } from '@/Game.ts'
 import router from '@/router'
+import { ICE_YETI_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
 import { savePlayer } from '@/use/useWorldState.ts'
 import { animateArc } from '@/utils/animation.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
@@ -155,7 +156,7 @@ const cleanupUuid = $.addEvent('level.cleanup', () => {
 let startTime = 0
 const wildFairy: Ref<any> = ref(null)
 const showDispel = (closestFairySpawnPoint: string) => {
-  wildFairy.value = spawnWildFairy('ice_yeti_young', closestFairySpawnPoint)
+  wildFairy.value = spawnWildFairy(ICE_YETI_YOUNG.id, closestFairySpawnPoint)
   if (wildFairy.value?.position) {
     $.isBattleStarting.value = true
 

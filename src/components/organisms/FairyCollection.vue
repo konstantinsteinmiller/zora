@@ -122,21 +122,24 @@ watch(
               a.underline.text-blue-500(@click="onEvolveClick(evolves.to)") {{ evolves.to.name }}
           div(class="bg-[#acacac] mb-[2px]")
             div.grid.grid-cols-2(v-for="stat in statsVisualsList" :key="selectedFairy.id + stat.key" class="mb-[2px]")
-              div.px-2(class="bg-[#454545] py-[1px]") {{ t(stat.key) }}
+              div.px-2(class="bg-[#454545] text-[13px] py-[1px]") {{ t(stat.key) }}
               div.px-2.bg-white.flex.items-center(class="text-[#454545] py-[1px]")
                 div.rounded-full.flex.items-center(v-if="stat.key === 'type'" class="bg-[#454545] p-[2px] px-3")
                   ElementImg(:type="stat.value")
                   div.text-white.text-sm.px-1 {{ t(stat.value) }}
                 StatRating(v-else :amount="clamp(3 + Math.round(stat.value), 0, 5)")
           div.px-2.rounded-b-lg.text-sm(class="bg-[#454545] py-[3px]") {{ selectedFairy.description }}
-    div.list.card.glass.frame.gap-4.flex.items-start.justify-start.p-4.mr-4.mb-24.w-full(
-      class="flex-basis-[10%]" style="background: rgba(0, 0, 0, 0.0); backdrop-filter: blur(0px);"
+    div.list.card.glass.frame.gap-4.flex.justify-start.items-start.flex-wrap.p-4.mr-4.w-full(
+      class="" style="background: rgba(0, 0, 0, 0.0); backdrop-filter: blur(0px);"
     )
-      div.w-16.h-16.relative(v-for="fairy in fairiesList" :key="fairy.id" class="" @click="selectedFairy = fairy")
-        img.frame.absolute(v-if="selectedFairy?.id === fairy.id" src="/images/frames/frame-selected_128x128.png" :alt="`${fairy.name} frame selected`" class="h-16 scale-110")
-        img.frame.absolute(v-else src="/images/frames/frame-normal_128x128.png" :alt="`${fairy.name} frame`" class="h-16 scale-110")
-        div.flex.justify-center.items-center.h-full.w-full
-          img(:src="fairy.avatar" :alt="`${fairy.name} image`" class="h-[60px] w-[60px]")
+      div.icons.gap-3.flex.justify-start.items-start.flex-wrap.w-full(
+        class="" style="background: rgba(0, 0, 0, 0.0); backdrop-filter: blur(0px);"
+      )
+        div.w-16.max-h-16.relative(v-for="fairy in fairiesList" :key="fairy.id" class="" @click="selectedFairy = fairy")
+          img.frame.absolute(v-if="selectedFairy?.id === fairy.id" src="/images/frames/frame-selected_128x128.png" :alt="`${fairy.name} frame selected`" class="h-16 scale-110")
+          img.frame.absolute(v-else src="/images/frames/frame-normal_128x128.png" :alt="`${fairy.name} frame`" class="h-16 scale-110")
+          div.flex.justify-center.items-center.h-full.w-full
+            img(:src="fairy.avatar" :alt="`${fairy.name} image`" class="h-[60px] w-[60px]")
 </template>
 
 <style scoped lang="sass">

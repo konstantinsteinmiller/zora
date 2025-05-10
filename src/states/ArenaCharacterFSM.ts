@@ -1,4 +1,4 @@
-import { characterAnimationNamesList } from '@/utils/constants.ts'
+import { arenaCharacterAnimationNamesList, characterAnimationNamesList } from '@/utils/constants.ts'
 import FSM from '@/states/FSM.ts'
 import IdleState from '@/states/IdleState.ts'
 import WalkState from '@/states/WalkState.ts'
@@ -29,7 +29,7 @@ export default class ArenaCharacterFSM extends FSM {
     this.owner = owner
     this.animationsMap = animationsMap
 
-    const animationsList: string[] = characterAnimationNamesList
+    const animationsList: string[] = arenaCharacterAnimationNamesList
     animationsList.forEach((name: string) => {
       let stateClass
       if (name.includes('-')) {

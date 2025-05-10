@@ -22,10 +22,9 @@ export const savePlayer = () => {
     JSON.stringify({
       currency: $.player.currency,
       inventory: $.player.inventory,
-      fairies: {
-        fairiesList: $.player.fairies.fairiesList.value,
-        // selectedFairy: $.player.fairies.selectedFairy,
-      },
+      fairiesList: $.player.fairiesList.value,
+      // selectedFairy: $.player.selectedFairy,
+
       spells: {
         spellsList: $.player.spells.spellsList.value,
       },

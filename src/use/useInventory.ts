@@ -56,17 +56,17 @@ const useInventory = () => {
   }
 
   const isPrimaryFairy = (name: number, entity: any = $.player) => {
-    return entity.fairies?.fairiesList?.value?.[0]?.name === name
+    return entity?.fairiesList?.value?.[0]?.name === name
   }
 
   const tradeFairy = (giveAwayName: number, receiveFairy: number, entity: any = $.player) => {
-    // const giveAwayFairy = entity.fairies?.getFairy?.(giveAwayName)
+    // const giveAwayFairy = getFairy?.(entity, giveAwayName)
     // if (giveAwayFairy) {
-    entity.fairies.fairiesList.value[0] = receiveFairy
+    entity.fairiesList.value[0] = receiveFairy
     // }
     /* remove flying fairy mesh and replace with new fairy for more sophisticated demonstration */
     addMessage(`traded ${giveAwayName}, received ${receiveFairy.name}`, 5000)
-    // console.log('entity.fairies.fairiesList.value[0]: ', entity.fairies.fairiesList.value[0])
+    // console.log('entity.fairiesList.value[0]: ', entity.fairiesList.value[0])
     return
   }
 

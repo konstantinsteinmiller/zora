@@ -148,6 +148,7 @@ const AssetManager = () => {
   }
   function loadCharacterAnims({ src, animsList }: CharacterAnimsProps): Promise<any>[] {
     const pathPartsList = src.split('/')
+    // console.log('src: ', src)
     pathPartsList.pop()
     const animationsPath = prependBaseUrl(`${pathPartsList.join('/')}/`)
 
@@ -342,7 +343,7 @@ export default () => {
               resolve(null)
             },
             (fileProgressEvent: any) => $.fileLoader.onFileProgress(name, fileProgressEvent),
-            () => ($.loadingManager.itemError(name), reject())
+            () => ($.loadingManager.itemError(name), reject({ message: `Failed to load animation ${name}` }))
           )
         })
       })

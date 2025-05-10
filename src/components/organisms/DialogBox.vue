@@ -117,7 +117,7 @@ const { userMusicVolume } = useUser()
 const onOpenDialog = () => {
   originalVolume = userMusicVolume.value * 0.25
   let reducedDialogVolume = originalVolume * 0.05
-  reducedDialogVolume = originalVolume > 0.08 ? reducedDialogVolume : 0.01
+  reducedDialogVolume = originalVolume > 0.08 ? reducedDialogVolume : originalVolume === 0 ? 0 : 0.01
   $.sounds.bgMusic.value.setVolume(reducedDialogVolume)
 
   // console.log('Dialog opened')

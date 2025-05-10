@@ -246,13 +246,11 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
           // console.log('heightDiff: ', heightDiff, entity.appliedFlyImpulse, entity.utils.takeOffFrames)
           entity.appliedFlyImpulse = MAX_FLY_IMPULSE
           entity.utils.takeOffFrames = 5
-          entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
         /* glide down */
         const prevHeightDiff = previousPosition ? targetPosition.y - previousPosition.y : 10000
         if (prevHeightDiff < 1) {
           entity.appliedFlyImpulse = MAX_FLY_IMPULSE * 0.1
-          entity.stateMachine.currentState.name !== 'fly' && entity.stateMachine.setState('fly')
         }
       }
 
@@ -262,21 +260,11 @@ const moveAgentAlongPath = (path: any[], entity: any, targetToFace: any) => {
 
         /* set animation based on if agent is looking in the running direction or not */
         if (!isPortal) {
-          const entityForwardN = new Vector3(0, 0, 1).applyQuaternion(entity.mesh.quaternion).normalize()
-          const directionN: Vector3 = targetPosition?.clone().sub(agentPos).normalize()
-          const facingFactor = entityForwardN.dot(directionN)
-
           entity.utils.takeOffFrames = 0
-          if (facingFactor < 0 && entity.stateMachine.currentState.name !== 'run-back') {
-            !entity.isAnimState('run-back') && entity.stateMachine.setState('run-back')
-          } else if (facingFactor >= 0 && entity.stateMachine.currentState.name !== 'run') {
-            !entity.isAnimState('run') && entity.stateMachine.setState('run')
-          }
         }
       } else {
         // look at next waypoint
         entity.mesh.lookAt(targetPosition.x, entity.mesh.position.y, targetPosition.z)
-        !entity.isAnimState('walk') && entity.stateMachine.setState('walk')
       }
 
       const nextPhysicsPos = new Rapier.Vector3(movementVector.x, movementVector.y, movementVector.z)

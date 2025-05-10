@@ -61,7 +61,8 @@ export const levelUpFairy = (fairy: Fairy, targetLevel: number) => {
   }
 
   for (const key in clone.stats) {
-    clone.stats[key] = (fairy?.statGrowthPerLevel?.[key] || 0) * targetLevel * tierScaler
+    const statGrowthPerLevel: any = getStatGrowth(fairy?.statsGrowthSteps?.[key], fairy.tier) || 0
+    clone.stats[key] = (statGrowthPerLevel?.[key] || 0) * targetLevel * tierScaler
     clone.stats[key] = +clone.stats[key]?.toFixed(3)
   }
   clone.stats['hp'] = Math.round(clone.stats['hp'])

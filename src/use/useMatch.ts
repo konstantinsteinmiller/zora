@@ -27,7 +27,7 @@ const useMatch = () => {
   const routes = ['/world', '/battle']
   if (!isStartingGame.value && routes.some(route => window.location.hash.includes(route))) {
     let themeQuery = ''
-    console.log('window.location.hash: ', window.location.hash)
+    // console.log('window.location.hash: ', window.location.hash)
     if (window.location.hash.includes('debug=')) {
       const queries = window.location.hash.split('?')[1]?.split('&')
       themeQuery = `?${queries.find(query => query.includes('debug'))}`

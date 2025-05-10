@@ -4,6 +4,7 @@ import type { Guild } from '@/types/entity.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { levelUpFairy } from '@/utils/fairy.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
+import stats from '@/utils/stats.ts'
 
 export async function importNPCs(): Promise<Map<string, any>> {
   const npcMap = new Map<string, any>()
@@ -26,7 +27,12 @@ export const loadNPCs = async () => {
 }
 loadNPCs()
 
-export const spawnNpc = (id: string, wp: string) => {
+interface NpcProps {
+  id: string
+  wp: string
+  fairiesList: Fairy[]
+}
+export const spawnNpc = ({ id, wp, fairiesList }: NpcProps) => {
   const WP = $.level?.WPsMap?.get(wp)
   if (!WP) {
     console.error(`Waypoint ${wp} not found`)
@@ -41,6 +47,7 @@ export const spawnNpc = (id: string, wp: string) => {
 
   npc({
     id,
+    fairiesList,
     startPosition: WP.position.clone(),
     startRotation: WP.quaternion.clone(),
   })
@@ -63,12 +70,9 @@ export const loadFairies = async () => {
 }
 loadFairies()
 
-export const createFairy = (
-  id: string = 'ice_yeti_young',
-  level: number = 10,
-  guild: Guild = 'guild-companion-fairy' as Guild
-): Fairy => {
+export const createFairy = (id: string, level: number, guild: Guild = 'guild-companion-fairy' as Guild): Fairy => {
   const templateFairy = fairiesMap.get(id)
+  // console.log('templateFairy: ', templateFairy)
 
   const modelPath = templateFairy.modelPath.split('/')
   modelPath.pop()
@@ -77,16 +81,25 @@ export const createFairy = (
   const fairyInstance = {
     ...templateFairy,
     guild,
-    level,
     stats: {
       ...templateFairy.stats,
+      /* Todo calc stats based on level */
       mp: 100,
+      previousMp: 100,
       maxMp: 100,
+      hp: 100,
+      previousHp: 100,
+      maxHp: 100,
+      power: 10,
+      defense: 0,
+      speed: 0,
+      special: 0,
     },
     avatar: prependBaseUrl(`${imagePath}/avatar_128x128.jpg`),
     preview: prependBaseUrl(`${imagePath}/preview_400x463.jpg`),
   }
   levelUpFairy(fairyInstance, level)
+  // console.log('leveled fairyInstance: ', fairyInstance)
   return fairyInstance
 }
 
@@ -104,8 +117,14 @@ export const spawnWildFairy = (id: string, wp: string) => {
     return
   }
 
+  // const leveledFairy = levelFairy(fairy, 20)
   return FairyController({
     ...fairy,
+    // level: 10,
+    // xp: 0,
+    // nextLevelXp: 10,
+    // getLeveledStats
+    stats: { name: fairy.name },
     guild: 'guild-wild-fairy' as Guild,
     startPosition: WP.position.clone(),
   })

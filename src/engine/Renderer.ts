@@ -43,8 +43,8 @@ export default () => {
 
     while (accumulatedTime >= FIXED_TIME_STEP) {
       /* safeguard from freezing screen on missed animation frames */
-      if (accumulatedTime > FIXED_TIME_STEP * 2) {
-        accumulatedTime = FIXED_TIME_STEP
+      if (accumulatedTime > FIXED_TIME_STEP * 5) {
+        accumulatedTime = FIXED_TIME_STEP * 2
       }
 
       $.oneTimeEventsList.forEach(({ eventName, callback, cleanup }: any) => {

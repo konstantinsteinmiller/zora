@@ -82,7 +82,7 @@ const FairyController = ({
         mesh.entityId = `${entity.uuid}`
         entity.mesh = mesh
 
-        entity.stateMachine.setState('fly')
+        entity.stateMachine.setState('idle')
 
         $.triggerEvent('model.loaded', entity)
       },

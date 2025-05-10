@@ -26,11 +26,14 @@ export const characterAnimationNamesList: ANIM[] = [
   'hit' /*
    */,
 ]
+export const arenaCharacterAnimationNamesList: ANIM[] = ['idle', 'hit'] /*characterAnimationNamesList.filter(
+  (anim: string) => !['cast', 'run-back', 'run', 'walk-back', 'walk', 'jump'].includes(anim)
+)*/
 export const worldCharacterAnimationNamesList: ANIM[] = characterAnimationNamesList.filter(
   (anim: string) => !['fly', 'cast'].includes(anim)
 )
 export const worldNPCAnimationNamesList: ANIM[] = ['idle', 'walk', 'run']
-export const fairyAnimsList: ANIM[] = ['idle', 'fly']
+export const fairyAnimsList: ANIM[] = ['idle']
 
 /* spell charge constants */
 export const INITIAL_ROTATION_SPEED = Math.PI * 0.05 // 1 full rotation per 10 sec

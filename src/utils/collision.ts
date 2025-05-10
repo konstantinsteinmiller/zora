@@ -1,9 +1,13 @@
 import $ from '@/global'
+import useMatch from '@/use/useMatch.ts'
+import { LEVELS } from '@/utils/enums.ts'
 import Rapier, { Capsule, QueryFilterFlags } from '@dimforge/rapier3d-compat'
 import { ArrowHelper, Vector3 } from 'three'
 
 const calcUpVector = (entity: any, deltaS: number) => {
-  const isFlying = entity.stateMachine.currentState.name === 'fly'
+  const isFlying =
+    entity.stateMachine.currentState.name === 'fly' ||
+    (useMatch().levelType.value === LEVELS.ARENA && entity.stateMachine.currentState.name === 'idle')
   let flyImpulse = entity.appliedFlyImpulse
 
   if (!isFlying || flyImpulse <= 0) {

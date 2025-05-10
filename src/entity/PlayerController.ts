@@ -1,5 +1,6 @@
 import FairyController from '@/entity/FairyController.ts'
 import WorldController from '@/entity/WorldController.ts'
+import { METAL_SCORPION_OLD } from '@/Story/Fairies/metal-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
 import useDialog from '@/use/useDialog.ts'
 import useInteraction from '@/use/useInteraction.ts'
@@ -30,9 +31,7 @@ const PlayerController = (config: PlayerControllerProps) => {
       ? {
           currency: $.world.playerRef.value.currency,
           inventory: $.world.playerRef.value.inventory,
-          fairies: {
-            fairiesList: ref($.world.playerRef.value.fairies.fairiesList),
-          },
+          fairiesList: ref($.world.playerRef.value.fairiesList),
           spells: { spellsList: ref($.world.playerRef.value.spells.spellsList) },
         }
       : {}),
@@ -132,13 +131,11 @@ const PlayerController = (config: PlayerControllerProps) => {
   updateEventUuid = $.addEvent('renderer.update', update)
 
   entity.companion = FairyController({
-    modelPath: '/models/fire-harpy/fire-harpy.fbx',
-    // stats: { name: 'nature fairy' },
-    stats: { name: 'Harpire' },
+    modelPath: METAL_SCORPION_OLD.modelPath,
+    stats: { name: METAL_SCORPION_OLD.name },
     parent: entity,
     startPosition: new Vector3(0, 0, 0),
     guild: 'guild-companion-fairy' as Guild,
-    // id: 'nature_fairy',
     id: 'fire_harpy',
   })
 
