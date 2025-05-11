@@ -65,8 +65,11 @@ onMounted(async () => {
   const updateUuid = $.addEvent('renderer.update', () => {
     if ($?.isBattleOver) {
       isBattleOver.value = true
+      if (!$.enemy || !$.player) {
+        hasOneTeamLost.value = true
+      }
       ;[$.player, $.enemy].some(team => {
-        if (team.isDead(team)) {
+        if (team?.isDead(team)) {
           hasOneTeamLost.value = true
           return true
         }

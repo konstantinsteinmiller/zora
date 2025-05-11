@@ -24,9 +24,9 @@ const showFairyList = computed(() => {
 const fairies = [
   createFairy(ENERGY_FEMALE_OLD.id, 8),
   // createFairy('ice_yeti_young', 18),
-  createFairy(FIRE_DRAGON_OLD.id, 11),
+  // createFairy(FIRE_DRAGON_OLD.id, 11),
   createFairy(ICE_SNOWMAN_YOUNG.id, 11),
-  createFairy(ICE_YETI_MIDDLE.id, 15),
+  // createFairy(ICE_YETI_MIDDLE.id, 15),
   createFairy(NATURE_BUTTERFLY_MIDDLE.id, 32),
   // createFairy(FIRE_HARPY.id, 49),
   createFairy(METAL_SCORPION_OLD.id, 49),
@@ -37,7 +37,7 @@ if (!$.player) {
     fairiesList: ref(fairies),
   }
 } else {
-  $.player.fairiesList.value = fairies
+  $.player.fairiesList = ref(fairies)
 }
 
 const thunlady = $.player.fairiesList.value[0]
@@ -68,7 +68,7 @@ $.player.fairiesList.value = $.player?.fairiesList.value.map(fairy => {
 
 <template lang="pug">
   div.h-full.relative(v-if="showFairyList" class="w-full h-full")
-    div.w-full.flex.flex-col.gap-8(class="w-[270px]")
+    div.flex.flex-col.gap-6(class="w-[270px]")
       div.flex.flex-col.relative(v-for="(fairy, index) in $.player?.fairiesList.value" :key="`fairy-${index}`"
         class="w-full h-full flex items-center justify-center"
       )

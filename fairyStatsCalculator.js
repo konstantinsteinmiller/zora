@@ -239,18 +239,9 @@ const fairiesList = [
     ),
   },
   {
-    name: 'Household',
-    tier: 0,
-    baseStatsIncrease: getStatGrowth(
-      {
-        hp: 1,
-        power: 0,
-        defense: 0,
-        speed: 0,
-        special: 0,
-      },
-      0
-    ),
+    name: 'Housyu',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth({ hp: -1, power: 0, defense: -1, speed: 4, special: 0 }, 1),
   },
   {
     name: 'Metlor',
@@ -364,6 +355,26 @@ const fairiesList = [
       },
       1
     ),
+  },
+  {
+    name: 'Vera',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth({ hp: -1, power: 3, defense: 0, speed: 2, special: -3 }, 0),
+  },
+  {
+    name: 'Verona',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth({ hp: 0, power: 3, defense: 1, speed: 1, special: -3 }, 2),
+  },
+  {
+    name: 'Starlight',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth({ hp: 0, power: 2, defense: -1, speed: 1, special: 2 }, 2),
+  },
+  {
+    name: 'Piradon',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth({ hp: 1, power: 3, defense: -1, speed: 1, special: -1 }, 2),
   },
   // { name: 'homemaker', tier: 0, baseStatsIncrease: { hp: 1, power: 0.01, defense: 0.1, speed: 0.01, special: 0.01 } },
   // { name: 'eclipse', tier: 2, baseStatsIncrease: { hp: 1.5, power: 0.035, defense: 0.1, speed: 0.03, special: 0.02 } },

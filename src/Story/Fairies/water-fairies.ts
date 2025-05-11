@@ -46,4 +46,18 @@ export const WATER_MERMAID_OLD: Fairy = {
 }
 Merquen.value = WATER_MERMAID_OLD
 
-export default [WATER_MERMAID_YOUNG, WATER_MERMAID_MIDDLE, WATER_MERMAID_OLD]
+export const WATER_PIRANHA_OLD: Fairy = {
+  name: 'Piradon',
+  id: 'water_piranha_old',
+  modelPath: '/models/piranha-old/piranha-old.fbx',
+  description:
+    "A dreadful water fairy. this fairy is a natural killer. It's hard to find this dangerous amphibious creature.",
+  element: ELEMENTS.WATER,
+  tier: 2,
+  evolutionsList: [null, null],
+  statsGrowthSteps: { hp: 1, power: 3, defense: -1, speed: 1, special: -1 },
+  spells: [],
+  passiveSpells: [],
+}
+
+export default [WATER_MERMAID_YOUNG, WATER_MERMAID_MIDDLE, WATER_MERMAID_OLD, WATER_PIRANHA_OLD]

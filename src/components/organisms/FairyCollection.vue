@@ -98,7 +98,7 @@ watch(
           img.frame.absolute.bottom-0.left-0.overflow-visible(src="/images/frames/hr.png" :alt="`horizontal-line`"
             class="!scale-[98%] h-[9px] -mb-[8px] z-20"
           )
-        div.preview-img.relative(class="z-10")
+        div.preview-img.relative(class="z-10 min-h-[290px]")
           img.fancy-frame.absolute.top-0.left-0(
             src="/images/frames/fancy-frame_512x512.png" :alt="`frame`"
             class="scale-[110%] h-[326px] -mt-[35px]"

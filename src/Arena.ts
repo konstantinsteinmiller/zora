@@ -2,12 +2,10 @@ import AIController from '@/entity/AIController.ts'
 import ArenaPlayerController from '@/entity/ArenaPlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
-import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
-import { ICE_SNOWMAN_MIDDLE, ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
-import { METAL_SCORPION_MIDDLE, METAL_SCORPION_OLD, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
-import { WATER_MERMAID_MIDDLE, WATER_MERMAID_OLD, WATER_MERMAID_YOUNG } from '@/Story/Fairies/water-fairies.ts'
+import { LIGHT_STARLIGHT } from '@/Story/Fairies/light-fairies.ts'
+import { METAL_SCORPION_MIDDLE, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
+import { NATURE_BUTTERFLY_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
-import stats from '@/utils/stats.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
@@ -18,9 +16,9 @@ const Arena = async level => {
     const startPos2 = $.level.pathfinder.startPositions[1]
 
     ArenaPlayerController({
-      ...WATER_MERMAID_OLD,
+      ...LIGHT_STARLIGHT,
       stats: {
-        name: WATER_MERMAID_OLD.name,
+        name: LIGHT_STARLIGHT.name,
         hp: 100,
         previousHp: 100,
         mp: 50,
@@ -33,8 +31,8 @@ const Arena = async level => {
     })
 
     AIController({
-      modelPath: '/models/nature-butterfly-middle/nature-butterfly-middle.fbx',
-      stats: { name: 'enemy' },
+      ...NATURE_BUTTERFLY_MIDDLE,
+      stats: { name: NATURE_BUTTERFLY_MIDDLE.name },
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
       modelHeight: 1.8,

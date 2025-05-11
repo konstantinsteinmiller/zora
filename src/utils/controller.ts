@@ -75,6 +75,7 @@ export const getBaseStats: any = () => ({
     },
   },
   fairiesList: ref<Fairy[]>([]),
+  allFairiesList: ref<Fairy[]>([]),
 
   spells: {
     spellsList: ref<Spell[]>([]),

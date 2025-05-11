@@ -1,12 +1,10 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
 import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
-import { FIRE_DRAGON_OLD, FIRE_HARPY } from '@/Story/Fairies/fire-fairies.ts'
-import { ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE, ICE_YETI_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
-import { NATURE_BUTTERFLY_MIDDLE, NATURE_MOSS } from '@/Story/Fairies/nature-fairies.ts'
-import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
+import { ICE_SNOWMAN_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
+import { METAL_SCORPION_MIDDLE } from '@/Story/Fairies/metal-fairies.ts'
+import { NATURE_BUTTERFLY_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
 import {
   arenaCharacterAnimationNamesList,
-  characterAnimationNamesList,
   worldCharacterAnimationNamesList,
   worldNPCAnimationNamesList,
 } from '@/utils/constants.ts'
@@ -42,12 +40,13 @@ export default () => {
     NATURE_BUTTERFLY_MIDDLE.modelPath,
     ENERGY_FEMALE_OLD.modelPath,
     ICE_SNOWMAN_YOUNG.modelPath,
-    ICE_YETI_YOUNG.modelPath,
-    ICE_YETI_MIDDLE.modelPath,
-    FIRE_HARPY.modelPath,
-    FIRE_DRAGON_OLD.modelPath,
-    PSI_NIGHTMARE.modelPath,
-    NATURE_MOSS.modelPath,
+    // ICE_YETI_YOUNG.modelPath,
+    // ICE_YETI_MIDDLE.modelPath,
+    // FIRE_HARPY.modelPath,
+    // FIRE_DRAGON_OLD.modelPath,
+    // PSI_NIGHTMARE.modelPath,
+    // NATURE_MOSS.modelPath,
+    METAL_SCORPION_MIDDLE.modelPath,
   ]
   const worldCharacterAnimsList = ['/models/fairy-trainer/fairy-trainer.fbx']
   const worldNPCAnimsList = [

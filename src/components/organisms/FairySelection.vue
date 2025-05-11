@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
+import AllFairies from '@/components/organisms/AllFairies.vue'
 import FairiesList from '@/components/organisms/FairiesList.vue'
 import { computed, type ComputedRef, type Ref, ref, onMounted, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
@@ -24,8 +25,9 @@ const { t } = useI18n()
     v-if="$?.menuItem.value === MENU.FAIRY"
     class="w-full h-full"
   )
-    div.glass.card.frame.w-full.p-4.px-6(class="min-w-[298px]")
+    div.glass.card.frame.w-full.p-4.px-5.gap-5.flex.justify-between(class="min-w-[298px]")
       FairiesList
+      AllFairies
 </template>
 
 <style scoped lang="sass">
@@ -46,7 +48,7 @@ de:
   fairyCollection: "Feen Sammlung"
   type: "Typ"
   hp: "Hp"
-  defense: "Verteidigung"
-  speed: "Geschwindigkeit"
-  special: "Spezialfähigkeit"
+  defense: "Vert."
+  speed: "Geschw."
+  special: "Spezial"
 </i18n>
