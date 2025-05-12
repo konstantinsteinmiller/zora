@@ -169,20 +169,6 @@ const fairiesList = [
     ),
   },
   {
-    name: 'Dandalina',
-    tier: 1,
-    baseStatsIncrease: getStatGrowth(
-      {
-        hp: 0,
-        power: 0,
-        defense: -2,
-        speed: 3,
-        special: 1,
-      },
-      1
-    ),
-  },
-  {
     name: 'Thunlady',
     tier: 2,
     baseStatsIncrease: getStatGrowth(
@@ -376,13 +362,20 @@ const fairiesList = [
     tier: 2,
     baseStatsIncrease: getStatGrowth({ hp: 1, power: 3, defense: -1, speed: 1, special: -1 }, 2),
   },
-  // { name: 'homemaker', tier: 0, baseStatsIncrease: { hp: 1, power: 0.01, defense: 0.1, speed: 0.01, special: 0.01 } },
-  // { name: 'eclipse', tier: 2, baseStatsIncrease: { hp: 1.5, power: 0.035, defense: 0.1, speed: 0.03, special: 0.02 } },
-  // {
-  //   name: 'psi-nightmare',
-  //   tier: 2,
-  //   baseStatsIncrease: { hp: 1.2, power: 0.025, defense: 0.15, speed: 0.025, special: 0.03 },
-  // },
+  {
+    name: 'Dandalina',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth(
+      {
+        hp: 0,
+        power: 0,
+        defense: -2,
+        speed: 3,
+        special: 1,
+      },
+      1
+    ),
+  },
 ]
 const levels = [1, 10, 20, 30, 40, 50]
 const baseLevels = 10

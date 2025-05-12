@@ -2,11 +2,11 @@ import type { Fairy } from '@/types/fairy.ts'
 import { levelXpMap, tierScaleMap } from '@/utils/enums.ts'
 import { pick } from 'lodash'
 
-const BASE_ITERATIONS = 10
+const BASE_ITERATIONS: number = 10
 
-const BASE_INCREASE_STEP = 0.15
-const BASE_INCREASE_HP_STEP = 40
-const BASE_INCREASE_DEF_STEP = 3
+const BASE_INCREASE_STEP: number = 0.15
+const BASE_INCREASE_HP_STEP: number = 40
+const BASE_INCREASE_DEF_STEP: number = 3
 
 interface StatGrowth {
   hp: number
@@ -20,11 +20,11 @@ export const getStatGrowth = (
   tier: number,
   maxLevel: number = 50
 ) => {
-  const maxHp = 150 + hp * BASE_INCREASE_HP_STEP
-  const maxPower = 0.6 + power * BASE_INCREASE_STEP
-  const maxDef = 10 + defense * BASE_INCREASE_DEF_STEP
-  const maxSpeed = 0.6 + speed * BASE_INCREASE_STEP
-  const maxSpecial = 0.6 + special * BASE_INCREASE_STEP
+  const maxHp = 150 + hp * BASE_INCREASE_HP_STEP /** tierScaleMap[tier]*/
+  const maxPower = 0.6 + power * BASE_INCREASE_STEP /** tierScaleMap[tier]*/
+  const maxDef = 10 + defense * BASE_INCREASE_DEF_STEP /** tierScaleMap[tier]*/
+  const maxSpeed = 0.6 + speed * BASE_INCREASE_STEP /** tierScaleMap[tier]*/
+  const maxSpecial = 0.6 + special * BASE_INCREASE_STEP /** tierScaleMap[tier]*/
   return {
     hp: calcStatGrowth(maxHp, tier, maxLevel),
     power: calcStatGrowth(maxPower, tier, maxLevel),
@@ -54,15 +54,13 @@ const getFairyRequiredExp = (level: number): number => {
 let clone = null
 export const levelUpFairy = (fairy: Fairy, targetLevel: number) => {
   const tierScaler: number = tierScaleMap[fairy.tier]
-  const stats = pick(fairy.stats, ['hp', 'power', 'defense', 'speed', 'special'])
 
-  clone = {
-    stats,
-  }
+  clone = { stats: pick(fairy.stats, ['hp', 'power', 'defense', 'speed', 'special']) }
+
+  const statGrowthPerLevel: any = getStatGrowth(fairy?.statsGrowthSteps, fairy.tier) || 0
 
   for (const key in clone.stats) {
-    const statGrowthPerLevel: any = getStatGrowth(fairy?.statsGrowthSteps?.[key], fairy.tier) || 0
-    clone.stats[key] = (statGrowthPerLevel?.[key] || 0) * targetLevel * tierScaler
+    clone.stats[key] = (statGrowthPerLevel?.[key] || 0) * (targetLevel + BASE_ITERATIONS) * tierScaler
     clone.stats[key] = +clone.stats[key]?.toFixed(3)
   }
   clone.stats['hp'] = Math.round(clone.stats['hp'])
@@ -74,4 +72,5 @@ export const levelUpFairy = (fairy: Fairy, targetLevel: number) => {
   fairy.nextLevelXp = nextLevelXp
   fairy.level = targetLevel
   fairy.stats = { ...fairy.stats, ...clone.stats }
+  // console.log('fairy.stats: ', fairy.stats)
 }

@@ -99,6 +99,7 @@ export const levelXpMap: Record<string, number> = {
   '48': 3384,
   '49': 3528,
   '50': 3675,
+  '51': 0,
 }
 
 export const LANGUAGES: Array<string> = [

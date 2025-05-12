@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import ElementImg from '@/components/atoms/ElementImg.vue'
-import StatRating from '@/components/atoms/StatRating.vue'
 import AllFairies from '@/components/organisms/AllFairies.vue'
 import FairiesList from '@/components/organisms/FairiesList.vue'
-import { computed, type ComputedRef, type Ref, ref, onMounted, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
 import { useI18n } from 'vue-i18n'
-
-// $.menuItem.value =
-
-interface Fairy {
-  name: string
-  id: string
-  avatar: string
-  preview: string
-}
 
 const { t } = useI18n()
 </script>
@@ -26,29 +14,20 @@ const { t } = useI18n()
     class="w-full h-full"
   )
     div.glass.card.frame.w-full.p-4.px-5.gap-5.flex.justify-between(class="min-w-[298px]")
+      //div.flex.gap-2
+      //  h3.rib.text-2xl.font-bold.text-center(class="") {{ t('battleFormation') }}
+      //  h3.flex.justify-between
+      //div
       FairiesList
       AllFairies
 </template>
 
-<style scoped lang="sass">
-.rib
-  & *, &
-    font-family: 'Ribeye', serif
-</style>
+<style scoped lang="sass"></style>
 
 <i18n>
 en:
-  fairyCollection: "Fairy Collection"
-  type: "Type"
-  hp: "Hp"
-  defense: "Defense"
-  speed: "Speed"
-  special: "Special Ability"
+  battleFormation: "Battle Formation"
+
 de:
-  fairyCollection: "Feen Sammlung"
-  type: "Typ"
-  hp: "Hp"
-  defense: "Vert."
-  speed: "Geschw."
-  special: "Spezial"
+  battleFormation: "Kampfaufstellung"
 </i18n>

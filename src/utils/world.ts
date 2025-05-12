@@ -1,10 +1,19 @@
 import FairyController from '@/entity/FairyController.ts'
 import $ from '@/global.ts'
+import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
+import { FIRE_DRAGON_OLD } from '@/Story/Fairies/fire-fairies.ts'
+import { ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE } from '@/Story/Fairies/ice-fairies.ts'
+import { LIGHT_STARLIGHT } from '@/Story/Fairies/light-fairies.ts'
+import { METAL_SCORPION_MIDDLE, METAL_SCORPION_OLD, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
+import { NATURE_BUTTERFLY_MIDDLE, NATURE_MUSHROOM_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
+import { NEUTRAL_WARRIOR_MIDDLE } from '@/Story/Fairies/neutral-fairies.ts'
+import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { levelUpFairy } from '@/utils/fairy.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
-import stats from '@/utils/stats.ts'
+import { v4 } from 'uuid'
+import { ref } from 'vue'
 
 export async function importNPCs(): Promise<Map<string, any>> {
   const npcMap = new Map<string, any>()
@@ -80,10 +89,10 @@ export const createFairy = (id: string, level: number, guild: Guild = 'guild-com
 
   const fairyInstance = {
     ...templateFairy,
+    uuid: v4(),
     guild,
     stats: {
       ...templateFairy.stats,
-      /* Todo calc stats based on level */
       mp: 100,
       previousMp: 100,
       maxMp: 100,
@@ -140,4 +149,33 @@ export const disposeEntity = (entity: any) => {
   })
   $.scene.remove(entity.mesh)
   entity.mesh = null
+}
+
+export const addMockedFairies = () => {
+  const activeFairiesList = [
+    createFairy(ENERGY_FEMALE_OLD.id, 8),
+    createFairy(ICE_SNOWMAN_YOUNG.id, 11),
+    createFairy(NATURE_BUTTERFLY_MIDDLE.id, 50),
+    createFairy(METAL_SCORPION_OLD.id, 49),
+    createFairy(PSI_NIGHTMARE.id, 22),
+  ]
+  const allFairies = [
+    createFairy(LIGHT_STARLIGHT.id, 8),
+    { ...createFairy(FIRE_DRAGON_OLD.id, 11), name: 'cute Glurak' },
+    createFairy(ICE_SNOWMAN_OLD.id, 11),
+    createFairy(ICE_YETI_MIDDLE.id, 15),
+    createFairy(NATURE_MUSHROOM_MIDDLE.id, 32),
+    createFairy(METAL_SCORPION_YOUNG.id, 12),
+    createFairy(METAL_SCORPION_MIDDLE.id, 3),
+    { ...createFairy(NEUTRAL_WARRIOR_MIDDLE.id, 22), name: 'nighty' },
+  ]
+  if (!$.player) {
+    $.player = {
+      fairiesList: ref(activeFairiesList),
+      allFairiesList: ref(allFairies),
+    }
+  } else {
+    $.player.fairiesList = ref(activeFairiesList)
+    $.player.allFairiesList = ref(allFairies)
+  }
 }

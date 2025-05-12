@@ -7,6 +7,7 @@ import useInteraction from '@/use/useInteraction.ts'
 import useInventory from '@/use/useInventory.ts'
 import useOctree from '@/use/useOctree.ts'
 import { INTERACTIONS } from '@/utils/enums.ts'
+import { addMockedFairies } from '@/utils/world.ts'
 import { Quaternion, Vector3 } from 'three'
 import InputController from '@/control/KeyboardController.ts'
 import { createPlayerMovementStrategy } from '@/entity/MovementStrategy.ts'
@@ -149,6 +150,8 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   $.entitiesMap.set(entity.uuid, entity)
   $.player = entity
+
+  addMockedFairies()
 
   return entity
 }

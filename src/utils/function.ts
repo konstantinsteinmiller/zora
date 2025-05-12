@@ -185,3 +185,24 @@ export function removeDoubleSlashComments(inputString) {
 export const getChargeDuration = (entity: any) => {
   return DEFAULT_CHARGE_DURATION / entity.currentSpell.speed
 }
+
+export const findNodeParent = (evt: any, targetClass: string) => {
+  let currentNode = evt.target
+  let iter = 0
+
+  /* find out if hit target is a draggable unit */
+  while (currentNode && !currentNode?.classList?.contains(targetClass) && iter < 10) {
+    currentNode = findParent(currentNode, targetClass)
+    // console.log('currentNode: ', currentNode)
+    iter++
+  }
+
+  if (iter === 10) {
+    currentNode = null
+  }
+
+  return currentNode
+}
+const findParent = (currentNode: any, targetClass: string) => {
+  return currentNode?.classList?.contains(targetClass) ? currentNode : currentNode?.parentNode
+}
