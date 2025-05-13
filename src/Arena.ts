@@ -3,9 +3,10 @@ import ArenaPlayerController from '@/entity/ArenaPlayerController.ts'
 import { cleanupLevel } from '@/Game.ts'
 import $ from '@/global'
 import { LIGHT_STARLIGHT } from '@/Story/Fairies/light-fairies.ts'
-import { METAL_SCORPION_MIDDLE, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
 import { NATURE_BUTTERFLY_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
+import type { Fairy } from '@/types/fairy.ts'
+import useFairies from '@/use/useFairies.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
 import Crosshair from '@/entity/Crosshair'
@@ -15,15 +16,12 @@ const Arena = async level => {
     const startPos1 = $.level.pathfinder.startPositions[0]
     const startPos2 = $.level.pathfinder.startPositions[1]
 
+    const { getFairyClassFromQueryParams } = useFairies()
+    const [playerFairyClass, enemyFairyClass] = getFairyClassFromQueryParams()
+
     ArenaPlayerController({
-      ...LIGHT_STARLIGHT,
-      stats: {
-        name: LIGHT_STARLIGHT.name,
-        hp: 100,
-        previousHp: 100,
-        mp: 50,
-        previousMp: 50,
-      },
+      ...(playerFairyClass as Fairy),
+      stats: { name: (playerFairyClass as Fairy).name, hp: 100, previousHp: 100, mp: 50, previousMp: 50 },
       startPosition: new Vector3(startPos1.x, startPos1.y, startPos1.z),
       startRotation: startPos1.quaternion,
       modelHeight: 1.8,
@@ -31,8 +29,8 @@ const Arena = async level => {
     })
 
     AIController({
-      ...NATURE_BUTTERFLY_MIDDLE,
-      stats: { name: NATURE_BUTTERFLY_MIDDLE.name },
+      ...(enemyFairyClass as Fairy),
+      stats: { name: (enemyFairyClass as Fairy).name },
       startPosition: new Vector3(startPos2.x, startPos2.y, startPos2.z),
       startRotation: startPos2.quaternion,
       modelHeight: 1.8,

@@ -30,7 +30,9 @@ const useMatch = () => {
     // console.log('window.location.hash: ', window.location.hash)
     if (window.location.hash.includes('debug=')) {
       const queries = window.location.hash.split('?')[1]?.split('&')
-      themeQuery = `?${queries.find(query => query.includes('debug'))}`
+      const includedList = ['debug', 'player', 'enemy']
+      const newQueries = queries.filter(query => includedList.includes(query.split('=')[0]))
+      themeQuery = `?${newQueries.join('&')}`
     }
     window.location.pathname = '/'
     window.location.hash = `#/${themeQuery}`

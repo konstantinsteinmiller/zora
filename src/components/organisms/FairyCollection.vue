@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ElementImg from '@/components/atoms/ElementImg.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
+import useFairies from '@/use/useFairies.ts'
 import { clamp, prependBaseUrl } from '@/utils/function.ts'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
 import { MENU } from '@/utils/enums.ts'
@@ -14,30 +15,7 @@ interface Fairy {
   preview: string
 }
 
-const fairiesList: Ref<Fairy[]> = ref([])
-
-const loadFairies = async () => {
-  const fairyModules = import.meta.glob('@/Story/Fairies/*.ts', { eager: true })
-  fairiesList.value = Object.values(fairyModules).reduce((acc, elementalFairiesList) => {
-    // const elementalFairiesList = module.default
-    acc = [
-      ...acc,
-      ...elementalFairiesList.default.map((fairy: Fairy) => {
-        let modelPath = fairy.modelPath.split('/')
-        modelPath.pop()
-        const imagePath = modelPath.join('/')
-        return {
-          ...fairy,
-          avatar: prependBaseUrl(`${imagePath}/avatar_128x128.jpg`),
-          preview: prependBaseUrl(`${imagePath}/preview_400x463.jpg`),
-        }
-      }),
-    ]
-    return acc
-  }, [])
-  // console.log('fairies: ', fairiesList.value)
-}
-loadFairies()
+const { fairiesList } = useFairies()
 
 const { t } = useI18n()
 const selectedFairy: Ref<Fairy | null> = ref(null)
