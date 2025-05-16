@@ -8,6 +8,10 @@
       :class="cssProps"
     >
       <router-view />
+      <OptionsModal
+        :show="isOptionsModalOpen"
+        @close="() => (isOptionsModalOpen = false)"
+      />
     </main>
     <img
       src="/images/icons/fairy.png"
@@ -15,11 +19,6 @@
       alt="cursor"
     />
     <Tutorial />
-
-    <OptionsModal
-      :show="isOptionsModalOpen"
-      @close="() => (isOptionsModalOpen = false)"
-    />
   </div>
 </template>
 

@@ -4,7 +4,8 @@ import $ from '@/global'
 import type { Guild } from '@/types/entity.ts'
 import { Vector3 } from 'three'
 import World from '@/entity/World'
-import City1Startup from '@/entity/levels/city-1/city-1-startup.ts'
+import City1Startup from '@/entity/levels/city-1/startup.ts'
+import EmberStartup from '@/entity/levels/embersteel/startup.ts'
 
 const LevelStartup = async (level: string) => {
   World(level, async () => {
@@ -13,6 +14,9 @@ const LevelStartup = async (level: string) => {
         City1Startup()
         break
       case 'city-2':
+        break
+      case 'embersteel':
+        EmberStartup()
         break
       default:
         console.error('Unknown level:', level)

@@ -33,6 +33,7 @@ export default () => {
     '/images/crosshair/crosshair-dots.avif',
     '/images/logo/Zora_logo_512x512.png',
     '/worlds/city-1/city-1.comp.glb',
+    '/worlds/embersteel/embersteel.comp.glb',
     '/worlds/city-1/city-1-houses.comp.glb',
     '/worlds/city-1/city-1-navmesh.fbx',
   ]

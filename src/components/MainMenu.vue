@@ -36,7 +36,7 @@ const startArena = () => {
 
 const startWorld = () => {
   isStartingGame.value = true
-  router.push({ name: 'world', params: { worldId: 'city-1' }, query: route.query })
+  router.push({ name: 'world', params: { worldId: /* 'embersteel'*/ 'city-1' }, query: route.query })
 }
 
 const onExit = () => {

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import FairySpellsList from '@/components/molecules/FairySpellsList.vue'
+import FairySpells from '@/components/molecules/FairySpells.vue'
 import $ from '@/global'
+import type { Fairy } from '@/types/fairy.ts'
+import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const currentFairies: Ref<Fairy[]> = $.player.fairiesList
+// console.log('currentFairies: ', currentFairies)
 </script>
 
 <template lang="pug">
@@ -15,7 +19,12 @@ const { t } = useI18n()
       div.flex.gap-2
         h3.rib.text-2xl.font-bold.text-center(class="") {{ t('spellSelection') }}
       div.glass.card.frame.w-full.p-4.px-6(class="min-w-[298px] h-screen")
-        //FairySpellsList
+        //FairySpells(v-for="(fairy, index) in currentFairies"
+        //  :key="fairy.id"
+        //  :fairy="fairy"
+        //  :index="index"
+        //)
+        FairySpells(:fairy="currentFairies[0]" :index="0")
 
 </template>
 

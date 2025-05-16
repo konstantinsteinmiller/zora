@@ -93,6 +93,7 @@ onMounted(() => {
         LevelStartup('city-1')
         break
       default:
+        LevelStartup(props.level)
         break
     }
 

@@ -17,7 +17,10 @@ export default async (onFinishedCallback: () => void) => {
     // console.log('houses.scene.children[0]: ', houses.scene.children[0])
     glb.scene.children[0].children.concat(houses.scene.children[0].children).forEach((child: any) => {
       if (child instanceof Mesh) {
-        child.material.map.encoding = (THREE as any).sRGBEncoding
+        if (child?.material?.map) {
+          child.material.map.encoding = (THREE as any).sRGBEncoding
+        }
+
         child.castShadow = true
         child.receiveShadow = true
         child = createGeoIndex(child)

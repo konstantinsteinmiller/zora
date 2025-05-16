@@ -297,11 +297,37 @@ export default () => {
 
     const model: any = assetManager.getModel(src)?.clone()
     // console.log('model: ', model)
+
+    // model.children.forEach(group => {
+    //   if (group.type === 'Group') {
+    //     group.children.forEach((child: any) => {
+    //       if (child.type === 'Mesh') {
+    //         // console.log('child: ', child)
+    //         if (scale >= 0) child.scale.setScalar(scale)
+    //
+    //         if (child?.material?.map) {
+    //           child.material.map.encoding = (THREE as any).sRGBEncoding
+    //         }
+    //
+    //         if (shadows) {
+    //           child.castShadow = true
+    //           child.receiveShadow = true
+    //         }
+    //         child = createGeoIndex(child)
+    //         parent.add(child)
+    //       }
+    //     })
+    //   }
+    // })
     model.traverse((child: any) => {
       if (child instanceof Mesh) {
         // console.log('child: ', child)
         if (scale >= 0) child.scale.setScalar(scale)
-        child.material.map.encoding = (THREE as any).sRGBEncoding
+
+        if (child?.material?.map) {
+          child.material.map.encoding = (THREE as any).sRGBEncoding
+        }
+
         if (shadows) {
           child.castShadow = true
           child.receiveShadow = true

@@ -145,7 +145,9 @@ const globalState = () => {
   /* init this game state with defaults */
   global.enableWater = true
   global.enableDebug = false
+  // global.enableDebug = true
   // global.debugPhysics = true
+
   global.showCursor = true
   global.showCrosshair = true
   global.isThirdPerson = true

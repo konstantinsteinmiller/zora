@@ -1,55 +1,3 @@
-<template>
-  <VModal
-    :show="show"
-    @close="onClose"
-  >
-    <template #title>
-      <h1 class="mb-2 text-2xl">{{ t('title') }}</h1>
-    </template>
-    <template #description>
-      <div class="w-full max-w-80 flex flex-col justify-between items-center gap-3">
-        <div
-          v-for="(item, index) in itemsList"
-          :key="index"
-          class="grid grid-cols-3 w-full"
-        >
-          <h5 class="text-l flex items-center justify-center">{{ t(item.name) }}</h5>
-          <div class="flex justify-start items-center col-span-2 w-full flex-grow">
-            <input
-              v-if="item.type === 'range'"
-              v-model="item.value"
-              min="0"
-              max="1"
-              step="0.01"
-              type="range"
-              class="text-red-700 w-full"
-              :style="`--range-value:${item.value}`"
-              @input="onInput(item.name, item.value)"
-            />
-            <XSelect
-              v-if="item.type === 'select' && item.items"
-              v-model="item.value"
-              :items="item.items"
-              @change="onInput(item.name, item.value)"
-            />
-            <XSwitch
-              v-if="item.type === 'switch'"
-              v-model="item.value"
-              :title="item.title"
-              class="w-full"
-              @change="onInput(item.name, item.value)"
-            />
-          </div>
-        </div>
-      </div>
-    </template>
-    <template #buttons>
-      <div class="mt-6"></div>
-      <XButton @click="onClose">{{ t('close') }}</XButton>
-    </template>
-  </VModal>
-</template>
-
 <script setup lang="ts">
 import XSwitch from '@/components/atoms/XSwitch.vue'
 import { useI18n } from 'vue-i18n'
@@ -120,6 +68,58 @@ const onClose = () => {
   emit('close')
 }
 </script>
+
+<template>
+  <VModal
+    :show="show"
+    @close="onClose"
+  >
+    <template #title>
+      <h1 class="mb-2 text-2xl">{{ t('title') }}</h1>
+    </template>
+    <template #description>
+      <div class="w-full max-w-80 flex flex-col justify-between items-center gap-3">
+        <div
+          v-for="(item, index) in itemsList"
+          :key="index"
+          class="grid grid-cols-3 w-full"
+        >
+          <h5 class="text-l flex items-center justify-center">{{ t(item.name) }}</h5>
+          <div class="flex justify-start items-center col-span-2 w-full flex-grow">
+            <input
+              v-if="item.type === 'range'"
+              v-model="item.value"
+              min="0"
+              max="1"
+              step="0.01"
+              type="range"
+              class="text-red-700 w-full"
+              :style="`--range-value:${item.value}`"
+              @input="onInput(item.name, item.value)"
+            />
+            <XSelect
+              v-if="item.type === 'select' && item.items"
+              v-model="item.value"
+              :items="item.items"
+              @change="onInput(item.name, item.value)"
+            />
+            <XSwitch
+              v-if="item.type === 'switch'"
+              v-model="item.value"
+              :title="item.title"
+              class="w-full"
+              @change="onInput(item.name, item.value)"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #buttons>
+      <div class="mt-6"></div>
+      <XButton @click="onClose">{{ t('close') }}</XButton>
+    </template>
+  </VModal>
+</template>
 
 <style scoped lang="scss"></style>
 

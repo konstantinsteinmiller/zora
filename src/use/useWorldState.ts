@@ -18,19 +18,19 @@ setTimeout(() => {
 })
 
 export const savePlayer = () => {
-  $.world.playerRef.value = JSON.parse(
-    JSON.stringify({
-      currency: $.player.currency,
-      inventory: $.player.inventory,
-      fairiesList: $.player.fairiesList.value,
-      // selectedFairy: $.player.selectedFairy,
-
-      spells: {
-        spellsList: $.player.spells.spellsList.value,
-      },
-    })
-  )
-  console.log('$.world.playerRef.value: ', $.world.playerRef.value, $.player.currency.fairyDust)
+  // $.world.playerRef.value = JSON.parse(
+  //   JSON.stringify({
+  //     currency: $.player.currency,
+  //     inventory: $.player.inventory,
+  //     fairiesList: $.player.fairiesList.value,
+  //     // selectedFairy: $.player.selectedFairy,
+  //
+  //     spells: {
+  //       spellsList: $.player.spells.spellsList.value,
+  //     },
+  //   })
+  // )
+  // console.log('$.world.playerRef.value: ', $.world.playerRef.value, $.player.currency.fairyDust)
   // $.world.entitiesListRef.value = $.entitiesMap
   $.world.level.value = $.level
   // $.entitiesMap = new Map()

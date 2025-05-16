@@ -1,5 +1,6 @@
 import { assetManager } from '@/engine/AssetLoader.ts'
 import City1 from '@/entity/levels/city-1/City1.ts'
+import Embersteel from '@/entity/levels/embersteel/Embersteel.ts'
 import WaterArena from '@/entity/levels/water-arena/WaterArena.ts'
 import $ from '@/global'
 import * as THREE from 'three'
@@ -20,6 +21,9 @@ export default (level: string, onFinishedCallback: () => void) => {
       break
     case 'city-1':
       City1(onFinishedCallback)
+      break
+    case 'embersteel':
+      Embersteel(onFinishedCallback)
       break
     default:
       console.log('Unknown level: ', level)

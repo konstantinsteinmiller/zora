@@ -58,7 +58,6 @@ const onMenuClick = (menuItem: MenuItemEntry) => ($.menuItem.value = menuItem.id
             img.icon.absolute.top-0.left-0.w-8.h-8.mt-2.ml-2(:src="menuItem.icon" :alt="`${menuItem.name} icon`" class="")
             img.frame.absolute.bottom-0.right-0(src="/images/frames/frame-simple_128x128.png" :alt="`frame`" class="")
       div.justify-self-end.absolute.top-0.right-0.flex.justify-center.items-center
-        //div.w-12.h-12.text-4xl.text-center.text-red-700.z-20(@click="$.menuItem.value = null") x
         img.w-8.h-8(
           src="/images/icons/x_128x128.png" alt="close icon"
           class="scale-[65%] z-20"
