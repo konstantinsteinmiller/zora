@@ -16,7 +16,8 @@ const typeToImgMap = Object.values(ELEMENTS).reduce((acc, ele) => {
 </script>
 
 <template lang="pug">
-  img.inline-block.w-6.h-6(:src="typeToImgMap[type]" alt="element icon" class="")
+  img.inline-block.w-6.h-6(:src="typeToImgMap[type]" alt="element icon" class=""
+    style="filter: drop-shadow(0 0 1px #d3d3d3ff);")
 </template>
 
 <style scoped lang="sass"></style>

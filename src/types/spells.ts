@@ -11,6 +11,7 @@ export interface Spell {
     name: string
     value: number // [1 is 100%]
   }
+  effect?: string
 }
 
 export interface AttackSpell extends Spell {
@@ -18,4 +19,5 @@ export interface AttackSpell extends Spell {
   damage: number
   charge: number
   onSpecial?: (hitTarget: any, attacker: any) => void
+  specialEffect?: string
 }

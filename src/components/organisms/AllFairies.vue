@@ -2,7 +2,7 @@
 import FairyDetail from '@/components/molecules/FairyDetail.vue'
 import type { Fairy } from '@/types/fairy.ts'
 import useMenu from '@/use/useDraggable.ts'
-import { computed, type Ref, ref } from 'vue'
+import { computed, type Ref } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
 import { useI18n } from 'vue-i18n'

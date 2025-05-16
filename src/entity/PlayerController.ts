@@ -1,6 +1,6 @@
 import FairyController from '@/entity/FairyController.ts'
 import WorldController from '@/entity/WorldController.ts'
-import { METAL_SCORPION_OLD } from '@/Story/Fairies/metal-fairies.ts'
+import { METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
 import useDialog from '@/use/useDialog.ts'
 import useInteraction from '@/use/useInteraction.ts'
@@ -131,13 +131,14 @@ const PlayerController = (config: PlayerControllerProps) => {
   }
   updateEventUuid = $.addEvent('renderer.update', update)
 
+  const fairyClass: any = METAL_SCORPION_YOUNG
   entity.companion = FairyController({
-    modelPath: METAL_SCORPION_OLD.modelPath,
-    stats: { name: METAL_SCORPION_OLD.name },
+    modelPath: fairyClass.modelPath,
+    stats: { name: fairyClass.name },
     parent: entity,
     startPosition: new Vector3(0, 0, 0),
     guild: 'guild-companion-fairy' as Guild,
-    id: 'fire_harpy',
+    id: fairyClass.id,
   })
 
   $.addEvent('level.cleanup', () => {

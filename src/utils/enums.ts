@@ -46,6 +46,7 @@ export const tierScaleMap: Record<number, number> = {
   0: 1,
   1: 1.1,
   2: 1.2,
+  3: 1.4,
 }
 
 export const levelXpMap: Record<string, number> = {

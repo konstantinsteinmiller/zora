@@ -29,15 +29,11 @@ class FairyLeveler {
   }
 }
 
-// const tiersScale = {
-//   0: 1,
-//   1: 1.2,
-//   2: 1.4,
-// }
 const tiersScale = {
   0: 1,
   1: 1.1,
   2: 1.2,
+  3: 1.4,
 }
 
 const BASE_ITERATIONS = 10
@@ -358,23 +354,44 @@ const fairiesList = [
     baseStatsIncrease: getStatGrowth({ hp: 0, power: 2, defense: -1, speed: 1, special: 2 }, 2),
   },
   {
+    name: 'Dandalina',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth({ hp: 0, power: 0, defense: -2, speed: 3, special: 1 }, 1),
+  },
+  {
+    name: 'Eclipse',
+    tier: 3,
+    baseStatsIncrease: getStatGrowth({ hp: 1, power: 3, defense: -1, speed: 1, special: 0 }, 3),
+  },
+  {
+    name: 'Goygor',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth({ hp: 2, power: 1, defense: 1, speed: -2, special: -1 }, 0),
+  },
+  {
+    name: 'Goygorin',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth({ hp: 2, power: 2, defense: 2, speed: -2, special: -2 }, 1),
+  },
+  {
+    name: 'Goygorix',
+    tier: 2,
+    baseStatsIncrease: getStatGrowth({ hp: 2, power: 3, defense: 2, speed: -3, special: -1 }, 2),
+  },
+  {
+    name: 'Pira',
+    tier: 0,
+    baseStatsIncrease: getStatGrowth({ hp: -1, power: 3, defense: -2, speed: 3, special: -2 }, 0),
+  },
+  {
+    name: 'Pirin',
+    tier: 1,
+    baseStatsIncrease: getStatGrowth({ hp: 0, power: 3, defense: -2, speed: 2, special: -1 }, 1),
+  },
+  {
     name: 'Piradon',
     tier: 2,
     baseStatsIncrease: getStatGrowth({ hp: 1, power: 3, defense: -1, speed: 1, special: -1 }, 2),
-  },
-  {
-    name: 'Dandalina',
-    tier: 1,
-    baseStatsIncrease: getStatGrowth(
-      {
-        hp: 0,
-        power: 0,
-        defense: -2,
-        speed: 3,
-        special: 1,
-      },
-      1
-    ),
   },
 ]
 const levels = [1, 10, 20, 30, 40, 50]

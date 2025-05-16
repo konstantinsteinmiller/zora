@@ -38,7 +38,6 @@ export default () => {
 
   window.fairyIds = fairiesIdsList.value
   const getFairyClassFromQueryParams = () => {
-    console.log('$.route.value: ', $.route.value)
     const { player, enemy } = $.route.value?.query
 
     let playerFairyClass: Fairy | undefined

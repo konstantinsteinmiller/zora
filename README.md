@@ -25,6 +25,7 @@ expected features:
 - UI for health, mana, endurance and enemy health
 - charging spell indicator
 - Water
+- CI/CD pipeline to deploy to develop and production version of the game on github pages.
 
 ### charging a spell
 ![charging-spell](https://github.com/konstantinsteinmiller/zora/blob/master/src/assets/documentation/charging-spell.png)
