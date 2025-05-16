@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FairyListDetail from '@/components/molecules/FairyListDetail.vue'
 import type { Fairy } from '@/types/fairy.ts'
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 import { MENU } from '@/utils/enums.ts'
 import $ from '@/global'
 import useMenu from '@/use/useDraggable.ts'
@@ -28,7 +28,7 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy, onDropFairy } = useMenu(d
         group="fairies"
         item-key="id"
         draggable=".fairy-list-detail"
-        ghost-class="fairy-list-detail-ghost"
+        ghost-class="fairy-list-detail"
         @start="onDragStartFairy"
         @dragover="onDragOverFairy"
         @end="onEndFairy"
@@ -37,7 +37,7 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy, onDropFairy } = useMenu(d
       )
         template(v-slot:item="{ element, index }")
           FairyListDetail(
-            class="fairy-list-detail draggable fairy-list-detail-ghost cursor-grab"
+            class="draggable cursor-grab"
             :fairy="element" :key="element.id"
             :index="index"
             :data-index="index"

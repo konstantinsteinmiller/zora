@@ -15,10 +15,9 @@ const isFairySelected = (fairy: Fairy): boolean => {
 }
 </script>
 
-<!--.card.glass.frame-->
 <template lang="pug">
-  div.flex.relative.items-center.justify-start(class="w-full")
-    div.avatar.relative.justify-self-start.p-2
+  div.all-fairy-detail.flex.relative.items-center.justify-start(class="w-full")
+    div.all-fairy-detail-avatar.avatar.relative.justify-self-start.p-2
       template(v-if="isFairySelected(fairy)")
         img.normal-frame.absolute.top-1.left-1(
           src="/images/frames/frame-avatar_128x144.png" alt="frame"
@@ -33,7 +32,7 @@ const isFairySelected = (fairy: Fairy): boolean => {
           src="/images/frames/frame-avatar-simple_128x128.png" alt="frame"
           class="h-[52px] w-[52px] ml-[2px]"
         )
-        img.self-start.rounded-full(v-if="fairy?.avatar"
+        img.avatar-img.self-start.rounded-full(v-if="fairy?.avatar"
           :src="fairy.avatar" :alt="`${fairy.name} image`"
           class="h-[48px] w-[48px]"
         )
@@ -48,8 +47,8 @@ const isFairySelected = (fairy: Fairy): boolean => {
           )
           div.z-20(class="-translate-y-[5px]") {{ fairy.level }}
 
-    div.flex.flex-col.justify-center.gap-1(class="ml-[2px]")
-      div.flex.items-center.gap-2
+    div.all-fairy-detail-stats.flex.flex-col.justify-center.gap-1(class="ml-[2px]")
+      div.all-fairy-detail-header.flex.items-center.gap-2
         ElementImg(:type="fairy.element" class="w-6 h-5 ml-[2px]")
         div.rib.text-sm {{ fairy.name }}
       div.rib.text-sm.text-sm.flex.gap-2.justify-between.items-center(class="!text-[12px]")

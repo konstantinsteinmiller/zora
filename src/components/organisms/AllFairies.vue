@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FairyDetail from '@/components/molecules/FairyDetail.vue'
+import AllFairyDetail from '@/components/molecules/AllFairyDetail.vue'
 import type { Fairy } from '@/types/fairy.ts'
 import useMenu from '@/use/useDraggable.ts'
 import { computed, type Ref } from 'vue'
@@ -20,45 +20,52 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy } = useMenu(
   $.player.allFairiesList,
   'all-fairies-list'
 )
-
-// const onEnd = (event: any) => {
-//   // Update the global list when dragging ends
-//   isDragging.value = false
-//   $.player.allFairiesList.value = [...draggableFairies.value]
-// }
 </script>
 
 <template lang="pug">
-  //.card.glass.frame
   div.h-full.relative.flex.justify-end(v-if="showAllFairyList" class="w-full h-full")
     div.flex.flex-col.gap-2(class="w-[380px] z-100")
       draggable(
         v-model="draggableFairies"
         group="fairies"
         item-key="id"
-        draggable=".fairy-detail"
-        ghost-class="fairy-detail-ghost"
+        draggable=".all-fairy-detail"
+        ghost-class="all-fairy-detail"
         @start="onDragStartFairy"
         @dragover="onDragOverFairy"
         @end="onEndFairy"
         class="all-fairies-list flex flex-col gap-4 w-full"
       )
         template(v-slot:item="{ element, index }")
-          FairyDetail(
+          AllFairyDetail(
             :fairy="element" :key="element.id"
-            class="fairy-detail draggable fairy-detail-ghost cursor-grab"
+            class="draggable cursor-grab"
             :data-index="index"
           )
 </template>
 
 <style scoped lang="sass">
-.fairy-detail.draggable
+.all-fairy-detail.draggable
   user-drag: element!important
   user-select: all!important
   -webkit-user-select: all!important
   -webkit-user-drag: element!important
   -moz-user-select: all!important
   -ms-user-select: all!important
+</style>
+
+<style lang="sass">
+.fairies-list .fairy-list-detail .all-fairy-detail-avatar
+  transform: translateX(0.75rem)
+
+.fairies-list .fairy-list-detail .all-fairy-detail-stats
+  transform: translateX(-0.5rem) scale(0.75)
+
+.fairies-list .fairy-list-detail .all-fairy-detail-header
+  transform: translateX(-0.125rem)
+
+.fairies-list .fairy-list-detail .all-fairy-detail-avatar .avatar-img
+  width: 66px
 </style>
 
 <i18n>

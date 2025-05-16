@@ -15,7 +15,7 @@ const props = defineProps({
 </script>
 
 <template lang="pug">
-  div.flex.flex-col.relative.w-full.h-full.items-center.justify-center
+  div.fairy-list-detail.flex.flex-col.relative.w-full.h-full.items-center.justify-center
     img.fancy-frame.absolute.top-0.left-0(
       src="/images/frames/fancy-frame_512x128.png" alt="frame"
       class="h-24 w-[320px] -mt-1"
