@@ -1,5 +1,5 @@
 import { useKeyboard } from '@/use/useKeyboard.ts'
-import { MENU, type MenuItem } from '@/utils/enums.ts'
+import { type MenuItem } from '@/utils/enums.ts'
 import { LoadingManager } from 'three'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, type ComputedRef, type Ref, ref, watch } from 'vue'
@@ -51,6 +51,7 @@ export interface Global {
   options: any
   isDialog: Ref<boolean>
   menuItem: Ref<MenuItem | null>
+  isPauseMenu: Ref<boolean>
   isDispel: Ref<boolean>
   isMenu: ComputedRef<boolean>
   dialogSelf: Ref<any>
@@ -129,8 +130,9 @@ const globalState = () => {
     },
     isDialog: ref(false),
     menuItem: ref(null),
+    isPauseMenu: ref(false),
     isDispel: ref(false),
-    isMenu: computed(() => global.isDialog.value || global.isDispel.value),
+    isMenu: computed(() => global.isDialog.value || global.isDispel.value || global.isPauseMenu.value),
     dialogSelf: ref(null),
     targetToFocus: ref(null),
     importantDialog: ref([]),

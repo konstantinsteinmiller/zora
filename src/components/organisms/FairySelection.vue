@@ -9,15 +9,13 @@ const { t } = useI18n()
 </script>
 
 <template lang="pug">
-  div.flex.gap-2.h-full.pt-6.pb-2.relative(
+  div.flex.flex-col.gap-2.h-full.pt-6.pb-2.relative(
     v-if="$?.menuItem.value === MENU.FAIRY"
     class="w-full h-full"
   )
+    div.flex.gap-2
+      h3.rib.text-2xl.font-bold.text-center(class="") {{ t('battleFormation') }}
     div.glass.card.frame.w-full.p-4.px-5.gap-5.flex.justify-between(class="min-w-[298px]")
-      //div.flex.gap-2
-      //  h3.rib.text-2xl.font-bold.text-center(class="") {{ t('battleFormation') }}
-      //  h3.flex.justify-between
-      //div
       FairiesList
       AllFairies
 </template>

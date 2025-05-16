@@ -4,6 +4,7 @@ import LoadingScreen from '@/components/LoadingScreen.vue'
 import DispelInteraction from '@/components/molecules/DispelInteraction.vue'
 import MessageManager from '@/components/molecules/MessageManager.vue'
 import NameInteraction from '@/components/molecules/NameInteraction.vue'
+import PauseMenu from '@/components/molecules/PauseMenu.vue'
 import TalkInteraction from '@/components/molecules/TalkInteraction.vue'
 import DialogBox from '@/components/organisms/DialogBox.vue'
 import Menu from '@/components/organisms/Menu.vue'
@@ -55,6 +56,7 @@ onMounted(async () => {
   />
 
   <Menu />
+  <PauseMenu />
 </template>
 
 <style scoped lang="sass"></style>

@@ -1,6 +1,6 @@
 <template>
   <VModal
-    v-if="show"
+    :show="show"
     @close="onClose"
   >
     <template #title>

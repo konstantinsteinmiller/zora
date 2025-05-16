@@ -9,21 +9,22 @@ import router from '@/router'
 import $ from '@/global'
 import useAssets from '@/use/useAssets.ts'
 import useMatch from '@/use/useMatch.ts'
+import useUser from '@/use/useUser.ts'
 import { findPointer, onUnlockedMouseMove, showCustomPointer } from '@/utils/find-pointer.ts'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import OptionsModal from '@/components/OptionsModal.vue'
+import OptionsModal from '@/components/molecules/OptionsModal.vue'
 import TutorialPopover from '@/components/TutorialPopover.vue'
 import XButton from '@/components/atoms/XButton.vue'
 import Menu from '@/components/organisms/Menu.vue'
 import { useRoute } from 'vue-router'
 
 const { isStartingGame } = useMatch()
+const { isOptionsModalOpen } = useUser()
 const route = useRoute()
 $.route.value = route
 
 const { t } = useI18n()
-const isOptionsModalOpen = ref(false)
 const isNative = import.meta.env.VITE_PLATTFORM === 'native'
 
 showCustomPointer()
@@ -124,11 +125,6 @@ onUnmounted(() => {
             >{{ t('options') }}
           </XButton>
         </div>
-
-        <OptionsModal
-          :show="isOptionsModalOpen"
-          @close="() => (isOptionsModalOpen = false)"
-        />
 
         <div
           v-if="isNative"

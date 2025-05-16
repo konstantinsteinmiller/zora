@@ -15,25 +15,33 @@
       alt="cursor"
     />
     <Tutorial />
+
+    <OptionsModal
+      :show="isOptionsModalOpen"
+      @close="() => (isOptionsModalOpen = false)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import OptionsModal from '@/components/molecules/OptionsModal.vue'
 import Tutorial from '@/components/Tutorial.vue'
 import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
 import { FIRE_DRAGON_OLD } from '@/Story/Fairies/fire-fairies.ts'
-import { ICE_SNOWMAN_MIDDLE, ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE } from '@/Story/Fairies/ice-fairies.ts'
+import { ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE } from '@/Story/Fairies/ice-fairies.ts'
 import { LIGHT_STARLIGHT } from '@/Story/Fairies/light-fairies.ts'
 import { METAL_SCORPION_MIDDLE, METAL_SCORPION_OLD, METAL_SCORPION_YOUNG } from '@/Story/Fairies/metal-fairies.ts'
 import { NATURE_BUTTERFLY_MIDDLE, NATURE_MUSHROOM_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
 import { NEUTRAL_WARRIOR_MIDDLE } from '@/Story/Fairies/neutral-fairies.ts'
 import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
+import useUser from '@/use/useUser.ts'
 import { createFairy } from '@/utils/world.ts'
 import { computed, ref } from 'vue'
 import $ from '@/global'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const { isOptionsModalOpen } = useUser()
 
 /* reactivity transform example */
 // let count = $ref(0)

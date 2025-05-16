@@ -73,12 +73,3 @@ const backToWorld = () => {
 </template>
 
 <style scoped lang="sass"></style>
-
-<i18n>
-en:
-  backToMainMenu: "Back to Main Menu"
-  continue: "Continue"
-de:
-  backToMainMenu: "Zurück zum Hauptmenü"
-  continue: "Weiter"
-</i18n>

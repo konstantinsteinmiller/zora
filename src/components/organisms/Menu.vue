@@ -69,8 +69,6 @@ const onMenuClick = (menuItem: MenuItemEntry) => ($.menuItem.value = menuItem.id
         FairyCollection
         FairySelection
         SpellSelection
-        //div.menu-items  Menu Items
-        //div.menu-spells Menu Spells
 </template>
 
 <style scoped lang="sass">

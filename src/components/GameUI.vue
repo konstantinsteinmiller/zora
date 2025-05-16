@@ -31,6 +31,7 @@
 
   <DamageNumber />
   <LoadingScreen :level="worldId" />
+  <PauseMenu />
 </template>
 
 <script setup lang="ts">
@@ -38,6 +39,7 @@ import DamageNumber from '@/components/atoms/DamageNumber.vue'
 import BuffsList from '@/components/molecules/BuffsList.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import GameOverScreen from '@/components/GameOverScreen.vue'
+import PauseMenu from '@/components/molecules/PauseMenu.vue'
 import StatBar from '@/components/StatBar.vue'
 import $ from '@/global'
 import Game from '@/Game'

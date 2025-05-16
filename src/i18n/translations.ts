@@ -8,6 +8,10 @@ export default {
     ok: 'Ok',
     tap: 'tap',
     click: 'click',
+    backToMainMenu: 'Back to Main Menu',
+    options: 'Options',
+    continue: 'Continue',
+    exit: 'Exit Game',
     elements: {
       nature: 'Nature',
       water: 'Water',
@@ -32,6 +36,10 @@ export default {
     ok: 'Ok',
     tap: 'tippen',
     click: 'klicken',
+    backToMainMenu: 'Zurück zum Hauptmenü',
+    options: 'Einstellungen',
+    continue: 'Weiter',
+    exit: 'Spiel Beenden',
     elements: {
       nature: 'Natur',
       water: 'Wasser',

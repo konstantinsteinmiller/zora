@@ -1,16 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import FairySpellsList from '@/components/molecules/FairySpellsList.vue'
 import $ from '@/global'
 import { useI18n } from 'vue-i18n'
-
-$.isFairyCollection = ref(true)
-
-interface Fairy {
-  name: string
-  id: string
-  avatar: string
-  preview: string
-}
 
 const { t } = useI18n()
 </script>
@@ -20,8 +11,11 @@ const { t } = useI18n()
     v-if="$?.menuItem?.value?.endsWith('Spells')"
     class=""
   )
-    div.flex.gap-2.h-full.mt-16.relative
-      div.glass.card.frame.w-full.p-4.px-6(class="min-w-[298px]")
+    div.flex.flex-col.gap-2.h-full.mt-6.relative
+      div.flex.gap-2
+        h3.rib.text-2xl.font-bold.text-center(class="") {{ t('spellSelection') }}
+      div.glass.card.frame.w-full.p-4.px-6(class="min-w-[298px] h-screen")
+        //FairySpellsList
 
 </template>
 
@@ -33,17 +27,7 @@ const { t } = useI18n()
 
 <i18n>
 en:
-  fairyCollection: "Fairy Collection"
-  type: "Type"
-  hp: "Hp"
-  defense: "Defense"
-  speed: "Speed"
-  special: "Special Ability"
+  spellSelection: "Spell Selection"
 de:
-  fairyCollection: "Feen Sammlung"
-  type: "Typ"
-  hp: "Hp"
-  defense: "Verteidigung"
-  speed: "Geschwindigkeit"
-  special: "Spezialfähigkeit"
+  spellSelection: "Spruch Auswahl"
 </i18n>

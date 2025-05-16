@@ -239,8 +239,11 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     esc: {
       onActivate: (entity: any, hasChanged: boolean) => {
-        if (hasChanged) {
-          $.controls.removePointerLock()
+        if ($.menuItem.value !== null) {
+          $.menuItem.value = null
+        } else {
+          $.isPaused = !$.isPaused
+          $.isPauseMenu.value = !$.isPauseMenu.value
         }
       },
       onDeactivate: (entity: any) => {},

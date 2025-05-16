@@ -9,6 +9,7 @@ const userLanguage: Ref<string> = ref(navigator?.language?.split('-')[0] || 'en'
 const userTutorialsDoneMap: Ref<any> = ref('{}')
 const tutorialPhase: Ref<string> = ref('')
 const allowTutorial: Ref<boolean> = ref(true)
+const isOptionsModalOpen: Ref<boolean> = ref(false)
 
 /* just for after the indexDB has loaded */
 watch(
@@ -54,6 +55,7 @@ const useUser = () => {
     tutorialPhase,
     allowTutorial,
     setSettingValue,
+    isOptionsModalOpen,
   }
 }
 

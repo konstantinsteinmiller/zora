@@ -62,7 +62,7 @@ const Controller = ({
   entity.currentVelocity = new Vector3(0, 0, 0)
 
   entity.playAnimation = (name: string) => {
-    if (entity.stateMachine.currentState) {
+    if (entity.stateMachine.currentState && entity.stateMachine.currentState.name !== name) {
       entity.stateMachine.setState(name)
     }
   }

@@ -187,6 +187,9 @@ export default (entity?: any) => {
       document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
+      if (!$.isMenu.value) {
+        onKeyDown({ code: 'Escape' } as KeyboardEvent)
+      }
       // console.log('Pointer unlocked')
 
       if ($.controls.attack) {
@@ -238,7 +241,7 @@ export default (entity?: any) => {
     }
   }
   function setPointerLock() {
-    if ($.isBattleOver) return
+    if ($.isBattleOver || $.isPauseMenu.value) return
 
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,
@@ -331,6 +334,7 @@ export function spraySprincles(event: MouseEvent) {
 }
 
 import { startFairySprinklesVFX } from '@/vfx/spricles-vfx.ts'
+import { watch } from 'vue'
 
 let sprinclesCount = 0
 export function spraySprinclesAtWorldPosition(entity: any) {

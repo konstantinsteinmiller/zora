@@ -14,10 +14,9 @@ export default (config: any = {}) => {
   entity.routines = {
     start: {
       wp: 'WP_FLF_TRADER',
+      anim: 'run',
       callback: entity => {
         entity.mesh.lookAt($.player.mesh.position.x, entity.position.y, $.player.mesh.position.z)
-        // console.log('start animation idle: ')
-        // entity.playAnimation('idle')
       },
     },
     trade: {

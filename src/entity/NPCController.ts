@@ -74,10 +74,22 @@ const NPCController = (config: NPCControllerProps) => {
   entity.targetPosition = config.startPosition
   const performNPCLogic = () => {
     if ($?.level?.pathfinder) {
+      const routine = entity.routines[entity.routine]
+
       if (entity.position.distanceTo(entity.targetPosition) > 0.5) {
-        /*;(($.isDebug && entity.name === 'flf trader') || !$.isDebug) &&
-         */ moveToTargetPosition(entity, entity.targetPosition, enemy, true)
+        if (!routine?.anim || routine?.anim === 'walk') {
+          entity.playAnimation('walk')
+        } else if (routine?.anim) {
+          entity.playAnimation(routine.anim)
+        }
+
+        moveToTargetPosition(entity, entity.targetPosition, enemy, true)
       } else {
+        if (!routine?.anim) {
+          entity.playAnimation('idle')
+        } else if (routine?.anim) {
+          entity.playAnimation(routine.anim)
+        }
         updateCallback(entity)
       }
     }
