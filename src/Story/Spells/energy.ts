@@ -5,8 +5,9 @@ import { ELEMENTS } from '@/utils/enums.ts'
  ***** attack ******
  ******************/
 export const ENERGY_BALL: AttackSpell = {
-  name: 'Energy Ball',
+  name: 'energyBall',
   element: ELEMENTS.ENERGY,
+  icon: 'energyWhite',
   speed: 1.5,
   damage: 20,
   mana: 8,
@@ -15,9 +16,10 @@ export const ENERGY_BALL: AttackSpell = {
 /*******************
  ***** passive *****
  ******************/
-export const OVERCHARGED: Spell = {
-  name: 'Overcharged',
+export const SUPERCHARGED: Spell = {
+  name: 'supercharged',
   element: ELEMENTS.ENERGY,
+  icon: 'pentagramWhite',
   mana: 15,
   buff: {
     name: 'attack',

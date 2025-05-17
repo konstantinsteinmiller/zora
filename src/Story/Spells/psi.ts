@@ -5,21 +5,22 @@ import { ELEMENTS } from '@/utils/enums.ts'
  ***** attack ******
  ******************/
 
-// export const AURA_OF_RAGE: AttackSpell = {
-//   name: 'Aura of rage',
-//   element: ELEMENTS.PSI,
-//   speed: 1,
-//   damage: 20,
-//   mana: 10,
-//   specialEffect: `will agonize your opponent. Everytime impacted fairy uses an active spell, it's magic turns against himself and causes damage.`,
-// }
+export const SCREAM: AttackSpell = {
+  name: 'scream',
+  element: ELEMENTS.PSI,
+  icon: 'energyWhite',
+  speed: 1.5,
+  damage: 20,
+  mana: 10,
+}
 
 /*******************
  ***** passive *****
  ******************/
 export const AURA_OF_RAGE: Spell = {
-  name: 'Aura of rage',
+  name: 'auraOfRage',
   element: ELEMENTS.PSI,
+  icon: 'brainWhite',
   mana: 0,
   buff: {
     name: 'attack',

@@ -12,8 +12,8 @@ export const NATURE_BUTTERFLY_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 0, power: 0, defense: -2, speed: 3, special: 1 },
-  spells: [FLOWER_POWER],
-  passiveSpells: [NATURES_SHIELD],
+  spells: [FLOWER_POWER, FLOWER_POWER],
+  passiveSpells: [NATURES_SHIELD, NATURES_SHIELD],
 }
 
 const Mushiddle: Ref<Fairy | null> = ref(null)
@@ -26,8 +26,8 @@ export const NATURE_MUSHROOM_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Mushiddle],
   statsGrowthSteps: { hp: 0, power: -1, defense: 0, speed: -1, special: 3 },
-  spells: [FLOWER_POWER],
-  passiveSpells: [NATURES_SHIELD],
+  spells: [FLOWER_POWER, FLOWER_POWER],
+  passiveSpells: [NATURES_SHIELD, NATURES_SHIELD],
 }
 
 export const NATURE_MUSHROOM_MIDDLE: Fairy = {
@@ -39,8 +39,8 @@ export const NATURE_MUSHROOM_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [NATURE_MUSHROOM_YOUNG, null],
   statsGrowthSteps: { hp: 2, power: -1, defense: 1, speed: -1, special: 1 },
-  spells: [FLOWER_POWER],
-  passiveSpells: [NATURES_SHIELD],
+  spells: [FLOWER_POWER, FLOWER_POWER],
+  passiveSpells: [NATURES_SHIELD, NATURES_SHIELD],
 }
 Mushiddle.value = NATURE_MUSHROOM_MIDDLE
 
@@ -56,7 +56,7 @@ export const NATURE_MOSS: Fairy = {
   tier: 1,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: -1, power: 1, defense: 0, speed: 2, special: 0 },
-  spells: [FLOWER_POWER],
-  passiveSpells: [NATURES_SHIELD],
+  spells: [FLOWER_POWER, FLOWER_POWER],
+  passiveSpells: [NATURES_SHIELD, NATURES_SHIELD],
 }
 export default [NATURE_BUTTERFLY_MIDDLE, NATURE_MUSHROOM_YOUNG, NATURE_MUSHROOM_MIDDLE, NATURE_MOSS]
