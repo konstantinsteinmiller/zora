@@ -7,6 +7,7 @@ import { ELEMENTS } from '@/utils/enums.ts'
 export const FLOWER_POWER: AttackSpell = {
   name: 'Flower Power',
   element: ELEMENTS.NATURE,
+  icon: 'energyWhite',
   speed: 1,
   damage: 10,
   mana: 5,
@@ -19,6 +20,7 @@ export const FLOWER_POWER: AttackSpell = {
 export const NATURES_SHIELD: Spell = {
   name: "Nature's Shield",
   element: ELEMENTS.NATURE,
+  icon: 'shieldWhite',
   mana: 25,
   buff: {
     name: 'defense',

@@ -1,3 +1,4 @@
+import { AURA_OF_RAGE, SCREAM } from '@/Story/Spells/psi.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
 
@@ -12,8 +13,8 @@ export const PSI_NIGHTMARE: Fairy = {
   tier: 2,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 0, power: 2, defense: -2, speed: 2, special: 1 },
-  spells: [],
-  passiveSpells: [],
+  spells: [SCREAM, SCREAM],
+  passiveSpells: [AURA_OF_RAGE, AURA_OF_RAGE],
 }
 
 export default [PSI_NIGHTMARE]

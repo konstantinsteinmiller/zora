@@ -7,6 +7,7 @@ import { ELEMENTS } from '@/utils/enums.ts'
 export const SNOWBALL_TOSS: AttackSpell = {
   name: 'Snowball Toss',
   element: ELEMENTS.ICE,
+  icon: 'iceWhite',
   speed: 1.2,
   damage: 20,
   mana: 5,
@@ -26,6 +27,7 @@ export const SNOWBALL_TOSS: AttackSpell = {
 export const FROST_NEEDLE: AttackSpell = {
   name: 'Frost Needle',
   element: ELEMENTS.ICE,
+  icon: 'needlesWhite',
   speed: 2,
   damage: 10,
   mana: 5,
@@ -38,6 +40,7 @@ export const FROST_NEEDLE: AttackSpell = {
 export const FROST_SHIELD: Spell = {
   name: 'Frost Shield',
   element: ELEMENTS.ICE,
+  icon: 'shieldWhite',
   mana: 5,
   buff: {
     name: 'defense',
@@ -48,6 +51,7 @@ export const FROST_SHIELD: Spell = {
 export const ARCTIC_BARRIER: Spell = {
   name: 'Arctic Barrier',
   element: ELEMENTS.ICE,
+  icon: 'shieldWhite',
   mana: 25,
   buff: {
     name: 'defense',

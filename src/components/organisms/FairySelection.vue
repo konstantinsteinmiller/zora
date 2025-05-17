@@ -25,7 +25,6 @@ const { t } = useI18n()
 <i18n>
 en:
   battleFormation: "Battle Formation"
-
 de:
   battleFormation: "Kampfaufstellung"
 </i18n>

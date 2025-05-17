@@ -17,13 +17,14 @@ const props = defineProps({
   },
 })
 
+const emptySpellSlot = { name: 'empty', icon: '' }
 const fairySpellsList = ref<(Spell | AttackSpell)[]>([
-  props.fairy.spells[0],
-  props.fairy.passiveSpells[1],
-  props.fairy.spells[0],
-  props.fairy.passiveSpells[1],
+  props.fairy.spells[0] || emptySpellSlot,
+  props.fairy.passiveSpells[0] || emptySpellSlot,
+  props.fairy.spells[1] || emptySpellSlot,
+  props.fairy.passiveSpells[1] || emptySpellSlot,
 ])
-console.log('fairySpellsList: ', fairySpellsList.value)
+// console.log('fairySpellsList: ', fairySpellsList.value)
 const { onDragStartSpell, onEndSpell, onDropSpell } = useMenu(fairySpellsList, 'fairy-spells-list')
 </script>
 

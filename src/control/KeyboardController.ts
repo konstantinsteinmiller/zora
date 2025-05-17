@@ -99,7 +99,9 @@ export default (entity?: any) => {
   const onMouseDown = (event: MouseEvent) => {
     if ($.isMenu.value) return
 
-    event.preventDefault()
+    if (!$.menuItem.value) {
+      event.preventDefault()
+    }
     input.keysMap[`Mouse${event.button}`] = true
     activatedKeysMap.value[`Mouse${event.button}`] = true
 
@@ -126,6 +128,9 @@ export default (entity?: any) => {
   const preventedKeyDownEventsList = ['Space']
   const preventedControlCommandsList = ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyH']
   const onKeyDown = (event: KeyboardEvent) => {
+    if (event.code === 'Escape') {
+      input.hitEscape = true
+    }
     if ($.isMenu.value) return
 
     // $.enableDebug && console.log('event.code: ', event.code, event.keyCode)
@@ -187,8 +192,10 @@ export default (entity?: any) => {
       document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
-      if (!$.isMenu.value) {
+      if (!$.isMenu.value && input.hitEscape) {
         onKeyDown({ code: 'Escape' } as KeyboardEvent)
+      } else {
+        input.hitEscape = false
       }
       // console.log('Pointer unlocked')
 
@@ -241,7 +248,7 @@ export default (entity?: any) => {
     }
   }
   function setPointerLock() {
-    if ($.isBattleOver || $.isPauseMenu.value) return
+    if ($.isBattleOver || $.isPauseMenu.value || $.menuItem.value) return
 
     document.body.requestPointerLock({
       unadjustedMovement: Options.unadjustedMovement,

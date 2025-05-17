@@ -1,3 +1,4 @@
+import { ANORGANIC_STRIKE, METAL_NEEDLE, STRUCTURAL_DAMAGE } from '@/Story/Spells/metal.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
 import { ref } from 'vue'
@@ -15,8 +16,8 @@ export const METAL_SCORPION_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Metalord],
   statsGrowthSteps: { hp: 0, power: 1, defense: 2, speed: 1, special: -3 },
-  spells: [],
-  passiveSpells: [],
+  spells: [METAL_NEEDLE, ANORGANIC_STRIKE],
+  passiveSpells: [STRUCTURAL_DAMAGE, STRUCTURAL_DAMAGE],
 }
 
 export const METAL_SCORPION_MIDDLE: Fairy = {
@@ -28,8 +29,8 @@ export const METAL_SCORPION_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [METAL_SCORPION_YOUNG, Scorgon],
   statsGrowthSteps: { hp: 0, power: 3, defense: 2, speed: 0, special: -3 },
-  spells: [],
-  passiveSpells: [],
+  spells: [METAL_NEEDLE, ANORGANIC_STRIKE],
+  passiveSpells: [STRUCTURAL_DAMAGE, STRUCTURAL_DAMAGE],
 }
 Metalord.value = METAL_SCORPION_MIDDLE
 
@@ -43,8 +44,8 @@ export const METAL_SCORPION_OLD: Fairy = {
   tier: 2,
   evolutionsList: [METAL_SCORPION_MIDDLE, null],
   statsGrowthSteps: { hp: 2, power: 1, defense: 4, speed: -2, special: -2 },
-  spells: [],
-  passiveSpells: [],
+  spells: [METAL_NEEDLE, ANORGANIC_STRIKE],
+  passiveSpells: [STRUCTURAL_DAMAGE, STRUCTURAL_DAMAGE],
 }
 Scorgon.value = METAL_SCORPION_OLD
 

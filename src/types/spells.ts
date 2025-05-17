@@ -6,6 +6,7 @@ export type Element = (typeof elements)[number]
 export interface Spell {
   name: string
   element: Element
+  icon: string
   mana: number
   buff?: {
     name: string
