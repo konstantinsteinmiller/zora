@@ -25,20 +25,22 @@ const spellToIconMap = {
   needlesWhite: 'needles-white',
   brain: 'brain',
   brainWhite: 'brain-white',
+  feetWhite: 'feet-white',
+  painWhite: 'pain-white',
 }
 const elementToColorMpa: Record<Element, string> = {
-  NATURE: 'rgba(21,198,98,0.34)', // Similar lightness and saturation, shifted to green
-  AIR: 'rgba(255,255,255,0.92)', // Light white, similar lightness
-  WATER: 'rgba(45,107,251,0.84)', // Medium blue, similar saturation
-  LIGHT: 'rgba(255, 255, 224, 0.19)', // Light yellow, similar lightness
+  NATURE: 'rgba(21,198,98,0.34)',
+  AIR: 'rgba(255,255,255,0.92)',
+  WATER: 'rgba(45,107,251,0.84)',
+  LIGHT: 'rgba(255,255,71,0.8)',
   ENERGY: 'rgba(95, 21, 198, 0.19)',
-  PSI: 'rgba(7,108,133,0.87)', // Light blue, slightly desaturated
-  EARTH: 'rgba(139,69,19,0.53)', // Brown, lower lightness but same transparency
-  ICE: 'rgb(80,193,221)', // Light blue, often associated with ice
-  FIRE: 'rgba(209,59,0,0.57)', // Orange-red, similar saturation
-  DARK: 'rgba(47, 79, 79, 0.19)', // Dark grey-green, lower lightness
-  METAL: 'rgba(185,193,198,0.93)', // Grey, similar lightness but neutral hue
-  NEUTRAL: 'rgba(220, 220, 220, 0.19)', // Light grey, very desaturated
+  PSI: 'rgba(7,108,133,0.87)',
+  EARTH: 'rgba(139,69,19,0.53)',
+  ICE: 'rgb(80,193,221)',
+  FIRE: 'rgba(209,59,0,0.57)',
+  DARK: 'rgba(47, 79, 79, 0.19)',
+  METAL: 'rgba(185,193,198,0.93)',
+  NEUTRAL: 'rgba(220, 220, 220, 0.19)',
 }
 
 const icon =

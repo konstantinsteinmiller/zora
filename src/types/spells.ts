@@ -8,6 +8,7 @@ export interface Spell {
   element: Element
   icon: string
   mana: number
+  effectText?: string
   buff?: {
     name: string
     value: number // [1 is 100%]
@@ -20,5 +21,6 @@ export interface AttackSpell extends Spell {
   damage: number
   charge: number
   onSpecial?: (hitTarget: any, attacker: any) => void
-  specialEffect?: string
+  effect?: string
+  criticalHitText?: string
 }

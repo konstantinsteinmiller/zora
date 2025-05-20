@@ -192,11 +192,10 @@ export default (entity?: any) => {
       document.removeEventListener('mousemove', onUnlockedMouseMove, false)
       document.addEventListener('mousemove', onMouseMove, false)
     } else {
-      if (!$.isMenu.value && input.hitEscape) {
+      if (!$.isMenu.value && !$.menuItem.value && input.hitEscape) {
         onKeyDown({ code: 'Escape' } as KeyboardEvent)
-      } else {
-        input.hitEscape = false
       }
+      input.hitEscape = false
       // console.log('Pointer unlocked')
 
       if ($.controls.attack) {

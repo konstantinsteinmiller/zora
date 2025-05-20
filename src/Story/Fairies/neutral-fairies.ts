@@ -16,8 +16,8 @@ export const NEUTRAL_WARRIOR_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Verona],
   statsGrowthSteps: { hp: -1, power: 3, defense: 0, speed: 2, special: -3 },
-  spells: [],
-  passiveSpells: [],
+  spells: [KNIGHTS_VENGEANCE],
+  passiveSpells: [STAND_YOUR_GROUND],
 }
 
 export const NEUTRAL_WARRIOR_MIDDLE: Fairy = {
@@ -30,8 +30,8 @@ export const NEUTRAL_WARRIOR_MIDDLE: Fairy = {
   tier: 2,
   evolutionsList: [NEUTRAL_WARRIOR_YOUNG, null],
   statsGrowthSteps: { hp: 0, power: 3, defense: 1, speed: 1, special: -3 },
-  spells: [],
-  passiveSpells: [],
+  spells: [KNIGHTS_VENGEANCE],
+  passiveSpells: [STAND_YOUR_GROUND],
 }
 Verona.value = NEUTRAL_WARRIOR_MIDDLE
 

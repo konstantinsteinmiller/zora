@@ -25,7 +25,7 @@ export default (draggableItems: Ref<(Fairy | Spell)[]>, listId: string) => {
 
     if (event?.moved?.element) {
       console.log('moved: ', event?.moved?.element)
-    } else if (event?.added?.element && listId === 'fairy-spells-list') {
+    } else if (event?.added?.element && listId === 'all-spells-list') {
       // Dropping from unused to active
       const dropIndex = event.added.newIndex
       const cutoutIndex = dropIndex >= 5 ? dropIndex - 1 : dropIndex + 1

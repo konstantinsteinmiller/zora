@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import OptionsModal from '@/components/molecules/OptionsModal.vue'
 import Tutorial from '@/components/Tutorial.vue'
+import { EARTH_GARGOYLE_MIDDLE, EARTH_GARGOYLE_YOUNG } from '@/Story/Fairies/earth-fairies.ts'
 import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
 import { FIRE_DRAGON_OLD } from '@/Story/Fairies/fire-fairies.ts'
 import { ICE_SNOWMAN_OLD, ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE } from '@/Story/Fairies/ice-fairies.ts'
@@ -34,7 +35,7 @@ import { NATURE_BUTTERFLY_MIDDLE, NATURE_MUSHROOM_MIDDLE } from '@/Story/Fairies
 import { NEUTRAL_WARRIOR_MIDDLE } from '@/Story/Fairies/neutral-fairies.ts'
 import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import useUser from '@/use/useUser.ts'
-import { createFairy } from '@/utils/world.ts'
+import { allSpellsList, createFairy } from '@/utils/world.ts'
 import { computed, ref } from 'vue'
 import $ from '@/global'
 import { useRoute } from 'vue-router'
@@ -59,22 +60,33 @@ if ($.isDebug) {
   ]
   const allFairies = [
     createFairy(LIGHT_STARLIGHT.id, 8),
-    { ...createFairy(FIRE_DRAGON_OLD.id, 11), name: 'cute Glurak' },
+    { ...createFairy(FIRE_DRAGON_OLD.id, 11) },
     createFairy(ICE_SNOWMAN_OLD.id, 11),
     createFairy(ICE_YETI_MIDDLE.id, 15),
     createFairy(NATURE_MUSHROOM_MIDDLE.id, 32),
     createFairy(METAL_SCORPION_YOUNG.id, 12),
     createFairy(METAL_SCORPION_MIDDLE.id, 3),
-    { ...createFairy(NEUTRAL_WARRIOR_MIDDLE.id, 22), name: 'nighty' },
+    createFairy(EARTH_GARGOYLE_MIDDLE.id, 5),
+    createFairy(EARTH_GARGOYLE_YOUNG.id, 23),
+    { ...createFairy(NEUTRAL_WARRIOR_MIDDLE.id, 22) },
   ]
+
+  const allSpells = [...allSpellsList.value]
+
   if (!$.player) {
     $.player = {
       fairiesList: ref(activeFairiesList),
       allFairiesList: ref(allFairies),
+      spells: {
+        spellsList: ref(allSpells),
+      },
     }
   } else {
     $.player.fairiesList = ref(activeFairiesList)
     $.player.allFairiesList = ref(allFairies)
+    $.player.spells = {
+      spellsList: ref(allSpells),
+    }
   }
   $.player.fairiesList.value = $.player?.fairiesList.value.map(fairy => {
     // const hp = Math.ceil(Math.random() * 100)

@@ -69,12 +69,12 @@ const onClick = (e: MouseEvent) => {
 
 onMounted(() => {
   preloadAssets()
-  game$.addEventListener('click', onClick, false)
-  game$.addEventListener('mousemove', onUnlockedMouseMove, false)
+  game$?.addEventListener('click', onClick, false)
+  game$?.addEventListener('mousemove', onUnlockedMouseMove, false)
 })
 onUnmounted(() => {
-  game$.removeEventListener('click', onClick, false)
-  game$.removeEventListener('mousemove', onUnlockedMouseMove, false)
+  game$?.removeEventListener('click', onClick, false)
+  game$?.removeEventListener('mousemove', onUnlockedMouseMove, false)
 })
 </script>
 

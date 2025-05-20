@@ -1,4 +1,4 @@
-import { ARCTIC_BARRIER, FROST_NEEDLE, FROST_SHIELD, SNOWBALL_TOSS } from '@/Story/Spells/ice.ts'
+import { ARCTIC_BARRIER, CHILLING_STRIKE, FROST_NEEDLE, FROST_SHIELD, SNOWBALL_TOSS } from '@/Story/Spells/ice.ts'
 import type { Fairy } from '@/types/fairy.ts'
 import { ELEMENTS } from '@/utils/enums.ts'
 import { type Ref, ref } from 'vue'
@@ -62,7 +62,7 @@ export const ICE_SNOWMAN_YOUNG: Fairy = {
     speed: 1,
     special: -1,
   },
-  spells: [SNOWBALL_TOSS, FROST_NEEDLE],
+  spells: [CHILLING_STRIKE, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 

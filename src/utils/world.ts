@@ -1,3 +1,4 @@
+import fairiesList from '@/components/organisms/FairiesList.vue'
 import FairyController from '@/entity/FairyController.ts'
 import $ from '@/global.ts'
 import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
@@ -10,6 +11,7 @@ import { NEUTRAL_WARRIOR_MIDDLE } from '@/Story/Fairies/neutral-fairies.ts'
 import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import type { Guild } from '@/types/entity.ts'
 import type { Fairy } from '@/types/fairy.ts'
+import type { Spell } from '@/types/spells.ts'
 import { levelUpFairy } from '@/utils/fairy.ts'
 import { prependBaseUrl } from '@/utils/function.ts'
 import { v4 } from 'uuid'
@@ -78,6 +80,26 @@ export const loadFairies = async () => {
   })
 }
 loadFairies()
+
+const spellsMap: Map<string, any> = new Map<string, any>()
+let spellsList: Spell[] = []
+export async function importSpells(): Promise<void> {
+  const spellFilesList = import.meta.glob('@/Story/Spells/*.ts', { eager: true })
+  for (const spellElement in spellFilesList) {
+    const allSpellsList: Spell[] = Object.values(spellFilesList[spellElement])
+    // console.log('allSpellsList: ', allSpellsList)
+    spellsList = spellsList.concat(allSpellsList)
+    allSpellsList?.forEach((spell: any) => spellsMap.set(spell.name, spell))
+  }
+}
+
+export const loadSpells = async () => {
+  await importSpells()
+}
+loadSpells()
+
+// export const allSpellsMap = ref(spellsMap)
+export const allSpellsList = ref(spellsList)
 
 export const createFairy = (id: string, level: number, guild: Guild = 'guild-companion-fairy' as Guild): Fairy => {
   const templateFairy = fairiesMap.get(id)

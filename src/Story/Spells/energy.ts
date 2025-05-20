@@ -21,6 +21,7 @@ export const SUPERCHARGED: Spell = {
   element: ELEMENTS.ENERGY,
   icon: 'pentagramWhite',
   mana: 15,
+  effectText: `Your attacks are supercharged. Increases damage by 60%.`,
   buff: {
     name: 'attack',
     value: 1.6,

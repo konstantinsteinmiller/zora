@@ -24,7 +24,7 @@ const menuItemsList: Ref<MenuItemEntry[]> = ref([
   { name: 'Menu Items', id: MENU.ITEMS, icon: '/images/icons/potion_128x128.png' },
   { name: 'Menu Fairy', id: MENU.FAIRY, icon: '/images/icons/fairy.png' },
   { name: 'Menu Attack Spells', id: MENU.ATTACK_SPELLS, icon: '/images/icons/scroll_128x128.png' },
-  { name: 'Menu passive Spells', id: MENU.PASSIVE_SPELLS, icon: '/images/icons/scroll_128x128.png' },
+  // { name: 'Menu passive Spells', id: MENU.PASSIVE_SPELLS, icon: '/images/icons/scroll_128x128.png' },
 ])
 menuItemsList.value = menuItemsList.value.map(item => {
   item.icon = prependBaseUrl(item.icon)

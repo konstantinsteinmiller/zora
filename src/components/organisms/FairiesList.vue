@@ -44,15 +44,7 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy, onDropFairy } = useMenu(d
           )
 </template>
 
-<style scoped lang="sass">
-.fairy-list-detail.draggable
-  user-drag: element!important
-  user-select: all!important
-  -webkit-user-select: all!important
-  -webkit-user-drag: element!important
-  -moz-user-select: all!important
-  -ms-user-select: all!important
-</style>
+<style scoped lang="sass"></style>
 
 <i18n>
 en:

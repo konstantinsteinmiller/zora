@@ -19,7 +19,8 @@ export const ANORGANIC_STRIKE: AttackSpell = {
   icon: 'energy',
   speed: 1.5,
   damage: 20,
-  mana: 8,
+  mana: 12,
+  criticalHitText: `deal an additional 20% damage`,
 }
 
 /*******************
@@ -29,7 +30,8 @@ export const STRUCTURAL_DAMAGE: Spell = {
   name: 'structuralDamage',
   element: ELEMENTS.METAL,
   icon: 'pentagram',
-  mana: 15,
+  mana: 5,
+  effectText: `Reduce enemy armor by 2`,
   onCriticalHit: (entity, enemy) => {
     // enemy.dealDamage(enemy, entity, 5)
     // deal 2 armor damage to the enemy

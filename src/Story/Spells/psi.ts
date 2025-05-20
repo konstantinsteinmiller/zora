@@ -26,5 +26,5 @@ export const AURA_OF_RAGE: Spell = {
     name: 'attack',
     value: 1.6,
   },
-  effect: 'Your opponent is shaking with blind rage. Increases chance of missing his target by 20%.',
+  effectText: 'Your opponent is shaking with blind rage. Increases chance of missing his target by 20%.',
 }

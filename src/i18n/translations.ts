@@ -1,6 +1,13 @@
 export default {
   en: {
     gameName: 'Zora',
+    stats: {
+      damage: 'Damage',
+      mana: 'Mana',
+      fireRate: 'Fire Rate',
+      criticalHit: 'Critical Hit',
+      effect: 'Effect',
+    },
     cancel: 'Cancel',
     close: 'Close',
     understood: 'Understood',
@@ -29,6 +36,13 @@ export default {
   },
   de: {
     gameName: 'Zora',
+    stats: {
+      damage: 'Schaden',
+      mana: 'Mana',
+      fireRate: 'Schussrate',
+      criticalHit: 'Kritischer Treffer',
+      effect: 'Effekt',
+    },
     cancel: 'Abbrechen',
     close: 'Schließen',
     understood: 'Verstanden',

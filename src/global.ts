@@ -177,6 +177,15 @@ const globalState = () => {
       !document.pointerLockElement && global.controls.setPointerLock()
     }
   })
+
+  watch(global.menuItem, newValue => {
+    /* toggle pointer on menu change */
+    if (newValue) {
+      global?.controls?.removePointerLock()
+    } else {
+      !document.pointerLockElement && global?.controls?.setPointerLock()
+    }
+  })
   return global
 }
 const currentState = globalState()

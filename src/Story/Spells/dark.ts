@@ -4,8 +4,9 @@ import { ELEMENTS } from '@/utils/enums.ts'
 export const TOUCH_OF_DOOM: AttackSpell = {
   name: 'Touch of the doomed',
   element: ELEMENTS.DARK,
+  icon: 'energyWhite',
   speed: 1,
-  damage: 20,
-  mana: 10,
-  specialEffect: `will agonize your opponent. Everytime impacted fairy uses an active spell, it's magic turns against himself and causes damage.`,
+  damage: 15,
+  mana: 12,
+  criticalHitText: `Opponent is agonized for 3 seconds. Everytime impacted fairy uses an active spell, it's magic turns against himself and causes damage.`,
 }

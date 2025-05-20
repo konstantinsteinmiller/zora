@@ -5,24 +5,27 @@ import { ELEMENTS } from '@/utils/enums.ts'
  ***** attack ******
  ******************/
 export const BLAZING_FEATHERS: AttackSpell = {
-  name: 'Blazing Feathers',
+  name: 'blazingFeathers',
   element: ELEMENTS.FIRE,
+  icon: 'energyWhite',
   speed: 2,
   damage: 15,
   mana: 8,
 }
 
 export const FIRE_BREEZE: AttackSpell = {
-  name: 'Fire Breeze',
+  name: 'fireBreeze',
   element: ELEMENTS.FIRE,
+  icon: 'energyWhite',
   speed: 0.75,
   damage: 35,
   mana: 7,
 }
 
 export const SPARK: AttackSpell = {
-  name: 'Spark',
+  name: 'spark',
   element: ELEMENTS.FIRE,
+  icon: 'energyWhite',
   speed: 3,
   damage: 8,
   mana: 2,
@@ -32,8 +35,9 @@ export const SPARK: AttackSpell = {
  ***** passive *****
  ******************/
 export const BLINDING_FIRE: Spell = {
-  name: 'Blinding Fire',
+  name: 'blindingFire',
   element: ELEMENTS.FIRE,
+  icon: 'painWhite',
   mana: 3,
   onHit: (entity, enemy) => {
     enemy.dealDamage(enemy, entity, 5)
@@ -41,8 +45,9 @@ export const BLINDING_FIRE: Spell = {
 }
 
 export const FIERY_EVADE: Spell = {
-  name: 'Fiery Evade',
+  name: 'fieryEvade',
   element: ELEMENTS.FIRE,
+  icon: 'feetWhite',
   mana: 15,
   onHit: (entity, enemy) => {
     /* dodge spell */
@@ -50,8 +55,9 @@ export const FIERY_EVADE: Spell = {
 }
 
 export const FLASH: Spell = {
-  name: 'Fiery Evade',
+  name: 'flash',
   element: ELEMENTS.FIRE,
+  icon: 'feetWhite',
   mana: 1,
   onHit: (entity, enemy) => {
     /* TODO make up skill */

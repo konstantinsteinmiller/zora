@@ -6,20 +6,22 @@ import { ELEMENTS } from '@/utils/enums.ts'
  ******************/
 
 export const KNIGHTS_VENGEANCE: AttackSpell = {
-  name: `Knight's vengeance`,
+  name: `knightSVengeance`,
   element: ELEMENTS.NEUTRAL,
+  icon: 'brainWhite',
   speed: 1,
   damage: 20,
   mana: 10,
-  specialEffect: `Stun your opponent for 5 seconds. He can neither fly nor move. Current charge of his spell is paused.`,
+  effect: `Stun your opponent for 5 seconds. He can neither fly nor move. Current charge of his spell is paused.`,
 }
 
 /*******************
  ***** passive *****
  ******************/
 export const STAND_YOUR_GROUND: Spell = {
-  name: 'Stand your ground',
+  name: 'standYourGround',
   element: ELEMENTS.NEUTRAL,
+  icon: 'shieldWhite',
   mana: 0,
   buff: {
     name: 'attack',

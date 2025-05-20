@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+
 const props = defineProps({
   amount: {
     type: Number,
@@ -6,8 +8,9 @@ const props = defineProps({
   },
 })
 
-const amountsList = [...Array(props.amount)]
-const missingList = [...Array(5 - props.amount)]
+const dots = computed(() => props.amount)
+const amountsList = computed(() => [...Array(dots.value)])
+const missingList = computed(() => [...Array(5 - dots.value)])
 </script>
 
 <template lang="pug">
