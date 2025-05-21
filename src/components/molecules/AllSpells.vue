@@ -3,7 +3,7 @@ import SpellIcon from '@/components/atoms/SpellIcon.vue'
 import StatRating from '@/components/atoms/StatRating.vue'
 import $ from '@/global.ts'
 import type { AttackSpell, Spell } from '@/types/spells.ts'
-import useMenu from '@/use/useDraggable.ts'
+import useDraggable, { draggedUponFairy, targetSpell } from '@/use/useDraggable.ts'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
@@ -14,39 +14,55 @@ const { t } = useI18n()
 const spellsList = ref<(Spell | AttackSpell)[]>($.player.spells.spellsList)
 const selectedSpell = ref<Spell | AttackSpell | null>(null)
 const isAttackSpell = computed(() => {
-  console.log(JSON.stringify(selectedSpell.value, undefined, 2))
   return selectedSpell.value?.speed !== undefined && selectedSpell.value?.name
 })
 const isPassiveSpell = computed(() => {
-  console.log(JSON.stringify(selectedSpell.value, undefined, 2))
   return selectedSpell.value?.speed === undefined && selectedSpell.value?.mana >= 0 && selectedSpell.value?.name
 })
 const selectedSpellDamage = computed(() => Math.ceil(selectedSpell.value?.damage / 5))
-// console.log('fairySpellsList: ', fairySpellsList.value)
-const { onDragStartSpell, onEndSpell, onDropSpell } = useMenu(spellsList, 'all-spells-list')
+
+const { draggedSpell, draggedFromActiveFairySpells } = useDraggable(spellsList, 'all-spells-list')
+
+const onDragStartAllSpell = (event: any) => {
+  const draggedElement = event.item._underlying_vm_
+
+  if (draggedElement) {
+    draggedSpell.value = draggedElement as Spell | AttackSpell
+    draggedFromActiveFairySpells.value = false
+    // console.log('AllSpell drag start:', draggedSpell.value?.name, 'from index:', event.oldIndex)
+  }
+}
+
+const onEndAllSpell = (event: any) => {
+  draggedSpell.value = null
+  draggedFromActiveFairySpells.value = false
+  targetSpell.value = null
+  draggedUponFairy.value = null
+  // console.log('AllSpell drag end.')
+}
 </script>
 
 <template lang="pug">
   div.all-spells.flex.flex-col.relative.w-full.items-start.justify-start
     draggable(
       v-model="spellsList"
-      group="spells"
+      :group="{ name: 'spells', pull: false, put: false }"
       item-key="name"
-      draggable=".all-spell-detail"
-      ghost-class="all-spell-detail"
-      @start="onDragStartSpell"
-      @end="onEndSpell"
-      @change="onDropSpell"
-      class="all-spells-list flex flex-wrap flex-shrink-1 p-2 gap-1 gap-y-1 items-start justify-start max-h-[520px] overflow-auto"
+      draggable=".all-spell-handle"
+      ghost-class="spell-icon-ghost"
+      @start="onDragStartAllSpell"
+      @end="onEndAllSpell"
+      class="all-spells-list flex flex-wrap flex-shrink-1 p-2 gap-1 gap-y-1 items-start justify-start max-h-[460px] overflow-auto"
     )
       template(v-slot:item="{ element, index }")
-        div.flex.w-20.h-20.relative(class="p-[2px]" @click="selectedSpell = element")
-          img.absolute.top-0.left-0(v-if="selectedSpell?.name === element.name" src="/images/frames/frame-selected_128x128.png" alt="frame"
-            class="w-[80px] h-[80px] z-20 scale-[110%]"
+        div.all-spell-handle.flex.w-20.h-20.relative.cursor-grab(class="p-[2px]" @click="selectedSpell = element")
+          img.absolute.top-0.left-0(v-if="selectedSpell?.name === element.name"
+            src="/images/frames/frame-selected_128x128.png" alt="frame"
+            class="w-[80px] h-[80px] scale-[110%]"
           )
           SpellIcon(
-            class="all-spell-detail draggable cursor-grab"
-            :spell="element" :key="index"
+            class="draggable"
+            :spell="element" :key="element.name"
             :index="index"
             :data-index="index"
           )
@@ -70,4 +86,30 @@ const { onDragStartSpell, onEndSpell, onDropSpell } = useMenu(spellsList, 'all-s
           div.col-span-2 {{ t(selectedSpell?.effectText || '') }}
 </template>
 
-<style scoped lang="sass"></style>
+<style scoped lang="sass">
+.all-spell-handle
+  position: relative
+  z-index: 10
+.all-spells-list
+  &::-webkit-scrollbar
+    width: 12px /* For vertical scrollbars */
+    height: 12px /* For horizontal scrollbars */
+    background-color: transparent
+    border: solid 1px #a58a4b
+    border-radius: 12px
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(182, 152, 101, 0.34)
+    border-radius: 6px
+    border: solid 1px #a58a4b
+  &::-webkit-scrollbar-thumb:hover
+    background-color: rgba(223, 192, 120, 0.85)
+
+.spell-icon-ghost
+  opacity: 0.4
+  border: 2px dashed #762ae4
+  background-color: transparent
+  .all-spell-handle
+    display: none
+  .fairy-spell-handle
+    display: none
+</style>

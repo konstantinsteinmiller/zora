@@ -6,11 +6,16 @@ import { ref, type Ref } from 'vue'
 export const draggedElement: Ref<any> = ref(null)
 export const cutoutElement: Ref<any> = ref(null)
 export const isDragging: Ref<boolean> = ref(false)
+export const draggedSpell: Ref<any> = ref(null)
+export const targetSpell: Ref<any> = ref(null)
+export const draggedFromActiveFairySpells: Ref<boolean> = ref(false)
+export const draggedUponFairy: Ref<any> = ref(null)
 
 export default (draggableItems: Ref<(Fairy | Spell)[]>, listId: string) => {
   const onDragStartSpell = (event: any) => {
     isDragging.value = true
     draggedElement.value = event
+    console.log('onDragStartSpell all: ', draggedElement.value)
   }
 
   const onEndSpell = (event: any) => {
@@ -101,6 +106,8 @@ export default (draggableItems: Ref<(Fairy | Spell)[]>, listId: string) => {
   }
 
   return {
+    draggedSpell,
+    draggedFromActiveFairySpells,
     draggedElement,
     isDragging,
     onDragStartFairy,
