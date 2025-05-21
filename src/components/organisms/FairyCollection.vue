@@ -65,11 +65,11 @@ watch(
 <template lang="pug">
   div.collection.flex.gap-2.h-full.pt-6.pb-2.relative(
     v-if="$?.menuItem?.value === MENU.COLLECTION"
-    class="w-full h-full"
+    class="w-full  max-h-[90vh]"
   )
     div.preview.mr-8.p-4.pt-0.px-6(class="min-w-[298px]")
       div.relative.overflow-visible(style="background: rgba(0, 0, 0, 0.0);"
-        class="h-[300px] max-w-[250px] z-10"
+        class="h-[300px] max-w-[250px] z-10 scale-[80%] -mt-6"
       )
         div.name.relative.p-1.h-8.flex.items-center.justify-center(class="!border-0 bg-[#151515]")
           div.rib(class="text-[17px] -mb-[2px]") {{ selectedFairy?.name ? t(selectedFairy.name) : '' }}

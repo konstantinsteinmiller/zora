@@ -11,7 +11,7 @@ import { clamp } from 'three/src/math/MathUtils.js'
 
 const { t } = useI18n()
 
-const spellsList = ref<(Spell | AttackSpell)[]>($.player.spells.spellsList)
+const spellsList = ref<(Spell | AttackSpell)[]>($.player?.spells?.spellsList || [])
 const selectedSpell = ref<Spell | AttackSpell | null>(null)
 const isAttackSpell = computed(() => {
   return selectedSpell.value?.speed !== undefined && selectedSpell.value?.name
@@ -52,7 +52,7 @@ const onEndAllSpell = (event: any) => {
       ghost-class="spell-icon-ghost"
       @start="onDragStartAllSpell"
       @end="onEndAllSpell"
-      class="all-spells-list flex flex-wrap flex-shrink-1 p-2 gap-1 gap-y-1 items-start justify-start max-h-[460px] overflow-auto"
+      class="all-spells-list fairy-scrollbar  flex flex-wrap flex-shrink-1 p-2 gap-1 gap-y-1 items-start justify-start max-h-[460px] overflow-auto"
     )
       template(v-slot:item="{ element, index }")
         div.all-spell-handle.flex.w-20.h-20.relative.cursor-grab(class="p-[2px]" @click="selectedSpell = element")
@@ -90,19 +90,6 @@ const onEndAllSpell = (event: any) => {
 .all-spell-handle
   position: relative
   z-index: 10
-.all-spells-list
-  &::-webkit-scrollbar
-    width: 12px /* For vertical scrollbars */
-    height: 12px /* For horizontal scrollbars */
-    background-color: transparent
-    border: solid 1px #a58a4b
-    border-radius: 12px
-  &::-webkit-scrollbar-thumb
-    background-color: rgba(182, 152, 101, 0.34)
-    border-radius: 6px
-    border: solid 1px #a58a4b
-  &::-webkit-scrollbar-thumb:hover
-    background-color: rgba(223, 192, 120, 0.85)
 
 .spell-icon-ghost
   opacity: 0.4

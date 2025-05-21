@@ -8,7 +8,7 @@ export const PSI_NIGHTMARE: Fairy = {
   modelPath: '/models/psi-nightmare/psi-nightmare.fbx',
   description:
     'A psi fairy. Who knows, whether this fairy originates from the scariest dreams or otherwise - this dreams are caused by this fairy.\n' +
-    'Despite being physically weak, nimble nightmare fairies specializes in mental attacks and special effect infliction. Legends tell that this kind is originated from the Nightmare Forest from the depth of the Wildlands, but today, if you are unlucky, you can meet her even in urban terrain, feasting on the nightmares of inhabitants.',
+    'Nightmare fairies specializes in mental attacks and special effect infliction. Legends tell that this kind is originated from the Nightmare Forest from the depth of the Wildlands.',
   element: ELEMENTS.PSI,
   tier: 2,
   evolutionsList: [null, null],

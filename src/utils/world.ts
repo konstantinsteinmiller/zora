@@ -183,13 +183,13 @@ export const addMockedFairies = () => {
   ]
   const allFairies = [
     createFairy(LIGHT_STARLIGHT.id, 8),
-    { ...createFairy(FIRE_DRAGON_OLD.id, 11), name: 'cute Glurak' },
+    { ...createFairy(FIRE_DRAGON_OLD.id, 11) },
     createFairy(ICE_SNOWMAN_OLD.id, 11),
     createFairy(ICE_YETI_MIDDLE.id, 15),
     createFairy(NATURE_MUSHROOM_MIDDLE.id, 32),
     createFairy(METAL_SCORPION_YOUNG.id, 12),
     createFairy(METAL_SCORPION_MIDDLE.id, 3),
-    { ...createFairy(NEUTRAL_WARRIOR_MIDDLE.id, 22), name: 'nighty' },
+    { ...createFairy(NEUTRAL_WARRIOR_MIDDLE.id, 22) },
   ]
   if (!$.player) {
     $.player = {

@@ -49,7 +49,7 @@ const backToWorld = () => {
         <div class="mx-auto">
           <div class="flex justify-center">
             <XButton
-              v-if="!$?.world?.playerRef"
+              v-if="!$?.world?.playerRef || route.query.test === 'arena'"
               class="with-bg leading-[1rem]"
               @click="backToMainMenu"
               @keydown.enter="backToMainMenu"

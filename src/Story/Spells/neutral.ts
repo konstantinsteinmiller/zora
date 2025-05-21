@@ -12,7 +12,7 @@ export const KNIGHTS_VENGEANCE: AttackSpell = {
   speed: 1,
   damage: 20,
   mana: 10,
-  effect: `Stun your opponent for 5 seconds. He can neither fly nor move. Current charge of his spell is paused.`,
+  criticalHitText: `Stun your opponent for 5 seconds. He can neither fly nor move. Current charge of his spell is paused.`,
 }
 
 /*******************
@@ -27,5 +27,5 @@ export const STAND_YOUR_GROUND: Spell = {
     name: 'attack',
     value: 1.6,
   },
-  effect: 'effect: party defense is increased by 10% as long as this fairy is not unconscious',
+  effectText: 'Party defense is increased by 10% as long as this fairy is not unconscious',
 }

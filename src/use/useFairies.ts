@@ -61,7 +61,7 @@ export default () => {
       }
     } else if (localStorage.getItem('enemyFairyClass')?.length) {
       const fairyId = localStorage.getItem('enemyFairyClass')
-      enemyFairyClass = fairiesList.value.find(fairy => fairy?.id === fairyId) || undefined
+      enemyFairyClass = fairiesList.value.find(fairy => fairy?.id === fairyId) || NATURE_BUTTERFLY_MIDDLE
     } else {
       enemyFairyClass = NATURE_BUTTERFLY_MIDDLE
     }

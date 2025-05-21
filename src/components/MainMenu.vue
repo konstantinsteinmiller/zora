@@ -31,7 +31,7 @@ showCustomPointer()
 
 const startArena = () => {
   isStartingGame.value = true
-  router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: route.query })
+  router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: { ...route.query, test: 'arena' } })
 }
 
 const startWorld = () => {

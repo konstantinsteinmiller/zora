@@ -24,6 +24,9 @@ watch(
     if (!newValue) return
     try {
       if ($.dialogSelf.value?.id) {
+        if ($.dialogSelf.value.id.toUpperCase() === 'PLAYER') {
+          return
+        }
         const dialogModule = await import(`@/Story/dialogs/DIA_${$.dialogSelf.value.id.toUpperCase()}.ts`)
         /* fill in an end option if writers forget to add one */
         if (dialogModule.default.every((option: Option) => option.order !== 999)) {

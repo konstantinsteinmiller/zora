@@ -31,6 +31,7 @@ export const NATURES_SHIELD: Spell = {
   element: ELEMENTS.NATURE,
   icon: 'shieldWhite',
   mana: 8,
+  effectText: `Reduce incoming damage by 50%`,
   buff: {
     name: 'defense',
     value: 0.5,

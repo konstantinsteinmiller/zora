@@ -23,7 +23,7 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy } = useMenu(
 </script>
 
 <template lang="pug">
-  div.h-full.relative.flex.justify-end(v-if="showAllFairyList" class="w-full h-full")
+  div.relative.flex.justify-end(v-if="showAllFairyList" class="w-full")
     div.flex.flex-col.gap-2(class="w-[380px] z-100")
       draggable(
         v-model="draggableFairies"
@@ -34,7 +34,7 @@ const { onDragStartFairy, onDragOverFairy, onEndFairy } = useMenu(
         @start="onDragStartFairy"
         @dragover="onDragOverFairy"
         @end="onEndFairy"
-        class="all-fairies-list flex flex-col gap-4 w-full"
+        class="all-fairies-list fairy-scrollbar flex flex-col gap-4 w-full max-h-[100%] overflow-auto"
       )
         template(v-slot:item="{ element, index }")
           AllFairyDetail(

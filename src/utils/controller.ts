@@ -1,12 +1,5 @@
 import SpellFire from '@/entity/SpellFire.ts'
-import { ENERGY_FEMALE_OLD } from '@/Story/Fairies/energy-fairies.ts'
-import { FIRE_DRAGON_OLD, FIRE_HARPY } from '@/Story/Fairies/fire-fairies.ts'
-import { ICE_SNOWMAN_YOUNG, ICE_YETI_MIDDLE, ICE_YETI_YOUNG } from '@/Story/Fairies/ice-fairies.ts'
-import { METAL_SCORPION_OLD } from '@/Story/Fairies/metal-fairies.ts'
-import { NATURE_BUTTERFLY_MIDDLE } from '@/Story/Fairies/nature-fairies.ts'
-import { PSI_NIGHTMARE } from '@/Story/Fairies/psi-fairies.ts'
 import type { Fairy } from '@/types/fairy.ts'
-import type { Spell } from '@/types/spells.ts'
 import useUser from '@/use/useUser.ts'
 import {
   DEFAULT_CHARGE_DURATION,
@@ -25,7 +18,7 @@ import { calcRapierMovementVector } from '@/utils/collision.ts'
 import { createDebugBox, createRayTrace, remap } from '@/utils/function.ts'
 import { removePath } from '@/utils/navigation.ts'
 import { createVFX } from '@/utils/vfx.ts'
-import { createFairy } from '@/utils/world.ts'
+import { allSpellsList } from '@/utils/world.ts'
 import { clamp, lerp } from 'three/src/math/MathUtils'
 import { Color, Object3D, type Quaternion, Raycaster, Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
@@ -84,8 +77,11 @@ export const getBaseStats: any = () => ({
   fairiesList: ref<Fairy[]>([]),
   allFairiesList: ref<Fairy[]>([]),
 
+  // spells: {
+  //   spellsList: ref<Spell[]>([]),
+  // },
   spells: {
-    spellsList: ref<Spell[]>([]),
+    spellsList: ref([...allSpellsList.value]),
   },
   isGrounded: false,
   appliedFlyImpulse: 0,
