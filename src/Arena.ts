@@ -18,7 +18,7 @@ const Arena = async level => {
     const [playerFairyClass, enemyFairyClass] = getFairyClassFromQueryParams()
 
     ArenaPlayerController({
-      ...(playerFairyClass as Fairy),
+      fairy: { ...(playerFairyClass as Fairy) },
       stats: { name: (playerFairyClass as Fairy).name, hp: 100, previousHp: 100, mp: 50, previousMp: 50 },
       startPosition: new Vector3(startPos1.x, startPos1.y, startPos1.z),
       startRotation: startPos1.quaternion,

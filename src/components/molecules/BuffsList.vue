@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
+import SpellRotation from '@/components/atoms/SpellRotation.vue'
 import $ from '@/global.ts'
 import AttackBuffImg from '#/images/buff/swords-128x128.avif'
 import DefenseBuffImg from '#/images/buff/breast-plate-128x128.avif'
@@ -64,6 +65,7 @@ $.addEvent('renderer.update', updateBuffs)
       />
     </div>
     <FairyDustCollected />
+    <SpellRotation />
   </div>
 </template>
 

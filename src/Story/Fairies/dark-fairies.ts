@@ -11,7 +11,7 @@ export const ENERGY_FEMALE_OLD: Fairy = {
   tier: 3,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 1, power: 3, defense: -1, speed: 1, special: 0 },
-  spells: ['Space Slice', 'Dark Blast'],
+  attackSpells: ['Space Slice', 'Dark Blast'],
   passiveSpells: ['Gravity Field'],
 }
 

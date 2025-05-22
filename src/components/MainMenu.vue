@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FairyDustCollected from '@/components/atoms/FairyDustCollected.vue'
 import LoadingBar from '@/components/LoadingBar.vue'
 import MessageManager from '@/components/molecules/MessageManager.vue'
 import { spraySprincles } from '@/control/KeyboardController.ts'

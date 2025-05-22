@@ -20,7 +20,7 @@ export const ICE_YETI_YOUNG: Fairy = {
     speed: -1,
     special: 0,
   },
-  spells: [SNOWBALL_TOSS, FROST_NEEDLE],
+  attackSpells: [SNOWBALL_TOSS, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 
@@ -39,7 +39,7 @@ export const ICE_YETI_MIDDLE: Fairy = {
     speed: -3,
     special: -1,
   },
-  spells: [SNOWBALL_TOSS, FROST_NEEDLE],
+  attackSpells: [SNOWBALL_TOSS, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 Yetopa.value = ICE_YETI_MIDDLE
@@ -62,7 +62,7 @@ export const ICE_SNOWMAN_YOUNG: Fairy = {
     speed: 1,
     special: -1,
   },
-  spells: [CHILLING_STRIKE, FROST_NEEDLE],
+  attackSpells: [CHILLING_STRIKE, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 
@@ -81,7 +81,7 @@ export const ICE_SNOWMAN_MIDDLE: Fairy = {
     speed: -1,
     special: 1,
   },
-  spells: [SNOWBALL_TOSS, FROST_NEEDLE],
+  attackSpells: [SNOWBALL_TOSS, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 Snogrin.value = ICE_SNOWMAN_MIDDLE
@@ -101,7 +101,7 @@ export const ICE_SNOWMAN_OLD: Fairy = {
     speed: -2,
     special: 1,
   },
-  spells: [SNOWBALL_TOSS, FROST_NEEDLE],
+  attackSpells: [SNOWBALL_TOSS, FROST_NEEDLE],
   passiveSpells: [FROST_SHIELD, ARCTIC_BARRIER],
 }
 Snokong.value = ICE_SNOWMAN_OLD

@@ -25,14 +25,14 @@ onUnmounted(() => {
 <template>
   <div
     v-if="fairyDust >= 0 /* && !$.isMenu*/"
-    class="fixed right-2 bottom-16 w-10 z-[5]"
+    class="fixed right-2 bottom-[166px] w-10 z-[5]"
     :class="{
       '!bottom-2': levelType === LEVELS.WORLD,
     }"
   >
     <div class="relative flex flex-col gap-0 items-end justify-center">
       <div
-        class="text-white text-2xl self-center p-2 pb-0 -mb-[4.6rem] -mr-0 z-10"
+        class="text-white text-2xl self-center p-2 pb-0 -mb-[4.8rem] -mr-0 z-10"
         style="
           text-shadow:
             0 0 3px black,

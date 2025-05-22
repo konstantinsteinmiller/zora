@@ -15,7 +15,7 @@ export const WATER_MERMAID_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Meriddle],
   statsGrowthSteps: { hp: -2, power: -1, defense: -1, speed: 3, special: 2 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 
@@ -29,7 +29,7 @@ export const WATER_MERMAID_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [WATER_MERMAID_YOUNG, Merquen],
   statsGrowthSteps: { hp: -1, power: 0, defense: -1, speed: 2, special: 2 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 Meriddle.value = WATER_MERMAID_MIDDLE
@@ -43,7 +43,7 @@ export const WATER_MERMAID_OLD: Fairy = {
   tier: 2,
   evolutionsList: [Meriddle, null],
   statsGrowthSteps: { hp: 0, power: 1, defense: 0, speed: 1, special: 1 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 Merquen.value = WATER_MERMAID_OLD
@@ -57,7 +57,7 @@ export const WATER_PIRANHA_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Pirin],
   statsGrowthSteps: { hp: -1, power: 3, defense: -2, speed: 3, special: -2 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 
@@ -70,7 +70,7 @@ export const WATER_PIRANHA_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [WATER_PIRANHA_YOUNG, Piradon],
   statsGrowthSteps: { hp: 0, power: 3, defense: -2, speed: 2, special: -1 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 Pirin.value = WATER_PIRANHA_MIDDLE
@@ -85,7 +85,7 @@ export const WATER_PIRANHA_OLD: Fairy = {
   tier: 2,
   evolutionsList: [WATER_PIRANHA_MIDDLE, null],
   statsGrowthSteps: { hp: 1, power: 3, defense: -1, speed: 1, special: -1 },
-  spells: [],
+  attackSpells: [],
   passiveSpells: [],
 }
 Piradon.value = WATER_PIRANHA_OLD

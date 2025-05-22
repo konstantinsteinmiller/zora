@@ -13,7 +13,7 @@ export const FIRE_HARPY: Fairy = {
   tier: 0,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 0, power: 1, defense: -1, speed: 1, special: 0 },
-  spells: [BLAZING_FEATHERS, FIRE_BREEZE],
+  attackSpells: [BLAZING_FEATHERS, FIRE_BREEZE],
   passiveSpells: [BLINDING_FIRE, FIERY_EVADE],
 }
 
@@ -30,7 +30,7 @@ export const FIRE_DRAGON_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, dragorin],
   statsGrowthSteps: { hp: -1, power: 2, defense: 0, speed: -1, special: 1 },
-  spells: [SPARK, FIRE_BREEZE],
+  attackSpells: [SPARK, FIRE_BREEZE],
   passiveSpells: [BLINDING_FIRE, FLASH],
 }
 dragir.value = FIRE_DRAGON_YOUNG
@@ -44,7 +44,7 @@ export const FIRE_DRAGON_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [dragir, dragoire],
   statsGrowthSteps: { hp: 2, power: 2, defense: 2, speed: -3, special: -1 },
-  spells: [SPARK],
+  attackSpells: [SPARK],
   passiveSpells: [BLINDING_FIRE, FLASH],
 }
 dragorin.value = FIRE_DRAGON_MIDDLE
@@ -58,7 +58,7 @@ export const FIRE_DRAGON_OLD: Fairy = {
   tier: 2,
   evolutionsList: [dragorin, null],
   statsGrowthSteps: { hp: 4, power: 2, defense: 2, speed: -3, special: -2 },
-  spells: [SPARK],
+  attackSpells: [SPARK],
   passiveSpells: [BLINDING_FIRE, FLASH],
 }
 dragoire.value = FIRE_DRAGON_OLD

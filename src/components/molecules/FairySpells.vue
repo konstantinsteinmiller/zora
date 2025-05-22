@@ -2,7 +2,7 @@
 import SpellIcon from '@/components/atoms/SpellIcon.vue'
 import type { AttackSpell, Spell } from '@/types/spells.ts'
 import useDraggable, { targetSpell, draggedUponFairy } from '@/use/useDraggable.ts'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
 
@@ -16,15 +16,24 @@ const props = defineProps({
     required: true,
   },
 })
+const emit = defineEmits(['fairy-spells-changed'])
 const { t } = useI18n()
 
 const emptySpellSlot = { name: 'empty', icon: '' }
 const fairySpellsList = ref<(Spell | AttackSpell)[]>([
-  props.fairy.spells[0] || emptySpellSlot,
+  props.fairy.attackSpells[0] || emptySpellSlot,
   props.fairy.passiveSpells[0] || emptySpellSlot,
-  props.fairy.spells[1] || emptySpellSlot,
+  props.fairy.attackSpells[1] || emptySpellSlot,
   props.fairy.passiveSpells[1] || emptySpellSlot,
 ])
+
+watch(
+  fairySpellsList,
+  () => {
+    emit('fairy-spells-changed', fairySpellsList.value)
+  },
+  { deep: true }
+)
 
 const { draggedSpell, draggedFromActiveFairySpells } = useDraggable(fairySpellsList, 'fairy-spells-list')
 const isDropAllowed = ref<boolean>(false)

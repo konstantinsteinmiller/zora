@@ -55,9 +55,11 @@ const elementToColorMpa: Record<Element, string> = {
 
 const allowedElementsList = ref<string[]>([...(props.fairy?.allowedElementsList || [props.fairy?.element || ''])])
 
-const icon =
-  (props.spell?.icon && `/images/icons/spells/${spellToIconMap[props.spell?.icon]}.png`) ||
-  '/images/icons/spells/brain.png'
+const icon = computed(
+  () =>
+    (props.spell?.icon && `/images/icons/spells/${spellToIconMap[props.spell?.icon]}.png`) ||
+    '/images/icons/spells/brain.png'
+)
 const color = elementToColorMpa[props.spell?.element?.toUpperCase()] || 'bg-gray-500'
 const isAttackSpell = props.spell?.speed !== undefined
 const isPassiveSpell = props.spell?.speed === undefined && props.spell?.element && props.spell?.mana >= 0

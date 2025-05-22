@@ -188,7 +188,11 @@ const showDispel = (closestFairySpawnPoint: string) => {
 
           cleanupLevel(false, true)
           setTimeout(() => {
-            router.push({ name: 'battle', params: { worldId: 'water-arena' }, query: $.route.value.query })
+            router.push({
+              name: 'battle',
+              params: { worldId: 'water-arena' },
+              query: { ...$.route.value.query, test: undefined },
+            })
           }, 300)
         }, 1000) // Keep visible for a bit after animation
 

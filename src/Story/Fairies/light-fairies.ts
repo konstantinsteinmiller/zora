@@ -10,7 +10,7 @@ export const LIGHT_STARLIGHT: Fairy = {
   tier: 2,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 0, power: 2, defense: -1, speed: 1, special: 2 },
-  spells: ['Star throw', 'Magnetar', 'supernova'],
+  attackSpells: ['Star throw', 'Magnetar', 'supernova'],
   passiveSpells: ['nebula'],
 }
 

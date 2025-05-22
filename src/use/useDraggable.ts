@@ -12,52 +12,6 @@ export const draggedFromActiveFairySpells: Ref<boolean> = ref(false)
 export const draggedUponFairy: Ref<any> = ref(null)
 
 export default (draggableItems: Ref<(Fairy | Spell)[]>, listId: string) => {
-  const onDragStartSpell = (event: any) => {
-    isDragging.value = true
-    draggedElement.value = event
-    console.log('onDragStartSpell all: ', draggedElement.value)
-  }
-
-  const onEndSpell = (event: any) => {
-    isDragging.value = false
-    draggedElement.value = null
-  }
-
-  const onDropSpell = (event: any) => {
-    if (!draggedElement.value) {
-      return // No element is being dragged
-    }
-
-    if (event?.moved?.element) {
-      console.log('moved: ', event?.moved?.element)
-    } else if (event?.added?.element && listId === 'all-spells-list') {
-      // Dropping from unused to active
-      const dropIndex = event.added.newIndex
-      const cutoutIndex = dropIndex >= 5 ? dropIndex - 1 : dropIndex + 1
-      // console.log('cutoutIndex: ', cutoutIndex)
-      const existingSpell = draggableItems.value[cutoutIndex]
-      console.log('existingSpell: ', existingSpell)
-
-      if ($.player.fairiesList.value.length <= 5) {
-        // If there's space, just add the new fairy
-        // draggableFairies.value.splice(dropIndex, 0, draggedElement.value)
-      } else {
-        // If the list is full, replace the fairy at the drop index
-        cutoutElement.value = draggableItems.value[cutoutIndex]
-        if (existingSpell) {
-          $.player.spells.spellsList.value.push({ ...cutoutElement.value })
-        }
-        draggableItems.value = draggableItems.value.filter((e, index) => cutoutIndex !== index)
-      }
-    }
-
-    if (listId === 'all-spells-list') {
-      $.player.spells.spellsList.value = [...draggableItems.value]
-    } else {
-      // $.player.fairiesList.value = [...draggableItems.value]
-    }
-  }
-
   const onDragStartFairy = (event: any) => {
     isDragging.value = true
     draggedElement.value = event
@@ -114,8 +68,5 @@ export default (draggableItems: Ref<(Fairy | Spell)[]>, listId: string) => {
     onDragOverFairy,
     onEndFairy,
     onDropFairy,
-    onDragStartSpell,
-    onEndSpell,
-    onDropSpell,
   }
 }

@@ -102,7 +102,7 @@ const PlayerController = (config: PlayerControllerProps) => {
 
   const findWildFairyInteraction = () => {
     dispelThrottleCounter++
-    if (dispelThrottleCounter % 2 !== 0) return
+    if (dispelThrottleCounter % 3 !== 0) return
 
     const closestFairySpawnPoint: string | null = getClosestFairySpawn(entity, 7)
 

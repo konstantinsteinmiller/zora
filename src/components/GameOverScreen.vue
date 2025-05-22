@@ -22,9 +22,7 @@ const backToWorld = () => {
   setTimeout(() => {
     router.push({
       name: 'world',
-      params: {
-        worldId: $.world?.level.value?.zone,
-      },
+      params: { worldId: $.world?.level.value?.zone },
       query: route.query,
     })
   }, 100)

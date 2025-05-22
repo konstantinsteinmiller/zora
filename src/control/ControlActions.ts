@@ -8,6 +8,9 @@ import type { BoolEnum, EnumStringToList } from '@/types/general.ts'
 import $ from '@/global'
 import { INTERACTIONS, LEVELS, MENU } from '@/utils/enums.ts'
 import { moveToTargetPosition } from '@/utils/navigation.ts'
+import { ref } from 'vue'
+
+export const activeSpellSlotIndex = ref(2)
 
 /* set all actions initially to false */
 export const getPrefilledActionsMap = (defaultControlsConfig: EnumStringToList) => {
@@ -176,6 +179,12 @@ export default (defaultControlsConfig: EnumStringToList) => {
     },
     sprint: {
       onActivate: (entity: any, hasChanged: boolean) => {},
+      onDeactivate: (entity: any) => {},
+    },
+    switchSpell: {
+      onActivate: (entity: any, hasChanged: boolean) => {
+        activeSpellSlotIndex.value = activeSpellSlotIndex.value === 0 ? 1 : 0
+      },
       onDeactivate: (entity: any) => {},
     },
     pause: {

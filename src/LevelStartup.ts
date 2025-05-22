@@ -23,12 +23,17 @@ const LevelStartup = async (level: string) => {
         return
     }
 
-    const startPos1 = $.level.pathfinder.startPositions[0]
+    let previousPosition = null
+    if ($.world?.playerRef?.value?.position) {
+      previousPosition = $.world?.playerRef?.value?.position
+    }
+
+    const startPosPlayer = previousPosition || $.level.pathfinder.startPositions[0]
     PlayerController({
       modelPath: '/models/fairy-trainer/fairy-trainer.fbx',
       stats: { name: 'trainer' },
-      startPosition: new Vector3(startPos1.x, startPos1.y, startPos1.z),
-      startRotation: startPos1.quaternion,
+      startPosition: new Vector3(startPosPlayer.x, startPosPlayer.y, startPosPlayer.z),
+      startRotation: startPosPlayer.quaternion,
       modelHeight: 1.8,
       guild: 'guild-0' as Guild,
       id: 'player',

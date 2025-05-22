@@ -26,6 +26,18 @@ export const ANORGANIC_STRIKE: AttackSpell = {
 /*******************
  ***** passive *****
  ******************/
+export const METALLIC_SURGE: Spell = {
+  name: 'metallicSurge',
+  element: ELEMENTS.METAL,
+  icon: 'energy',
+  mana: 7,
+  effectText: `Increase damage by 10`,
+  onCriticalHit: (entity, enemy) => {
+    // enemy.dealDamage(enemy, entity, 5)
+    // deal 2 armor damage to the enemy
+  },
+}
+
 export const STRUCTURAL_DAMAGE: Spell = {
   name: 'structuralDamage',
   element: ELEMENTS.METAL,

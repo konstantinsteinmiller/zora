@@ -16,7 +16,7 @@ export const EARTH_GARGOYLE_YOUNG: Fairy = {
   tier: 0,
   evolutionsList: [null, Goygorin],
   statsGrowthSteps: { hp: 2, power: 1, defense: 1, speed: -2, special: -1 },
-  spells: [STONE_HAIL, METEOR],
+  attackSpells: [STONE_HAIL, METEOR],
   passiveSpells: [STONE_SHIELD],
 }
 
@@ -29,7 +29,7 @@ export const EARTH_GARGOYLE_MIDDLE: Fairy = {
   tier: 1,
   evolutionsList: [EARTH_GARGOYLE_YOUNG, Goygorix],
   statsGrowthSteps: { hp: 2, power: 2, defense: 2, speed: -2, special: -2 },
-  spells: [STONE_STRIKE, METEOR],
+  attackSpells: [STONE_STRIKE, METEOR],
   passiveSpells: [STONE_SHIELD],
 }
 
@@ -42,7 +42,7 @@ export const EARTH_GARGOYLE_OLD: Fairy = {
   tier: 2,
   evolutionsList: [EARTH_GARGOYLE_MIDDLE, null],
   statsGrowthSteps: { hp: 2, power: 3, defense: 2, speed: -3, special: -1 },
-  spells: [STONE_HAIL, METEOR],
+  attackSpells: [STONE_HAIL, METEOR],
   passiveSpells: [STONE_SHIELD],
 }
 Goygorix.value = EARTH_GARGOYLE_OLD

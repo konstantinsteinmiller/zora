@@ -5,10 +5,6 @@ const playerRef: Ref<any | null> = ref<any | null>(null)
 const entitiesListRef: Ref<any | null> = ref<any | null>(null)
 const level: Ref<any | null> = ref<any | null>(null)
 
-const playerInvRef: Ref<any | null> = ref<any | null>(null)
-const playerFairiesRef: Ref<any | null> = ref<any | null>(null)
-const playerSpellsRef: Ref<any | null> = ref<any | null>(null)
-
 setTimeout(() => {
   $.world = {
     playerRef,
@@ -18,24 +14,15 @@ setTimeout(() => {
 })
 
 export const savePlayer = () => {
-  // $.world.playerRef.value = ref({
-  //   currency: $.player.currency,
-  //   inventory: $.player.inventory,
-  //   fairiesList: $.player.fairiesList.value,
-  //   spells: {
-  //     spellsList: ref($.player.spells.spellsList.value),
-  //   },
-  // })
   const fairiesList = $.player.fairiesList.value.map((fairy: any) => {
     fairy.evolutionsList = []
-    return {
-      ...fairy,
-    }
+    return { ...fairy }
   })
   // console.log('$.player.fairiesList.value: ', $.player.fairiesList.value, $.player.spells.spellsList.value)
 
   $.world.playerRef.value = JSON.parse(
     JSON.stringify({
+      position: $.player.mesh.position,
       currency: $.player.currency,
       inventory: $.player.inventory,
       fairiesList: fairiesList,

@@ -11,7 +11,7 @@ export const ENERGY_FEMALE_OLD: Fairy = {
   tier: 2,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 1, power: 2, defense: -1, speed: -1, special: 1 },
-  spells: [ENERGY_BALL, ENERGY_BALL],
+  attackSpells: [ENERGY_BALL, ENERGY_BALL],
   passiveSpells: [SUPERCHARGED, SUPERCHARGED],
 }
 

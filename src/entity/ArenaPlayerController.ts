@@ -13,14 +13,21 @@ interface ArenaPlayerControllerProps {
   startRotation: Quaternion
   modelHeight: number
   guild: Guild
+  fairy: Fairy
 }
 
 const ArenaPlayerController = (config: ArenaPlayerControllerProps) => {
+  config.name = config.fairy.name
+  config.modelPath = config.fairy.modelPath
+  config.id = config.fairy.id
+
   let entity = ArenaController(config)
   const utils: any = { ...chargeUtils() }
   for (const key in utils) {
     entity[key] = utils[key]
   }
+
+  entity.fairy = config.fairy
 
   entity.getPosition = () => {
     if (!entity.mesh) {

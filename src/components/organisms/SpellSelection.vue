@@ -9,6 +9,13 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const currentFairies: Ref<Fairy[]> = $.player?.fairiesList || ref([])
 // console.log('currentFairies: ', currentFairies)
+
+const onSpellsChanged = (fairySpellsList, fairy) => {
+  fairy.attackSpells[0] = fairySpellsList[0]
+  fairy.passiveSpells[0] = fairySpellsList[1]
+  fairy.attackSpells[1] = fairySpellsList[2]
+  fairy.passiveSpells[1] = fairySpellsList[3]
+}
 </script>
 
 <template lang="pug">
@@ -25,6 +32,7 @@ const currentFairies: Ref<Fairy[]> = $.player?.fairiesList || ref([])
             :key="fairy.id"
             :fairy="fairy"
             :index="index"
+            @fairy-spells-changed="onSpellsChanged($event, fairy)"
           )
         AllSpells
 </template>

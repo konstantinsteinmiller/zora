@@ -31,6 +31,7 @@ const defaultControlsConfig: EnumStringToList = {
   fly: ['Mouse2'],
   talk: ['KeyF'],
   sprint: ['ShiftLeft'],
+  switchSpell: ['Scroll'],
   pause: ['KeyP'],
   lookBack: ['KeyG'],
   toggleCamera: ['KeyH'],
@@ -142,6 +143,13 @@ export default (entity?: any) => {
     setAction(event.code)
   }
 
+  const onMouseWheel = (event: MouseEvent) => {
+    // console.log('onMouseWheel: ', event)
+    input.keysMap[`Scroll`] = true
+    activatedKeysMap.value[`Scroll`] = true
+    setAction(`Scroll`)
+  }
+
   const onKeyUp = (event: KeyboardEvent) => {
     // if ($.isMenu.value) return
 
@@ -213,6 +221,7 @@ export default (entity?: any) => {
   document.addEventListener('keydown', onKeyDown, false)
   document.addEventListener('keyup', onKeyUp, false)
   document.addEventListener('contextmenu', onContextMenu, false)
+  document.addEventListener('wheel', onMouseWheel, false)
   document.addEventListener('mousedown', onMouseDown, false)
   document.addEventListener('mouseup', onMouseUp, false)
   document.addEventListener('mousemove', onUnlockedMouseMove, false)
@@ -222,6 +231,7 @@ export default (entity?: any) => {
     document.removeEventListener('keydown', onKeyDown, false)
     document.removeEventListener('keyup', onKeyUp, false)
     document.removeEventListener('contextmenu', onContextMenu, false)
+    document.removeEventListener('wheel', onMouseWheel, false)
     document.removeEventListener('mousedown', onMouseDown, false)
     document.removeEventListener('mouseup', onMouseUp, false)
     document.removeEventListener('mousemove', onUnlockedMouseMove, false)
@@ -235,6 +245,7 @@ export default (entity?: any) => {
     document.removeEventListener('keydown', onKeyDown, false)
     document.removeEventListener('keyup', onKeyUp, false)
     document.removeEventListener('contextmenu', onContextMenu, false)
+    document.removeEventListener('wheel', onMouseWheel, false)
     document.removeEventListener('mousedown', onMouseDown, false)
     document.removeEventListener('mouseup', onMouseUp, false)
     document.removeEventListener('mousemove', onUnlockedMouseMove, false)

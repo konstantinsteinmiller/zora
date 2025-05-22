@@ -13,7 +13,7 @@ export const PSI_NIGHTMARE: Fairy = {
   tier: 2,
   evolutionsList: [null, null],
   statsGrowthSteps: { hp: 0, power: 2, defense: -2, speed: 2, special: 1 },
-  spells: [SCREAM, SCREAM],
+  attackSpells: [SCREAM, SCREAM],
   passiveSpells: [AURA_OF_RAGE, AURA_OF_RAGE],
 }
 
